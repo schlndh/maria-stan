@@ -1,0 +1,19 @@
+{
+	"name": "schlndh/maria-stan",
+	"type": "phpstan-extension",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"MariaStan\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "schldnh"
+		}
+	],
+	"require": {
+		"php": "^8.1",
+		"greenlion/php-sql-parser": "^4.5"
+	}
+}
