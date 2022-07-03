@@ -7,8 +7,6 @@ namespace MariaStan;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbParsingTest;
 
-use function array_fill_keys;
-use function explode;
 use function file_put_contents;
 use function strpos;
 
@@ -31,11 +29,8 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	$newTests = [];
 
 	foreach ($tests as [$modeLine, [$input, $expected]]) {
-		$modes = $modeLine !== null
-			? array_fill_keys(explode(',', $modeLine), true)
-			: [];
 		$parser = $codeParsingTest->createParser();
-		[, $output] = $codeParsingTest->getParseOutput($parser, $input, $modes);
+		[, $output] = $codeParsingTest->getParseOutput($parser, $input);
 		$newTests[] = [$modeLine, [$input, $output]];
 	}
 

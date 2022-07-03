@@ -27,11 +27,11 @@ abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 			$shortName = ltrim(str_replace($directory, '', realpath($fileName)), '/\\');
 
 			// multiple sections possible with always two forming a pair
-			foreach ($tests as $i => [$mode, $parts]) {
+			foreach ($tests as $i => [, $parts]) {
 				$dataSetName = $shortName . (count($parts) > 1
 						? '#' . $i
 						: '');
-				$allTests[$dataSetName] = array_merge([$name], $parts, [$mode]);
+				$allTests[$dataSetName] = array_merge([$name], $parts);
 			}
 		}
 
