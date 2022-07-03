@@ -1,0 +1,26 @@
+Basic select
+-----
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery Object
+(
+    [select] => Array
+        (
+            [0] => MariaStan\Ast\SelectExpr\AllColumns Object
+                (
+                    [tableName] =>
+                )
+
+        )
+
+    [from] => Array
+        (
+            [0] => MariaStan\Ast\Query\TableReference\Table Object
+                (
+                    [name] => tbl
+                    [alias] =>
+                )
+
+        )
+
+)
