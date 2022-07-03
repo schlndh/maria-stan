@@ -6,7 +6,7 @@ namespace MariaStan\Parser;
 
 use function MariaStan\filesInDir;
 
-abstract class CodeTestAbstract extends \PHPUnit\Framework\TestCase
+abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 {
 	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
 	{

@@ -10,7 +10,7 @@ use MariaStan\Parser\Exception\ParserException;
 use function MariaStan\canonicalize;
 
 // If valid output changes, re-run updateTests.php
-class MariaDbParsingTest extends CodeTestAbstract
+class MariaDbParsingTest extends CodeTestCase
 {
 	/** @dataProvider provideTestParse */
 	public function testParse(string $name, string $code, string $expected, ?string $modeLine): void
