@@ -6,6 +6,7 @@ namespace MariaStan\Parser;
 
 use MariaStan\Ast\Query;
 use MariaStan\Parser\Exception\ParserException;
+
 use function MariaStan\canonicalize;
 
 // If valid output changes, re-run updateTests.php

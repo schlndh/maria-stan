@@ -10,7 +10,7 @@ abstract class CodeTestAbstract extends \PHPUnit\Framework\TestCase
 {
 	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
 	{
-		$parser = new CodeTestParser;
+		$parser = new CodeTestParser();
 		$allTests = [];
 		$directory = realpath($directory);
 

@@ -7,7 +7,8 @@ namespace MariaStan;
 require __DIR__ . '/../vendor/autoload.php';
 
 /**
- * The code below is based on https://github.com/nikic/PHP-Parser/blob/5aae65e627f8f3cdf6b109dc6a2bddbd92e0867a/test/bootstrap.php
+ * The code below is based on
+ * https://github.com/nikic/PHP-Parser/blob/5aae65e627f8f3cdf6b109dc6a2bddbd92e0867a/test/bootstrap.php
  *
  * Original license:
  * BSD 3-Clause License
@@ -76,4 +77,3 @@ function filesInDir(string $directory, string $fileExtension): iterable
 		yield $fileName => file_get_contents($fileName);
 	}
 }
-
