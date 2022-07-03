@@ -9,7 +9,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"MariaStan\\": "test/"
+			"MariaStan\\": "tests/"
 		}
 	},
 	"authors": [

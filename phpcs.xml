@@ -9,7 +9,7 @@
 	<arg name="cache" value="tmp/cache/phpcs"/>
 	<arg value="s"/>
 	<file>src/</file>
-	<file>test/</file>
+	<file>tests/</file>
 
 	<rule ref="PSR12">
 		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
@@ -22,7 +22,7 @@
 	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-		<exclude-pattern>test/bootstrap.php</exclude-pattern>
+		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
 	</rule>
 
 	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
@@ -59,7 +59,7 @@
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="src" value="MariaStan"/>
-				<element key="test" value="MariaStan"/>
+				<element key="tests" value="MariaStan"/>
 			</property>
 		</properties>
 	</rule>
@@ -146,6 +146,6 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
-		<exclude-pattern>test</exclude-pattern>
+		<exclude-pattern>tests</exclude-pattern>
 	</rule>
 </ruleset>
