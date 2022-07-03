@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MariaStan\Ast\Query;
 
-use MariaStan\Ast\SelectExpr;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Query;
+use MariaStan\Ast\SelectExpr;
 
 final class SelectQuery implements Query
 {

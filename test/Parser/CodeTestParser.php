@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use function array_chunk;
+use function array_merge;
+use function array_pop;
+use function array_shift;
 use function MariaStan\canonicalize;
+use function preg_split;
+use function strlen;
+use function strpos;
+use function substr;
 
 class CodeTestParser
 {
-	/**
-	 * @param string $code
-	 * @param int $chunksPerTest
-	 * @return array{string, array<array{?string, array<string>}>} [test name, [[mode, [inputs, ..., output]]]]
-	 */
+	/** @return array{string, array<array{?string, array<string>}>} [test name, [[mode, [inputs, ..., output]]]] */
 	public function parseTest(string $code, int $chunksPerTest): array
 	{
 		$code = canonicalize($code);
@@ -45,11 +49,7 @@ class CodeTestParser
 		return [$name, $tests];
 	}
 
-	/**
-	 * @param string $name
-	 * @param array<array{string, array<string>}> $tests [[mode, [inputs, ..., output]]]
-	 * @return string
-	 */
+	/** @param array<array{string, array<string>}> $tests [[mode, [inputs, ..., output]]] */
 	public function reconstructTest(string $name, array $tests): string
 	{
 		$result = $name;
@@ -63,7 +63,7 @@ class CodeTestParser
 
 			$result .= "\n-----\n";
 
-			if (null !== $mode) {
+			if ($mode !== null) {
 				$result .= "!!$mode\n";
 			}
 
@@ -73,21 +73,18 @@ class CodeTestParser
 		return $result;
 	}
 
-	/**
-	 * @param string $expected
-	 * @return array{string, ?string} [test output, mode]
-	 */
+	/** @return array{string, ?string} [test output, mode] */
 	private function extractMode(string $expected): array
 	{
 		$firstNewLine = strpos($expected, "\n");
 
-		if (false === $firstNewLine) {
+		if ($firstNewLine === false) {
 			$firstNewLine = strlen($expected);
 		}
 
 		$firstLine = substr($expected, 0, $firstNewLine);
 
-		if (0 !== strpos($firstLine, '!!')) {
+		if (strpos($firstLine, '!!') !== 0) {
 			return [$expected, null];
 		}
 

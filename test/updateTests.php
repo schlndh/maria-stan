@@ -7,6 +7,11 @@ namespace MariaStan;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbParsingTest;
 
+use function array_fill_keys;
+use function explode;
+use function file_put_contents;
+use function strpos;
+
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/Parser/CodeTestParser.php';
 require __DIR__ . '/Parser/MariaDbParsingTest.php';
@@ -17,7 +22,7 @@ $testParser = new CodeTestParser();
 $codeParsingTest = new MariaDbParsingTest();
 
 foreach (filesInDir($dir, 'test') as $fileName => $code) {
-	if (false !== strpos($code, '@@{')) {
+	if (strpos($code, '@@{') !== false) {
 		// Skip tests with evaluate segments
 		continue;
 	}
@@ -25,8 +30,8 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	[$name, $tests] = $testParser->parseTest($code, 2);
 	$newTests = [];
 
-	foreach ($tests as list($modeLine, list($input, $expected))) {
-		$modes = null !== $modeLine
+	foreach ($tests as [$modeLine, [$input, $expected]]) {
+		$modes = $modeLine !== null
 			? array_fill_keys(explode(',', $modeLine), true)
 			: [];
 		$parser = $codeParsingTest->createParser();

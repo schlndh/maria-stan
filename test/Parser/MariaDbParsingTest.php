@@ -7,7 +7,9 @@ namespace MariaStan\Parser;
 use MariaStan\Ast\Query;
 use MariaStan\Parser\Exception\ParserException;
 
+use function explode;
 use function MariaStan\canonicalize;
+use function print_r;
 
 // If valid output changes, re-run updateTests.php
 class MariaDbParsingTest extends CodeTestCase
@@ -15,11 +17,9 @@ class MariaDbParsingTest extends CodeTestCase
 	/** @dataProvider provideTestParse */
 	public function testParse(string $name, string $code, string $expected, ?string $modeLine): void
 	{
-		if (null !== $modeLine) {
-			$modes = $this->parseModeLine($modeLine);
-		} else {
-			$modes = [];
-		}
+		$modes = $modeLine !== null
+			? $this->parseModeLine($modeLine)
+			: [];
 
 		$parser = $this->createParser();
 		[, $output] = $this->getParseOutput($parser, $code, $modes);
@@ -34,11 +34,7 @@ class MariaDbParsingTest extends CodeTestCase
 		foreach (explode(',', $modeLine) as $mode) {
 			$kv = explode('=', $mode, 2);
 
-			if (isset($kv[1])) {
-				$modes[$kv[0]] = $kv[1];
-			} else {
-				$modes[$kv[0]] = true;
-			}
+			$modes[$kv[0]] = $kv[1] ?? true;
 		}
 
 		return $modes;
@@ -50,8 +46,6 @@ class MariaDbParsingTest extends CodeTestCase
 	}
 
 	/**
-	 * @param MariaDbParser $parser
-	 * @param string $code
 	 * @param array<string, bool> $modes mode => true
 	 * @return array{Query|ParserException, string} [result, output]
 	 *

@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
-use MariaStan\Ast\SelectExpr;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Query;
+use MariaStan\Ast\SelectExpr;
 use MariaStan\Parser\Exception\InvalidSqlException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 use PHPSQLParser\PHPSQLParser;
 use PHPSQLParser\utils\ExpressionType;
+
+use function count;
+use function end;
+use function print_r;
 
 class MariaDbParser
 {
@@ -22,11 +26,7 @@ class MariaDbParser
 		$this->parser = new PHPSQLParser();
 	}
 
-	/**
-	 * @param string $sqlQuery
-	 * @return Query
-	 * @throws ParserException
-	 */
+	/** @throws ParserException */
 	public function parseSingleQuery(string $sqlQuery): Query
 	{
 		// it seems that PHPSQLParser can't handle multiple queries at once

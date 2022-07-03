@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use function array_merge;
+use function count;
+use function ltrim;
 use function MariaStan\filesInDir;
+use function realpath;
+use function str_replace;
 
 abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 {

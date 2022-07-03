@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace MariaStan;
 
+use function array_map;
+use function explode;
+use function file_get_contents;
+use function implode;
+use function preg_quote;
+use function realpath;
+use function rtrim;
+use function str_replace;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 /**
@@ -52,18 +61,12 @@ function canonicalize(string $str): string
 
 	// remove trailing whitespace on all lines
 	$lines = explode("\n", $str);
-	$lines = array_map(function ($line) {
-		return rtrim($line, " \t");
-	}, $lines);
+	$lines = array_map(static fn ($line) => rtrim($line, " \t"), $lines);
 
 	return implode("\n", $lines);
 }
 
-/**
- * @param string $directory
- * @param string $fileExtension
- * @return iterable<string, string> file name => contents
- */
+/** @return iterable<string, string> file name => contents */
 function filesInDir(string $directory, string $fileExtension): iterable
 {
 	$directory = realpath($directory);
