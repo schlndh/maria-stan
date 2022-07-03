@@ -43,7 +43,8 @@ class MariaDbParsingTest extends CodeTestCase
 		}
 	}
 
-	public function provideTestParse()
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestParse(): iterable
 	{
 		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser', 'test');
 	}

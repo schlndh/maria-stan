@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MariaStan\Ast\SelectExpr;
 
-use MariaStan\Ast\Node;
+use MariaStan\Ast\SelectExpr;
 
-final class AllColumns implements Node
+final class AllColumns implements SelectExpr
 {
 	public function __construct(public readonly ?string $tableName = null)
 	{

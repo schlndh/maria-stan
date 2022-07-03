@@ -30,6 +30,7 @@ class MariaDbParser
 	public function parseSingleQuery(string $sqlQuery): Query
 	{
 		// it seems that PHPSQLParser can't handle multiple queries at once
+		/** @var array<mixed>|false $result */
 		$result = $this->parser->parse($sqlQuery);
 
 		if ($result === false) {
@@ -102,7 +103,7 @@ class MariaDbParser
 	{
 		$result = [];
 
-		if (count($fromClause) === 0 || count($fromClause) > 1) {
+		if (count($fromClause) > 1) {
 			throw new UnsupportedQueryException(print_r($fromClause, true));
 		}
 
@@ -113,6 +114,8 @@ class MariaDbParser
 				$tblName = end($fromExpr['no_quotes']['parts']);
 				$result[] = new Query\TableReference\Table($tblName);
 				break;
+			default:
+				throw new UnsupportedQueryException(print_r($fromExpr, true));
 		}
 
 		return $result;

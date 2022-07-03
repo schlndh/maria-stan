@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use RuntimeException;
+
 use function array_merge;
 use function count;
 use function ltrim;
@@ -13,18 +15,20 @@ use function str_replace;
 
 abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 {
+	/** @return iterable<string, array<mixed>> test name => args */
 	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
 	{
 		$parser = new CodeTestParser();
 		$allTests = [];
-		$directory = realpath($directory);
+		$directory = realpath($directory) ?: throw new RuntimeException('Invalid directory');
 
 		foreach (filesInDir($directory, $fileExtension) as $fileName => $fileContents) {
+			$fileName = realpath($fileName) ?: throw new RuntimeException('Invalid file');
 			[$name, $tests] = $parser->parseTest($fileContents, $chunksPerTest);
 
 			// first part is the name
 			$name .= ' (' . $fileName . ')';
-			$shortName = ltrim(str_replace($directory, '', realpath($fileName)), '/\\');
+			$shortName = ltrim(str_replace($directory, '', $fileName), '/\\');
 
 			// multiple sections possible with always two forming a pair
 			foreach ($tests as $i => [, $parts]) {
