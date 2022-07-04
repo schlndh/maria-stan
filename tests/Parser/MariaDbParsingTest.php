@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
-use MariaStan\Ast\Query;
+use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
 
 use function MariaStan\canonicalize;

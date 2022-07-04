@@ -6,6 +6,6 @@ namespace MariaStan\Ast\Query;
 
 use MariaStan\Ast\Node;
 
-interface TableReference extends Node
+interface Query extends Node
 {
 }

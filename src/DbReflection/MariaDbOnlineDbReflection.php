@@ -7,7 +7,9 @@ namespace MariaStan\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\Schema\Column;
-use MariaStan\Schema\DbType;
+use MariaStan\Schema\DbType\DbType;
+use MariaStan\Schema\DbType\IntType;
+use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\Table;
 use MariaStan\Util\MysqliUtil;
 use mysqli;
@@ -62,9 +64,9 @@ class MariaDbOnlineDbReflection
 
 		switch ($type) {
 			case 'varchar':
-				return new DbType\VarcharType();
+				return new VarcharType();
 			case 'int':
-				return new DbType\IntType();
+				return new IntType();
 			default:
 				throw new UnexpectedValueException("Unrecognized type {$origType}");
 		}

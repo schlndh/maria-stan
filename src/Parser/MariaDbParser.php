@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
-use MariaStan\Ast\Expr;
-use MariaStan\Ast\Query;
-use MariaStan\Ast\SelectExpr;
+use MariaStan\Ast\Expr\Column;
+use MariaStan\Ast\Expr\Expr;
+use MariaStan\Ast\Query\Query;
+use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\TableReference\Table;
+use MariaStan\Ast\Query\TableReference\TableReference;
+use MariaStan\Ast\SelectExpr\AllColumns;
+use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Exception\InvalidSqlException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
@@ -45,7 +50,7 @@ class MariaDbParser
 			throw new InvalidSqlException('Empty SELECT');
 		}
 
-		return new Query\SelectQuery(
+		return new SelectQuery(
 			$this->parseSelectExpressions($result['SELECT']),
 			count($result['FROM'] ?? []) > 0
 				? $this->parseTableReferences($result['FROM'])
@@ -65,20 +70,20 @@ class MariaDbParser
 			switch ($selectExpr['expr_type']) {
 				case ExpressionType::COLREF:
 					if ($selectExpr['base_expr'] === '*') {
-						$result[] = new SelectExpr\AllColumns(null);
+						$result[] = new AllColumns(null);
 						break;
 					}
 
 					if (count($selectExpr['no_quotes']['parts'] ?? []) === 2) {
 						[$tableName, $colName] = $selectExpr['no_quotes']['parts'];
 						$result[] = $colName === '*'
-							? new SelectExpr\AllColumns($tableName)
-							: new Expr\Column($colName, $tableName);
+							? new AllColumns($tableName)
+							: new Column($colName, $tableName);
 						break;
 					}
 
 					if (count($selectExpr['no_quotes']['parts'] ?? []) === 1) {
-						$result[] = new Expr\Column($selectExpr['no_quotes']['parts'][0]);
+						$result[] = new Column($selectExpr['no_quotes']['parts'][0]);
 						break;
 					}
 
@@ -97,7 +102,7 @@ class MariaDbParser
 
 	/**
 	 * @param non-empty-array<array<mixed>> $fromClause
-	 * @return non-empty-array<Query\TableReference>
+	 * @return non-empty-array<TableReference>
 	 */
 	private function parseTableReferences(array $fromClause): array
 	{
@@ -112,7 +117,7 @@ class MariaDbParser
 		switch ($fromExpr['expr_type']) {
 			case ExpressionType::TABLE:
 				$tblName = end($fromExpr['no_quotes']['parts']);
-				$result[] = new Query\TableReference\Table($tblName);
+				$result[] = new Table($tblName);
 				break;
 			default:
 				throw new UnsupportedQueryException(print_r($fromExpr, true));
