@@ -19,6 +19,7 @@
 	],
 	"require": {
 		"php": "^8.1",
+		"ext-mysqli": "*",
 		"greenlion/php-sql-parser": "^4.5"
 	},
 	"require-dev": {

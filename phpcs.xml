@@ -53,6 +53,8 @@
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostDecrementOperator"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator" />
 		<exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses" />
+		<exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
+		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
