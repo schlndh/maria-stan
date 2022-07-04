@@ -8,4 +8,5 @@ use MariaStan\Ast\Node;
 
 interface SelectExpr extends Node
 {
+	public static function getSelectExprType(): SelectExprTypeEnum;
 }

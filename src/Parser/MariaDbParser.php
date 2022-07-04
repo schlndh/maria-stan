@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace MariaStan\Parser;
 
 use MariaStan\Ast\Expr\Column;
-use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\AllColumns;
+use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Exception\InvalidSqlException;
 use MariaStan\Parser\Exception\ParserException;
@@ -60,7 +60,7 @@ class MariaDbParser
 
 	/**
 	 * @param non-empty-array<array<mixed>> $selectClause
-	 * @return non-empty-array<Expr|SelectExpr>
+	 * @return non-empty-array<SelectExpr>
 	 */
 	private function parseSelectExpressions(array $selectClause): array
 	{
@@ -78,12 +78,12 @@ class MariaDbParser
 						[$tableName, $colName] = $selectExpr['no_quotes']['parts'];
 						$result[] = $colName === '*'
 							? new AllColumns($tableName)
-							: new Column($colName, $tableName);
+							: new RegularExpr(new Column($colName, $tableName));
 						break;
 					}
 
 					if (count($selectExpr['no_quotes']['parts'] ?? []) === 1) {
-						$result[] = new Column($selectExpr['no_quotes']['parts'][0]);
+						$result[] = new RegularExpr(new Column($selectExpr['no_quotes']['parts'][0]));
 						break;
 					}
 

@@ -9,4 +9,9 @@ final class AllColumns implements SelectExpr
 	public function __construct(public readonly ?string $tableName = null)
 	{
 	}
+
+	public static function getSelectExprType(): SelectExprTypeEnum
+	{
+		return SelectExprTypeEnum::ALL_COLUMNS;
+	}
 }

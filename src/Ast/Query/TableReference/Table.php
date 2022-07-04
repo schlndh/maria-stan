@@ -9,4 +9,9 @@ final class Table implements TableReference
 	public function __construct(public readonly string $name, public readonly ?string $alias = null)
 	{
 	}
+
+	public static function getTableReferenceType(): TableReferenceTypeEnum
+	{
+		return TableReferenceTypeEnum::TABLE;
+	}
 }

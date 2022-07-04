@@ -9,4 +9,9 @@ class Column implements Expr
 	public function __construct(public readonly string $name, public readonly ?string $tableName = null)
 	{
 	}
+
+	public static function getExprType(): ExprTypeEnum
+	{
+		return ExprTypeEnum::COLUMN;
+	}
 }

@@ -8,4 +8,5 @@ use MariaStan\Ast\Node;
 
 interface TableReference extends Node
 {
+	public static function getTableReferenceType(): TableReferenceTypeEnum;
 }
