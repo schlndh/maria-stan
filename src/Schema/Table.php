@@ -6,7 +6,7 @@ namespace MariaStan\Schema;
 
 final class Table
 {
-	/** @param array<Column> $columns */
+	/** @param array<string, Column> $columns name => column */
 	public function __construct(public readonly string $name, public readonly array $columns)
 	{
 	}

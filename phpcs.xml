@@ -55,6 +55,7 @@
 		<exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses" />
 		<exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
+		<exclude name="SlevomatCodingStandard.Classes.SuperfluousErrorNaming"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">

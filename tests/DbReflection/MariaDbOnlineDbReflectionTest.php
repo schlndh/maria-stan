@@ -14,7 +14,7 @@ class MariaDbOnlineDbReflectionTest extends DatabaseTestCase
 	public function test(): void
 	{
 		$tableName = 'db_reflection_test';
-		$mysqli = $this->getSharedConnection('testdb_');
+		$mysqli = $this->getDefaultSharedConnection();
 		$mysqli->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				id INT NULL,
@@ -28,8 +28,8 @@ class MariaDbOnlineDbReflectionTest extends DatabaseTestCase
 		$this->assertSame($tableName, $schema->name);
 		$this->assertCount(2, $schema->columns);
 		$this->assertEquals([
-			new Column('id', new IntType(), true),
-			new Column('name', new VarcharType(), false),
+			'id' => new Column('id', new IntType(), true),
+			'name' => new Column('name', new VarcharType(), false),
 		], $schema->columns);
 	}
 }

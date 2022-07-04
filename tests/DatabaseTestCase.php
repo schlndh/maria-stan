@@ -17,6 +17,11 @@ abstract class DatabaseTestCase extends TestCase
 	/** @var array<string, mysqli> */
 	private array $connections;
 
+	protected function getDefaultSharedConnection(): mysqli
+	{
+		return $this->getSharedConnection('testdb_');
+	}
+
 	protected function getSharedConnection(string $prefix): mysqli
 	{
 		if (isset($this->connections[$prefix])) {

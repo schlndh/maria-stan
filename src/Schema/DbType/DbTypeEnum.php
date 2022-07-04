@@ -11,4 +11,7 @@ enum DbTypeEnum: string
 
 	/** @see VarcharType */
 	case VARCHAR = 'VARCHAR';
+
+	/** @see MixedType */
+	case MIXED = 'MIXED';
 }

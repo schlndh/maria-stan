@@ -14,6 +14,7 @@ use MariaStan\Schema\Table;
 use MariaStan\Util\MysqliUtil;
 use mysqli;
 
+use function array_combine;
 use function array_map;
 use function explode;
 
@@ -31,6 +32,13 @@ class MariaDbOnlineDbReflection
 		$columns = array_map(
 			$this->createColumnSchema(...),
 			$tableCols,
+		);
+		$columns = array_combine(
+			array_map(
+				static fn (Column $c) => $c->name,
+				$columns,
+			),
+			$columns,
 		);
 
 		return new Table($table, $columns);
