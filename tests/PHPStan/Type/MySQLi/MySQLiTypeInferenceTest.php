@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi;
 
+use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
 use mysqli;
 use PHPStan\Testing\TypeInferenceTestCase;
 
@@ -16,15 +17,10 @@ class MySQLiTypeInferenceTest extends TypeInferenceTestCase
 	{
 		$mysqli = self::getContainer()->getService('mariaStanDb');
 		assert($mysqli instanceof mysqli);
-		$mysqli->query('
-			CREATE OR REPLACE TABLE mysqli_test (
-				id INT NOT NULL,
-				name VARCHAR(255) NULL
-			);
-		');
+		MySQLiTypeInferenceDataTest::initData($mysqli);
 
 		// path to a file with actual asserts of expected types:
-		yield from $this->gatherAssertTypes(__DIR__ . '/data/mysqli.php');
+		yield from $this->gatherAssertTypes(__DIR__ . '/data/MySQLiTypeInferenceDataTest.php');
 	}
 
 	/** @dataProvider dataFileAsserts */
