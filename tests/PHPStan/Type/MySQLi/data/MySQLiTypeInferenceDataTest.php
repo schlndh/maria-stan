@@ -6,11 +6,11 @@ namespace MariaStan\PHPStan\Type\MySQLi\data;
 
 use MariaStan\DatabaseTestCase;
 use mysqli;
+use Nette\Schema\Expect;
+use Nette\Schema\Processor;
 
 use function array_keys;
 use function function_exists;
-use function get_debug_type;
-use function in_array;
 use function PHPStan\Testing\assertType;
 
 use const MYSQLI_ASSOC;
@@ -35,6 +35,11 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_ASSOC);
+		$schemaProcessor = new Processor();
+		$schema = Expect::structure([
+			'id' => Expect::int(),
+			'name' => Expect::anyOf(Expect::string(), Expect::null()),
+		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -44,11 +49,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 			}
 
 			$this->assertEqualsCanonicalizing(['id', 'name'], array_keys($row));
-			$this->assertSame('int', get_debug_type($row['id']));
-			$this->assertTrue(
-				in_array(get_debug_type($row['name']), ['string', 'null'], true),
-				get_debug_type($row['name']),
-			);
+			$schemaProcessor->process($schema, $row);
 		}
 	}
 }
