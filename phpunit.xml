@@ -7,6 +7,7 @@
 >
 	<php>
 		<ini name="error_reporting" value="-1" />
+		<ini name="assert.exception" value="1" />
 
 		<var name="testdb_host" value="127.0.0.1" />
 		<var name="testdb_port" value="3306"/>
