@@ -1,0 +1,45 @@
+parameters:
+	maria-stan:
+		db:
+			host: 127.0.0.1
+			port: 3306
+			user: ''
+			password: ''
+			database: ''
+parametersSchema:
+	maria-stan: structure([
+		db: structure([
+			host: string()
+			port: int()
+			user: string()
+			password: string()
+			database: string()
+		])
+	])
+services:
+	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiDynamicReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiResultDynamicReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	mariaStanDb:
+		# make sure it doesn't conflict with other extensions
+		autowired: false
+		class: mysqli
+		arguments:
+			hostname: %maria-stan.db.host%
+			username: %maria-stan.db.user%
+			password: %maria-stan.db.password%
+			database: %maria-stan.db.database%
+			port: %maria-stan.db.port%
+		setup:
+			- options(::constant(MYSQLI_OPT_INT_AND_FLOAT_NATIVE), 1)
+			- set_charset('utf8mb4')
+	- MariaStan\Parser\MariaDbParser
+	- MariaStan\DbReflection\MariaDbOnlineDbReflection(@mariaStanDb)
+	- MariaStan\Analyser\Analyser
+	- MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper
+

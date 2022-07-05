@@ -13,6 +13,7 @@ use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
+use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
@@ -83,9 +84,15 @@ class Analyser
 		}
 
 		$tableSchemas = [];
+		$fields = [];
+		$errors = [];
 
 		foreach (array_unique($tablesByAlias) as $table) {
-			$tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
+			try {
+				$tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
+			} catch (DbReflectionException $e) {
+				$errors[] = new AnalyserError($e->getMessage());
+			}
 		}
 
 		/** @var array<string, array<string, Schema\Column>> $columnSchemasByName */
@@ -96,9 +103,6 @@ class Analyser
 				$columnSchemasByName[$column->name][$tableSchema->name] = $column;
 			}
 		}
-
-		$fields = [];
-		$errors = [];
 
 		foreach ($selectAst->select as $selectExpr) {
 			switch ($selectExpr::getSelectExprType()) {
@@ -149,9 +153,9 @@ class Analyser
 						: $tableNamesInOrder;
 
 					foreach ($tableNames as $tableName) {
-						$tableSchema = $tableSchemas[$tableName];
+						$tableSchema = $tableSchemas[$tableName] ?? null;
 
-						foreach ($tableSchema->columns as $column) {
+						foreach ($tableSchema?->columns ?? [] as $column) {
 							$fields[$column->name] = new QueryResultField($column->type, $column->isNullable);
 						}
 					}
