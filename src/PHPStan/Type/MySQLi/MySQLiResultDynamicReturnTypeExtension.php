@@ -8,8 +8,8 @@ use mysqli_result;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -42,15 +42,16 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 		$callerType = $scope->getType($methodCall->var);
 
 		if (! $callerType instanceof GenericObjectType || count($callerType->getTypes()) !== 1) {
-			$methodDefinition = ParametersAcceptorSelector::selectSingle(
-				$methodReflection->getVariants(),
-			);
-
-			return $methodDefinition->getReturnType();
+			return null;
 		}
 
 		$rowType = $callerType->getTypes()[0];
-		$mode = MYSQLI_BOTH;
+
+		if (! $rowType instanceof ConstantArrayType) {
+			return null;
+		}
+
+		$mode = null;
 
 		if (count($methodCall->getArgs()) > 0) {
 			$firstArgType = $scope->getType($methodCall->getArgs()[0]->value);
@@ -66,9 +67,32 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 			case MYSQLI_ASSOC:
 				return new ArrayType(new IntegerType(), $rowType);
 			case MYSQLI_NUM:
+				return new ArrayType(new IntegerType(), $rowType->getValuesArray());
 			case MYSQLI_BOTH:
 			default:
-				return null;
+				$combinedValueTypes = $combinedKeyTypes = [];
+				$i = 0;
+				$valueTypes = $rowType->getValueTypes();
+				$optionalKeys = [];
+
+				foreach ($rowType->getKeyTypes() as $keyType) {
+					$combinedKeyTypes[] = new ConstantIntegerType($i);
+					$combinedKeyTypes[] = $keyType;
+					$combinedValueTypes[] = $valueTypes[$i];
+					$combinedValueTypes[] = $valueTypes[$i];
+
+					if ($mode !== MYSQLI_BOTH) {
+						$optionalKeys[] = $i * 2;
+						$optionalKeys[] = $i * 2 + 1;
+					}
+
+					$i++;
+				}
+
+				return new ArrayType(
+					new IntegerType(),
+					new ConstantArrayType($combinedKeyTypes, $combinedValueTypes, [$i], $optionalKeys),
+				);
 		}
 	}
 }

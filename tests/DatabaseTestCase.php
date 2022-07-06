@@ -15,17 +15,17 @@ use function mysqli_report;
 abstract class DatabaseTestCase extends TestCase
 {
 	/** @var array<string, mysqli> */
-	private array $connections;
+	private static array $connections;
 
-	protected function getDefaultSharedConnection(): mysqli
+	protected static function getDefaultSharedConnection(): mysqli
 	{
-		return $this->getSharedConnection('testdb_');
+		return self::getSharedConnection('testdb_');
 	}
 
-	protected function getSharedConnection(string $prefix): mysqli
+	protected static function getSharedConnection(string $prefix): mysqli
 	{
-		if (isset($this->connections[$prefix])) {
-			return $this->connections[$prefix];
+		if (isset(self::$connections[$prefix])) {
+			return self::$connections[$prefix];
 		}
 
 		// see phpunit.xml
@@ -42,7 +42,7 @@ abstract class DatabaseTestCase extends TestCase
 			$configKey = $prefix . $property;
 
 			if (! isset($GLOBALS[$configKey])) {
-				$this->fail("Missing DB config {$configKey}!");
+				throw new \RuntimeException("Missing DB config {$configKey}!");
 			}
 
 			$values[$property] = $GLOBALS[$configKey];
@@ -59,6 +59,6 @@ abstract class DatabaseTestCase extends TestCase
 			$mysqli->query('CREATE DATABASE ' . $values['dbname']);
 		}
 
-		return $this->connections[$prefix] = $mysqli;
+		return self::$connections[$prefix] = $mysqli;
 	}
 }

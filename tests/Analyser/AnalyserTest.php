@@ -12,6 +12,10 @@ use MariaStan\Schema\DbType\VarcharType;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 
+use function array_keys;
+
+use const MYSQLI_ASSOC;
+
 class AnalyserTest extends DatabaseTestCase
 {
 	public function testName(): void
@@ -46,7 +50,7 @@ class AnalyserTest extends DatabaseTestCase
 		]);
 
 		foreach ($db->query($query)->fetch_all(MYSQLI_ASSOC) as $row) {
-			$this->assertEqualsCanonicalizing(['id', 'name'], array_keys($row));
+			$this->assertSame(['id', 'name'], array_keys($row));
 			$schemaProcessor->process($schema, $row);
 		}
 	}
