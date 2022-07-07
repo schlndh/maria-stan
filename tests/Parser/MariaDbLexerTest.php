@@ -4,41 +4,41 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
-use MariaStan\Ast\Query\Query;
-use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Parser\Exception\LexerException;
 
+use function array_map;
+use function implode;
 use function MariaStan\canonicalize;
-use function print_r;
 
 // If valid output changes, re-run updateTests.php
-class MariaDbParsingTest extends CodeTestCase
+class MariaDbLexerTest extends CodeTestCase
 {
 	/** @dataProvider provideTestParse */
 	public function testParse(string $name, string $code, string $expected): void
 	{
-		$parser = $this->createParser();
-		[, $output] = $this->getParseOutput($parser, $code);
+		$parser = $this->createLexer();
+		[, $output] = $this->getLexerOutput($parser, $code);
 
 		$this->assertSame($expected, $output, $name);
 	}
 
-	public function createParser(): MariaDbParser
+	public function createLexer(): MariaDbLexer
 	{
-		return new MariaDbParser();
+		return new MariaDbLexer();
 	}
 
 	/**
-	 * @return array{Query|ParserException, string} [result, output]
+	 * @return array{array<Token>|LexerException, string} [result, output]
 	 *
 	 * Must be public for updateTests.php
 	 */
-	public function getParseOutput(MariaDbParser $parser, string $code): array
+	public function getLexerOutput(MariaDbLexer $parser, string $code): array
 	{
 		try {
-			$query = $parser->parseSingleQuery($code);
+			$tokens = $parser->tokenize($code);
 
-			return [$query, canonicalize(print_r($query, true))];
-		} catch (ParserException $e) {
+			return [$tokens, canonicalize(implode("\n", array_map($this->dumpToken(...), $tokens)))];
+		} catch (LexerException $e) {
 			return [$e, canonicalize($e::class . "\n{$e->getMessage()}")];
 		}
 	}
@@ -46,7 +46,12 @@ class MariaDbParsingTest extends CodeTestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestParse(): iterable
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser', 'test');
+		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbLexer', 'test');
+	}
+
+	private function dumpToken(Token $token): string
+	{
+		return "{$token->type->value}: [{$token->content}]";
 	}
 }
 

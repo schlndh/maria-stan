@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace MariaStan;
 
 use MariaStan\Parser\CodeTestParser;
-use MariaStan\Parser\MariaDbParsingTest;
+use MariaStan\Parser\MariaDbLexerTest;
+use MariaStan\Parser\MariaDbParserTest;
 
 use function file_put_contents;
 use function strpos;
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/Parser/CodeTestParser.php';
-require __DIR__ . '/Parser/MariaDbParsingTest.php';
-
-$dir = __DIR__ . '/code/Parser/MariaDbParser';
+require __DIR__ . '/Parser/MariaDbParserTest.php';
+require __DIR__ . '/Parser/MariaDbLexerTest.php';
 
 $testParser = new CodeTestParser();
-$codeParsingTest = new MariaDbParsingTest();
+
+$dir = __DIR__ . '/code/Parser/MariaDbParser';
+$codeParsingTest = new MariaDbParserTest();
 
 foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	if (strpos($code, '@@{') !== false) {
@@ -31,6 +33,28 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	foreach ($tests as [$modeLine, [$input, $expected]]) {
 		$parser = $codeParsingTest->createParser();
 		[, $output] = $codeParsingTest->getParseOutput($parser, $input);
+		$newTests[] = [$modeLine, [$input, $output]];
+	}
+
+	$newCode = $testParser->reconstructTest($name, $newTests);
+	file_put_contents($fileName, $newCode);
+}
+
+$dir = __DIR__ . '/code/Parser/MariaDbLexer';
+$codeParsingTest = new MariaDbLexerTest();
+
+foreach (filesInDir($dir, 'test') as $fileName => $code) {
+	if (strpos($code, '@@{') !== false) {
+		// Skip tests with evaluate segments
+		continue;
+	}
+
+	[$name, $tests] = $testParser->parseTest($code, 2);
+	$newTests = [];
+
+	foreach ($tests as [$modeLine, [$input, $expected]]) {
+		$parser = $codeParsingTest->createLexer();
+		[, $output] = $codeParsingTest->getLexerOutput($parser, $input);
 		$newTests[] = [$modeLine, [$input, $output]];
 	}
 
