@@ -3,6 +3,9 @@
 tests:
 	php -d zend.assertions=1 vendor/bin/phpunit
 
+update-tests:
+	php tests/updateTests.php
+
 cs:
 	php vendor/bin/phpcs
 

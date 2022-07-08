@@ -17,6 +17,9 @@ use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function count;
+use function str_replace;
+use function str_starts_with;
+use function substr;
 
 class MariaDbParserState
 {
@@ -196,7 +199,12 @@ class MariaDbParserState
 
 	private function cleanIdentifier(string $identifier): string
 	{
-		// TODO: fix this
-		return $identifier;
+		if (! str_starts_with($identifier, '`')) {
+			return $identifier;
+		}
+
+		$identifier = substr($identifier, 1, -1);
+
+		return str_replace('``', '`', $identifier);
 	}
 }
