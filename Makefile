@@ -1,5 +1,7 @@
 .PHONY: tests
 
+build: cs tests phpstan
+
 tests:
 	php -d zend.assertions=1 vendor/bin/phpunit
 

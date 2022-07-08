@@ -70,14 +70,19 @@ class MariaDbLexer
 		$matches = [];
 		preg_match_all($re, $input, $matches, PREG_SET_ORDER | PREG_UNMATCHED_AS_NULL);
 		$keywordMap = TokenTypeEnum::getKeywordsMap();
+		$nextPosition = new Position(0, 0, 0);
 
 		foreach ($matches as $m) {
+			$position = $nextPosition;
+			$nextPosition = $position->advance($m[0]);
+			$tokenType = null;
+
 			if (isset($m['whitespace']) || isset($m['line_comment'])) {
 				continue;
 			}
 
 			if (isset($m['string_single']) || isset($m['string_double'])) {
-				$tokens[] = new Token(TokenTypeEnum::LITERAL_STRING, $m[0]);
+				$tokenType = TokenTypeEnum::LITERAL_STRING;
 			} elseif (isset($m['c_comment'])) {
 				if (isset($m['rest'])) {
 					continue;
@@ -85,19 +90,19 @@ class MariaDbLexer
 
 				throw new LexerException('Unterminated C-comment');
 			} elseif (isset($m['quoted_identifier'])) {
-				$tokens[] = new Token(TokenTypeEnum::IDENTIFIER, $m[0]);
+				$tokenType = TokenTypeEnum::IDENTIFIER;
 			} elseif (isset($m['literal_bin'])) {
-				$tokens[] = new Token(TokenTypeEnum::LITERAL_BIN, $m[0]);
+				$tokenType = TokenTypeEnum::LITERAL_BIN;
 			} elseif (isset($m['literal_hex'])) {
-				$tokens[] = new Token(TokenTypeEnum::LITERAL_HEX, $m[0]);
+				$tokenType = TokenTypeEnum::LITERAL_HEX;
 			} elseif (isset($m['literal_float'])) {
-				$tokens[] = new Token(TokenTypeEnum::LITERAL_FLOAT, $m[0]);
+				$tokenType = TokenTypeEnum::LITERAL_FLOAT;
 			} elseif (isset($m['literal_int'])) {
-				$tokens[] = new Token(TokenTypeEnum::LITERAL_INT, $m[0]);
+				$tokenType = TokenTypeEnum::LITERAL_INT;
 			} elseif (isset($m['identifier'])) {
-				$tokens[] = new Token($keywordMap[strtoupper($m[0])] ?? TokenTypeEnum::IDENTIFIER, $m[0]);
+				$tokenType = $keywordMap[strtoupper($m[0])] ?? TokenTypeEnum::IDENTIFIER;
 			} elseif (isset($m['char'])) {
-				$tokens[] = new Token(TokenTypeEnum::SINGLE_CHAR, $m['char']);
+				$tokenType = TokenTypeEnum::SINGLE_CHAR;
 			} elseif (isset($m['badchar'])) {
 				throw new LexerException("Unexpected character '{$m['badchar']}'");
 			} else {
@@ -106,21 +111,24 @@ class MariaDbLexer
 						continue;
 					}
 
-					$type = constant(TokenTypeEnum::class . '::' . strtoupper($type));
-					assert($type instanceof TokenTypeEnum);
-					$tokens[] = new Token($type, $m[0]);
+					$tokenType = constant(TokenTypeEnum::class . '::' . strtoupper($type));
+					assert($tokenType instanceof TokenTypeEnum);
 
-					continue 2;
+					break;
 				}
+			}
 
+			if ($tokenType === null) {
 				throw new LexerException(
 					'Unmatched token: ' . print_r($m, true)
-						. ' after: ' . print_r(array_slice($tokens, -5), true),
+					. ' after: ' . print_r(array_slice($tokens, -5), true),
 				);
 			}
+
+			$tokens[] = new Token($tokenType, $m[0], $position);
 		}
 
-		$tokens[] = new Token(TokenTypeEnum::END_OF_INPUT, '');
+		$tokens[] = new Token(TokenTypeEnum::END_OF_INPUT, '', $nextPosition);
 
 		return $tokens;
 	}

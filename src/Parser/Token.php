@@ -6,7 +6,10 @@ namespace MariaStan\Parser;
 
 class Token
 {
-	public function __construct(public readonly TokenTypeEnum $type, public readonly string $content)
-	{
+	public function __construct(
+		public readonly TokenTypeEnum $type,
+		public readonly string $content,
+		public readonly Position $position,
+	) {
 	}
 }

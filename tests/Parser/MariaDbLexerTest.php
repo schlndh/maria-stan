@@ -9,6 +9,7 @@ use MariaStan\Parser\Exception\LexerException;
 use function array_map;
 use function implode;
 use function MariaStan\canonicalize;
+use function strlen;
 
 // If valid output changes, re-run updateTests.php
 class MariaDbLexerTest extends CodeTestCase
@@ -17,7 +18,15 @@ class MariaDbLexerTest extends CodeTestCase
 	public function testParse(string $name, string $code, string $expected): void
 	{
 		$parser = $this->createLexer();
-		[, $output] = $this->getLexerOutput($parser, $code);
+		[$tokens, $output] = $this->getLexerOutput($parser, $code);
+
+		foreach ($tokens as $token) {
+			$this->assertNotNull($token->position);
+			$this->assertSame(
+				$token->content,
+				$token->position->findSubstringStartingWithPosition($code, strlen($token->content)),
+			);
+		}
 
 		$this->assertSame($expected, $output, $name);
 	}
