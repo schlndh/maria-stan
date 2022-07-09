@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace MariaStan\Ast\SelectExpr;
 
-final class AllColumns implements SelectExpr
+use MariaStan\Ast\BaseNode;
+use MariaStan\Parser\Position;
+
+final class AllColumns extends BaseNode implements SelectExpr
 {
-	public function __construct(public readonly ?string $tableName = null)
-	{
+	public function __construct(
+		Position $startPosition,
+		Position $endPosition,
+		public readonly ?string $tableName = null,
+	) {
+		parent::__construct($startPosition, $endPosition);
 	}
 
 	public static function getSelectExprType(): SelectExprTypeEnum

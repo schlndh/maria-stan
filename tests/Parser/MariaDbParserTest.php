@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\BaseNode;
+use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
 
+use function array_filter;
+use function array_map;
+use function is_array;
 use function MariaStan\canonicalize;
 use function print_r;
+use function str_replace;
+use function substr;
+use function trim;
 
 // If valid output changes, re-run updateTests.php
 class MariaDbParserTest extends CodeTestCase
@@ -17,7 +25,11 @@ class MariaDbParserTest extends CodeTestCase
 	public function testParse(string $name, string $code, string $expected): void
 	{
 		$parser = $this->createParser();
-		[, $output] = $this->getParseOutput($parser, $code);
+		[$query, $output] = $this->getParseOutput($parser, $code);
+		$this->assertSame(
+			trim($code, " \t\n\r\0\x0B;"),
+			substr($code, $query->getStartPosition()->offset, $query->getEndPosition()->offset),
+		);
 
 		$this->assertSame($expected, $output, $name);
 	}
@@ -37,7 +49,7 @@ class MariaDbParserTest extends CodeTestCase
 		try {
 			$query = $parser->parseSingleQuery($code);
 
-			return [$query, canonicalize(print_r($query, true))];
+			return [$query, canonicalize($this->printDumpedData($this->dumpNodeData($query)))];
 		} catch (ParserException $e) {
 			return [$e, canonicalize($e::class . "\n{$e->getMessage()}")];
 		}
@@ -47,6 +59,63 @@ class MariaDbParserTest extends CodeTestCase
 	public function provideTestParse(): iterable
 	{
 		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser', 'test');
+	}
+
+	private function dumpNodeData(mixed $data): mixed
+	{
+		if ($data instanceof Node) {
+			$reflectionClass = new \ReflectionClass($data);
+			$properties = $reflectionClass->getProperties(~\ReflectionProperty::IS_STATIC);
+			$result = [
+				'__CLASS__' => $data::class,
+			];
+
+			foreach ($properties as $property) {
+				// skip positions
+				if ($property->getDeclaringClass()->getName() === BaseNode::class) {
+					continue;
+				}
+
+				$val = $property->getValue($data);
+				$val = $this->dumpNodeData($val);
+				$result[$property->name] = $val;
+			}
+
+			return array_filter($result);
+		}
+
+		if (is_array($data)) {
+			return array_filter(array_map($this->dumpNodeData(...), $data));
+		}
+
+		return $data;
+	}
+
+	private function printDumpedData(mixed $data): string
+	{
+		$result = '';
+
+		if (is_array($data)) {
+			if (isset($data['__CLASS__'])) {
+				$class = $data['__CLASS__'];
+				unset($data['__CLASS__']);
+				$result .= $class . "\n(\n";
+			} else {
+				$result .= "Array\n(\n";
+			}
+
+			foreach ($data as $key => $value) {
+				$printedValue = $this->printDumpedData($value);
+				$printedValue = str_replace("\n", "\n\t\t", $printedValue);
+				$result .= "\t[{$key}] => {$printedValue}\n";
+			}
+
+			return $result . ')';
+		} else {
+			$result = print_r($data, true);
+		}
+
+		return $result;
 	}
 }
 

@@ -2,78 +2,56 @@ Basic select
 -----
 SELECT * FROM tbl
 -----
-MariaStan\Ast\Query\SelectQuery Object
+MariaStan\Ast\Query\SelectQuery
 (
-    [select] => Array
-        (
-            [0] => MariaStan\Ast\SelectExpr\AllColumns Object
-                (
-                    [tableName] =>
-                )
-
-        )
-
-    [from] => Array
-        (
-            [0] => MariaStan\Ast\Query\TableReference\Table Object
-                (
-                    [name] => tbl
-                    [alias] =>
-                )
-
-        )
-
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+		)
 )
 -----
 SELECT id, `aa bb`, `cc``dd` FROM `tbl`
 -----
-MariaStan\Ast\Query\SelectQuery Object
+MariaStan\Ast\Query\SelectQuery
 (
-    [select] => Array
-        (
-            [0] => MariaStan\Ast\SelectExpr\RegularExpr Object
-                (
-                    [expr] => MariaStan\Ast\Expr\Column Object
-                        (
-                            [name] => id
-                            [tableName] =>
-                        )
-
-                    [alias] =>
-                )
-
-            [1] => MariaStan\Ast\SelectExpr\RegularExpr Object
-                (
-                    [expr] => MariaStan\Ast\Expr\Column Object
-                        (
-                            [name] => aa bb
-                            [tableName] =>
-                        )
-
-                    [alias] =>
-                )
-
-            [2] => MariaStan\Ast\SelectExpr\RegularExpr Object
-                (
-                    [expr] => MariaStan\Ast\Expr\Column Object
-                        (
-                            [name] => cc`dd
-                            [tableName] =>
-                        )
-
-                    [alias] =>
-                )
-
-        )
-
-    [from] => Array
-        (
-            [0] => MariaStan\Ast\Query\TableReference\Table Object
-                (
-                    [name] => tbl
-                    [alias] =>
-                )
-
-        )
-
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => aa bb
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => cc`dd
+						)
+				)
+		)
+	[from] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+		)
 )

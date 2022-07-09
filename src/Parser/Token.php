@@ -12,4 +12,9 @@ class Token
 		public readonly Position $position,
 	) {
 	}
+
+	public function getEndPosition(): Position
+	{
+		return $this->position->advance($this->content);
+	}
 }

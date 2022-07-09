@@ -16,7 +16,9 @@ use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
+use function assert;
 use function count;
+use function end;
 use function str_replace;
 use function str_starts_with;
 use function substr;
@@ -56,10 +58,23 @@ class MariaDbParserState
 	/** @phpstan-impure */
 	private function parseSelectQuery(): SelectQuery
 	{
+		$startToken = $this->getPreviousTokenUnsafe();
 		$selectExpressions = $this->parseSelectExpressionsList();
 		$from = $this->parseFrom();
 
-		return new SelectQuery($selectExpressions, $from);
+		$endPosition = null;
+
+		if ($from !== null) {
+			$lastFrom = end($from);
+			assert($lastFrom instanceof TableReference);
+			$endPosition = $lastFrom->getEndPosition();
+		} else {
+			$lastSelect = end($selectExpressions);
+			assert($lastSelect instanceof SelectExpr);
+			$endPosition = $lastSelect->getEndPosition();
+		}
+
+		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from);
 	}
 
 	/** @return ?non-empty-array<TableReference> */
@@ -69,9 +84,20 @@ class MariaDbParserState
 			return null;
 		}
 
-		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+		return [$this->parseTableReference()];
+	}
 
-		return [new Table($this->cleanIdentifier($table->content), $this->parseAlias())];
+	private function parseTableReference(): TableReference
+	{
+		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+		$alias = $this->parseAlias();
+
+		return new Table(
+			$table->position,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->cleanIdentifier($table->content),
+			$alias,
+		);
 	}
 
 	/**
@@ -92,8 +118,10 @@ class MariaDbParserState
 	/** @phpstan-impure */
 	private function parseSelectExpression(): SelectExpr
 	{
+		$startExpressionToken = $this->findCurrentToken();
+
 		if ($this->acceptSingleCharToken('*')) {
-			return new AllColumns();
+			return new AllColumns($startExpressionToken->position, $startExpressionToken->getEndPosition());
 		}
 
 		$position = $this->position;
@@ -101,14 +129,22 @@ class MariaDbParserState
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident && $this->acceptSingleCharToken('.') && $this->acceptSingleCharToken('*')) {
-			return new AllColumns($this->cleanIdentifier($ident->content));
+			$prevToken = $this->getPreviousTokenUnsafe();
+
+			return new AllColumns(
+				$startExpressionToken->position,
+				$prevToken->getEndPosition(),
+				$this->cleanIdentifier($ident->content),
+			);
 		}
 
 		unset($ident);
 		$this->position = $position;
 		$expr = $this->parseExpression();
+		$alias = $this->parseAlias();
+		$prevToken = $this->getPreviousTokenUnsafe();
 
-		return new RegularExpr($expr, $this->parseAlias());
+		return new RegularExpr($prevToken->getEndPosition(), $expr, $alias);
 	}
 
 	/** @phpstan-impure */
@@ -134,11 +170,18 @@ class MariaDbParserState
 
 		if ($ident) {
 			if (! $this->acceptSingleCharToken('.')) {
-				return new Column($this->cleanIdentifier($ident->content));
+				return new Column($ident->position, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}
 		}
 
 		throw new UnexpectedTokenException($this->findCurrentToken()?->type ?? 'Out of tokens');
+	}
+
+	/** @phpstan-impure */
+	private function getPreviousTokenUnsafe(): Token
+	{
+		// It can only be called after a token was consumed.
+		return $this->tokens[$this->position - 1];
 	}
 
 	/** @phpstan-impure */
