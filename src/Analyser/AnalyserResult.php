@@ -7,7 +7,7 @@ namespace MariaStan\Analyser;
 final class AnalyserResult
 {
 	/**
-	 * @param array<string, QueryResultField> $resultFields field name => field, in the order they are returned by query
+	 * @param array<QueryResultField> $resultFields fields in the order they are returned by query
 	 * @param array<AnalyserError> $errors
 	 */
 	public function __construct(public readonly array $resultFields, public readonly array $errors)

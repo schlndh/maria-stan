@@ -11,12 +11,17 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
 
+use function array_column;
+use function array_values;
+use function assert;
 use function count;
+use function range;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
@@ -51,6 +56,23 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 			return null;
 		}
 
+		/** @var array<array{ConstantStringType, Type}> $columns [[name type, value type]]*/
+		$columns = [];
+
+		foreach ($rowType->getValueTypes() as $rowValueType) {
+			if (! $rowValueType instanceof ConstantArrayType || count($rowValueType->getValueTypes()) !== 2) {
+				return null;
+			}
+
+			[$name, $type] = $rowValueType->getValueTypes();
+
+			if (! $name instanceof ConstantStringType) {
+				return null;
+			}
+
+			$columns[] = [$name, $type];
+		}
+
 		$mode = null;
 
 		if (count($methodCall->getArgs()) > 0) {
@@ -65,28 +87,40 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 
 		switch ($mode) {
 			case MYSQLI_ASSOC:
-				return new ArrayType(new IntegerType(), $rowType);
+				[$keyTypes, $valueTypes] = $this->filterDuplicateKeys(
+					array_column($columns, 0),
+					array_column($columns, 1),
+				);
+
+				return new ArrayType(new IntegerType(), new ConstantArrayType($keyTypes, $valueTypes));
 			case MYSQLI_NUM:
-				return new ArrayType(new IntegerType(), $rowType->getValuesArray());
+				$valueTypes = array_column($columns, 1);
+
+				return new ArrayType(
+					new IntegerType(),
+					new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes),
+				);
 			case MYSQLI_BOTH:
 			default:
 				$combinedValueTypes = $combinedKeyTypes = [];
 				$i = 0;
-				$valueTypes = $rowType->getValueTypes();
 				$optionalKeys = [];
 
-				foreach ($rowType->getKeyTypes() as $keyType) {
+				foreach ($columns as [$keyType, $valueType]) {
 					$combinedKeyTypes[] = new ConstantIntegerType($i);
 					$combinedKeyTypes[] = $keyType;
-					$combinedValueTypes[] = $valueTypes[$i];
-					$combinedValueTypes[] = $valueTypes[$i];
-
-					if ($mode !== MYSQLI_BOTH) {
-						$optionalKeys[] = $i * 2;
-						$optionalKeys[] = $i * 2 + 1;
-					}
-
+					$combinedValueTypes[] = $valueType;
+					$combinedValueTypes[] = $valueType;
 					$i++;
+				}
+
+				[$combinedKeyTypes, $combinedValueTypes] = $this->filterDuplicateKeys(
+					$combinedKeyTypes,
+					$combinedValueTypes,
+				);
+
+				if ($mode !== MYSQLI_BOTH) {
+					$optionalKeys = range(0, count($combinedKeyTypes) - 1);
 				}
 
 				return new ArrayType(
@@ -94,5 +128,38 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 					new ConstantArrayType($combinedKeyTypes, $combinedValueTypes, [$i], $optionalKeys),
 				);
 		}
+	}
+
+	/**
+	 * @param array<ConstantStringType|ConstantIntegerType> $keyTypes
+	 * @param array<Type> $valueTypes
+	 * @return array{array<ConstantStringType|ConstantIntegerType>, array<Type>} [filtered keys, filtered values]
+	 */
+	private function filterDuplicateKeys(array $keyTypes, array $valueTypes): array
+	{
+		$alreadyUsedNames = [];
+		assert(count($keyTypes) === count($valueTypes));
+
+		for ($i = 0; $i < count($keyTypes); $i++) {
+			if (isset($alreadyUsedNames[$keyTypes[$i]->getValue()])) {
+				unset($keyTypes[$i], $valueTypes[$i]);
+			} else {
+				$alreadyUsedNames[$keyTypes[$i]->getValue()] = 1;
+			}
+		}
+
+		return [array_values($keyTypes), array_values($valueTypes)];
+	}
+
+	/** @return array<ConstantIntegerType> */
+	private function getNumberedKeyTypes(int $count): array
+	{
+		$result = [];
+
+		for ($i = 0; $i < $count; $i++) {
+			$result[] = new ConstantIntegerType($i);
+		}
+
+		return $result;
 	}
 }

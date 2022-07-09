@@ -58,7 +58,7 @@ class Analyser
 	}
 
 	/**
-	 * @return array{array<string, QueryResultField>, array<AnalyserError>} [[name = >field], errors]
+	 * @return array{array<QueryResultField>, array<AnalyserError>} [fields, errors]
 	 * @throws AnalyserException
 	 */
 	private function getFieldsFromSelect(SelectQuery $selectAst): array
@@ -139,9 +139,9 @@ class Analyser
 								}
 							}
 
-							$fields[$expr->name] = $columnSchema !== null
-								? new QueryResultField($columnSchema->type, $columnSchema->isNullable)
-								: new QueryResultField(new Schema\DbType\MixedType(), true);
+							$fields[] = $columnSchema !== null
+								? new QueryResultField($expr->name, $columnSchema->type, $columnSchema->isNullable)
+								: new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
 							break;
 					}
 
@@ -156,7 +156,7 @@ class Analyser
 						$tableSchema = $tableSchemas[$tableName] ?? null;
 
 						foreach ($tableSchema?->columns ?? [] as $column) {
-							$fields[$column->name] = new QueryResultField($column->type, $column->isNullable);
+							$fields[] = new QueryResultField($column->name, $column->type, $column->isNullable);
 						}
 					}
 
