@@ -14,6 +14,8 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 
 use function array_keys;
+use function array_map;
+use function implode;
 
 use const MYSQLI_ASSOC;
 
@@ -71,6 +73,36 @@ class AnalyserTest extends DatabaseTestCase
 				'name' => Expect::anyOf(Expect::string(), Expect::null()),
 			]),
 		];
+
+		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP. -name is double.
+		yield 'unary ops' => [
+			'query' => "
+				SELECT
+				    -id, +id, !id, /*~id,*/
+				    /*-name,*/ +name, !name/*, ~name*/
+				FROM {$tableName}
+			",
+			'expected fields' => [
+				new QueryResultField('-id', new IntType(), false),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('!id', new IntType(), false),
+				//new QueryResultField('~id', new IntType(), false),
+				//new QueryResultField('-name', new IntType(), true),
+				new QueryResultField('name', new VarcharType(), true),
+				new QueryResultField('!name', new IntType(), true),
+				//new QueryResultField('~name', new IntType(), true),
+			],
+			'expected schema' => Expect::structure([
+				'-id' => Expect::int(),
+				'id' => Expect::int(),
+				'!id' => Expect::int(),
+				//'~id' => Expect::anyOf(Expect::int(), Expect::string()),
+				//'-name' => Expect::anyOf(Expect::float(), Expect::null()),
+				'name' => Expect::anyOf(Expect::string(), Expect::null()),
+				'!name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
+				//'~name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
+			]),
+		];
 	}
 
 	/**
@@ -84,8 +116,12 @@ class AnalyserTest extends DatabaseTestCase
 		$reflection = new MariaDbOnlineDbReflection($db);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
-		$this->assertCount(0, $result->errors);
-		$this->assertSame(array_keys($expectedFields), array_keys($result->resultFields));
+		$this->assertCount(
+			0,
+			$result->errors,
+			"Expected no errors. Got: "
+				. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
+		);
 		$this->assertEquals($expectedFields, $result->resultFields);
 		$schemaProcessor = new Processor();
 		$stmt = $db->query($query);
