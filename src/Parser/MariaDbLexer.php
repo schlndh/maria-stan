@@ -34,7 +34,7 @@ class MariaDbLexer
 			( (?<string_single>  '  )  (?<rest>  ( \\. | '' | [^'\\] )*  '  )?  )|
 			( (?<string_double>  "  )  (?<rest>  ( \\. | "" | [^"\\] )*  "  )?  )|
 			( (?<c_comment>  /\*  )   (?<rest>  .*?\*/  )?  )|
-			( (?<line_comment>  (\#|--[ ])  )   (?<rest>  [^\r\n]*[\r\n]  )?  )|
+			( (?<line_comment>  (\#|--[ ])  )   (?<rest>  [^\r\n]* ( [\r\n] | $ )  )?  )|
 			# All 2B UTF-8 characters except NUL (\x60 is `)
 			( (?<quoted_identifier> ` ) (?<rest>  ( `` | [\x01-\x5F\x61-\x{FFFF}] )*  `  )?  )|
 			(?<literal_bin>

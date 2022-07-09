@@ -1,0 +1,9 @@
+Bug: line comments ending with the end of input instead of a new line were not properly recognized
+-----
+#comment
+-----
+END_OF_INPUT: []
+-----
+-- comment
+-----
+END_OF_INPUT: []
