@@ -1,0 +1,152 @@
+SELECT literals
+-----
+SELECT
+10, +10, -10
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 10
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => PLUS
+								    [value] => +
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 10
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => MINUS
+								    [value] => -
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 10
+								)
+						)
+				)
+		)
+)
+-----
+SELECT
+0.1, .1, +0.1, -.1, 0.2E3, .2e3, +0.2E3, -.2E3
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralFloat
+						(
+							[value] => 0.1
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralFloat
+						(
+							[value] => 0.1
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => PLUS
+								    [value] => +
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralFloat
+								(
+									[value] => 0.1
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => MINUS
+								    [value] => -
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralFloat
+								(
+									[value] => 0.1
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralFloat
+						(
+							[value] => 200
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralFloat
+						(
+							[value] => 200
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => PLUS
+								    [value] => +
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralFloat
+								(
+									[value] => 200
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
+								(
+								    [name] => MINUS
+								    [value] => -
+								)
+
+							[expr] => MariaStan\Ast\Expr\LiteralFloat
+								(
+									[value] => 200
+								)
+						)
+				)
+		)
+)

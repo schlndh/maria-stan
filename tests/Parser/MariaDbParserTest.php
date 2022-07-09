@@ -26,10 +26,13 @@ class MariaDbParserTest extends CodeTestCase
 	{
 		$parser = $this->createParser();
 		[$query, $output] = $this->getParseOutput($parser, $code);
-		$this->assertSame(
-			trim($code, " \t\n\r\0\x0B;"),
-			substr($code, $query->getStartPosition()->offset, $query->getEndPosition()->offset),
-		);
+
+		if (! $query instanceof \Throwable) {
+			$this->assertSame(
+				trim($code, " \t\n\r\0\x0B;"),
+				substr($code, $query->getStartPosition()->offset, $query->getEndPosition()->offset),
+			);
+		}
 
 		$this->assertSame($expected, $output, $name);
 	}

@@ -7,19 +7,18 @@ namespace MariaStan\Ast\Expr;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Parser\Position;
 
-final class Column extends BaseNode implements Expr
+final class UnaryOp extends BaseNode implements Expr
 {
 	public function __construct(
 		Position $startPosition,
-		Position $endPosition,
-		public readonly string $name,
-		public readonly ?string $tableName = null,
+		public readonly UnaryOpTypeEnum $opType,
+		public readonly Expr $expr,
 	) {
-		parent::__construct($startPosition, $endPosition);
+		parent::__construct($startPosition, $this->expr->getEndPosition());
 	}
 
 	public static function getExprType(): ExprTypeEnum
 	{
-		return ExprTypeEnum::COLUMN;
+		return ExprTypeEnum::UNARY_OP;
 	}
 }

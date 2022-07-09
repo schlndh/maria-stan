@@ -6,6 +6,10 @@ namespace MariaStan\Parser;
 
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
+use MariaStan\Ast\Expr\LiteralFloat;
+use MariaStan\Ast\Expr\LiteralInt;
+use MariaStan\Ast\Expr\UnaryOp;
+use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
@@ -16,9 +20,13 @@ use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
+use function array_slice;
 use function assert;
 use function count;
 use function end;
+use function max;
+use function min;
+use function print_r;
 use function str_replace;
 use function str_starts_with;
 use function substr;
@@ -61,8 +69,6 @@ class MariaDbParserState
 		$startToken = $this->getPreviousTokenUnsafe();
 		$selectExpressions = $this->parseSelectExpressionsList();
 		$from = $this->parseFrom();
-
-		$endPosition = null;
 
 		if ($from !== null) {
 			$lastFrom = end($from);
@@ -166,15 +172,46 @@ class MariaDbParserState
 	/** @phpstan-impure */
 	private function parseExpression(): Expr
 	{
+		$startPosition = $this->findCurrentToken()?->position
+			?? throw new UnexpectedTokenException('Out of tokens');
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident) {
 			if (! $this->acceptSingleCharToken('.')) {
-				return new Column($ident->position, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
+				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}
 		}
 
-		throw new UnexpectedTokenException($this->findCurrentToken()?->type ?? 'Out of tokens');
+		$unaryOpToken = $this->acceptSingleCharToken('+')
+			?? $this->acceptSingleCharToken('-')
+			?? $this->acceptSingleCharToken('!')
+			?? $this->acceptSingleCharToken('~');
+
+		if ($unaryOpToken) {
+			$expr = $this->parseExpression();
+
+			return new UnaryOp($startPosition, UnaryOpTypeEnum::from($unaryOpToken->content), $expr);
+		}
+
+		$literalInt = $this->acceptToken(TokenTypeEnum::LITERAL_INT);
+
+		if ($literalInt) {
+			return new LiteralInt($startPosition, $literalInt->getEndPosition(), (int) $literalInt->content);
+		}
+
+		$literalFloat = $this->acceptToken(TokenTypeEnum::LITERAL_FLOAT);
+
+		if ($literalFloat) {
+			return new LiteralFloat($startPosition, $literalFloat->getEndPosition(), (float) $literalFloat->content);
+		}
+
+		throw new UnexpectedTokenException(
+			($this->findCurrentToken()?->type->value ?? 'Out of tokens')
+			. ' after: ' . print_r(
+				array_slice($this->tokens, max($this->position - 5, 0), min($this->position, 5)),
+				true,
+			),
+		);
 	}
 
 	/** @phpstan-impure */
