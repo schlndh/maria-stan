@@ -51,12 +51,13 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 				col_varchar_null VARCHAR(255) NULL,
 				col_decimal DECIMAL(10, 2) NOT NULL,
 				col_float FLOAT NOT NULL,
-				col_double DOUBLE NOT NULL
+				col_double DOUBLE NOT NULL,
+				col_datetime DATETIME NOT NULL
 			);
 		");
 		$db->query("
-			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double)
-			VALUES (1, 'aa', 111.11, 11.11, 1.1), (2, NULL, 222.22, 22.22, 2.2)
+			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime)
+			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW()), (2, NULL, 222.22, 22.22, 2.2, NOW())
 		");
 	}
 
@@ -400,6 +401,19 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 			}
 
 			$this->assertGettype('double', $value);
+		}
+
+		$rows = $db->query('
+			SELECT col_datetime FROM mysqli_test_data_types
+		')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('string', $value);
+			}
+
+			$this->assertGettype('string', $value);
 		}
 	}
 

@@ -18,6 +18,9 @@ enum DbTypeEnum: string
 	/** @see FloatType */
 	case FLOAT = 'FLOAT';
 
+	/** @see DateTimeType */
+	case DATETIME = 'DATETIME';
+
 	/** @see MixedType */
 	case MIXED = 'MIXED';
 }

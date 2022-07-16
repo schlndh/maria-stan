@@ -7,6 +7,7 @@ namespace MariaStan\Analyser;
 use MariaStan\DatabaseTestCase;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
+use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
@@ -120,12 +121,13 @@ class AnalyserTest extends DatabaseTestCase
 				col_varchar_null VARCHAR(255) NULL,
 				col_decimal DECIMAL(10, 2) NOT NULL,
 				col_float FLOAT NOT NULL,
-				col_double DOUBLE NOT NULL
+				col_double DOUBLE NOT NULL,
+				col_datetime DATETIME NOT NULL
 			);
 		");
 		$db->query("
-			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double)
-			VALUES (1, 'aa', 111.11, 11.11, 1.1), (2, NULL, 222.22, 22.22, 2.2)
+			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime)
+			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW()), (2, NULL, 222.22, 22.22, 2.2, NOW())
 		");
 
 		yield 'column - int' => [
@@ -158,6 +160,12 @@ class AnalyserTest extends DatabaseTestCase
 			'query' => "SELECT col_double FROM {$dataTypesTable}",
 			'expected fields' => [new QueryResultField('col_double', new FloatType(), false)],
 			'expected schema' => Expect::structure(['col_double' => Expect::float()]),
+		];
+
+		yield 'column - datetime' => [
+			'query' => "SELECT col_datetime FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_datetime', new DateTimeType(), false)],
+			'expected schema' => Expect::structure(['col_datetime' => Expect::string()]),
 		];
 	}
 

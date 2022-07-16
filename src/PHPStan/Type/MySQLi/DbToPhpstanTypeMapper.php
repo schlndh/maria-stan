@@ -23,6 +23,7 @@ class DbToPhpstanTypeMapper
 			DbTypeEnum::VARCHAR => new StringType(),
 			DbTypeEnum::DECIMAL => new IntersectionType([new StringType(), new AccessoryNumericStringType()]),
 			DbTypeEnum::FLOAT => new FloatType(),
+			DbTypeEnum::DATETIME => new StringType(),
 			default => TypeCombinator::union(new IntegerType(), new StringType(), new FloatType()),
 		};
 	}

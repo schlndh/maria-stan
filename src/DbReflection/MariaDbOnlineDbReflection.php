@@ -8,6 +8,7 @@ use MariaStan\DbReflection\Exception\DatabaseException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\Schema\Column;
+use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\FloatType;
@@ -90,6 +91,8 @@ class MariaDbOnlineDbReflection
 			case 'float':
 			case 'double':
 				return new FloatType();
+			case 'datetime':
+				return new DateTimeType();
 			default:
 				throw new UnexpectedValueException("Unrecognized type {$origType}");
 		}
