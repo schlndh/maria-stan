@@ -72,6 +72,7 @@ class MariaDbOnlineDbReflection
 		);
 	}
 
+	/** @throws DbReflectionException */
 	private function parseDbType(string $type): DbType
 	{
 		$origType = $type;

@@ -8,4 +8,7 @@ enum TableReferenceTypeEnum: string
 {
 	/** @see Table */
 	case TABLE = 'TABLE';
+
+	/** @see Join */
+	case JOIN = 'JOIN';
 }

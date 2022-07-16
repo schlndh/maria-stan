@@ -11,15 +11,12 @@ use MariaStan\Parser\Position;
 
 final class SelectQuery extends BaseNode implements Query
 {
-	/**
-	 * @param non-empty-array<SelectExpr> $select
-	 * @param array<TableReference>|null $from
-	 */
+	/** @param non-empty-array<SelectExpr> $select */
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
 		public readonly array $select,
-		public readonly ?array $from,
+		public readonly ?TableReference $from,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

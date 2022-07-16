@@ -10,12 +10,9 @@ MariaStan\Ast\Query\SelectQuery
 				(
 				)
 		)
-	[from] => Array
+	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[0] => MariaStan\Ast\Query\TableReference\Table
-				(
-					[name] => tbl
-				)
+			[name] => tbl
 		)
 )
 -----
@@ -47,11 +44,8 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
-	[from] => Array
+	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[0] => MariaStan\Ast\Query\TableReference\Table
-				(
-					[name] => tbl
-				)
+			[name] => tbl
 		)
 )

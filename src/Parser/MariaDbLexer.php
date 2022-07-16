@@ -20,7 +20,10 @@ use const PREG_UNMATCHED_AS_NULL;
 
 class MariaDbLexer
 {
-	/** @return array<Token> */
+	/**
+	 * @return array<Token>
+	 * @throws LexerException
+	 */
 	public function tokenize(string $input): array
 	{
 		// Inspired by

@@ -12,11 +12,14 @@ use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\TableReference\Join;
+use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
+use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
@@ -42,7 +45,10 @@ class MariaDbParserState
 		$this->tokenCount = count($this->tokens);
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	public function parseStrictSingleQuery(): Query
 	{
 		$query = null;
@@ -63,7 +69,10 @@ class MariaDbParserState
 		return $query;
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	private function parseSelectQuery(): SelectQuery
 	{
 		$startToken = $this->getPreviousTokenUnsafe();
@@ -71,9 +80,7 @@ class MariaDbParserState
 		$from = $this->parseFrom();
 
 		if ($from !== null) {
-			$lastFrom = end($from);
-			assert($lastFrom instanceof TableReference);
-			$endPosition = $lastFrom->getEndPosition();
+			$endPosition = $from->getEndPosition();
 		} else {
 			$lastSelect = end($selectExpressions);
 			assert($lastSelect instanceof SelectExpr);
@@ -83,16 +90,73 @@ class MariaDbParserState
 		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from);
 	}
 
-	/** @return ?non-empty-array<TableReference> */
-	private function parseFrom(): ?array
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function parseFrom(): ?TableReference
 	{
 		if (! $this->acceptToken(TokenTypeEnum::FROM)) {
 			return null;
 		}
 
-		return [$this->parseTableReference()];
+		$leftTable = $this->parseTableReference();
+
+		while (true) {
+			$joinType = null;
+			$onCondition = null;
+			$isUnclearJoin = false;
+
+			// TODO: NATURAL and STRAIGHT_JOIN
+			if ($this->acceptSingleCharToken(',')) {
+				$joinType = JoinTypeEnum::CROSS_JOIN;
+			} elseif ($this->acceptToken(TokenTypeEnum::CROSS)) {
+				$this->expectToken(TokenTypeEnum::JOIN);
+				$joinType = JoinTypeEnum::CROSS_JOIN;
+			} elseif ($this->acceptToken(TokenTypeEnum::INNER)) {
+				$this->expectToken(TokenTypeEnum::JOIN);
+				$joinType = JoinTypeEnum::INNER_JOIN;
+			} elseif ($this->acceptToken(TokenTypeEnum::LEFT)) {
+				$this->acceptToken(TokenTypeEnum::OUTER);
+				$this->expectToken(TokenTypeEnum::JOIN);
+				$joinType = JoinTypeEnum::LEFT_OUTER_JOIN;
+			} elseif ($this->acceptToken(TokenTypeEnum::RIGHT)) {
+				$this->acceptToken(TokenTypeEnum::OUTER);
+				$this->expectToken(TokenTypeEnum::JOIN);
+				$joinType = JoinTypeEnum::RIGHT_OUTER_JOIN;
+			} elseif ($this->acceptToken(TokenTypeEnum::JOIN)) {
+				$isUnclearJoin = true;
+			} else {
+				break;
+			}
+
+			$rightTable = $this->parseTableReference();
+			$tokenPositionBak = $this->position;
+
+			// TODO: USING(...)
+			if ($isUnclearJoin) {
+				$joinType = $this->acceptToken(TokenTypeEnum::ON)
+					? JoinTypeEnum::INNER_JOIN
+					: JoinTypeEnum::CROSS_JOIN;
+			}
+
+			$this->position = $tokenPositionBak;
+
+			if ($joinType !== JoinTypeEnum::CROSS_JOIN) {
+				$this->expectToken(TokenTypeEnum::ON);
+				$onCondition = $this->parseExpression();
+			}
+
+			$leftTable = new Join($joinType, $leftTable, $rightTable, $onCondition);
+		}
+
+		return $leftTable;
 	}
 
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	private function parseTableReference(): TableReference
 	{
 		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
@@ -107,8 +171,9 @@ class MariaDbParserState
 	}
 
 	/**
-	 * @return non-empty-array<SelectExpr>
 	 * @phpstan-impure
+	 * @return non-empty-array<SelectExpr>
+	 * @throws ParserException
 	 */
 	private function parseSelectExpressionsList(): array
 	{
@@ -121,7 +186,10 @@ class MariaDbParserState
 		return $result;
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	private function parseSelectExpression(): SelectExpr
 	{
 		$startExpressionToken = $this->findCurrentToken();
@@ -153,7 +221,10 @@ class MariaDbParserState
 		return new RegularExpr($prevToken->getEndPosition(), $expr, $alias);
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	private function parseAlias(): ?string
 	{
 		$alias = null;
@@ -169,7 +240,10 @@ class MariaDbParserState
 			: null;
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
 	private function parseExpression(): Expr
 	{
 		$startPosition = $this->findCurrentToken()?->position
@@ -259,7 +333,10 @@ class MariaDbParserState
 		return $token;
 	}
 
-	/** @phpstan-impure */
+	/**
+	 * @phpstan-impure
+	 * @throws UnexpectedTokenException
+	 */
 	private function expectToken(TokenTypeEnum $type): Token
 	{
 		$token = $this->findCurrentToken();

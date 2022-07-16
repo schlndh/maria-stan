@@ -18,4 +18,4 @@ cs-fix:
 	php vendor/bin/phpcbf
 
 phpstan:
-	php vendor/bin/phpstan analyse
+	php -d memory_limit=256M vendor/bin/phpstan analyse

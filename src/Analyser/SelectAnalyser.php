@@ -45,8 +45,9 @@ final class SelectAnalyser
 	{
 		$this->tablesByAlias = [];
 		$tableNamesInOrder = [];
+		$fromClause = $this->selectAst->from;
 
-		foreach ($this->selectAst->from ?? [] as $fromClause) {
+		if ($fromClause !== null) {
 			switch ($fromClause::getTableReferenceType()) {
 				case TableReferenceTypeEnum::TABLE:
 					assert($fromClause instanceof Table);

@@ -10,8 +10,10 @@ use function array_merge;
 use function count;
 use function ltrim;
 use function MariaStan\filesInDir;
+use function mb_substr;
 use function realpath;
 use function str_replace;
+use function trim;
 
 abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -35,6 +37,7 @@ abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
 				$dataSetName = $shortName . (count($parts) > 1
 						? '#' . $i
 						: '');
+				$dataSetName .= ' ' . trim(mb_substr($parts[0], 0, 100));
 				$allTests[$dataSetName] = array_merge([$name], $parts);
 			}
 		}

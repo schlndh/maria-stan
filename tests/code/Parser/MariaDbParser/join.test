@@ -1,0 +1,420 @@
+JOINs
+-----
+SELECT * FROM a, b
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => CROSS_JOIN
+				    [value] => CROSS_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+		)
+)
+-----
+SELECT * FROM a JOIN b
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => CROSS_JOIN
+				    [value] => CROSS_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+		)
+)
+-----
+SELECT * FROM a CROSS JOIN b
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => CROSS_JOIN
+				    [value] => CROSS_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+		)
+)
+-----
+SELECT * FROM a JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => INNER_JOIN
+				    [value] => INNER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a INNER JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => INNER_JOIN
+				    [value] => INNER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a LEFT JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => LEFT_OUTER_JOIN
+				    [value] => LEFT_OUTER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a LEFT OUTER JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => LEFT_OUTER_JOIN
+				    [value] => LEFT_OUTER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a RIGHT JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => RIGHT_OUTER_JOIN
+				    [value] => RIGHT_OUTER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a RIGHT OUTER JOIN b ON 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => RIGHT_OUTER_JOIN
+				    [value] => RIGHT_OUTER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => b
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM a, b, c
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => CROSS_JOIN
+				    [value] => CROSS_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+						(
+						    [name] => CROSS_JOIN
+						    [value] => CROSS_JOIN
+						)
+
+					[leftTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => a
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => b
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => c
+				)
+		)
+)
+-----
+SELECT * FROM a JOIN b JOIN c
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => CROSS_JOIN
+				    [value] => CROSS_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+						(
+						    [name] => CROSS_JOIN
+						    [value] => CROSS_JOIN
+						)
+
+					[leftTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => a
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => b
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => c
+				)
+		)
+)
+-----
+SELECT * FROM a JOIN b ON 1 JOIN c ON 2
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+				(
+				    [name] => INNER_JOIN
+				    [value] => INNER_JOIN
+				)
+
+			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum Enum:string
+						(
+						    [name] => INNER_JOIN
+						    [value] => INNER_JOIN
+						)
+
+					[leftTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => a
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => b
+						)
+					[onCondition] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => c
+				)
+			[onCondition] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 2
+				)
+		)
+)
