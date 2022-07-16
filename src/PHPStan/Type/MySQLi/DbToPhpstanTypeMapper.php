@@ -6,8 +6,10 @@ namespace MariaStan\PHPStan\Type\MySQLi;
 
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
+use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -19,7 +21,8 @@ class DbToPhpstanTypeMapper
 		return match ($dbType::getTypeEnum()) {
 			DbTypeEnum::INT => new IntegerType(),
 			DbTypeEnum::VARCHAR => new StringType(),
-			DbTypeEnum::MIXED => TypeCombinator::union(new IntegerType(), new StringType(), new FloatType()),
+			DbTypeEnum::DECIMAL => new IntersectionType([new StringType(), new AccessoryNumericStringType()]),
+			default => TypeCombinator::union(new IntegerType(), new StringType(), new FloatType()),
 		};
 	}
 }

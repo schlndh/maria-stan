@@ -7,6 +7,7 @@ namespace MariaStan\Analyser;
 use MariaStan\DatabaseTestCase;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
+use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use Nette\Schema\Expect;
@@ -102,6 +103,44 @@ class AnalyserTest extends DatabaseTestCase
 				'!name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
 				//'~name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
 			]),
+		];
+
+		yield from $this->provideDataTypeData();
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideDataTypeData(): iterable
+	{
+		$tableName = 'analyser_test_data_types';
+		$db = $this->getDefaultSharedConnection();
+		$db->query("
+			CREATE OR REPLACE TABLE {$tableName} (
+				id INT NOT NULL,
+				name VARCHAR(255) NULL,
+				price DECIMAL(10, 2) NOT NULL
+			);
+		");
+		$db->query("INSERT INTO {$tableName} (id, name, price) VALUES (1, 'aa', 111.11), (2, NULL, 222.22)");
+		$idField = new QueryResultField('id', new IntType(), false);
+		$nameField = new QueryResultField('name', new VarcharType(), true);
+		$priceField = new QueryResultField('price', new DecimalType(), false);
+
+		yield 'column - int' => [
+			'query' => "SELECT id FROM {$tableName}",
+			'expected fields' => [$idField],
+			'expected schema' => Expect::structure(['id' => Expect::int()]),
+		];
+
+		yield 'column - varchar nullable' => [
+			'query' => "SELECT name FROM {$tableName}",
+			'expected fields' => [$nameField],
+			'expected schema' => Expect::structure(['name' => Expect::anyOf(Expect::string(), Expect::null())]),
+		];
+
+		yield 'column - decimal' => [
+			'query' => "SELECT price FROM {$tableName}",
+			'expected fields' => [$priceField],
+			'expected schema' => Expect::structure(['price' => Expect::string()]),
 		];
 	}
 
