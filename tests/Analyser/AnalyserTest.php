@@ -8,6 +8,7 @@ use MariaStan\DatabaseTestCase;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DecimalType;
+use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use Nette\Schema\Expect;
@@ -111,36 +112,52 @@ class AnalyserTest extends DatabaseTestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideDataTypeData(): iterable
 	{
-		$tableName = 'analyser_test_data_types';
 		$db = $this->getDefaultSharedConnection();
+		$dataTypesTable = 'analyser_test_data_types';
 		$db->query("
-			CREATE OR REPLACE TABLE {$tableName} (
-				id INT NOT NULL,
-				name VARCHAR(255) NULL,
-				price DECIMAL(10, 2) NOT NULL
+			CREATE OR REPLACE TABLE {$dataTypesTable} (
+				col_int INT NOT NULL,
+				col_varchar_null VARCHAR(255) NULL,
+				col_decimal DECIMAL(10, 2) NOT NULL,
+				col_float FLOAT NOT NULL,
+				col_double DOUBLE NOT NULL
 			);
 		");
-		$db->query("INSERT INTO {$tableName} (id, name, price) VALUES (1, 'aa', 111.11), (2, NULL, 222.22)");
-		$idField = new QueryResultField('id', new IntType(), false);
-		$nameField = new QueryResultField('name', new VarcharType(), true);
-		$priceField = new QueryResultField('price', new DecimalType(), false);
+		$db->query("
+			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double)
+			VALUES (1, 'aa', 111.11, 11.11, 1.1), (2, NULL, 222.22, 22.22, 2.2)
+		");
 
 		yield 'column - int' => [
-			'query' => "SELECT id FROM {$tableName}",
-			'expected fields' => [$idField],
-			'expected schema' => Expect::structure(['id' => Expect::int()]),
+			'query' => "SELECT col_int FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_int', new IntType(), false)],
+			'expected schema' => Expect::structure(['col_int' => Expect::int()]),
 		];
 
 		yield 'column - varchar nullable' => [
-			'query' => "SELECT name FROM {$tableName}",
-			'expected fields' => [$nameField],
-			'expected schema' => Expect::structure(['name' => Expect::anyOf(Expect::string(), Expect::null())]),
+			'query' => "SELECT col_varchar_null FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_varchar_null', new VarcharType(), true)],
+			'expected schema' => Expect::structure(
+				['col_varchar_null' => Expect::anyOf(Expect::string(), Expect::null())],
+			),
 		];
 
 		yield 'column - decimal' => [
-			'query' => "SELECT price FROM {$tableName}",
-			'expected fields' => [$priceField],
-			'expected schema' => Expect::structure(['price' => Expect::string()]),
+			'query' => "SELECT col_decimal FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_decimal', new DecimalType(), false)],
+			'expected schema' => Expect::structure(['col_decimal' => Expect::string()]),
+		];
+
+		yield 'column - float' => [
+			'query' => "SELECT col_float FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_float', new FloatType(), false)],
+			'expected schema' => Expect::structure(['col_float' => Expect::float()]),
+		];
+
+		yield 'column - double' => [
+			'query' => "SELECT col_double FROM {$dataTypesTable}",
+			'expected fields' => [new QueryResultField('col_double', new FloatType(), false)],
+			'expected schema' => Expect::structure(['col_double' => Expect::float()]),
 		];
 	}
 

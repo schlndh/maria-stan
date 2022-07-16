@@ -15,6 +15,9 @@ enum DbTypeEnum: string
 	/** @see DecimalType */
 	case DECIMAL = 'DECIMAL';
 
+	/** @see FloatType */
+	case FLOAT = 'FLOAT';
+
 	/** @see MixedType */
 	case MIXED = 'MIXED';
 }

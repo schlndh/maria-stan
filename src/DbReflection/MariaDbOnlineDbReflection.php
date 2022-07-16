@@ -10,6 +10,7 @@ use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DecimalType;
+use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\Table;
@@ -86,6 +87,9 @@ class MariaDbOnlineDbReflection
 				return new IntType();
 			case 'decimal':
 				return new DecimalType();
+			case 'float':
+			case 'double':
+				return new FloatType();
 			default:
 				throw new UnexpectedValueException("Unrecognized type {$origType}");
 		}

@@ -44,17 +44,20 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 		');
 		$db->query('INSERT INTO mysqli_test (id, name, price) VALUES (1, "aa", 111.11), (2, NULL, 222.22)');
 
-		$db->query('
-			CREATE OR REPLACE TABLE mysqli_test_data_types (
+		$dataTypesTable = 'mysqli_test_data_types';
+		$db->query("
+			CREATE OR REPLACE TABLE {$dataTypesTable} (
 				col_int INT NOT NULL,
 				col_varchar_null VARCHAR(255) NULL,
-				col_decimal DECIMAL(10, 2) NOT NULL
+				col_decimal DECIMAL(10, 2) NOT NULL,
+				col_float FLOAT NOT NULL,
+				col_double DOUBLE NOT NULL
 			);
-		');
-		$db->query('
-			INSERT INTO mysqli_test_data_types (col_int, col_varchar_null, col_decimal)
-			VALUES (1, "aa", 111.11), (2, NULL, 222.22)
-		');
+		");
+		$db->query("
+			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double)
+			VALUES (1, 'aa', 111.11, 11.11, 1.1), (2, NULL, 222.22, 22.22, 2.2)
+		");
 	}
 
 	public function testAssoc(): void
@@ -371,6 +374,32 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 			}
 
 			$this->assertGettype('string', $value);
+		}
+
+		$rows = $db->query('
+			SELECT col_float FROM mysqli_test_data_types
+		')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('float', $value);
+			}
+
+			$this->assertGettype('double', $value);
+		}
+
+		$rows = $db->query('
+			SELECT col_double FROM mysqli_test_data_types
+		')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('float', $value);
+			}
+
+			$this->assertGettype('double', $value);
 		}
 	}
 
