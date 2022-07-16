@@ -3,7 +3,7 @@
 build: cs tests phpstan
 
 tests:
-	php -d zend.assertions=1 vendor/bin/phpunit
+	php -d zend.assertions=1 -d memory_limit=256M vendor/bin/phpunit
 
 update-tests:
 	php tests/updateTests.php

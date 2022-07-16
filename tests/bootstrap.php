@@ -13,7 +13,8 @@ use function realpath;
 use function rtrim;
 use function str_replace;
 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/Testing/functions.php';
 
 /**
  * The code below is based on

@@ -25,6 +25,10 @@ services:
 		class: MariaStan\PHPStan\Type\MySQLi\MySQLiResultDynamicReturnTypeExtension
 		tags:
 			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: MariaStan\PHPStan\Rules\MySQLi\MySQLiRule
+		tags:
+			- phpstan.rules.rule
 	mariaStanDb:
 		# make sure it doesn't conflict with other extensions
 		autowired: false
