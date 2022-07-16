@@ -8,6 +8,7 @@ use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
+use UnitEnum;
 
 use function array_filter;
 use function array_map;
@@ -114,6 +115,8 @@ class MariaDbParserTest extends CodeTestCase
 			}
 
 			return $result . ')';
+		} elseif ($data instanceof UnitEnum) {
+			$result = $data::class . '::' . $data->name;
 		} else {
 			$result = print_r($data, true);
 		}

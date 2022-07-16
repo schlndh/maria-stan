@@ -18,12 +18,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => PLUS
-								    [value] => +
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::PLUS
 							[expr] => MariaStan\Ast\Expr\LiteralInt
 								(
 									[value] => 10
@@ -34,12 +29,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => MINUS
-								    [value] => -
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
 							[expr] => MariaStan\Ast\Expr\LiteralInt
 								(
 									[value] => 10
@@ -74,12 +64,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => PLUS
-								    [value] => +
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::PLUS
 							[expr] => MariaStan\Ast\Expr\LiteralFloat
 								(
 									[value] => 0.1
@@ -90,12 +75,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => MINUS
-								    [value] => -
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
 							[expr] => MariaStan\Ast\Expr\LiteralFloat
 								(
 									[value] => 0.1
@@ -120,12 +100,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => PLUS
-								    [value] => +
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::PLUS
 							[expr] => MariaStan\Ast\Expr\LiteralFloat
 								(
 									[value] => 200
@@ -136,12 +111,7 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
-							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum Enum:string
-								(
-								    [name] => MINUS
-								    [value] => -
-								)
-
+							[opType] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
 							[expr] => MariaStan\Ast\Expr\LiteralFloat
 								(
 									[value] => 200
