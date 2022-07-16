@@ -150,7 +150,11 @@ final class SelectAnalyser
 
 				$type = match ($expr->opType) {
 					Expr\UnaryOpTypeEnum::PLUS => $resolvedInnerExpr->type,
-					// TODO: this could be float as well
+					Expr\UnaryOpTypeEnum::MINUS => match ($resolvedInnerExpr->type::getTypeEnum()) {
+						Schema\DbType\DbTypeEnum::INT, Schema\DbType\DbTypeEnum::DECIMAL => $resolvedInnerExpr->type,
+						Schema\DbType\DbTypeEnum::DATETIME => new Schema\DbType\DecimalType(),
+						default => new Schema\DbType\FloatType(),
+					},
 					default => new Schema\DbType\IntType(),
 				};
 

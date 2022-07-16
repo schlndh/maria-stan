@@ -94,6 +94,7 @@ class MariaDbOnlineDbReflection
 			case 'datetime':
 				return new DateTimeType();
 			default:
+				// TODO: return MixedType instead with some warning?
 				throw new UnexpectedValueException("Unrecognized type {$origType}");
 		}
 	}

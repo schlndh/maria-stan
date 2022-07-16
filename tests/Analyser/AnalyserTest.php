@@ -8,6 +8,7 @@ use MariaStan\DatabaseTestCase;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DateTimeType;
+use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
@@ -18,9 +19,27 @@ use Nette\Schema\Schema;
 
 use function array_keys;
 use function array_map;
+use function count;
 use function implode;
 
 use const MYSQLI_ASSOC;
+use const MYSQLI_NOT_NULL_FLAG;
+use const MYSQLI_TYPE_DATE;
+use const MYSQLI_TYPE_DATETIME;
+use const MYSQLI_TYPE_DECIMAL;
+use const MYSQLI_TYPE_DOUBLE;
+use const MYSQLI_TYPE_FLOAT;
+use const MYSQLI_TYPE_INT24;
+use const MYSQLI_TYPE_LONG;
+use const MYSQLI_TYPE_LONGLONG;
+use const MYSQLI_TYPE_NEWDECIMAL;
+use const MYSQLI_TYPE_SHORT;
+use const MYSQLI_TYPE_STRING;
+use const MYSQLI_TYPE_TIME;
+use const MYSQLI_TYPE_TIMESTAMP;
+use const MYSQLI_TYPE_TINY;
+use const MYSQLI_TYPE_VAR_STRING;
+use const MYSQLI_TYPE_YEAR;
 
 class AnalyserTest extends DatabaseTestCase
 {
@@ -74,36 +93,6 @@ class AnalyserTest extends DatabaseTestCase
 			'expected schema' => Expect::structure([
 				'id' => Expect::int(),
 				'name' => Expect::anyOf(Expect::string(), Expect::null()),
-			]),
-		];
-
-		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP. -name is double.
-		yield 'unary ops' => [
-			'query' => "
-				SELECT
-				    -id, +id, !id, /*~id,*/
-				    /*-name,*/ +name, !name/*, ~name*/
-				FROM {$tableName}
-			",
-			'expected fields' => [
-				new QueryResultField('-id', new IntType(), false),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('!id', new IntType(), false),
-				//new QueryResultField('~id', new IntType(), false),
-				//new QueryResultField('-name', new IntType(), true),
-				new QueryResultField('name', new VarcharType(), true),
-				new QueryResultField('!name', new IntType(), true),
-				//new QueryResultField('~name', new IntType(), true),
-			],
-			'expected schema' => Expect::structure([
-				'-id' => Expect::int(),
-				'id' => Expect::int(),
-				'!id' => Expect::int(),
-				//'~id' => Expect::anyOf(Expect::int(), Expect::string()),
-				//'-name' => Expect::anyOf(Expect::float(), Expect::null()),
-				'name' => Expect::anyOf(Expect::string(), Expect::null()),
-				'!name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
-				//'~name' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
 			]),
 		];
 
@@ -167,6 +156,72 @@ class AnalyserTest extends DatabaseTestCase
 			'expected fields' => [new QueryResultField('col_datetime', new DateTimeType(), false)],
 			'expected schema' => Expect::structure(['col_datetime' => Expect::string()]),
 		];
+
+		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP.
+		// TODO: name of 2nd column contains comment: SELECT col_int, /*aaa*/ -col_int FROM mysqli_test_data_types
+		// TODO: check type return by fetch_fields as well?
+		yield 'unary ops' => [
+			'query' => "
+				SELECT
+				    -col_int, +col_int, !col_int,
+				    -col_varchar_null, +col_varchar_null, !col_varchar_null,
+				    -col_decimal, +col_decimal, !col_decimal,
+				    -col_float, +col_float, !col_float,
+				    -col_double, +col_double, !col_double,
+				    -col_datetime, +col_datetime, !col_datetime
+				FROM {$dataTypesTable}
+			",
+			'expected fields' => [
+				new QueryResultField('-col_int', new IntType(), false),
+				new QueryResultField('col_int', new IntType(), false),
+				new QueryResultField('!col_int', new IntType(), false),
+
+				new QueryResultField('-col_varchar_null', new FloatType(), true),
+				new QueryResultField('col_varchar_null', new VarcharType(), true),
+				new QueryResultField('!col_varchar_null', new IntType(), true),
+
+				new QueryResultField('-col_decimal', new DecimalType(), false),
+				new QueryResultField('col_decimal', new DecimalType(), false),
+				new QueryResultField('!col_decimal', new IntType(), false),
+
+				new QueryResultField('-col_float', new FloatType(), false),
+				new QueryResultField('col_float', new FloatType(), false),
+				new QueryResultField('!col_float', new IntType(), false),
+
+				new QueryResultField('-col_double', new FloatType(), false),
+				new QueryResultField('col_double', new FloatType(), false),
+				new QueryResultField('!col_double', new IntType(), false),
+
+				new QueryResultField('-col_datetime', new DecimalType(), false),
+				new QueryResultField('col_datetime', new DateTimeType(), false),
+				new QueryResultField('!col_datetime', new IntType(), false),
+			],
+			'expected schema' => Expect::structure([
+				'-col_int' => Expect::int(),
+				'col_int' => Expect::int(),
+				'!col_int' => Expect::int(),
+
+				'-col_varchar_null' => Expect::anyOf(Expect::float(), Expect::null()),
+				'col_varchar_null' => Expect::anyOf(Expect::string(), Expect::null()),
+				'!col_varchar_null' => Expect::anyOf(Expect::int(), Expect::string(), Expect::null()),
+
+				'-col_decimal' => Expect::string(),
+				'col_decimal' => Expect::string(),
+				'!col_decimal' => Expect::int(),
+
+				'-col_float' => Expect::float(),
+				'col_float' => Expect::float(),
+				'!col_float' => Expect::int(),
+
+				'-col_double' => Expect::float(),
+				'col_double' => Expect::float(),
+				'!col_double' => Expect::int(),
+
+				'-col_datetime' => Expect::string(),
+				'col_datetime' => Expect::string(),
+				'!col_datetime' => Expect::int(),
+			]),
+		];
 	}
 
 	/**
@@ -176,6 +231,27 @@ class AnalyserTest extends DatabaseTestCase
 	public function test(string $query, array $expectedFields, Schema $expectedSchema): void
 	{
 		$db = $this->getDefaultSharedConnection();
+
+		$schemaProcessor = new Processor();
+		$stmt = $db->query($query);
+		$expectedFieldKeys = $this->getExpectedFieldKeys($expectedFields);
+		$fields = $stmt->fetch_fields();
+		$this->assertSameSize($expectedFields, $fields);
+
+		for ($i = 0; $i < count($fields); $i++) {
+			$field = $fields[$i];
+			$expectedField = $expectedFields[$i];
+			$this->assertSame($expectedField->name, $field->name);
+			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
+			$this->assertSame($expectedField->isNullable, $isFieldNullable);
+			$this->assertSame($expectedField->type::getTypeEnum(), $this->mysqliTypeToDbTypeEnum($field->type));
+		}
+
+		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
+			$this->assertSame($expectedFieldKeys, array_keys($row));
+			$schemaProcessor->process($expectedSchema, $row);
+		}
+
 		$parser = new MariaDbParser();
 		$reflection = new MariaDbOnlineDbReflection($db);
 		$analyser = new Analyser($parser, $reflection);
@@ -187,14 +263,6 @@ class AnalyserTest extends DatabaseTestCase
 				. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
 		);
 		$this->assertEquals($expectedFields, $result->resultFields);
-		$schemaProcessor = new Processor();
-		$stmt = $db->query($query);
-		$expectedFieldKeys = $this->getExpectedFieldKeys($expectedFields);
-
-		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
-			$this->assertSame($expectedFieldKeys, array_keys($row));
-			$schemaProcessor->process($expectedSchema, $row);
-		}
 	}
 
 	/**
@@ -210,5 +278,21 @@ class AnalyserTest extends DatabaseTestCase
 		}
 
 		return array_keys($result);
+	}
+
+	private function mysqliTypeToDbTypeEnum(int $type): DbTypeEnum
+	{
+		return match ($type) {
+			MYSQLI_TYPE_DECIMAL, MYSQLI_TYPE_NEWDECIMAL => DbTypeEnum::DECIMAL,
+			MYSQLI_TYPE_TINY /* =  MYSQLI_TYPE_CHAR */, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_INT24, MYSQLI_TYPE_LONG,
+				MYSQLI_TYPE_LONGLONG => DbTypeEnum::INT,
+			MYSQLI_TYPE_FLOAT, MYSQLI_TYPE_DOUBLE => DbTypeEnum::FLOAT,
+			MYSQLI_TYPE_TIMESTAMP, MYSQLI_TYPE_DATE, MYSQLI_TYPE_TIME, MYSQLI_TYPE_DATETIME, MYSQLI_TYPE_YEAR
+				=> DbTypeEnum::DATETIME,
+			MYSQLI_TYPE_VAR_STRING, MYSQLI_TYPE_STRING => DbTypeEnum::VARCHAR,
+			// TODO: MYSQLI_TYPE_NULL, MYSQLI_TYPE_ENUM, MYSQLI_TYPE_BIT, MYSQLI_TYPE_INTERVAL, MYSQLI_TYPE_SET,
+			// MYSQLI_TYPE_GEOMETRY, MYSQLI_TYPE_JSON, blob/binary types
+			default => throw new \RuntimeException("Unhandled type {$type}"),
+		};
 	}
 }
