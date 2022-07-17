@@ -96,6 +96,16 @@ class AnalyserTest extends DatabaseTestCase
 			]),
 		];
 
+		yield 'field alias' => [
+			'query' => "SELECT 1 id",
+			'expected fields' => [
+				$idField,
+			],
+			'expected schema' => Expect::structure([
+				'id' => Expect::int(),
+			]),
+		];
+
 		yield from $this->provideLiteralData();
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
@@ -344,64 +354,93 @@ class AnalyserTest extends DatabaseTestCase
 			'expected schema' => $crossJoinAllFieldsSchema,
 		];
 
-		// TODO: explicitly list columns once support for aliases is implemented
-		yield 'multiple JOINs - track outer JOINs - LEFT' => [
-			'query' => "SELECT * FROM {$joinTableA} LEFT JOIN {$joinTableB} ON 1 INNER JOIN {$joinTableB} c ON 1",
+		yield 'LEFT OUTER JOIN - explicit, aliases vs column without table name' => [
+			'query' => "SELECT created_at FROM {$joinTableA} a LEFT JOIN {$joinTableB} b ON 1",
 			'expected fields' => [
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('name', new VarcharType(), false),
-				new QueryResultField('id', new IntType(), true),
 				new QueryResultField('created_at', new DateTimeType(), true),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
 			],
-			'expected schema' => $crossJoinAllFieldsSchema,
+			'expected schema' => Expect::structure([
+				'created_at' => Expect::string(),
+			]),
+		];
+
+		yield 'multiple JOINs - track outer JOINs - LEFT' => [
+			'query' => "
+				SELECT a.id aid, b.id bid, c.id cid
+				FROM {$joinTableA} a
+				LEFT JOIN {$joinTableB} b ON 1
+				INNER JOIN {$joinTableB} c ON 1
+			",
+			'expected fields' => [
+				new QueryResultField('aid', new IntType(), false),
+				new QueryResultField('bid', new IntType(), true),
+				new QueryResultField('cid', new IntType(), false),
+			],
+			'expected schema' => Expect::structure([
+				'aid' => Expect::int(),
+				'bid' => Expect::int(),
+				'cid' => Expect::int(),
+			]),
 		];
 
 		yield 'multiple JOINs - track outer JOINs - RIGHT' => [
-			'query' => "SELECT * FROM {$joinTableA} RIGHT JOIN {$joinTableB} ON 1 INNER JOIN {$joinTableB} c ON 1",
+			'query' => "
+				SELECT a.id aid, b.id bid, c.id cid
+				FROM {$joinTableA} a
+				RIGHT JOIN {$joinTableB} b ON 1
+				INNER JOIN {$joinTableB} c ON 1
+			",
 			'expected fields' => [
-				new QueryResultField('id', new IntType(), true),
-				new QueryResultField('name', new VarcharType(), true),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('aid', new IntType(), true),
+				new QueryResultField('bid', new IntType(), false),
+				new QueryResultField('cid', new IntType(), false),
 			],
-			'expected schema' => $crossJoinAllFieldsSchema,
+			'expected schema' => Expect::structure([
+				'aid' => Expect::int(),
+				'bid' => Expect::int(),
+				'cid' => Expect::int(),
+			]),
 		];
 
 		yield 'multiple JOINs - track outer JOINs - RIGHT - multiple tables before' => [
-			'query' => "SELECT * FROM {$joinTableA} INNER JOIN {$joinTableB} c ON 1 RIGHT JOIN {$joinTableB} ON 1",
+			'query' => "
+				SELECT a.id aid, b.id bid, c.id cid
+				FROM {$joinTableA} a
+				INNER JOIN {$joinTableB} b ON 1
+				RIGHT JOIN {$joinTableB} c ON 1
+			",
 			'expected fields' => [
-				new QueryResultField('id', new IntType(), true),
-				new QueryResultField('name', new VarcharType(), true),
-				new QueryResultField('id', new IntType(), true),
-				new QueryResultField('created_at', new DateTimeType(), true),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('aid', new IntType(), true),
+				new QueryResultField('bid', new IntType(), true),
+				new QueryResultField('cid', new IntType(), false),
 			],
-			'expected schema' => $crossJoinAllFieldsSchema,
+			'expected schema' => Expect::structure([
+				'aid' => Expect::int(),
+				'bid' => Expect::int(),
+				'cid' => Expect::int(),
+			]),
 		];
 
-		yield 'multiple JOINs - track outer JOINs - LEFT - multiple after before' => [
+		yield 'multiple JOINs - track outer JOINs - LEFT - multiple after' => [
 			'query' => "
-				SELECT * FROM {$joinTableA}
-				LEFT JOIN {$joinTableB} ON 1
+				SELECT a.id aid, b.id bid, c.id cid, d.id did
+				FROM {$joinTableA} a
+				LEFT JOIN {$joinTableB} b ON 1
 				JOIN {$joinTableB} c ON 1
 				JOIN {$joinTableB} d ON 1
 			",
 			'expected fields' => [
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('name', new VarcharType(), false),
-				new QueryResultField('id', new IntType(), true),
-				new QueryResultField('created_at', new DateTimeType(), true),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('aid', new IntType(), false),
+				new QueryResultField('bid', new IntType(), true),
+				new QueryResultField('cid', new IntType(), false),
+				new QueryResultField('did', new IntType(), false),
 			],
-			'expected schema' => $crossJoinAllFieldsSchema,
+			'expected schema' => Expect::structure([
+				'aid' => Expect::int(),
+				'bid' => Expect::int(),
+				'cid' => Expect::int(),
+				'did' => Expect::int(),
+			]),
 		];
 	}
 

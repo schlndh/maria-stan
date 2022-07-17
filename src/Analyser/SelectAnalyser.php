@@ -21,9 +21,10 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
 
 use function array_merge;
-use function array_unique;
+use function array_search;
 use function assert;
 use function count;
+use function key;
 use function reset;
 use function stripos;
 
@@ -70,7 +71,15 @@ final class SelectAnalyser
 		$tableSchemas = [];
 		$fields = [];
 
-		foreach (array_unique($this->tablesByAlias) as $table) {
+		foreach ($tableNamesInOrder as $table) {
+			if (isset($this->tablesByAlias[$table])) {
+				$table = $this->tablesByAlias[$table];
+			}
+
+			if (isset($tableSchemas[$table])) {
+				continue;
+			}
+
 			try {
 				$tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
 			} catch (DbReflectionException $e) {
@@ -90,7 +99,13 @@ final class SelectAnalyser
 			switch ($selectExpr::getSelectExprType()) {
 				case SelectExprTypeEnum::REGULAR_EXPR:
 					assert($selectExpr instanceof RegularExpr);
-					$fields[] = $this->resolveExprType($selectExpr->expr);
+					$resolvedField = $this->resolveExprType($selectExpr->expr);
+
+					if ($selectExpr->alias !== null && $selectExpr->alias !== $resolvedField->name) {
+						$resolvedField = $resolvedField->getRenamed($selectExpr->alias);
+					}
+
+					$fields[] = $resolvedField;
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
@@ -125,7 +140,6 @@ final class SelectAnalyser
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
 				assert($fromClause instanceof Table);
-				$this->tablesByAlias[$fromClause->name] = $fromClause->name;
 
 				if ($fromClause->alias !== null) {
 					$this->tablesByAlias[$fromClause->alias] = $fromClause->name;
@@ -164,11 +178,13 @@ final class SelectAnalyser
 				/** @var ?Schema\Column $columnSchema */
 				$columnSchema = null;
 				$candidateTables = $this->columnSchemasByName[$expr->name] ?? [];
+				$tableName = null;
 
 				if ($expr->tableName !== null) {
 					$columnSchema = $candidateTables[$expr->tableName]
 						?? $candidateTables[$this->tablesByAlias[$expr->tableName]]
 						?? null;
+					$tableName = $expr->tableName;
 
 					if ($columnSchema === null) {
 						$this->errors[] = new AnalyserError("Unknown column {$expr->tableName}.{$expr->name}");
@@ -180,6 +196,13 @@ final class SelectAnalyser
 							break;
 						case 1:
 							$columnSchema = reset($candidateTables);
+							$tableName = key($candidateTables);
+							$alias = array_search($tableName, $this->tablesByAlias, true);
+
+							if ($alias !== false) {
+								$tableName = $alias;
+							}
+
 							break;
 						default:
 							$this->errors[] = new AnalyserError("Ambiguous column {$expr->name}");
@@ -187,8 +210,10 @@ final class SelectAnalyser
 					}
 				}
 
+				$isOuterTable = $this->outerJoinedTableMap[$tableName] ?? false;
+
 				return $columnSchema !== null
-					? new QueryResultField($expr->name, $columnSchema->type, $columnSchema->isNullable)
+					? new QueryResultField($expr->name, $columnSchema->type, $columnSchema->isNullable || $isOuterTable)
 					: new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
 			case Expr\ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof Expr\LiteralInt);

@@ -254,6 +254,16 @@ class MariaDbParserState
 			if (! $this->acceptSingleCharToken('.')) {
 				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}
+
+			$tableIdent = $ident;
+			$ident = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+
+			return new Column(
+				$startPosition,
+				$ident->getEndPosition(),
+				$this->cleanIdentifier($ident->content),
+				$this->cleanIdentifier($tableIdent->content),
+			);
 		}
 
 		$unaryOpToken = $this->acceptSingleCharToken('+')

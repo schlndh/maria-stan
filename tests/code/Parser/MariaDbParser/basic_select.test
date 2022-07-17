@@ -49,3 +49,32 @@ MariaStan\Ast\Query\SelectQuery
 			[name] => tbl
 		)
 )
+-----
+SELECT tbl.id, `tbl`.`aa bb` FROM `tbl`
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => tbl
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => aa bb
+							[tableName] => tbl
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+)

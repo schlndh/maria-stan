@@ -14,4 +14,9 @@ final class QueryResultField
 		public readonly bool $isNullable,
 	) {
 	}
+
+	public function getRenamed(string $newName): self
+	{
+		return new self($newName, $this->type, $this->isNullable);
+	}
 }
