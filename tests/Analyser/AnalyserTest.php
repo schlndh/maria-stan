@@ -280,34 +280,28 @@ class AnalyserTest extends DatabaseTestCase
 		");
 		$db->query("INSERT INTO {$joinTableB} (id) VALUES (1), (2), (3)");
 
+		$crossJoinAllFields = [
+			new QueryResultField('id', new IntType(), false),
+			new QueryResultField('name', new VarcharType(), false),
+			new QueryResultField('id', new IntType(), false),
+			new QueryResultField('created_at', new DateTimeType(), false),
+		];
+		$crossJoinAllFieldsSchema = Expect::structure([
+			'id' => Expect::int(),
+			'name' => Expect::string(),
+			'created_at' => Expect::string(),
+		]);
+
 		yield 'CROSS JOIN - comma, *' => [
 			'query' => "SELECT * FROM {$joinTableA}, {$joinTableB}",
-			'expected fields' => [
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('name', new VarcharType(), false),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
-			],
-			'expected schema' => Expect::structure([
-				'id' => Expect::int(),
-				'name' => Expect::string(),
-				'created_at' => Expect::string(),
-			]),
+			'expected fields' => $crossJoinAllFields,
+			'expected schema' => $crossJoinAllFieldsSchema,
 		];
 
 		yield 'CROSS JOIN - explicit, *' => [
 			'query' => "SELECT * FROM {$joinTableA} CROSS JOIN {$joinTableB}",
-			'expected fields' => [
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('name', new VarcharType(), false),
-				new QueryResultField('id', new IntType(), false),
-				new QueryResultField('created_at', new DateTimeType(), false),
-			],
-			'expected schema' => Expect::structure([
-				'id' => Expect::int(),
-				'name' => Expect::string(),
-				'created_at' => Expect::string(),
-			]),
+			'expected fields' => $crossJoinAllFields,
+			'expected schema' => $crossJoinAllFieldsSchema,
 		];
 
 		yield 'CROSS JOIN - explicit, listed columns' => [
@@ -321,7 +315,94 @@ class AnalyserTest extends DatabaseTestCase
 				'name' => Expect::string(),
 			]),
 		];
-		// TODO: add tests for INNER/OUTER JOIN once I can parse ON expressions
+
+		yield 'INNER JOIN - implicit, *' => [
+			'query' => "SELECT * FROM {$joinTableA} JOIN {$joinTableB} ON 1",
+			'expected fields' => $crossJoinAllFields,
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		yield 'LEFT OUTER JOIN - implicit, *' => [
+			'query' => "SELECT * FROM {$joinTableA} LEFT JOIN {$joinTableB} ON 1",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('created_at', new DateTimeType(), true),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		yield 'RIGHT OUTER JOIN - implicit, *' => [
+			'query' => "SELECT * FROM {$joinTableA} RIGHT JOIN {$joinTableB} ON 1",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('name', new VarcharType(), true),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		// TODO: explicitly list columns once support for aliases is implemented
+		yield 'multiple JOINs - track outer JOINs - LEFT' => [
+			'query' => "SELECT * FROM {$joinTableA} LEFT JOIN {$joinTableB} ON 1 INNER JOIN {$joinTableB} c ON 1",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('created_at', new DateTimeType(), true),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		yield 'multiple JOINs - track outer JOINs - RIGHT' => [
+			'query' => "SELECT * FROM {$joinTableA} RIGHT JOIN {$joinTableB} ON 1 INNER JOIN {$joinTableB} c ON 1",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('name', new VarcharType(), true),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		yield 'multiple JOINs - track outer JOINs - RIGHT - multiple tables before' => [
+			'query' => "SELECT * FROM {$joinTableA} INNER JOIN {$joinTableB} c ON 1 RIGHT JOIN {$joinTableB} ON 1",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('name', new VarcharType(), true),
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('created_at', new DateTimeType(), true),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
+
+		yield 'multiple JOINs - track outer JOINs - LEFT - multiple after before' => [
+			'query' => "
+				SELECT * FROM {$joinTableA}
+				LEFT JOIN {$joinTableB} ON 1
+				JOIN {$joinTableB} c ON 1
+				JOIN {$joinTableB} d ON 1
+			",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+				new QueryResultField('id', new IntType(), true),
+				new QueryResultField('created_at', new DateTimeType(), true),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => $crossJoinAllFieldsSchema,
+		];
 	}
 
 	/**

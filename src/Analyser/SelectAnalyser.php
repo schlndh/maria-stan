@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
+use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
@@ -37,6 +38,9 @@ final class SelectAnalyser
 	/** @var array<AnalyserError> */
 	private array $errors = [];
 
+	/** @var array<string, bool> */
+	private array $outerJoinedTableMap = [];
+
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
 		private readonly SelectQuery $selectAst,
@@ -44,10 +48,18 @@ final class SelectAnalyser
 	) {
 	}
 
+	private function init(): void
+	{
+		// Prevent phpstan from incorrectly remembering these values.
+		// e.g. errors like: Offset string on array{} on left side of ?? does not exist.
+		$this->tablesByAlias = [];
+		$this->errors = [];
+	}
+
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
-		$this->tablesByAlias = [];
+		$this->init();
 		$tableNamesInOrder = [];
 		$fromClause = $this->selectAst->from;
 
@@ -57,7 +69,6 @@ final class SelectAnalyser
 
 		$tableSchemas = [];
 		$fields = [];
-		$this->errors = [];
 
 		foreach (array_unique($this->tablesByAlias) as $table) {
 			try {
@@ -88,10 +99,16 @@ final class SelectAnalyser
 						: $tableNamesInOrder;
 
 					foreach ($tableNames as $tableName) {
-						$tableSchema = $tableSchemas[$tableName] ?? null;
+						$normalizedTableName = $this->tablesByAlias[$tableName] ?? $tableName;
+						$tableSchema = $tableSchemas[$normalizedTableName] ?? null;
+						$isOuterTable = $this->outerJoinedTableMap[$tableName] ?? false;
 
 						foreach ($tableSchema?->columns ?? [] as $column) {
-							$fields[] = new QueryResultField($column->name, $column->type, $column->isNullable);
+							$fields[] = new QueryResultField(
+								$column->name,
+								$column->type,
+								$column->isNullable || $isOuterTable,
+							);
 						}
 					}
 
@@ -114,11 +131,23 @@ final class SelectAnalyser
 					$this->tablesByAlias[$fromClause->alias] = $fromClause->name;
 				}
 
-				return [$fromClause->name];
+				return [$fromClause->alias ?? $fromClause->name];
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
 				$rightTables = $this->analyseTableReference($fromClause->rightTable);
+				assert(count($leftTables) > 0);
+				// JOIN is left associative
+				assert(count($rightTables) === 1);
+
+				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
+					$rightTable = reset($rightTables);
+					$this->outerJoinedTableMap[$rightTable] = true;
+				} elseif ($fromClause->joinType === JoinTypeEnum::RIGHT_OUTER_JOIN) {
+					foreach ($leftTables as $leftTable) {
+						$this->outerJoinedTableMap[$leftTable] = true;
+					}
+				}
 
 				return array_merge($leftTables, $rightTables);
 		}
