@@ -97,6 +97,7 @@ class AnalyserTest extends DatabaseTestCase
 		];
 
 		yield from $this->provideDataTypeData();
+		yield from $this->provideJoinData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -222,6 +223,75 @@ class AnalyserTest extends DatabaseTestCase
 				'!col_datetime' => Expect::int(),
 			]),
 		];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideJoinData(): iterable
+	{
+		$db = $this->getDefaultSharedConnection();
+		$joinTableA = 'analyser_test_join_a';
+		$db->query("
+			CREATE OR REPLACE TABLE {$joinTableA} (
+				id INT NOT NULL,
+				name VARCHAR(255) NOT NULL
+			);
+		");
+		$db->query("
+			INSERT INTO {$joinTableA} (id, name)
+			VALUES (1, 'aa'), (2, 'bb')
+		");
+
+		$joinTableB = 'analyser_test_join_b';
+		$db->query("
+			CREATE OR REPLACE TABLE {$joinTableB} (
+				id INT NOT NULL,
+				created_at DATETIME NOT NULL DEFAULT NOW()
+			);
+		");
+		$db->query("INSERT INTO {$joinTableB} (id) VALUES (1), (2), (3)");
+
+		yield 'CROSS JOIN - comma, *' => [
+			'query' => "SELECT * FROM {$joinTableA}, {$joinTableB}",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => Expect::structure([
+				'id' => Expect::int(),
+				'name' => Expect::string(),
+				'created_at' => Expect::string(),
+			]),
+		];
+
+		yield 'CROSS JOIN - explicit, *' => [
+			'query' => "SELECT * FROM {$joinTableA} CROSS JOIN {$joinTableB}",
+			'expected fields' => [
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+				new QueryResultField('id', new IntType(), false),
+				new QueryResultField('created_at', new DateTimeType(), false),
+			],
+			'expected schema' => Expect::structure([
+				'id' => Expect::int(),
+				'name' => Expect::string(),
+				'created_at' => Expect::string(),
+			]),
+		];
+
+		yield 'CROSS JOIN - explicit, listed columns' => [
+			'query' => "SELECT created_at, name FROM {$joinTableA} CROSS JOIN {$joinTableB}",
+			'expected fields' => [
+				new QueryResultField('created_at', new DateTimeType(), false),
+				new QueryResultField('name', new VarcharType(), false),
+			],
+			'expected schema' => Expect::structure([
+				'created_at' => Expect::string(),
+				'name' => Expect::string(),
+			]),
+		];
+		// TODO: add tests for INNER/OUTER JOIN once I can parse ON expressions
 	}
 
 	/**

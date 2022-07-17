@@ -8,7 +8,9 @@ use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\Table;
+use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
@@ -17,6 +19,7 @@ use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
 
+use function array_merge;
 use function array_unique;
 use function assert;
 use function count;
@@ -48,19 +51,7 @@ final class SelectAnalyser
 		$fromClause = $this->selectAst->from;
 
 		if ($fromClause !== null) {
-			switch ($fromClause::getTableReferenceType()) {
-				case TableReferenceTypeEnum::TABLE:
-					assert($fromClause instanceof Table);
-					$this->tablesByAlias[$fromClause->name] = $fromClause->name;
-
-					if ($fromClause->alias !== null) {
-						$this->tablesByAlias[$fromClause->alias] = $fromClause->name;
-					}
-
-					$tableNamesInOrder[] = $fromClause->name;
-
-					break;
-			}
+			$tableNamesInOrder = $this->analyseTableReference($fromClause);
 		}
 
 		$tableSchemas = [];
@@ -108,6 +99,30 @@ final class SelectAnalyser
 		}
 
 		return new AnalyserResult($fields, $this->errors);
+	}
+
+	/** @return array<string> table names in order */
+	private function analyseTableReference(TableReference $fromClause): array
+	{
+		switch ($fromClause::getTableReferenceType()) {
+			case TableReferenceTypeEnum::TABLE:
+				assert($fromClause instanceof Table);
+				$this->tablesByAlias[$fromClause->name] = $fromClause->name;
+
+				if ($fromClause->alias !== null) {
+					$this->tablesByAlias[$fromClause->alias] = $fromClause->name;
+				}
+
+				return [$fromClause->name];
+			case TableReferenceTypeEnum::JOIN:
+				assert($fromClause instanceof Join);
+				$leftTables = $this->analyseTableReference($fromClause->leftTable);
+				$rightTables = $this->analyseTableReference($fromClause->rightTable);
+
+				return array_merge($leftTables, $rightTables);
+		}
+
+		return [];
 	}
 
 	private function resolveExprType(Expr\Expr $expr): QueryResultField

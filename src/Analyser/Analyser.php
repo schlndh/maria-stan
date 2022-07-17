@@ -13,7 +13,7 @@ use MariaStan\Parser\MariaDbParser;
 
 use function assert;
 
-class Analyser
+final class Analyser
 {
 	public function __construct(
 		private readonly MariaDbParser $parser,
