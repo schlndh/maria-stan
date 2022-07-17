@@ -57,6 +57,9 @@
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
 		<exclude name="SlevomatCodingStandard.Classes.SuperfluousErrorNaming"/>
 		<exclude name="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>
+		<exclude name="SlevomatCodingStandard.Complexity.Cognitive"/>
+		<exclude name="SlevomatCodingStandard.Files.FileLength"/>
+		<exclude name="SlevomatCodingStandard.Classes.ClassLength"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
