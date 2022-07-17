@@ -21,6 +21,9 @@ enum DbTypeEnum: string
 	/** @see DateTimeType */
 	case DATETIME = 'DATETIME';
 
+	/** @see NullType */
+	case NULL = 'NULL';
+
 	/** @see MixedType */
 	case MIXED = 'MIXED';
 }

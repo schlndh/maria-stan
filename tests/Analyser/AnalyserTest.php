@@ -12,6 +12,7 @@ use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
+use MariaStan\Schema\DbType\NullType;
 use MariaStan\Schema\DbType\VarcharType;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
@@ -33,6 +34,7 @@ use const MYSQLI_TYPE_INT24;
 use const MYSQLI_TYPE_LONG;
 use const MYSQLI_TYPE_LONGLONG;
 use const MYSQLI_TYPE_NEWDECIMAL;
+use const MYSQLI_TYPE_NULL;
 use const MYSQLI_TYPE_SHORT;
 use const MYSQLI_TYPE_STRING;
 use const MYSQLI_TYPE_TIME;
@@ -132,6 +134,12 @@ class AnalyserTest extends DatabaseTestCase
 			'expected schema' => Expect::structure(['5.5e0' => Expect::float()]),
 		];
 
+		yield 'literal - null' => [
+			'query' => "SELECT null",
+			'expected fields' => [new QueryResultField('NULL', new NullType(), true)],
+			'expected schema' => Expect::structure(['NULL' => Expect::null()]),
+		];
+
 		// TODO: enable this once literal string support is added
 		//yield 'literal - string' => [
 		//	'query' => "SELECT 'a'",
@@ -200,7 +208,6 @@ class AnalyserTest extends DatabaseTestCase
 
 		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP.
 		// TODO: name of 2nd column contains comment: SELECT col_int, /*aaa*/ -col_int FROM mysqli_test_data_types
-		// TODO: check type return by fetch_fields as well?
 		yield 'unary ops' => [
 			'query' => "
 				SELECT
@@ -511,7 +518,8 @@ class AnalyserTest extends DatabaseTestCase
 			MYSQLI_TYPE_TIMESTAMP, MYSQLI_TYPE_DATE, MYSQLI_TYPE_TIME, MYSQLI_TYPE_DATETIME, MYSQLI_TYPE_YEAR
 				=> DbTypeEnum::DATETIME,
 			MYSQLI_TYPE_VAR_STRING, MYSQLI_TYPE_STRING => DbTypeEnum::VARCHAR,
-			// TODO: MYSQLI_TYPE_NULL, MYSQLI_TYPE_ENUM, MYSQLI_TYPE_BIT, MYSQLI_TYPE_INTERVAL, MYSQLI_TYPE_SET,
+			MYSQLI_TYPE_NULL => DbTypeEnum::NULL,
+			// TODO: MYSQLI_TYPE_ENUM, MYSQLI_TYPE_BIT, MYSQLI_TYPE_INTERVAL, MYSQLI_TYPE_SET,
 			// MYSQLI_TYPE_GEOMETRY, MYSQLI_TYPE_JSON, blob/binary types
 			default => throw new \RuntimeException("Unhandled type {$type}"),
 		};

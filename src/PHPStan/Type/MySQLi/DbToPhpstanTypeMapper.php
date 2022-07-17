@@ -10,6 +10,7 @@ use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -20,11 +21,11 @@ class DbToPhpstanTypeMapper
 	{
 		return match ($dbType::getTypeEnum()) {
 			DbTypeEnum::INT => new IntegerType(),
-			DbTypeEnum::VARCHAR => new StringType(),
+			DbTypeEnum::VARCHAR, DbTypeEnum::DATETIME => new StringType(),
 			DbTypeEnum::DECIMAL => new IntersectionType([new StringType(), new AccessoryNumericStringType()]),
 			DbTypeEnum::FLOAT => new FloatType(),
-			DbTypeEnum::DATETIME => new StringType(),
-			default => TypeCombinator::union(new IntegerType(), new StringType(), new FloatType()),
+			DbTypeEnum::NULL => new NullType(),
+			DbTypeEnum::MIXED => TypeCombinator::union(new IntegerType(), new StringType(), new FloatType()),
 		};
 	}
 }

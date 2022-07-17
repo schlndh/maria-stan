@@ -231,6 +231,8 @@ final class SelectAnalyser
 						: new Schema\DbType\DecimalType(),
 					false,
 				);
+			case Expr\ExprTypeEnum::LITERAL_NULL:
+				return new QueryResultField('NULL', new Schema\DbType\NullType(), true);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
 				$resolvedInnerExpr = $this->resolveExprType($expr->expr);

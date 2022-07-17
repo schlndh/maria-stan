@@ -415,6 +415,17 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 
 			$this->assertGettype('string', $value);
 		}
+
+		$rows = $db->query('SELECT null')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('null', $value);
+			}
+
+			$this->assertGettype('NULL', $value);
+		}
 	}
 
 	/** @param string|array<string> $allowedTypes */

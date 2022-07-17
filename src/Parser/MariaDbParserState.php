@@ -8,6 +8,7 @@ use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
+use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\Query;
@@ -287,6 +288,12 @@ class MariaDbParserState
 
 		if ($literalFloat) {
 			return new LiteralFloat($startPosition, $literalFloat->getEndPosition(), (float) $literalFloat->content);
+		}
+
+		$literalNull = $this->acceptToken(TokenTypeEnum::NULL);
+
+		if ($literalNull) {
+			return new LiteralNull($startPosition, $literalNull->getEndPosition());
 		}
 
 		throw new UnexpectedTokenException(
