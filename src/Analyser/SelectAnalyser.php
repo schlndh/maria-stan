@@ -24,6 +24,7 @@ use function array_unique;
 use function assert;
 use function count;
 use function reset;
+use function stripos;
 
 final class SelectAnalyser
 {
@@ -160,6 +161,22 @@ final class SelectAnalyser
 				return $columnSchema !== null
 					? new QueryResultField($expr->name, $columnSchema->type, $columnSchema->isNullable)
 					: new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
+			case Expr\ExprTypeEnum::LITERAL_INT:
+				assert($expr instanceof Expr\LiteralInt);
+
+				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\IntType(), false);
+			case Expr\ExprTypeEnum::LITERAL_FLOAT:
+				assert($expr instanceof Expr\LiteralFloat);
+				$content = $this->getNodeContent($expr);
+				$isExponentNotation = stripos($content, 'e') !== false;
+
+				return new QueryResultField(
+					$content,
+					$isExponentNotation
+						? new Schema\DbType\FloatType()
+						: new Schema\DbType\DecimalType(),
+					false,
+				);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
 				$resolvedInnerExpr = $this->resolveExprType($expr->expr);

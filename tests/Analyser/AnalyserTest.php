@@ -96,8 +96,38 @@ class AnalyserTest extends DatabaseTestCase
 			]),
 		];
 
+		yield from $this->provideLiteralData();
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideLiteralData(): iterable
+	{
+		yield 'literal - int' => [
+			'query' => "SELECT 5",
+			'expected fields' => [new QueryResultField('5', new IntType(), false)],
+			'expected schema' => Expect::structure(['5' => Expect::int()]),
+		];
+
+		yield 'literal - float - normal notation' => [
+			'query' => "SELECT 5.5",
+			'expected fields' => [new QueryResultField('5.5', new DecimalType(), false)],
+			'expected schema' => Expect::structure(['5.5' => Expect::string()]),
+		];
+
+		yield 'literal - float - exponent notation' => [
+			'query' => "SELECT 5.5e0",
+			'expected fields' => [new QueryResultField('5.5e0', new FloatType(), false)],
+			'expected schema' => Expect::structure(['5.5e0' => Expect::float()]),
+		];
+
+		// TODO: enable this once literal string support is added
+		//yield 'literal - string' => [
+		//	'query' => "SELECT 'a'",
+		//	'expected fields' => [new QueryResultField('a', new VarcharType(), false)],
+		//	'expected schema' => Expect::structure(['a' => Expect::string()]),
+		//];
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -314,7 +344,8 @@ class AnalyserTest extends DatabaseTestCase
 			$this->assertSame($expectedField->name, $field->name);
 			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
 			$this->assertSame($expectedField->isNullable, $isFieldNullable);
-			$this->assertSame($expectedField->type::getTypeEnum(), $this->mysqliTypeToDbTypeEnum($field->type));
+			$actualType = $this->mysqliTypeToDbTypeEnum($field->type);
+			$this->assertSame($expectedField->type::getTypeEnum(), $actualType);
 		}
 
 		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
