@@ -15,6 +15,9 @@ enum ExprTypeEnum: string
 	/** @see LiteralFloat */
 	case LITERAL_FLOAT = 'LITERAL_FLOAT';
 
+	/** @see LiteralString */
+	case LITERAL_STRING = 'LITERAL_STRING';
+
 	/** @see LiteralNull */
 	case LITERAL_NULL = 'LITERAL_NULL';
 

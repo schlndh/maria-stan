@@ -147,3 +147,113 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT "aaa", "aa" "bb", "cc""dd", "ee\"ff", 'aaa', 'aa' 'bb', 'cc''dd', 'ee\'ff'
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aabb
+							[firstConcatPart] => aa
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => cc"dd
+							[firstConcatPart] => cc"dd
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => ee"ff
+							[firstConcatPart] => ee"ff
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aabb
+							[firstConcatPart] => aa
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => cc'dd
+							[firstConcatPart] => cc'dd
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => ee'ff
+							[firstConcatPart] => ee'ff
+						)
+				)
+		)
+)
+-----
+SELECT "\'\"\n\r\t\\\%\_\a", '\'\"\n\r\t\\\%\_\a', "\\\\\a"
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => '"
+									\%_a
+							[firstConcatPart] => '"
+									\%_a
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => '"
+									\%_a
+							[firstConcatPart] => '"
+									\%_a
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => \\a
+							[firstConcatPart] => \\a
+						)
+				)
+		)
+)

@@ -233,6 +233,10 @@ final class SelectAnalyser
 				);
 			case Expr\ExprTypeEnum::LITERAL_NULL:
 				return new QueryResultField('NULL', new Schema\DbType\NullType(), true);
+			case Expr\ExprTypeEnum::LITERAL_STRING:
+				assert($expr instanceof Expr\LiteralString);
+
+				return new QueryResultField($expr->firstConcatPart, new Schema\DbType\VarcharType(), false);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
 				$resolvedInnerExpr = $this->resolveExprType($expr->expr);

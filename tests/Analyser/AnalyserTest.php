@@ -140,12 +140,17 @@ class AnalyserTest extends DatabaseTestCase
 			'expected schema' => Expect::structure(['NULL' => Expect::null()]),
 		];
 
-		// TODO: enable this once literal string support is added
-		//yield 'literal - string' => [
-		//	'query' => "SELECT 'a'",
-		//	'expected fields' => [new QueryResultField('a', new VarcharType(), false)],
-		//	'expected schema' => Expect::structure(['a' => Expect::string()]),
-		//];
+		yield 'literal - string' => [
+			'query' => "SELECT 'a'",
+			'expected fields' => [new QueryResultField('a', new VarcharType(), false)],
+			'expected schema' => Expect::structure(['a' => Expect::string()]),
+		];
+
+		yield 'literal - string concat' => [
+			'query' => "SELECT 'a' 'bb'",
+			'expected fields' => [new QueryResultField('a', new VarcharType(), false)],
+			'expected schema' => Expect::structure(['a' => Expect::string()]),
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */

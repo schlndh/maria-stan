@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
+use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\Query;
@@ -26,6 +27,7 @@ use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function array_slice;
 use function assert;
+use function chr;
 use function count;
 use function end;
 use function max;
@@ -33,6 +35,7 @@ use function min;
 use function print_r;
 use function str_replace;
 use function str_starts_with;
+use function strtr;
 use function substr;
 
 class MariaDbParserState
@@ -296,6 +299,29 @@ class MariaDbParserState
 			return new LiteralNull($startPosition, $literalNull->getEndPosition());
 		}
 
+		$literalString = $this->acceptToken(TokenTypeEnum::LITERAL_STRING);
+
+		if ($literalString) {
+			$nextLiteralString = $literalString;
+			$literalStringContent = '';
+			$firstConcatPart = null;
+
+			do {
+				$lastLiteralString = $nextLiteralString;
+				$cleanedContent = $this->cleanStringLiteral($lastLiteralString->content);
+				$firstConcatPart ??= $cleanedContent;
+				$literalStringContent .= $cleanedContent;
+				$nextLiteralString = $this->acceptToken(TokenTypeEnum::LITERAL_STRING);
+			} while ($nextLiteralString !== null);
+
+			return new LiteralString(
+				$startPosition,
+				$lastLiteralString->getEndPosition(),
+				$literalStringContent,
+				$firstConcatPart,
+			);
+		}
+
 		throw new UnexpectedTokenException(
 			($this->findCurrentToken()?->type->value ?? 'Out of tokens')
 			. ' after: ' . print_r(
@@ -380,5 +406,36 @@ class MariaDbParserState
 		$identifier = substr($identifier, 1, -1);
 
 		return str_replace('``', '`', $identifier);
+	}
+
+	private function cleanStringLiteral(string $contents): string
+	{
+		$quotes = $contents[0];
+		$contents = substr($contents, 1, -1);
+		$contents = str_replace($quotes . $quotes, $quotes, $contents);
+		static $map = null;
+
+		if ($map === null) {
+			$map = [
+				'\\0' => "\0",
+				"\\'" => "'",
+				'\\"' => '"',
+				'\\b' => chr(8),
+				'\\n' => "\n",
+				'\\r' => "\r",
+				'\\t' => "\t",
+				'\\Z' => chr(26),
+				'\\\\' => '\\',
+				'\\%' => '%',
+				'\\_' => '_',
+			];
+
+			for ($i = 0; $i < 256; $i++) {
+				$c = chr($i);
+				$map["\\{$c}"] ??= $c;
+			}
+		}
+
+		return strtr($contents, $map);
 	}
 }
