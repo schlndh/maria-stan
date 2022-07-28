@@ -23,4 +23,7 @@ enum ExprTypeEnum: string
 
 	/** @see UnaryOp */
 	case UNARY_OP = 'UNARY_OP';
+
+	/** @see BinaryOp */
+	case BINARY_OP = 'BINARY_OP';
 }

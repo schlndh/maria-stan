@@ -1,0 +1,145 @@
+Operators
+-----
+SELECT 1 + 2 * 3
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[right] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 / 2 + 3
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::DIVISION
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 3
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 * 2 / 3 % 4 MOD 5 DIV 6 + 7 * 8 / 10
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::INT_DIVISION
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MODULO
+											[left] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MODULO
+													[left] => MariaStan\Ast\Expr\BinaryOp
+														(
+															[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::DIVISION
+															[left] => MariaStan\Ast\Expr\BinaryOp
+																(
+																	[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+																	[left] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																	[right] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 2
+																		)
+																)
+															[right] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 3
+																)
+														)
+													[right] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 4
+														)
+												)
+											[right] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[right] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::DIVISION
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+											[left] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 7
+												)
+											[right] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 8
+												)
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 10
+										)
+								)
+						)
+				)
+		)
+)

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\Expr\BinaryOp;
+use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\LiteralFloat;
@@ -248,8 +250,74 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseExpression(): Expr
+	private function parseExpression(int $precedence = 0): Expr
 	{
+		// Precedence climbing - https://www.engr.mun.ca/~theo/Misc/exp_parsing.htm
+		$exp = $this->parseUnaryExpression();
+
+		while (true) {
+			$binaryOpToken = $this->acceptAnyOfTokenTypes(
+				// TODO: other tokens
+				'*',
+				'/',
+				'%',
+				TokenTypeEnum::DIV,
+				TokenTypeEnum::MOD,
+				'+',
+				'-',
+			);
+
+			if ($binaryOpToken === null) {
+				break;
+			}
+
+			$binaryOp = $this->getBinaryOpFromToken($binaryOpToken);
+			$opPrecedence = $this->getOperatorPrecedence($binaryOp);
+
+			if ($opPrecedence < $precedence) {
+				$this->position--;
+				break;
+			}
+
+			// left-associative operation => +1
+			$right = $this->parseExpression($opPrecedence + 1);
+			$exp = new BinaryOp($binaryOp, $exp, $right);
+		}
+
+		return $exp;
+	}
+
+	/** @throws ParserException */
+	private function getBinaryOpFromToken(Token $token): BinaryOpTypeEnum
+	{
+		return match ($token->type) {
+			TokenTypeEnum::SINGLE_CHAR => BinaryOpTypeEnum::from($token->content),
+			TokenTypeEnum::MOD => BinaryOpTypeEnum::MODULO,
+			TokenTypeEnum::DIV => BinaryOpTypeEnum::INT_DIVISION,
+			default => throw new UnexpectedTokenException("Expected binary op token, got: {$token->content}"),
+		};
+	}
+
+	// higher number = higher precedence
+	private function getOperatorPrecedence(BinaryOpTypeEnum|UnaryOpTypeEnum $op): int
+	{
+		// https://mariadb.com/kb/en/operator-precedence/
+		return match ($op) {
+			UnaryOpTypeEnum::LOGIC_NOT => 15,
+			UnaryOpTypeEnum::PLUS, UnaryOpTypeEnum::MINUS, UnaryOpTypeEnum::BITWISE_NOT => 14,
+			BinaryOpTypeEnum::MULTIPLICATION, BinaryOpTypeEnum::DIVISION, BinaryOpTypeEnum::INT_DIVISION,
+			BinaryOpTypeEnum::MODULO => 11,
+			BinaryOpTypeEnum::PLUS, BinaryOpTypeEnum::MINUS => 10,
+		};
+	}
+
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function parseUnaryExpression(): Expr
+	{
+		// TODO: parentheses
 		$startPosition = $this->findCurrentToken()?->position
 			?? throw new UnexpectedTokenException('Out of tokens');
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
@@ -276,9 +344,10 @@ class MariaDbParserState
 			?? $this->acceptSingleCharToken('~');
 
 		if ($unaryOpToken) {
-			$expr = $this->parseExpression();
+			$unaryOp = UnaryOpTypeEnum::from($unaryOpToken->content);
+			$expr = $this->parseExpression($this->getOperatorPrecedence($unaryOp));
 
-			return new UnaryOp($startPosition, UnaryOpTypeEnum::from($unaryOpToken->content), $expr);
+			return new UnaryOp($startPosition, $unaryOp, $expr);
 		}
 
 		$literalInt = $this->acceptToken(TokenTypeEnum::LITERAL_INT);
@@ -346,6 +415,46 @@ class MariaDbParserState
 		}
 
 		return $this->tokens[$this->position];
+	}
+
+	/** @phpstan-impure */
+	private function acceptAnyOfTokenTypes(TokenTypeEnum|string ...$types): ?Token
+	{
+		if (count($types) === 0) {
+			return null;
+		}
+
+		$token = $this->findCurrentToken();
+
+		if ($token === null) {
+			return null;
+		}
+
+		if ($token->type === TokenTypeEnum::SINGLE_CHAR) {
+			foreach ($types as $type) {
+				if ($token->content !== $type) {
+					continue;
+				}
+
+				$this->position++;
+
+				return $token;
+			}
+
+			return null;
+		}
+
+		foreach ($types as $type) {
+			if ($token->type !== $type) {
+				continue;
+			}
+
+			$this->position++;
+
+			return $token;
+		}
+
+		return null;
 	}
 
 	/** @phpstan-impure */
