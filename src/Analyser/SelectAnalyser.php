@@ -241,7 +241,7 @@ final class SelectAnalyser
 				assert($expr instanceof Expr\UnaryOp);
 				$resolvedInnerExpr = $this->resolveExprType($expr->expr);
 
-				$type = match ($expr->opType) {
+				$type = match ($expr->operation) {
 					Expr\UnaryOpTypeEnum::PLUS => $resolvedInnerExpr->type,
 					Expr\UnaryOpTypeEnum::MINUS => match ($resolvedInnerExpr->type::getTypeEnum()) {
 						Schema\DbType\DbTypeEnum::INT, Schema\DbType\DbTypeEnum::DECIMAL => $resolvedInnerExpr->type,
@@ -254,7 +254,7 @@ final class SelectAnalyser
 				return new QueryResultField(
 					// It seems that MariaDB generally omits the +.
 					// TODO: investigate it more and fix stuff like "SELECT +(SELECT 1)"
-					$expr->opType !== Expr\UnaryOpTypeEnum::PLUS
+					$expr->operation !== Expr\UnaryOpTypeEnum::PLUS
 						? $this->getNodeContent($expr)
 						: $resolvedInnerExpr->name,
 					$type,
