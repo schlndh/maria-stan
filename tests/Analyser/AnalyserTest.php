@@ -22,6 +22,7 @@ use function array_keys;
 use function array_map;
 use function count;
 use function implode;
+use function in_array;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_NOT_NULL_FLAG;
@@ -109,6 +110,7 @@ class AnalyserTest extends DatabaseTestCase
 		];
 
 		yield from $this->provideLiteralData();
+		yield from $this->provideOperatorTestData();
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
 	}
@@ -456,6 +458,73 @@ class AnalyserTest extends DatabaseTestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideOperatorTestData(): iterable
+	{
+		$operators = ['+', '-', '*', '/', '%', 'DIV'];
+
+		foreach ($operators as $op) {
+			foreach (['1', '1.0', '"a"'] as $other) {
+				$expr = "NULL {$op} {$other}";
+
+				yield "operator {$expr}" => [
+					'query' => "SELECT {$expr}",
+					'expected fields' => [new QueryResultField($expr, new NullType(), true)],
+					'expected schema' => Expect::structure([$expr => Expect::null()]),
+				];
+			}
+		}
+
+		foreach (['+', '-', '*', '/', '%', 'DIV'] as $op) {
+			$isDivisionLike = in_array($op, ['/', 'DIV', '%', 'MOD'], true);
+			$expr = "1 {$op} 2";
+			[$expectedType, $expectedSchema] = $op === '/'
+				? [new DecimalType(), Expect::string()]
+				: [new IntType(), Expect::int()];
+
+			yield "operator {$expr}" => [
+				'query' => "SELECT {$expr}",
+				'expected fields' => [new QueryResultField($expr, $expectedType, $isDivisionLike)],
+				'expected schema' => Expect::structure([$expr => $expectedSchema]),
+			];
+
+			$expr = "1 {$op} 2.0";
+			[$expectedType, $expectedSchema] = $op === 'DIV'
+				? [new IntType(), Expect::int()]
+				: [new DecimalType(), Expect::string()];
+
+			yield "operator {$expr}" => [
+				'query' => "SELECT {$expr}",
+				'expected fields' => [new QueryResultField($expr, $expectedType, $isDivisionLike)],
+				'expected schema' => Expect::structure([$expr => $expectedSchema]),
+			];
+
+			foreach (['1', '1.0'] as $other) {
+				$expr = "'a' {$op} {$other}";
+				[$expectedType, $expectedSchema] = $op === 'DIV'
+					? [new IntType(), Expect::int()]
+					: [new FloatType(), Expect::float()];
+
+				yield "operator {$expr}" => [
+					'query' => "SELECT {$expr}",
+					'expected fields' => [new QueryResultField($expr, $expectedType, $isDivisionLike)],
+					'expected schema' => Expect::structure([$expr => $expectedSchema]),
+				];
+			}
+
+			$expr = "'a' {$op} 'b'";
+			[$expectedType, $expectedSchema] = $op === 'DIV'
+				? [new IntType(), Expect::null()]
+				: [new FloatType(), Expect::anyOf(Expect::float(), Expect::null())];
+
+			yield "operator {$expr}" => [
+				'query' => "SELECT {$expr}",
+				'expected fields' => [new QueryResultField($expr, $expectedType, $isDivisionLike)],
+				'expected schema' => Expect::structure([$expr => $expectedSchema]),
+			];
+		}
+	}
+
 	/**
 	 * @param array<QueryResultField> $expectedFields
 	 * @dataProvider provideTestData
@@ -469,6 +538,7 @@ class AnalyserTest extends DatabaseTestCase
 		$expectedFieldKeys = $this->getExpectedFieldKeys($expectedFields);
 		$fields = $stmt->fetch_fields();
 		$this->assertSameSize($expectedFields, $fields);
+		$forceNullsForColumns = [];
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
@@ -477,12 +547,29 @@ class AnalyserTest extends DatabaseTestCase
 			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
 			$this->assertSame($expectedField->isNullable, $isFieldNullable);
 			$actualType = $this->mysqliTypeToDbTypeEnum($field->type);
-			$this->assertSame($expectedField->type::getTypeEnum(), $actualType);
+
+			// It seems that in some cases the type returned by the database does not propagate NULL in all cases.
+			// E.g. 1 + NULL is double for some reason. Let's allow the analyser to get away with null, but force
+			// check that the returned values are all null.
+			if ($expectedField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
+				$forceNullsForColumns[$field->name] = true;
+			} else {
+				$this->assertSame(
+					$expectedField->type::getTypeEnum(),
+					$actualType,
+					"The test says {$expectedField->name} should be {$expectedField->type::getTypeEnum()->name} "
+					. "but got {$actualType->name} from the database.",
+				);
+			}
 		}
 
 		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
 			$this->assertSame($expectedFieldKeys, array_keys($row));
 			$schemaProcessor->process($expectedSchema, $row);
+
+			foreach (array_keys($forceNullsForColumns) as $col) {
+				$this->assertNull($row[$col]);
+			}
 		}
 
 		$parser = new MariaDbParser();

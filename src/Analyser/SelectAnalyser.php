@@ -24,6 +24,7 @@ use function array_merge;
 use function array_search;
 use function assert;
 use function count;
+use function in_array;
 use function key;
 use function reset;
 use function stripos;
@@ -259,6 +260,53 @@ final class SelectAnalyser
 						: $resolvedInnerExpr->name,
 					$type,
 					$resolvedInnerExpr->isNullable,
+				);
+			case Expr\ExprTypeEnum::BINARY_OP:
+				assert($expr instanceof Expr\BinaryOp);
+				$leftResult = $this->resolveExprType($expr->left);
+				$rightResult = $this->resolveExprType($expr->right);
+				$lt = $leftResult->type::getTypeEnum();
+				$rt = $rightResult->type::getTypeEnum();
+				$typesInvolved = [
+					$lt->value => 1,
+					$rt->value => 1,
+				];
+
+				if (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
+					$type = new Schema\DbType\NullType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::MIXED->value])) {
+					$type = new Schema\DbType\MixedType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->value])) {
+					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+						? new Schema\DbType\IntType()
+						: new Schema\DbType\FloatType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
+					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+						? new Schema\DbType\IntType()
+						: new Schema\DbType\DecimalType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->value])) {
+					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+						? new Schema\DbType\IntType()
+						: new Schema\DbType\FloatType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
+					$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
+						? new Schema\DbType\DecimalType()
+						: new Schema\DbType\IntType();
+				}
+
+				$type ??= new Schema\DbType\FloatType();
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					$type,
+					$leftResult->isNullable
+						|| $rightResult->isNullable
+						// It can be division by 0 in which case MariaDB returns null.
+						|| in_array($expr->operation, [
+							Expr\BinaryOpTypeEnum::DIVISION,
+							Expr\BinaryOpTypeEnum::INT_DIVISION,
+							Expr\BinaryOpTypeEnum::MODULO,
+						], true),
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
