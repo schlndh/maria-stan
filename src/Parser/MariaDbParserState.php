@@ -444,8 +444,17 @@ class MariaDbParserState
 			return null;
 		}
 
+		/**
+		 * Because of the if above, phpstan has a giant union for $token->type, which slows down the analysis quite
+		 * significantly (2s with this comment, 50s without). Since the information is useless, let's just force
+		 * phpstan to forget it.
+		 *
+		 * @phpstan-var TokenTypeEnum $tokenType
+		 */
+		$tokenType = $token->type;
+
 		foreach ($types as $type) {
-			if ($token->type !== $type) {
+			if ($tokenType !== $type) {
 				continue;
 			}
 

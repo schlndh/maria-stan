@@ -6,7 +6,8 @@ namespace MariaStan\Parser;
 
 use function array_combine;
 use function array_map;
-use function array_shift;
+use function array_search;
+use function array_slice;
 
 enum TokenTypeEnum: string
 {
@@ -297,11 +298,10 @@ enum TokenTypeEnum: string
 		static $result = null;
 
 		if ($result === null) {
+			/** @phpstan-var array<TokenTypeEnum> $result Analysis is needlessly slow without this. */
 			$result = self::cases();
-
-			while (array_shift($result) !== self::END_OF_INPUT) {
-			}
-
+			$eoiIdx = array_search(self::END_OF_INPUT, $result, true);
+			$result = array_slice($result, $eoiIdx + 1);
 			$result = array_combine(
 				array_map(static fn (self $e) => $e->value, $result),
 				$result,
