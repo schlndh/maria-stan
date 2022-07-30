@@ -86,6 +86,9 @@ class MariaDbParserState
 	 */
 	private function parseSelectQuery(): SelectQuery
 	{
+		// TODO: https://mariadb.com/kb/en/common-table-expressions/
+		// TODO: FOR UPDATE / LOCK IN SHARE MODE
+		// TODO: INTO OUTFILE/DUMPFILE/variable
 		$startToken = $this->getPreviousTokenUnsafe();
 		$selectExpressions = $this->parseSelectExpressionsList();
 		$from = $this->parseFrom();

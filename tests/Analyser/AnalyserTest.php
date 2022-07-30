@@ -531,6 +531,8 @@ class AnalyserTest extends DatabaseTestCase
 	 */
 	public function test(string $query, array $expectedFields, Schema $expectedSchema): void
 	{
+		// TODO: Maybe I could get completely rid of $expectedFields and $expectedSchema and I could just check
+		// that the output of the analyzer matches the DB output.
 		$db = $this->getDefaultSharedConnection();
 
 		$schemaProcessor = new Processor();
