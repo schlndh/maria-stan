@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Ast\Query;
 
 use MariaStan\Ast\BaseNode;
+use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Position;
@@ -17,6 +18,7 @@ final class SelectQuery extends BaseNode implements Query
 		Position $endPosition,
 		public readonly array $select,
 		public readonly ?TableReference $from,
+		public readonly ?Expr $where,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

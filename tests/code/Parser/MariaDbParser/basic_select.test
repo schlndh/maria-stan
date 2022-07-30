@@ -78,3 +78,55 @@ MariaStan\Ast\Query\SelectQuery
 			[name] => tbl
 		)
 )
+-----
+SELECT 1 WHERE 1 + 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+			[left] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT 1 FROM tbl WHERE 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+	[where] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 1
+		)
+)

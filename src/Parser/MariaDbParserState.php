@@ -86,8 +86,11 @@ class MariaDbParserState
 		$startToken = $this->getPreviousTokenUnsafe();
 		$selectExpressions = $this->parseSelectExpressionsList();
 		$from = $this->parseFrom();
+		$where = $this->parseWhere();
 
-		if ($from !== null) {
+		if ($where !== null) {
+			$endPosition = $where->getEndPosition();
+		} elseif ($from !== null) {
 			$endPosition = $from->getEndPosition();
 		} else {
 			$lastSelect = end($selectExpressions);
@@ -95,7 +98,7 @@ class MariaDbParserState
 			$endPosition = $lastSelect->getEndPosition();
 		}
 
-		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from);
+		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from, $where);
 	}
 
 	/**
@@ -176,6 +179,16 @@ class MariaDbParserState
 			$this->cleanIdentifier($table->content),
 			$alias,
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseWhere(): ?Expr
+	{
+		if (! $this->acceptToken(TokenTypeEnum::WHERE)) {
+			return null;
+		}
+
+		return $this->parseExpression();
 	}
 
 	/**
