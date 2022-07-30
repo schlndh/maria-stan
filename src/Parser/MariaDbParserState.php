@@ -8,6 +8,7 @@ use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
+use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
@@ -248,6 +249,27 @@ class MariaDbParserState
 	}
 
 	/**
+	 * @return array<Expr>
+	 * @throws ParserException
+	 */
+	private function parseExpressionListEndedByClosingParenthesis(): array
+	{
+		if ($this->acceptToken(')')) {
+			return [];
+		}
+
+		$result = [];
+
+		do {
+			$result[] = $this->parseExpression();
+		} while ($this->acceptToken(','));
+
+		$this->expectToken(')');
+
+		return $result;
+	}
+
+	/**
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
@@ -355,6 +377,17 @@ class MariaDbParserState
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident) {
+			if ($this->acceptToken('(')) {
+				$arguments = $this->parseExpressionListEndedByClosingParenthesis();
+
+				return new FunctionCall(
+					$startPosition,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$ident->content,
+					$arguments,
+				);
+			}
+
 			if (! $this->acceptToken('.')) {
 				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}

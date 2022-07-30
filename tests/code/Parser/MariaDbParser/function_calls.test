@@ -1,0 +1,76 @@
+Function calls
+-----
+SELECT ABS(-1)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => ABS
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\UnaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT COALESCE(NULL, NULL, 5)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => COALESCE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralNull
+										(
+										)
+									[1] => MariaStan\Ast\Expr\LiteralNull
+										(
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT nOw()
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => nOw
+							[arguments] => Array
+								(
+								)
+						)
+				)
+		)
+)

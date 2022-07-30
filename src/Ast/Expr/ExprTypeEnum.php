@@ -26,4 +26,7 @@ enum ExprTypeEnum: string
 
 	/** @see BinaryOp */
 	case BINARY_OP = 'BINARY_OP';
+
+	/** @see FunctionCall */
+	case FUNCTION_CALL = 'FUNCTION_CALL';
 }
