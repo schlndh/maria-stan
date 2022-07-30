@@ -35,6 +35,7 @@ enum TokenTypeEnum: string
 	// Everything after the END_OF_INPUT case needs to be a keyword.
 	case END_OF_INPUT = 'END_OF_INPUT';
 
+	// https://mariadb.com/kb/en/reserved-words/
 	case ACCESSIBLE = 'ACCESSIBLE';
 	case ACTION = 'ACTION';
 	case ADD = 'ADD';
@@ -227,6 +228,7 @@ enum TokenTypeEnum: string
 	case REVOKE = 'REVOKE';
 	case RIGHT = 'RIGHT';
 	case RLIKE = 'RLIKE';
+	case ROLLUP = 'ROLLUP';
 	case ROWS = 'ROWS';
 	case SCHEMA = 'SCHEMA';
 	case SCHEMAS = 'SCHEMAS';
