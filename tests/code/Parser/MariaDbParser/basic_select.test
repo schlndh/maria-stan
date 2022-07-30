@@ -251,3 +251,70 @@ MariaStan\Ast\Query\SelectQuery
 			[isWithRollup] => true
 		)
 )
+-----
+SELECT 1 HAVING 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[having] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 1
+		)
+)
+-----
+SELECT id FROM tbl GROUP BY tag HAVING val > 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\GroupByExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => tag
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+			[isWithRollup] => false
+		)
+	[having] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => val
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)

@@ -21,6 +21,7 @@ final class SelectQuery extends BaseNode implements Query
 		public readonly ?TableReference $from,
 		public readonly ?Expr $where,
 		public readonly ?GroupBy $groupBy,
+		public readonly ?Expr $having,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

@@ -32,10 +32,8 @@ use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function array_slice;
-use function assert;
 use function chr;
 use function count;
-use function end;
 use function is_string;
 use function max;
 use function min;
@@ -91,20 +89,18 @@ class MariaDbParserState
 		$from = $this->parseFrom();
 		$where = $this->parseWhere();
 		$groupBy = $this->parseGroupBy();
+		$having = $this->parseHaving();
+		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
 
-		if ($groupBy !== null) {
-			$endPosition = $groupBy->getEndPosition();
-		} elseif ($where !== null) {
-			$endPosition = $where->getEndPosition();
-		} elseif ($from !== null) {
-			$endPosition = $from->getEndPosition();
-		} else {
-			$lastSelect = end($selectExpressions);
-			assert($lastSelect instanceof SelectExpr);
-			$endPosition = $lastSelect->getEndPosition();
-		}
-
-		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from, $where, $groupBy);
+		return new SelectQuery(
+			$startToken->position,
+			$endPosition,
+			$selectExpressions,
+			$from,
+			$where,
+			$groupBy,
+			$having,
+		);
 	}
 
 	/**
@@ -191,6 +187,16 @@ class MariaDbParserState
 	private function parseWhere(): ?Expr
 	{
 		if (! $this->acceptToken(TokenTypeEnum::WHERE)) {
+			return null;
+		}
+
+		return $this->parseExpression();
+	}
+
+	/** @throws ParserException */
+	private function parseHaving(): ?Expr
+	{
+		if (! $this->acceptToken(TokenTypeEnum::HAVING)) {
 			return null;
 		}
 
