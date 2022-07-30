@@ -398,3 +398,112 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT 1 LIMIT 5 + 5
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+					[left] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+				)
+		)
+)
+-----
+SELECT 1 LIMIT 5 + 5, 10
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 10
+				)
+			[offset] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+					[left] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+				)
+		)
+)
+-----
+SELECT 1 LIMIT 5 + 5 OFFSET 1 + 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+					[left] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+				)
+			[offset] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+					[left] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+)

@@ -7,6 +7,7 @@ namespace MariaStan\Ast\Query;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\GroupBy;
+use MariaStan\Ast\Limit;
 use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -24,6 +25,7 @@ final class SelectQuery extends BaseNode implements Query
 		public readonly ?GroupBy $groupBy = null,
 		public readonly ?Expr $having = null,
 		public readonly ?OrderBy $orderBy = null,
+		public readonly ?Limit $limit = null,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

@@ -18,6 +18,7 @@ use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\ExprWithDirection;
 use MariaStan\Ast\GroupBy;
+use MariaStan\Ast\Limit;
 use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
@@ -92,6 +93,7 @@ class MariaDbParserState
 		$groupBy = $this->parseGroupBy();
 		$having = $this->parseHaving();
 		$orderBy = $this->parseOrderBy();
+		$limit = $this->parseLimit();
 		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
 
 		return new SelectQuery(
@@ -103,6 +105,7 @@ class MariaDbParserState
 			$groupBy,
 			$having,
 			$orderBy,
+			$limit,
 		);
 	}
 
@@ -568,6 +571,33 @@ class MariaDbParserState
 		$this->acceptToken(TokenTypeEnum::ASC);
 
 		return DirectionEnum::ASC;
+	}
+
+	/** @throws ParserException */
+	private function parseLimit(): ?Limit
+	{
+		if (! $this->acceptToken(TokenTypeEnum::LIMIT)) {
+			return null;
+		}
+
+		// TODO: implement SELECT ... OFFSET ... FETCH https://mariadb.com/kb/en/select-offset-fetch/
+		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$count = $this->parseExpression();
+		$offset = null;
+
+		if ($this->acceptToken(',')) {
+			$offset = $count;
+			$count = $this->parseExpression();
+		} elseif ($this->acceptToken(TokenTypeEnum::OFFSET)) {
+			$offset = $this->parseExpression();
+		}
+
+		return new Limit(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->position,
+			$count,
+			$offset,
+		);
 	}
 
 	/** @phpstan-impure */
