@@ -85,7 +85,7 @@ class MariaDbParserTest extends CodeTestCase
 				$result[$property->name] = $val;
 			}
 
-			return array_filter($result);
+			return array_filter($result, static fn (mixed $value) => $value !== null);
 		}
 
 		if (is_array($data)) {

@@ -23,6 +23,8 @@ enum TokenTypeEnum: string
 	case OP_COLON_ASSIGN = ':=';
 	case OP_SHIFT_LEFT = '<<';
 	case OP_SHIFT_RIGHT = '>>';
+
+	// also covers <>
 	case OP_NE = '!=';
 	case OP_LTE = '<=';
 	case OP_GTE = '>=';

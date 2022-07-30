@@ -10,4 +10,5 @@ enum UnaryOpTypeEnum: string
 	case MINUS = '-';
 	case LOGIC_NOT = '!';
 	case BITWISE_NOT = '~';
+	// TODO: BINARY, INTERVAL
 }

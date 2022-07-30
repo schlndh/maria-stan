@@ -294,6 +294,7 @@ final class SelectAnalyser
 						: new Schema\DbType\IntType();
 				}
 
+				// TODO: Analyze the rest of the operators
 				$type ??= new Schema\DbType\FloatType();
 
 				return new QueryResultField(

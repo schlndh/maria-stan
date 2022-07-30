@@ -14,6 +14,7 @@ use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\DatabaseTestCase;
+use RuntimeException;
 
 use function assert;
 
@@ -27,6 +28,11 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 			'!1 + 2',
 			'+2 * -3',
 			'10 DIV 2 + 1 MOD -2 * -1',
+			'0 AND 1 OR 1',
+			'0 XOR 0 OR 1',
+			'0 & 1 | 1 ^ 0',
+			'NOT 1 - 1',
+			'!1 - 1',
 		];
 
 		foreach ($expressions as $expr) {
@@ -75,6 +81,15 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					BinaryOpTypeEnum::INT_DIVISION => (int) ($left / $right),
 					BinaryOpTypeEnum::MULTIPLICATION => $left * $right,
 					BinaryOpTypeEnum::MODULO => $left % $right,
+					BinaryOpTypeEnum::LOGIC_AND => $left && $right ? 1 : 0,
+					BinaryOpTypeEnum::LOGIC_OR => $left || $right ? 1 : 0,
+					BinaryOpTypeEnum::LOGIC_XOR => $left xor $right ? 1 : 0,
+					BinaryOpTypeEnum::BITWISE_OR => ((int) $left) | ((int) $right),
+					BinaryOpTypeEnum::BITWISE_AND => ((int) $left) & ((int) $right),
+					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
+					BinaryOpTypeEnum::SHIFT_LEFT => ((int) $left) << ((int) $right),
+					BinaryOpTypeEnum::SHIFT_RIGHT => ((int) $left) >> ((int) $right),
+					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};
 			case ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof UnaryOp);
@@ -84,7 +99,8 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					UnaryOpTypeEnum::PLUS => $inner,
 					UnaryOpTypeEnum::MINUS => (-1) * $inner,
 					UnaryOpTypeEnum::LOGIC_NOT => $inner ? 0 : 1,
-					UnaryOpTypeEnum::BITWISE_NOT => throw new \RuntimeException('~ is not implemented yet.'),
+					UnaryOpTypeEnum::BITWISE_NOT => ~ ((int) $inner),
+					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};
 			case ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof LiteralInt);

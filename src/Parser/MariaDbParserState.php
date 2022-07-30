@@ -256,22 +256,19 @@ class MariaDbParserState
 		$exp = $this->parseUnaryExpression();
 
 		while (true) {
-			$binaryOpToken = $this->acceptAnyOfTokenTypes(
-				// TODO: other tokens
-				'*',
-				'/',
-				'%',
-				TokenTypeEnum::DIV,
-				TokenTypeEnum::MOD,
-				'+',
-				'-',
-			);
+			$binaryOpToken = $this->findCurrentToken();
 
 			if ($binaryOpToken === null) {
 				break;
 			}
 
-			$binaryOp = $this->getBinaryOpFromToken($binaryOpToken);
+			$binaryOp = $this->findBinaryOpFromToken($binaryOpToken);
+
+			if ($binaryOp === null) {
+				break;
+			}
+
+			$this->position++;
 			$opPrecedence = $this->getOperatorPrecedence($binaryOp);
 
 			if ($opPrecedence < $precedence) {
@@ -287,14 +284,32 @@ class MariaDbParserState
 		return $exp;
 	}
 
-	/** @throws ParserException */
-	private function getBinaryOpFromToken(Token $token): BinaryOpTypeEnum
+	private function findBinaryOpFromToken(Token $token): ?BinaryOpTypeEnum
 	{
 		return match ($token->type) {
-			TokenTypeEnum::SINGLE_CHAR => BinaryOpTypeEnum::from($token->content),
+			TokenTypeEnum::SINGLE_CHAR => BinaryOpTypeEnum::tryFrom($token->content),
 			TokenTypeEnum::MOD => BinaryOpTypeEnum::MODULO,
 			TokenTypeEnum::DIV => BinaryOpTypeEnum::INT_DIVISION,
-			default => throw new UnexpectedTokenException("Expected binary op token, got: {$token->content}"),
+			TokenTypeEnum::OP_LOGIC_OR, TokenTypeEnum::OR => BinaryOpTypeEnum::LOGIC_OR,
+			TokenTypeEnum::XOR => BinaryOpTypeEnum::LOGIC_XOR,
+			TokenTypeEnum::OP_LOGIC_AND, TokenTypeEnum::AND => BinaryOpTypeEnum::LOGIC_AND,
+			TokenTypeEnum::OP_NULL_SAFE => BinaryOpTypeEnum::NULL_SAFE_EQUAL,
+			TokenTypeEnum::OP_GTE => BinaryOpTypeEnum::GREATER_OR_EQUAL,
+			TokenTypeEnum::OP_LTE => BinaryOpTypeEnum::LOWER_OR_EQUAL,
+			TokenTypeEnum::OP_NE => BinaryOpTypeEnum::NOT_EQUAL,
+			TokenTypeEnum::OP_SHIFT_LEFT => BinaryOpTypeEnum::SHIFT_LEFT,
+			TokenTypeEnum::OP_SHIFT_RIGHT => BinaryOpTypeEnum::SHIFT_RIGHT,
+			default => null,
+		};
+	}
+
+	/** @throws ParserException */
+	private function getUnaryOpFromToken(Token $token): UnaryOpTypeEnum
+	{
+		return match ($token->type) {
+			TokenTypeEnum::SINGLE_CHAR => UnaryOpTypeEnum::from($token->content),
+			TokenTypeEnum::NOT => UnaryOpTypeEnum::LOGIC_NOT,
+			default => throw new UnexpectedTokenException("Expected unary op token, got: {$token->content}"),
 		};
 	}
 
@@ -303,11 +318,27 @@ class MariaDbParserState
 	{
 		// https://mariadb.com/kb/en/operator-precedence/
 		return match ($op) {
+			// INTERVAL => 17
+			// BINARY, COLLATE => 16
 			UnaryOpTypeEnum::LOGIC_NOT => 15,
 			UnaryOpTypeEnum::PLUS, UnaryOpTypeEnum::MINUS, UnaryOpTypeEnum::BITWISE_NOT => 14,
+			// || as string concat => 13
+			BinaryOpTypeEnum::BITWISE_XOR => 12,
 			BinaryOpTypeEnum::MULTIPLICATION, BinaryOpTypeEnum::DIVISION, BinaryOpTypeEnum::INT_DIVISION,
-			BinaryOpTypeEnum::MODULO => 11,
+				BinaryOpTypeEnum::MODULO => 11,
 			BinaryOpTypeEnum::PLUS, BinaryOpTypeEnum::MINUS => 10,
+			BinaryOpTypeEnum::SHIFT_LEFT, BinaryOpTypeEnum::SHIFT_RIGHT => 9,
+			BinaryOpTypeEnum::BITWISE_AND => 8,
+			BinaryOpTypeEnum::BITWISE_OR => 7,
+			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
+				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
+				BinaryOpTypeEnum::NOT_EQUAL => 6,
+			// BETWEEN, CASE, WHEN, THEN, ELSE, END => 5
+			// NOT => 4,
+			BinaryOpTypeEnum::LOGIC_AND => 3,
+			BinaryOpTypeEnum::LOGIC_XOR => 2,
+			BinaryOpTypeEnum::LOGIC_OR => 1,
+			// assignment => 0
 		};
 	}
 
@@ -338,14 +369,15 @@ class MariaDbParserState
 			);
 		}
 
-		$unaryOpToken = $this->acceptSingleCharToken('+')
-			?? $this->acceptSingleCharToken('-')
-			?? $this->acceptSingleCharToken('!')
-			?? $this->acceptSingleCharToken('~');
+		$unaryOpToken = $this->acceptAnyOfTokenTypes('+', '-', '!', '~', TokenTypeEnum::NOT);
 
 		if ($unaryOpToken) {
-			$unaryOp = UnaryOpTypeEnum::from($unaryOpToken->content);
-			$expr = $this->parseExpression($this->getOperatorPrecedence($unaryOp));
+			$unaryOp = $this->getUnaryOpFromToken($unaryOpToken);
+			// NOT has a lower precedence than !
+			$precedence = $unaryOpToken->type === TokenTypeEnum::NOT
+				? 4
+				: $this->getOperatorPrecedence($unaryOp);
+			$expr = $this->parseExpression($precedence);
 
 			return new UnaryOp($startPosition, $unaryOp, $expr);
 		}
