@@ -89,3 +89,11 @@ SINGLE_CHAR: [)]
 SINGLE_CHAR: [>]
 INT_LITERAL: [0]
 END_OF_INPUT: []
+-----
+SELECT 1 <=> 2
+-----
+SELECT: [SELECT]
+INT_LITERAL: [1]
+<=>: [<=>]
+INT_LITERAL: [2]
+END_OF_INPUT: []

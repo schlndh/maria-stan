@@ -59,9 +59,9 @@ class MariaDbLexer
 			(?<op_shift_left> << )|
 			(?<op_shift_right> >> )|
 			(?<op_ne> ( != | <> ) )|
+			(?<op_null_safe> <=> )|
 			(?<op_lte> <= )|
 			(?<op_gte> >= )|
-			(?<op_null_safe> <=> )|
 			(?<op_logic_and> && )|
 			(?<op_logic_or> \|\| )|
 			(?<char>  [;,.|^&+/*=%!\~$<>?@()-]  )|
