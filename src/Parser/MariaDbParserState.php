@@ -16,8 +16,9 @@ use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
+use MariaStan\Ast\ExprWithDirection;
 use MariaStan\Ast\GroupBy;
-use MariaStan\Ast\GroupByExpr;
+use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
@@ -90,6 +91,7 @@ class MariaDbParserState
 		$where = $this->parseWhere();
 		$groupBy = $this->parseGroupBy();
 		$having = $this->parseHaving();
+		$orderBy = $this->parseOrderBy();
 		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
 
 		return new SelectQuery(
@@ -100,6 +102,7 @@ class MariaDbParserState
 			$where,
 			$groupBy,
 			$having,
+			$orderBy,
 		);
 	}
 
@@ -500,19 +503,7 @@ class MariaDbParserState
 
 		$startPosition = $this->getPreviousTokenUnsafe()->position;
 		$this->expectToken(TokenTypeEnum::BY);
-		$expressions = [];
-
-		do {
-			$expr = $this->parseExpression();
-			$direction = $this->parseDirectionOrDefaultAsc();
-			$expressions[] = new GroupByExpr(
-				$expr->getStartPosition(),
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
-				$expr,
-				$direction,
-			);
-		} while ($this->acceptToken(','));
-
+		$expressions = $this->parseListOfExprWithDirection();
 		$isWithRollup = false;
 
 		if ($this->acceptToken(TokenTypeEnum::WITH)) {
@@ -526,6 +517,46 @@ class MariaDbParserState
 			$expressions,
 			$isWithRollup,
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseOrderBy(): ?OrderBy
+	{
+		if (! $this->acceptToken(TokenTypeEnum::ORDER)) {
+			return null;
+		}
+
+		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$this->expectToken(TokenTypeEnum::BY);
+		$expressions = $this->parseListOfExprWithDirection();
+
+		return new OrderBy(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$expressions,
+		);
+	}
+
+	/**
+	 * @return non-empty-array<ExprWithDirection>
+	 * @throws ParserException
+	 */
+	private function parseListOfExprWithDirection(): array
+	{
+		$expressions = [];
+
+		do {
+			$expr = $this->parseExpression();
+			$direction = $this->parseDirectionOrDefaultAsc();
+			$expressions[] = new ExprWithDirection(
+				$expr->getStartPosition(),
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$expr,
+				$direction,
+			);
+		} while ($this->acceptToken(','));
+
+		return $expressions;
 	}
 
 	private function parseDirectionOrDefaultAsc(): DirectionEnum

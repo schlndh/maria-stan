@@ -6,15 +6,11 @@ namespace MariaStan\Ast;
 
 use MariaStan\Parser\Position;
 
-final class GroupBy extends BaseNode
+final class OrderBy extends BaseNode
 {
 	/** @param non-empty-array<ExprWithDirection> $expressions */
-	public function __construct(
-		Position $startPosition,
-		Position $endPosition,
-		public readonly array $expressions,
-		public readonly bool $isWithRollup = false,
-	) {
+	public function __construct(Position $startPosition, Position $endPosition, public readonly array $expressions)
+	{
 		parent::__construct($startPosition, $endPosition);
 	}
 }

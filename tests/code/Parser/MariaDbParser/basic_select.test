@@ -149,7 +149,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[expressions] => Array
 				(
-					[0] => MariaStan\Ast\GroupByExpr
+					[0] => MariaStan\Ast\ExprWithDirection
 						(
 							[expr] => MariaStan\Ast\Expr\BinaryOp
 								(
@@ -192,7 +192,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[expressions] => Array
 				(
-					[0] => MariaStan\Ast\GroupByExpr
+					[0] => MariaStan\Ast\ExprWithDirection
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
@@ -239,7 +239,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[expressions] => Array
 				(
-					[0] => MariaStan\Ast\GroupByExpr
+					[0] => MariaStan\Ast\ExprWithDirection
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
@@ -294,7 +294,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[expressions] => Array
 				(
-					[0] => MariaStan\Ast\GroupByExpr
+					[0] => MariaStan\Ast\ExprWithDirection
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
@@ -315,6 +315,86 @@ MariaStan\Ast\Query\SelectQuery
 			[right] => MariaStan\Ast\Expr\LiteralInt
 				(
 					[value] => 1
+				)
+		)
+)
+-----
+SELECT 1 ORDER BY 1 + 1 DESC
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::DESC
+						)
+				)
+		)
+)
+-----
+SELECT id FROM tbl ORDER BY x ASC, y DESC
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => x
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+					[1] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => y
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::DESC
+						)
 				)
 		)
 )

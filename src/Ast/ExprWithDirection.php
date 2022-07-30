@@ -7,7 +7,7 @@ namespace MariaStan\Ast;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Parser\Position;
 
-final class GroupByExpr extends BaseNode
+final class ExprWithDirection extends BaseNode
 {
 	public function __construct(
 		Position $startPosition,
