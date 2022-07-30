@@ -32,6 +32,7 @@ use function assert;
 use function chr;
 use function count;
 use function end;
+use function is_string;
 use function max;
 use function min;
 use function print_r;
@@ -67,7 +68,7 @@ class MariaDbParserState
 			throw new UnsupportedQueryException();
 		}
 
-		while ($this->acceptSingleCharToken(';')) {
+		while ($this->acceptToken(';')) {
 		}
 
 		$this->expectToken(TokenTypeEnum::END_OF_INPUT);
@@ -114,7 +115,7 @@ class MariaDbParserState
 			$isUnclearJoin = false;
 
 			// TODO: NATURAL and STRAIGHT_JOIN
-			if ($this->acceptSingleCharToken(',')) {
+			if ($this->acceptToken(',')) {
 				$joinType = JoinTypeEnum::CROSS_JOIN;
 			} elseif ($this->acceptToken(TokenTypeEnum::CROSS)) {
 				$this->expectToken(TokenTypeEnum::JOIN);
@@ -185,7 +186,7 @@ class MariaDbParserState
 	{
 		$result = [$this->parseSelectExpression()];
 
-		while ($this->acceptSingleCharToken(',')) {
+		while ($this->acceptToken(',')) {
 			$result[] = $this->parseSelectExpression();
 		}
 
@@ -200,7 +201,7 @@ class MariaDbParserState
 	{
 		$startExpressionToken = $this->findCurrentToken();
 
-		if ($this->acceptSingleCharToken('*')) {
+		if ($this->acceptToken('*')) {
 			return new AllColumns($startExpressionToken->position, $startExpressionToken->getEndPosition());
 		}
 
@@ -208,7 +209,7 @@ class MariaDbParserState
 		// TODO: in some keywords can be used as an identifier
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
-		if ($ident && $this->acceptSingleCharToken('.') && $this->acceptSingleCharToken('*')) {
+		if ($ident && $this->acceptToken('.') && $this->acceptToken('*')) {
 			$prevToken = $this->getPreviousTokenUnsafe();
 
 			return new AllColumns(
@@ -354,7 +355,7 @@ class MariaDbParserState
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident) {
-			if (! $this->acceptSingleCharToken('.')) {
+			if (! $this->acceptToken('.')) {
 				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}
 
@@ -499,25 +500,15 @@ class MariaDbParserState
 	}
 
 	/** @phpstan-impure */
-	private function acceptSingleCharToken(string $char): ?Token
+	private function acceptToken(TokenTypeEnum|string $type): ?Token
 	{
 		$token = $this->findCurrentToken();
 
-		if ($token === null || $token->type !== TokenTypeEnum::SINGLE_CHAR || $token->content !== $char) {
-			return null;
-		}
-
-		$this->position++;
-
-		return $token;
-	}
-
-	/** @phpstan-impure */
-	private function acceptToken(TokenTypeEnum $type): ?Token
-	{
-		$token = $this->findCurrentToken();
-
-		if ($token?->type !== $type) {
+		if (is_string($type)) {
+			if ($token?->type !== TokenTypeEnum::SINGLE_CHAR || $token->content !== $type) {
+				return null;
+			}
+		} elseif ($token?->type !== $type) {
 			return null;
 		}
 
@@ -530,7 +521,7 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws UnexpectedTokenException
 	 */
-	private function expectToken(TokenTypeEnum $type): Token
+	private function expectToken(TokenTypeEnum|string $type): Token
 	{
 		$token = $this->findCurrentToken();
 
@@ -538,7 +529,11 @@ class MariaDbParserState
 			throw new UnexpectedTokenException("Expected {$type->value}, but reached end of token list.");
 		}
 
-		if ($token->type !== $type) {
+		if (is_string($type)) {
+			if ($token->type !== TokenTypeEnum::SINGLE_CHAR || $token->content !== $type) {
+				throw new UnexpectedTokenException("Expected {$type}, but found {$token->type->value}.");
+			}
+		} elseif ($token->type !== $type) {
 			throw new UnexpectedTokenException("Expected {$type->value}, but found {$token->type->value}.");
 		}
 
