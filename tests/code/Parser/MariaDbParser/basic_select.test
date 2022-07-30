@@ -130,3 +130,124 @@ MariaStan\Ast\Query\SelectQuery
 			[value] => 1
 		)
 )
+-----
+SELECT 1 GROUP BY 1 + 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\GroupByExpr
+						(
+							[expr] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+			[isWithRollup] => false
+		)
+)
+-----
+SELECT id FROM tbl GROUP BY tag DESC
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\GroupByExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => tag
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::DESC
+						)
+				)
+			[isWithRollup] => false
+		)
+)
+-----
+SELECT id FROM tbl WHERE val > 5 GROUP BY tag WITH ROLLUP
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => val
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 5
+				)
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\GroupByExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => tag
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+			[isWithRollup] => true
+		)
+)

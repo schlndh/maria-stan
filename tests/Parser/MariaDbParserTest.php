@@ -13,6 +13,7 @@ use UnitEnum;
 use function array_filter;
 use function array_map;
 use function is_array;
+use function is_bool;
 use function MariaStan\canonicalize;
 use function print_r;
 use function str_replace;
@@ -115,6 +116,10 @@ class MariaDbParserTest extends CodeTestCase
 			}
 
 			return $result . ')';
+		} elseif (is_bool($data)) {
+			$result = $data
+				? 'true'
+				: 'false';
 		} elseif ($data instanceof UnitEnum) {
 			$result = $data::class . '::' . $data->name;
 		} else {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\DirectionEnum;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
@@ -15,6 +16,8 @@ use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
+use MariaStan\Ast\GroupBy;
+use MariaStan\Ast\GroupByExpr;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
@@ -87,8 +90,11 @@ class MariaDbParserState
 		$selectExpressions = $this->parseSelectExpressionsList();
 		$from = $this->parseFrom();
 		$where = $this->parseWhere();
+		$groupBy = $this->parseGroupBy();
 
-		if ($where !== null) {
+		if ($groupBy !== null) {
+			$endPosition = $groupBy->getEndPosition();
+		} elseif ($where !== null) {
 			$endPosition = $where->getEndPosition();
 		} elseif ($from !== null) {
 			$endPosition = $from->getEndPosition();
@@ -98,7 +104,7 @@ class MariaDbParserState
 			$endPosition = $lastSelect->getEndPosition();
 		}
 
-		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from, $where);
+		return new SelectQuery($startToken->position, $endPosition, $selectExpressions, $from, $where, $groupBy);
 	}
 
 	/**
@@ -477,6 +483,54 @@ class MariaDbParserState
 				true,
 			),
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseGroupBy(): ?GroupBy
+	{
+		if (! $this->acceptToken(TokenTypeEnum::GROUP)) {
+			return null;
+		}
+
+		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$this->expectToken(TokenTypeEnum::BY);
+		$expressions = [];
+
+		do {
+			$expr = $this->parseExpression();
+			$direction = $this->parseDirectionOrDefaultAsc();
+			$expressions[] = new GroupByExpr(
+				$expr->getStartPosition(),
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$expr,
+				$direction,
+			);
+		} while ($this->acceptToken(','));
+
+		$isWithRollup = false;
+
+		if ($this->acceptToken(TokenTypeEnum::WITH)) {
+			$this->expectToken(TokenTypeEnum::ROLLUP);
+			$isWithRollup = true;
+		}
+
+		return new GroupBy(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$expressions,
+			$isWithRollup,
+		);
+	}
+
+	private function parseDirectionOrDefaultAsc(): DirectionEnum
+	{
+		if ($this->acceptToken(TokenTypeEnum::DESC)) {
+			return DirectionEnum::DESC;
+		}
+
+		$this->acceptToken(TokenTypeEnum::ASC);
+
+		return DirectionEnum::ASC;
 	}
 
 	/** @phpstan-impure */

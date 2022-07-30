@@ -6,6 +6,7 @@ namespace MariaStan\Ast\Query;
 
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Expr\Expr;
+use MariaStan\Ast\GroupBy;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Position;
@@ -19,6 +20,7 @@ final class SelectQuery extends BaseNode implements Query
 		public readonly array $select,
 		public readonly ?TableReference $from,
 		public readonly ?Expr $where,
+		public readonly ?GroupBy $groupBy,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}
