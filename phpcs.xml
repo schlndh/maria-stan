@@ -164,4 +164,10 @@
 	<rule ref="SlevomatCodingStandard.PHP.DisallowReference.DisallowedInheritingVariableByReference">
 		<exclude-pattern>tests/</exclude-pattern>
 	</rule>
+
+	<rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
+		<properties>
+			<property name="ignoreTrailingIfWithOneInstruction" value="true" />
+		</properties>
+	</rule>
 </ruleset>

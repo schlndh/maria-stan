@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\LiteralInt;
+use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQuery;
@@ -16,7 +17,9 @@ use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\DatabaseTestCase;
 use RuntimeException;
 
+use function array_map;
 use function assert;
+use function is_array;
 
 class MariaDbParserOperatorTest extends DatabaseTestCase
 {
@@ -33,6 +36,10 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 			'0 & 1 | 1 ^ 0',
 			'NOT 1 - 1',
 			'!1 - 1',
+			'1 * 2 IN (0, 2)',
+			'1 * 2 NOT IN (0, 2)',
+			'!1 IN (0, 2)',
+			'1 IN (1)',
 		];
 
 		foreach ($expressions as $expr) {
@@ -89,6 +96,14 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
 					BinaryOpTypeEnum::SHIFT_LEFT => ((int) $left) << ((int) $right),
 					BinaryOpTypeEnum::SHIFT_RIGHT => ((int) $left) >> ((int) $right),
+					// phpcs:ignore
+					BinaryOpTypeEnum::IN => in_array(
+						$left,
+						is_array($right)
+							? $right
+							: [$right],
+						false,
+					) ? 1 : 0,
 					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};
 			case ExprTypeEnum::UNARY_OP:
@@ -106,6 +121,10 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 				assert($expr instanceof LiteralInt);
 
 				return $expr->value;
+			case ExprTypeEnum::TUPLE:
+				assert($expr instanceof Tuple);
+
+				return array_map($this->getValueFromAstExpression(...), $expr->expressions);
 			default:
 				$this->fail("Unexpected expression type {$expr::getExprType()->value}");
 		}

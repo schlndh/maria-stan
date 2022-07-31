@@ -38,6 +38,7 @@ use MariaStan\Parser\Exception\UnsupportedQueryException;
 use function array_slice;
 use function chr;
 use function count;
+use function in_array;
 use function is_string;
 use function max;
 use function min;
@@ -316,29 +317,47 @@ class MariaDbParserState
 		$exp = $this->parseUnaryExpression();
 
 		while (true) {
+			$positionBak = $this->position;
 			$binaryOpToken = $this->findCurrentToken();
+			$isNot = $binaryOpToken?->type === TokenTypeEnum::NOT;
+
+			if ($isNot) {
+				$this->position++;
+				$binaryOpToken = $this->findCurrentToken();
+			}
 
 			if ($binaryOpToken === null) {
+				$this->position = $positionBak;
 				break;
 			}
 
 			$binaryOp = $this->findBinaryOpFromToken($binaryOpToken);
 
 			if ($binaryOp === null) {
+				$this->position = $positionBak;
 				break;
+			}
+
+			// TODO: add missing operators: IS, LIKE, REGEXP, RLIKE, BETWEEN
+			if ($isNot && ! in_array($binaryOp, [BinaryOpTypeEnum::IN], true)) {
+				throw new UnexpectedTokenException("Operator {$binaryOp->value} cannot be used with NOT.");
 			}
 
 			$this->position++;
 			$opPrecedence = $this->getOperatorPrecedence($binaryOp);
 
 			if ($opPrecedence < $precedence) {
-				$this->position--;
+				$this->position = $positionBak;
 				break;
 			}
 
 			// left-associative operation => +1
 			$right = $this->parseExpression($opPrecedence + 1);
 			$exp = new BinaryOp($binaryOp, $exp, $right);
+
+			if ($isNot) {
+				$exp = new UnaryOp($exp->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $exp);
+			}
 		}
 
 		return $exp;
@@ -359,6 +378,7 @@ class MariaDbParserState
 			TokenTypeEnum::OP_NE => BinaryOpTypeEnum::NOT_EQUAL,
 			TokenTypeEnum::OP_SHIFT_LEFT => BinaryOpTypeEnum::SHIFT_LEFT,
 			TokenTypeEnum::OP_SHIFT_RIGHT => BinaryOpTypeEnum::SHIFT_RIGHT,
+			TokenTypeEnum::IN => BinaryOpTypeEnum::IN,
 			default => null,
 		};
 	}
@@ -392,7 +412,7 @@ class MariaDbParserState
 			BinaryOpTypeEnum::BITWISE_OR => 7,
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
-				BinaryOpTypeEnum::NOT_EQUAL => 6,
+				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN => 6,
 			// BETWEEN, CASE, WHEN, THEN, ELSE, END => 5
 			// NOT => 4,
 			BinaryOpTypeEnum::LOGIC_AND => 3,
