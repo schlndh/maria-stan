@@ -10,6 +10,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\LiteralInt;
+use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
@@ -21,6 +22,7 @@ use RuntimeException;
 use function array_map;
 use function assert;
 use function is_array;
+use function preg_match;
 
 class MariaDbParserOperatorTest extends DatabaseTestCase
 {
@@ -44,6 +46,8 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 			'0 BETWEEN 0 AND 1 XOR 1',
 			'1 BETWEEN 0 AND 2 BETWEEN 0 AND 1',
 			'0 + 1 BETWEEN 1 AND 2',
+			'"a" REGEXP "b" RLIKE "0"',
+			'1 + 2 REGEXP 2 + 1',
 		];
 
 		foreach ($expressions as $expr) {
@@ -101,6 +105,11 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
 					BinaryOpTypeEnum::SHIFT_LEFT => ((int) $left) << ((int) $right),
 					BinaryOpTypeEnum::SHIFT_RIGHT => ((int) $left) >> ((int) $right),
+					BinaryOpTypeEnum::REGEXP => match (preg_match('/' . $right . '/', (string) $left)) {
+						1 => 1,
+						0 => 0,
+						false => throw new RuntimeException("Invalid {$left} REGEXP {$right}"),
+					},
 					// phpcs:ignore
 					BinaryOpTypeEnum::IN => in_array(
 						$left,
@@ -124,6 +133,10 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 				};
 			case ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof LiteralInt);
+
+				return $expr->value;
+			case ExprTypeEnum::LITERAL_STRING:
+				assert($expr instanceof LiteralString);
 
 				return $expr->value;
 			case ExprTypeEnum::TUPLE:

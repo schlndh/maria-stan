@@ -1027,3 +1027,78 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT "a" REGEXP "b" RLIKE "0"
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::REGEXP
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::REGEXP
+									[left] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[right] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => b
+											[firstConcatPart] => b
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => 0
+									[firstConcatPart] => 0
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 + 2 REGEXP 2 + 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::REGEXP
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[right] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)

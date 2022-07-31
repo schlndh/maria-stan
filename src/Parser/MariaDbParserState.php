@@ -340,7 +340,7 @@ class MariaDbParserState
 				break;
 			}
 
-			// TODO: add missing operators: IS, LIKE, REGEXP, RLIKE
+			// TODO: add missing operators: IS, LIKE
 			if ($isNot && ! in_array($operator, [BinaryOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN], true)) {
 				throw new UnexpectedTokenException("Operator {$operator->value} cannot be used with NOT.");
 			}
@@ -397,6 +397,7 @@ class MariaDbParserState
 			TokenTypeEnum::OP_SHIFT_LEFT => BinaryOpTypeEnum::SHIFT_LEFT,
 			TokenTypeEnum::OP_SHIFT_RIGHT => BinaryOpTypeEnum::SHIFT_RIGHT,
 			TokenTypeEnum::IN => BinaryOpTypeEnum::IN,
+			TokenTypeEnum::REGEXP, TokenTypeEnum::RLIKE => BinaryOpTypeEnum::REGEXP,
 			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
 			default => null,
 		};
@@ -429,9 +430,10 @@ class MariaDbParserState
 			BinaryOpTypeEnum::SHIFT_LEFT, BinaryOpTypeEnum::SHIFT_RIGHT => 9,
 			BinaryOpTypeEnum::BITWISE_AND => 8,
 			BinaryOpTypeEnum::BITWISE_OR => 7,
+			// LIKE, IS => 6
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
-				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN => 6,
+				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP => 6,
 			// CASE, WHEN, THEN, ELSE, END => 5
 			SpecialOpTypeEnum::BETWEEN => 5,
 			// NOT - handled separately => 4,
