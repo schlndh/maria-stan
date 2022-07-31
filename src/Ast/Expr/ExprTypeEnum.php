@@ -32,4 +32,7 @@ enum ExprTypeEnum: string
 
 	/** @see Tuple */
 	case TUPLE = 'TUPLE';
+
+	/** @see Subquery */
+	case SUBQUERY = 'SUBQUERY';
 }

@@ -14,6 +14,7 @@ use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Expr\Subquery;
 use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
@@ -411,7 +412,13 @@ class MariaDbParserState
 			?? throw new UnexpectedTokenException('Out of tokens');
 
 		if ($this->acceptToken('(')) {
-			// TODO: subquery
+			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+				$query = $this->parseSelectQuery();
+				$this->expectToken(')');
+
+				return new Subquery($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $query);
+			}
+
 			$expressions = [$this->parseExpression()];
 
 			while ($this->acceptToken(',')) {

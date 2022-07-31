@@ -518,3 +518,140 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT 1 = (SELECT id FROM tbl LIMIT 1)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+							[left] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[right] => MariaStan\Ast\Expr\Subquery
+								(
+									[query] => MariaStan\Ast\Query\SelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\RegularExpr
+														(
+															[expr] => MariaStan\Ast\Expr\Column
+																(
+																	[name] => id
+																)
+														)
+												)
+											[from] => MariaStan\Ast\Query\TableReference\Table
+												(
+													[name] => tbl
+												)
+											[limit] => MariaStan\Ast\Limit
+												(
+													[count] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT (1, 0) = ((SELECT id FROM tbl LIMIT 1), (SELECT id FROM tbl LIMIT 1))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+							[left] => MariaStan\Ast\Expr\Tuple
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[1] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 0
+												)
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Tuple
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Subquery
+												(
+													[query] => MariaStan\Ast\Query\SelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\Column
+																				(
+																					[name] => id
+																				)
+																		)
+																)
+															[from] => MariaStan\Ast\Query\TableReference\Table
+																(
+																	[name] => tbl
+																)
+															[limit] => MariaStan\Ast\Limit
+																(
+																	[count] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																)
+														)
+												)
+											[1] => MariaStan\Ast\Expr\Subquery
+												(
+													[query] => MariaStan\Ast\Query\SelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\Column
+																				(
+																					[name] => id
+																				)
+																		)
+																)
+															[from] => MariaStan\Ast\Query\TableReference\Table
+																(
+																	[name] => tbl
+																)
+															[limit] => MariaStan\Ast\Limit
+																(
+																	[count] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																)
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+)
