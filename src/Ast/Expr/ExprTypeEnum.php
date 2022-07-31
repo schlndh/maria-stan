@@ -29,4 +29,7 @@ enum ExprTypeEnum: string
 
 	/** @see FunctionCall */
 	case FUNCTION_CALL = 'FUNCTION_CALL';
+
+	/** @see Tuple */
+	case TUPLE = 'TUPLE';
 }

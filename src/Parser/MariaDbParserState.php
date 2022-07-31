@@ -14,6 +14,7 @@ use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\ExprWithDirection;
@@ -40,6 +41,7 @@ use function is_string;
 use function max;
 use function min;
 use function print_r;
+use function reset;
 use function str_replace;
 use function str_starts_with;
 use function strtr;
@@ -405,9 +407,24 @@ class MariaDbParserState
 	 */
 	private function parseUnaryExpression(): Expr
 	{
-		// TODO: parentheses
 		$startPosition = $this->findCurrentToken()?->position
 			?? throw new UnexpectedTokenException('Out of tokens');
+
+		if ($this->acceptToken('(')) {
+			// TODO: subquery
+			$expressions = [$this->parseExpression()];
+
+			while ($this->acceptToken(',')) {
+				$expressions[] = $this->parseExpression();
+			}
+
+			$this->expectToken(')');
+
+			return count($expressions) === 1
+				? reset($expressions)
+				: new Tuple($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $expressions);
+		}
+
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident) {

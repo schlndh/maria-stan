@@ -406,3 +406,115 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT (1, ((0 + 1) * 2, 1)) = (0, (1, 0))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+							[left] => MariaStan\Ast\Expr\Tuple
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[1] => MariaStan\Ast\Expr\Tuple
+												(
+													[expressions] => Array
+														(
+															[0] => MariaStan\Ast\Expr\BinaryOp
+																(
+																	[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+																	[left] => MariaStan\Ast\Expr\BinaryOp
+																		(
+																			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+																			[left] => MariaStan\Ast\Expr\LiteralInt
+																				(
+																					[value] => 0
+																				)
+																			[right] => MariaStan\Ast\Expr\LiteralInt
+																				(
+																					[value] => 1
+																				)
+																		)
+																	[right] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 2
+																		)
+																)
+															[1] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 1
+																)
+														)
+												)
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Tuple
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 0
+												)
+											[1] => MariaStan\Ast\Expr\Tuple
+												(
+													[expressions] => Array
+														(
+															[0] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 1
+																)
+															[1] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 0
+																)
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT (1 + 0) * 2
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 2
+								)
+						)
+				)
+		)
+)
