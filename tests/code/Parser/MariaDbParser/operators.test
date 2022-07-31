@@ -837,3 +837,193 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT 0 BETWEEN 0 AND 1 XOR 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_XOR
+							[left] => MariaStan\Ast\Expr\Between
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+									[min] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+									[max] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 0 BETWEEN 0 + 0 AND 1 + 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Between
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 0
+								)
+							[min] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+								)
+							[max] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 0 NOT BETWEEN 0 AND 1 XOR 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_XOR
+							[left] => MariaStan\Ast\Expr\UnaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+									[expr] => MariaStan\Ast\Expr\Between
+										(
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 0
+												)
+											[min] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 0
+												)
+											[max] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 BETWEEN 0 AND 2 BETWEEN 0 AND 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Between
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[min] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 0
+								)
+							[max] => MariaStan\Ast\Expr\Between
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[min] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+									[max] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 0 + 1 BETWEEN 1 AND 2
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Between
+						(
+							[expression] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 0
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[min] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[max] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 2
+								)
+						)
+				)
+		)
+)

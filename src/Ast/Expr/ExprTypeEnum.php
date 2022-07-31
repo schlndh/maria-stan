@@ -35,4 +35,7 @@ enum ExprTypeEnum: string
 
 	/** @see Subquery */
 	case SUBQUERY = 'SUBQUERY';
+
+	/** @see Between */
+	case BETWEEN = 'BETWEEN';
 }

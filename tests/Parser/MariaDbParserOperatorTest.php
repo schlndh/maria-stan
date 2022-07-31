@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
@@ -40,6 +41,9 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 			'1 * 2 NOT IN (0, 2)',
 			'!1 IN (0, 2)',
 			'1 IN (1)',
+			'0 BETWEEN 0 AND 1 XOR 1',
+			'1 BETWEEN 0 AND 2 BETWEEN 0 AND 1',
+			'0 + 1 BETWEEN 1 AND 2',
 		];
 
 		foreach ($expressions as $expr) {
@@ -90,7 +94,8 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					BinaryOpTypeEnum::MODULO => $left % $right,
 					BinaryOpTypeEnum::LOGIC_AND => $left && $right ? 1 : 0,
 					BinaryOpTypeEnum::LOGIC_OR => $left || $right ? 1 : 0,
-					BinaryOpTypeEnum::LOGIC_XOR => $left xor $right ? 1 : 0,
+					// phpcs:ignore SlevomatCodingStandard.PHP.UselessParentheses.UselessParentheses
+					BinaryOpTypeEnum::LOGIC_XOR => ($left xor $right) ? 1 : 0,
 					BinaryOpTypeEnum::BITWISE_OR => ((int) $left) | ((int) $right),
 					BinaryOpTypeEnum::BITWISE_AND => ((int) $left) & ((int) $right),
 					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
@@ -125,6 +130,15 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 				assert($expr instanceof Tuple);
 
 				return array_map($this->getValueFromAstExpression(...), $expr->expressions);
+			case ExprTypeEnum::BETWEEN:
+				assert($expr instanceof Between);
+				$left = $this->getValueFromAstExpression($expr->expression);
+				$min = $this->getValueFromAstExpression($expr->min);
+				$max = $this->getValueFromAstExpression($expr->max);
+
+				return $left >= $min && $left <= $max
+					? 1
+					: 0;
 			default:
 				$this->fail("Unexpected expression type {$expr::getExprType()->value}");
 		}

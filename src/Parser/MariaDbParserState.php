@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Parser;
 
 use MariaStan\Ast\DirectionEnum;
+use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
@@ -14,6 +15,7 @@ use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Expr\SpecialOpTypeEnum;
 use MariaStan\Ast\Expr\Subquery;
 use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
@@ -318,33 +320,33 @@ class MariaDbParserState
 
 		while (true) {
 			$positionBak = $this->position;
-			$binaryOpToken = $this->findCurrentToken();
-			$isNot = $binaryOpToken?->type === TokenTypeEnum::NOT;
+			$operatorToken = $this->findCurrentToken();
+			$isNot = $operatorToken?->type === TokenTypeEnum::NOT;
 
 			if ($isNot) {
 				$this->position++;
-				$binaryOpToken = $this->findCurrentToken();
+				$operatorToken = $this->findCurrentToken();
 			}
 
-			if ($binaryOpToken === null) {
+			if ($operatorToken === null) {
 				$this->position = $positionBak;
 				break;
 			}
 
-			$binaryOp = $this->findBinaryOpFromToken($binaryOpToken);
+			$operator = $this->findBinaryOrSpecialOpFromToken($operatorToken);
 
-			if ($binaryOp === null) {
+			if ($operator === null) {
 				$this->position = $positionBak;
 				break;
 			}
 
-			// TODO: add missing operators: IS, LIKE, REGEXP, RLIKE, BETWEEN
-			if ($isNot && ! in_array($binaryOp, [BinaryOpTypeEnum::IN], true)) {
-				throw new UnexpectedTokenException("Operator {$binaryOp->value} cannot be used with NOT.");
+			// TODO: add missing operators: IS, LIKE, REGEXP, RLIKE
+			if ($isNot && ! in_array($operator, [BinaryOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN], true)) {
+				throw new UnexpectedTokenException("Operator {$operator->value} cannot be used with NOT.");
 			}
 
 			$this->position++;
-			$opPrecedence = $this->getOperatorPrecedence($binaryOp);
+			$opPrecedence = $this->getOperatorPrecedence($operator);
 
 			if ($opPrecedence < $precedence) {
 				$this->position = $positionBak;
@@ -352,8 +354,12 @@ class MariaDbParserState
 			}
 
 			// left-associative operation => +1
-			$right = $this->parseExpression($opPrecedence + 1);
-			$exp = new BinaryOp($binaryOp, $exp, $right);
+			$right = $this->parseExpression($opPrecedence + ($this->isRightAssociative($operator) ? 0 : 1));
+			$exp = $operator instanceof BinaryOpTypeEnum
+				? new BinaryOp($operator, $exp, $right)
+				: match ($operator) {
+					SpecialOpTypeEnum::BETWEEN => $this->parseRestOfBetweenOperator($exp, $right),
+				};
 
 			if ($isNot) {
 				$exp = new UnaryOp($exp->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $exp);
@@ -363,7 +369,19 @@ class MariaDbParserState
 		return $exp;
 	}
 
-	private function findBinaryOpFromToken(Token $token): ?BinaryOpTypeEnum
+	/** @throws ParserException */
+	private function parseRestOfBetweenOperator(Expr $left, Expr $min): Between
+	{
+		static $precedence = null;
+		// BETWEEN is right-associative so no + 1
+		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::BETWEEN);
+		$this->expectToken(TokenTypeEnum::AND);
+		$max = $this->parseExpression($precedence);
+
+		return new Between($left, $min, $max);
+	}
+
+	private function findBinaryOrSpecialOpFromToken(Token $token): BinaryOpTypeEnum|SpecialOpTypeEnum|null
 	{
 		return match ($token->type) {
 			TokenTypeEnum::SINGLE_CHAR => BinaryOpTypeEnum::tryFrom($token->content),
@@ -379,6 +397,7 @@ class MariaDbParserState
 			TokenTypeEnum::OP_SHIFT_LEFT => BinaryOpTypeEnum::SHIFT_LEFT,
 			TokenTypeEnum::OP_SHIFT_RIGHT => BinaryOpTypeEnum::SHIFT_RIGHT,
 			TokenTypeEnum::IN => BinaryOpTypeEnum::IN,
+			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
 			default => null,
 		};
 	}
@@ -394,7 +413,7 @@ class MariaDbParserState
 	}
 
 	// higher number = higher precedence
-	private function getOperatorPrecedence(BinaryOpTypeEnum|UnaryOpTypeEnum $op): int
+	private function getOperatorPrecedence(BinaryOpTypeEnum|UnaryOpTypeEnum|SpecialOpTypeEnum $op): int
 	{
 		// https://mariadb.com/kb/en/operator-precedence/
 		return match ($op) {
@@ -413,13 +432,19 @@ class MariaDbParserState
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
 				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN => 6,
-			// BETWEEN, CASE, WHEN, THEN, ELSE, END => 5
-			// NOT => 4,
+			// CASE, WHEN, THEN, ELSE, END => 5
+			SpecialOpTypeEnum::BETWEEN => 5,
+			// NOT - handled separately => 4,
 			BinaryOpTypeEnum::LOGIC_AND => 3,
 			BinaryOpTypeEnum::LOGIC_XOR => 2,
 			BinaryOpTypeEnum::LOGIC_OR => 1,
 			// assignment => 0
 		};
+	}
+
+	private function isRightAssociative(BinaryOpTypeEnum|SpecialOpTypeEnum $op): bool
+	{
+		return $op === SpecialOpTypeEnum::BETWEEN;
 	}
 
 	/**
