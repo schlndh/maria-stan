@@ -1,4 +1,4 @@
-JOINs
+FROM clauses
 -----
 SELECT * FROM a, b
 -----
