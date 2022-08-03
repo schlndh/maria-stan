@@ -60,6 +60,8 @@
 		<exclude name="SlevomatCodingStandard.Complexity.Cognitive"/>
 		<exclude name="SlevomatCodingStandard.Files.FileLength"/>
 		<exclude name="SlevomatCodingStandard.Classes.ClassLength"/>
+		<!-- it's not safe, its fixes can have different semantics -->
+		<exclude name="SlevomatCodingStandard.PHP.UselessParentheses"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">

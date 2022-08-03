@@ -98,7 +98,6 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 					BinaryOpTypeEnum::MODULO => $left % $right,
 					BinaryOpTypeEnum::LOGIC_AND => $left && $right ? 1 : 0,
 					BinaryOpTypeEnum::LOGIC_OR => $left || $right ? 1 : 0,
-					// phpcs:ignore SlevomatCodingStandard.PHP.UselessParentheses.UselessParentheses
 					BinaryOpTypeEnum::LOGIC_XOR => ($left xor $right) ? 1 : 0,
 					BinaryOpTypeEnum::BITWISE_OR => ((int) $left) | ((int) $right),
 					BinaryOpTypeEnum::BITWISE_AND => ((int) $left) & ((int) $right),
