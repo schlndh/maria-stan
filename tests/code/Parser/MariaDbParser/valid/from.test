@@ -343,3 +343,204 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT * FROM (tbl1, tbl2)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl1
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl2
+				)
+		)
+)
+-----
+SELECT * FROM ((tbl1 JOIN tbl2 ON tbl1.id = tbl2.id), tbl3), tbl4
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Join
+						(
+							[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+							[leftTable] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl1
+								)
+							[rightTable] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl2
+								)
+							[onCondition] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+									[left] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+											[tableName] => tbl1
+										)
+									[right] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+											[tableName] => tbl2
+										)
+								)
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => tbl3
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl4
+				)
+		)
+)
+-----
+SELECT * FROM (SELECT 1) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT * FROM (SELECT * FROM (SELECT 1) t) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+										)
+								)
+							[alias] => t
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT * FROM tbl JOIN (SELECT 1 id) AS t ON t.id = tbl.id
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+				(
+					[query] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+								)
+						)
+					[alias] => t
+				)
+			[onCondition] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => t
+						)
+					[right] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => tbl
+						)
+				)
+		)
+)

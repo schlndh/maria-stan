@@ -11,4 +11,7 @@ enum TableReferenceTypeEnum: string
 
 	/** @see Join */
 	case JOIN = 'JOIN';
+
+	/** @see Subquery */
+	case SUBQUERY = 'SUBQUERY';
 }

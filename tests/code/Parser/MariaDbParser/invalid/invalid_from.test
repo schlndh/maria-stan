@@ -1,8 +1,29 @@
 Invalid FROM
 -----
-SELECT * FROM (((SELECT 1)) b) t;
+SELECT * FROM (((SELECT 1) b)) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected IDENTIFIER, but found SINGLE_CHAR.
+Expected END_OF_INPUT, but found IDENTIFIER.
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't' at line 1
+-----
+SELECT * FROM (a, b) c
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, but found IDENTIFIER.
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'c' at line 1
+-----
+SELECT * FROM (1, 2)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IDENTIFIER, but found INT_LITERAL.
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1, 2)' at line 1
+-----
+SELECT * FROM ((mysqli_test) a)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ), but found IDENTIFIER.
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'a)' at line 1

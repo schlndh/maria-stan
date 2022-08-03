@@ -33,6 +33,7 @@ use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
+use MariaStan\Parser\Exception\InvalidSqlException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
@@ -128,6 +129,15 @@ class MariaDbParserState
 			return null;
 		}
 
+		return $this->parseJoins();
+	}
+
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function parseJoins(): TableReference
+	{
 		$leftTable = $this->parseTableReference();
 
 		while (true) {
@@ -187,6 +197,35 @@ class MariaDbParserState
 	 */
 	private function parseTableReference(): TableReference
 	{
+		$startPosition = $this->getCurrentPosition();
+
+		// TODO: There are many weird edge-cases when it comes to nested parentheses. A subquery can be nested
+		// in multiple parentheses and the alias can be on any level. But only once. For example these work:
+		// SELECT * FROM (((SELECT 1)) t); SELECT * FROM (((SELECT 1))) t;
+		if ($this->acceptToken('(')) {
+			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+				$query = $this->parseSelectQuery();
+				$this->expectToken(')');
+				$alias = $this->parseAlias();
+
+				if ($alias === null) {
+					throw new InvalidSqlException('Subquery has to have an alias!');
+				}
+
+				return new \MariaStan\Ast\Query\TableReference\Subquery(
+					$startPosition,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$query,
+					$alias,
+				);
+			}
+
+			$result = $this->parseJoins();
+			$this->expectToken(')');
+
+			return $result;
+		}
+
 		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
 		$alias = $this->parseAlias();
 
@@ -455,8 +494,7 @@ class MariaDbParserState
 	 */
 	private function parseUnaryExpression(): Expr
 	{
-		$startPosition = $this->findCurrentToken()?->position
-			?? throw new UnexpectedTokenException('Out of tokens');
+		$startPosition = $this->getCurrentPosition();
 
 		if ($this->acceptToken('(')) {
 			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
@@ -781,6 +819,12 @@ class MariaDbParserState
 		$this->position++;
 
 		return $token;
+	}
+
+	/** @throws ParserException */
+	private function getCurrentPosition(): Position
+	{
+		return $this->findCurrentToken()?->position ?? throw new UnexpectedTokenException('Out of tokens');
 	}
 
 	private function cleanIdentifier(string $identifier): string
