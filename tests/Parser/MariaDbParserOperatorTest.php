@@ -16,7 +16,8 @@ use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\SelectExpr\RegularExpr;
-use MariaStan\DatabaseTestCase;
+use MariaStan\DatabaseTestCaseHelper;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 use function array_map;
@@ -24,7 +25,7 @@ use function assert;
 use function is_array;
 use function preg_match;
 
-class MariaDbParserOperatorTest extends DatabaseTestCase
+class MariaDbParserOperatorTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
 	public function provideTestData(): iterable
@@ -73,7 +74,7 @@ class MariaDbParserOperatorTest extends DatabaseTestCase
 
 	private function getValueFromSql(string $select): mixed
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$stmt = $db->query($select);
 		$val = $stmt->fetch_column(0);
 		$stmt->close();

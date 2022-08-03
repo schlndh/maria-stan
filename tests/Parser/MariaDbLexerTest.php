@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Parser;
 
 use MariaStan\Parser\Exception\LexerException;
+use PHPUnit\Framework\TestCase;
 
 use function array_map;
 use function implode;
@@ -12,8 +13,10 @@ use function MariaStan\canonicalize;
 use function strlen;
 
 // If valid output changes, re-run updateTests.php
-class MariaDbLexerTest extends CodeTestCase
+class MariaDbLexerTest extends TestCase
 {
+	use CodeTestCase;
+
 	/** @dataProvider provideTestParse */
 	public function testParse(string $name, string $code, string $expected): void
 	{

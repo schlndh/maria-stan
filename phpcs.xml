@@ -172,4 +172,11 @@
 			<property name="ignoreTrailingIfWithOneInstruction" value="true" />
 		</properties>
 	</rule>
+
+	<rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
+		<properties>
+			<property name="linesCountBeforeFirstUseWhenFirstInClass" value="0" />
+			<property name="linesCountAfterLastUseWhenLastInClass" value="0" />
+		</properties>
+	</rule>
 </ruleset>

@@ -6,23 +6,22 @@ namespace MariaStan;
 
 use mysqli;
 use mysqli_sql_exception;
-use PHPUnit\Framework\TestCase;
 
 use function mysqli_report;
 
 // phpcs:disable SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
 
-abstract class DatabaseTestCase extends TestCase
+abstract class DatabaseTestCaseHelper
 {
 	/** @var array<string, mysqli> */
-	private static array $connections;
+	private static array $connections = [];
 
-	protected static function getDefaultSharedConnection(): mysqli
+	public static function getDefaultSharedConnection(): mysqli
 	{
 		return self::getSharedConnection('testdb_');
 	}
 
-	protected static function getSharedConnection(string $prefix): mysqli
+	public static function getSharedConnection(string $prefix): mysqli
 	{
 		if (isset(self::$connections[$prefix])) {
 			return self::$connections[$prefix];

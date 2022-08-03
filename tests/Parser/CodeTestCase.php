@@ -15,7 +15,7 @@ use function realpath;
 use function str_replace;
 use function trim;
 
-abstract class CodeTestCase extends \PHPUnit\Framework\TestCase
+trait CodeTestCase
 {
 	/** @return iterable<string, array<mixed>> test name => args */
 	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable

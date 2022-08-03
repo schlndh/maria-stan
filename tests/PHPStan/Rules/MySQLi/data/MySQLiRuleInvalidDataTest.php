@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
-use MariaStan\DatabaseTestCase;
+use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_sql_exception;
+use PHPUnit\Framework\TestCase;
 
 use function MariaStan\Testing\assertFirstArgumentErrors;
 
-class MySQLiRuleInvalidDataTest extends DatabaseTestCase
+class MySQLiRuleInvalidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
 	{
 		parent::setUpBeforeClass();
 
-		$db = self::getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -41,7 +42,7 @@ class MySQLiRuleInvalidDataTest extends DatabaseTestCase
 
 	public function test(): void
 	{
-		$db = self::getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 
 		try {
 			assertFirstArgumentErrors(

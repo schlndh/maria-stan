@@ -8,6 +8,7 @@ use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
+use PHPUnit\Framework\TestCase;
 use UnitEnum;
 
 use function array_filter;
@@ -21,8 +22,10 @@ use function substr;
 use function trim;
 
 // If valid output changes, re-run updateTests.php
-class MariaDbParserTest extends CodeTestCase
+class MariaDbParserTest extends TestCase
 {
+	use CodeTestCase;
+
 	/** @dataProvider provideTestParse */
 	public function testParse(string $name, string $code, string $expected): void
 	{

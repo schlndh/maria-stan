@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Analyser;
 
-use MariaStan\DatabaseTestCase;
+use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -17,6 +17,7 @@ use MariaStan\Schema\DbType\VarcharType;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
+use PHPUnit\Framework\TestCase;
 
 use function array_keys;
 use function array_map;
@@ -44,13 +45,13 @@ use const MYSQLI_TYPE_TINY;
 use const MYSQLI_TYPE_VAR_STRING;
 use const MYSQLI_TYPE_YEAR;
 
-class AnalyserTest extends DatabaseTestCase
+class AnalyserTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
 	public function provideTestData(): iterable
 	{
 		$tableName = 'analyser_test';
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				id INT NOT NULL,
@@ -158,7 +159,7 @@ class AnalyserTest extends DatabaseTestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideDataTypeData(): iterable
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$dataTypesTable = 'analyser_test_data_types';
 		$db->query("
 			CREATE OR REPLACE TABLE {$dataTypesTable} (
@@ -282,7 +283,7 @@ class AnalyserTest extends DatabaseTestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideJoinData(): iterable
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$joinTableA = 'analyser_test_join_a';
 		$db->query("
 			CREATE OR REPLACE TABLE {$joinTableA} (
@@ -533,7 +534,7 @@ class AnalyserTest extends DatabaseTestCase
 	{
 		// TODO: Maybe I could get completely rid of $expectedFields and $expectedSchema and I could just check
 		// that the output of the analyzer matches the DB output.
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 
 		$schemaProcessor = new Processor();
 		$stmt = $db->query($query);

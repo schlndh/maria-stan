@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi\data;
 
-use MariaStan\DatabaseTestCase;
+use MariaStan\DatabaseTestCaseHelper;
 use mysqli;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
+use PHPUnit\Framework\TestCase;
 
 use function array_column;
 use function array_key_exists;
@@ -23,13 +24,13 @@ use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
 use const MYSQLI_NUM;
 
-class MySQLiTypeInferenceDataTest extends DatabaseTestCase
+class MySQLiTypeInferenceDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
 	{
 		parent::setUpBeforeClass();
 
-		$db = self::getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -63,7 +64,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 
 	public function testAssoc(): void
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_ASSOC);
@@ -113,7 +114,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 
 	public function testNum(): void
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_NUM);
@@ -199,7 +200,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 
 	public function testBoth(): void
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_BOTH);
@@ -282,7 +283,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 	// This is not executed, it's just here as a data source for the PHPStan test.
 	public function checkDynamicReturnType(int $returnType): void
 	{
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all($returnType);
@@ -337,7 +338,7 @@ class MySQLiTypeInferenceDataTest extends DatabaseTestCase
 	public function testDataTypes(): void
 	{
 		// TODO: switch to fetch_column once a type-specifying extension is made for it.
-		$db = $this->getDefaultSharedConnection();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('
 			SELECT col_int FROM mysqli_test_data_types
 		')->fetch_all(MYSQLI_NUM);
