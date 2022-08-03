@@ -7,6 +7,8 @@ namespace MariaStan;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbLexerTest;
 use MariaStan\Parser\MariaDbParserTest;
+use PHPUnit\TextUI\XmlConfiguration\Loader;
+use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
 use function file_put_contents;
 use function strpos;
@@ -15,13 +17,17 @@ require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/Parser/CodeTestParser.php';
 require __DIR__ . '/Parser/MariaDbParserTest.php';
 require __DIR__ . '/Parser/MariaDbLexerTest.php';
+require __DIR__ . '/../vendor/autoload.php';
 
+// Load DB credentials from phpunit.xml to make DatabaseTestCaseHelper work.
+$config = (new Loader())->load(__DIR__ . '/../phpunit.xml');
+(new PhpHandler())->handle($config->php());
 $testParser = new CodeTestParser();
 
-$dir = __DIR__ . '/code/Parser/MariaDbParser';
+$parserDir = __DIR__ . '/code/Parser/MariaDbParser';
 $codeParsingTest = new MariaDbParserTest();
 
-foreach (filesInDir($dir, 'test') as $fileName => $code) {
+foreach (filesInDir($parserDir . '/valid', 'test') as $fileName => $code) {
 	if (strpos($code, '@@{') !== false) {
 		// Skip tests with evaluate segments
 		continue;
@@ -29,11 +35,32 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 
 	[$name, $tests] = $testParser->parseTest($code, 2);
 	$newTests = [];
+	$parser = $codeParsingTest->createParser();
 
 	foreach ($tests as [$modeLine, [$input, $expected]]) {
-		$parser = $codeParsingTest->createParser();
 		[, $output] = $codeParsingTest->getParseOutput($parser, $input);
 		$newTests[] = [$modeLine, [$input, $output]];
+	}
+
+	$newCode = $testParser->reconstructTest($name, $newTests);
+	file_put_contents($fileName, $newCode);
+}
+
+foreach (filesInDir($parserDir . '/invalid', 'test') as $fileName => $code) {
+	if (strpos($code, '@@{') !== false) {
+		// Skip tests with evaluate segments
+		continue;
+	}
+
+	[$name, $tests] = $testParser->parseTest($code, 3);
+	$newTests = [];
+	$parser = $codeParsingTest->createParser();
+	$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+	foreach ($tests as [$modeLine, [$input, $expected]]) {
+		[, $parserOutput] = $codeParsingTest->getParseOutput($parser, $input);
+		[, $dbOutput] = $codeParsingTest->getDbOutput($db, $input);
+		$newTests[] = [$modeLine, [$input, $parserOutput, $dbOutput]];
 	}
 
 	$newCode = $testParser->reconstructTest($name, $newTests);

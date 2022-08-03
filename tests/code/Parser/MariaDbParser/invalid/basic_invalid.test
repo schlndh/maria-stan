@@ -1,0 +1,8 @@
+Basic invalid SQL
+-----
+SELECT *** FROM FROM
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, but found SINGLE_CHAR.
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '** FROM FROM' at line 1

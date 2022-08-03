@@ -7,8 +7,12 @@ namespace MariaStan\Parser;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
+use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
+use mysqli;
+use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use UnitEnum;
 
 use function array_filter;
@@ -26,8 +30,8 @@ class MariaDbParserTest extends TestCase
 {
 	use CodeTestCase;
 
-	/** @dataProvider provideTestParse */
-	public function testParse(string $name, string $code, string $expected): void
+	/** @dataProvider provideTestParseValidData */
+	public function testParseValid(string $name, string $code, string $expected): void
 	{
 		$parser = $this->createParser();
 		[$query, $output] = $this->getParseOutput($parser, $code);
@@ -40,6 +44,22 @@ class MariaDbParserTest extends TestCase
 		}
 
 		$this->assertSame($expected, $output, $name);
+	}
+
+	/** @dataProvider provideTestParseInvalidData */
+	public function testParseInvalid(
+		string $name,
+		string $code,
+		string $expectedParserOutput,
+		string $expectedDbError,
+	): void {
+		$parser = $this->createParser();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		[, $parserOutput] = $this->getParseOutput($parser, $code);
+		[, $dbOutput] = $this->getDbOutput($db, $code);
+
+		$this->assertSame($expectedDbError, $dbOutput, $name);
+		$this->assertSame($expectedParserOutput, $parserOutput, $name);
 	}
 
 	public function createParser(): MariaDbParser
@@ -63,10 +83,33 @@ class MariaDbParserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestParse(): iterable
+	/**
+	 * @return array{mysqli_sql_exception, string} [result, output]
+	 *
+	 * Must be public for updateTests.php
+	 */
+	public function getDbOutput(mysqli $db, string $code): array
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser', 'test');
+		try {
+			$db->query($code);
+		} catch (mysqli_sql_exception $e) {
+			// TODO: Is it a good idea to put the error message there?
+			return [$e, canonicalize($e->getCode() . ": {$e->getMessage()}")];
+		}
+
+		throw new RuntimeException("'{$code}' was supposed to throw an exception, but didn't.");
+	}
+
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestParseValidData(): iterable
+	{
+		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/valid', 'test');
+	}
+
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestParseInvalidData(): iterable
+	{
+		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/invalid', 'test', 3);
 	}
 
 	private function dumpNodeData(mixed $data): mixed

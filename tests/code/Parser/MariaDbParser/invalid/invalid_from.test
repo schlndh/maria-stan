@@ -1,0 +1,8 @@
+Invalid FROM
+-----
+SELECT * FROM (((SELECT 1)) b) t;
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IDENTIFIER, but found SINGLE_CHAR.
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't' at line 1
