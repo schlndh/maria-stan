@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use function array_map;
 use function implode;
+use function is_array;
 use function MariaStan\canonicalize;
 use function strlen;
 
@@ -23,12 +24,14 @@ class MariaDbLexerTest extends TestCase
 		$parser = $this->createLexer();
 		[$tokens, $output] = $this->getLexerOutput($parser, $code);
 
-		foreach ($tokens as $token) {
-			$this->assertNotNull($token->position);
-			$this->assertSame(
-				$token->content,
-				$token->position->findSubstringStartingWithPosition($code, strlen($token->content)),
-			);
+		if (is_array($tokens)) {
+			foreach ($tokens as $token) {
+				$this->assertNotNull($token->position);
+				$this->assertSame(
+					$token->content,
+					$token->position->findSubstringStartingWithPosition($code, strlen($token->content)),
+				);
+			}
 		}
 
 		$this->assertSame($expected, $output, $name);

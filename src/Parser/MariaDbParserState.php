@@ -15,6 +15,7 @@ use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Expr\Placeholder;
 use MariaStan\Ast\Expr\SpecialOpTypeEnum;
 use MariaStan\Ast\Expr\Subquery;
 use MariaStan\Ast\Expr\Tuple;
@@ -543,6 +544,15 @@ class MariaDbParserState
 				$ident->getEndPosition(),
 				$this->cleanIdentifier($ident->content),
 				$this->cleanIdentifier($tableIdent->content),
+			);
+		}
+
+		$positionalPlaceholderToken = $this->acceptToken('?');
+
+		if ($positionalPlaceholderToken) {
+			return new Placeholder(
+				$positionalPlaceholderToken->position,
+				$positionalPlaceholderToken->getEndPosition(),
 			);
 		}
 

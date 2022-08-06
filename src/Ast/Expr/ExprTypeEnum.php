@@ -9,6 +9,9 @@ enum ExprTypeEnum: string
 	/** @see Column */
 	case COLUMN = 'COLUMN';
 
+	/** @see Placeholder */
+	case PLACEHOLDER = 'PLACEHOLDER';
+
 	/** @see LiteralInt */
 	case LITERAL_INT = 'LITERAL_INT';
 

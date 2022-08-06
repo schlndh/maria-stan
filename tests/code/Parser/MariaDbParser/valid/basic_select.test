@@ -507,3 +507,18 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT ?
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Placeholder
+						(
+						)
+				)
+		)
+)
