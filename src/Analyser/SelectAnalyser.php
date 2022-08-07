@@ -170,6 +170,7 @@ final class SelectAnalyser
 		return [];
 	}
 
+	/** @throws AnalyserException */
 	private function resolveExprType(Expr\Expr $expr): QueryResultField
 	{
 		// TODO: handle all expression types
@@ -183,7 +184,7 @@ final class SelectAnalyser
 
 				if ($expr->tableName !== null) {
 					$columnSchema = $candidateTables[$expr->tableName]
-						?? $candidateTables[$this->tablesByAlias[$expr->tableName]]
+						?? $candidateTables[$this->tablesByAlias[$expr->tableName] ?? null]
 						?? null;
 					$tableName = $expr->tableName;
 
@@ -309,6 +310,20 @@ final class SelectAnalyser
 							Expr\BinaryOpTypeEnum::MODULO,
 						], true),
 				);
+			case Expr\ExprTypeEnum::SUBQUERY:
+				assert($expr instanceof Expr\Subquery);
+				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
+				$result = $subqueryAnalyser->analyse();
+				// TODO: support row subqueries: e.g. for = operator
+				assert(count($result->resultFields) === 1);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					$result->resultFields[0]->type,
+					// TODO: Change it to false if we can statically determine that the query will always return
+					// a result: e.g. SELECT 1
+					true,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 
@@ -325,5 +340,22 @@ final class SelectAnalyser
 		$length = $node->getEndPosition()->offset - $node->getStartPosition()->offset;
 
 		return $node->getStartPosition()->findSubstringStartingWithPosition($this->query, $length);
+	}
+
+	private function getSubqueryAnalyser(SelectQuery $subquery): self
+	{
+		$other = new self(
+			$this->dbReflection,
+			$subquery,
+			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
+			$this->query,
+		);
+		$other->columnSchemasByName = $this->columnSchemasByName;
+		$other->tablesByAlias = $this->tablesByAlias;
+		$other->outerJoinedTableMap = $this->outerJoinedTableMap;
+		// phpcs:ignore SlevomatCodingStandard.PHP.DisallowReference
+		$other->errors = &$this->errors;
+
+		return $other;
 	}
 }

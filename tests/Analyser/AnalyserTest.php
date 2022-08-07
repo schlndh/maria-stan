@@ -8,6 +8,8 @@ use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DbTypeEnum;
+use MariaStan\Util\MariaDbErrorCodes;
+use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
 use function array_keys;
@@ -70,6 +72,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideOperatorTestData();
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
+		yield from $this->provideSubqueryTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -295,6 +298,22 @@ class AnalyserTest extends TestCase
 		}
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideSubqueryTestData(): iterable
+	{
+		yield 'subquery as SELECT expression' => [
+			'query' => 'SELECT (SELECT 1)',
+		];
+
+		yield 'subquery as SELECT expression - reference to outer table' => [
+			'query' => 'SELECT (SELECT id FROM analyser_test WHERE id = t_out.id LIMIT 1) FROM analyser_test t_out',
+		];
+
+		yield 'subquery as SELECT expression - same name as outer table' => [
+			'query' => 'SELECT (SELECT id FROM analyser_test WHERE id = analyser_test.id LIMIT 1) FROM analyser_test',
+		];
+	}
+
 	/** @dataProvider provideTestData */
 	public function test(string $query): void
 	{
@@ -315,13 +334,20 @@ class AnalyserTest extends TestCase
 		$fields = $stmt->fetch_fields();
 		$this->assertSameSize($result->resultFields, $fields);
 		$forceNullsForColumns = [];
+		$unnecessaryNullableFields = [];
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
 			$parserField = $result->resultFields[$i];
 			$this->assertSame($parserField->name, $field->name);
 			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
-			$this->assertSame($parserField->isNullable, $isFieldNullable);
+
+			if ($parserField->isNullable && ! $isFieldNullable) {
+				$unnecessaryNullableFields[] = $parserField->name;
+			} else {
+				$this->assertSame($isFieldNullable, $parserField->isNullable);
+			}
+
 			$actualType = $this->mysqliTypeToDbTypeEnum($field->type);
 
 			// It seems that in some cases the type returned by the database does not propagate NULL in all cases.
@@ -345,6 +371,52 @@ class AnalyserTest extends TestCase
 			foreach (array_keys($forceNullsForColumns) as $col) {
 				$this->assertNull($row[$col]);
 			}
+		}
+
+		if (count($unnecessaryNullableFields) > 0) {
+			$this->markTestIncomplete(
+				"These fields don't have to be nullable:\n" . implode(",\n", $unnecessaryNullableFields),
+			);
+		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public function provideInvalidData(): iterable
+	{
+		yield 'unknown column in SELECT' => [
+			'query' => 'SELECT v.id FROM analyser_test',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery' => [
+			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+	}
+
+	/** @dataProvider provideInvalidData */
+	public function testInvalid(string $query, string $error, int $dbErrorCode): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$parser = new MariaDbParser();
+		$reflection = new MariaDbOnlineDbReflection($db);
+		$analyser = new Analyser($parser, $reflection);
+		$result = $analyser->analyzeQuery($query);
+		$this->assertCount(
+			1,
+			$result->errors,
+			"Expected 1 error. Got: "
+			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
+		);
+		$this->assertSame($error, $result->errors[0]->message);
+
+		try {
+			$db->query($query);
+			$this->fail('Expected mysqli_sql_exception.');
+		} catch (mysqli_sql_exception $e) {
+			$this->assertSame($dbErrorCode, $e->getCode());
 		}
 	}
 
