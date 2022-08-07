@@ -216,6 +216,20 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT created_at FROM {$joinTableA} a LEFT JOIN {$joinTableB} b ON 1",
 		];
 
+		yield 'LEFT OUTER JOIN - parentheses' => [
+			'query' => "
+				SELECT * FROM (analyser_test a, analyser_test b)
+				LEFT OUTER JOIN (analyser_test c, analyser_test d) ON 0
+			",
+		];
+
+		yield 'RIGHT OUTER JOIN - parentheses' => [
+			'query' => "
+				SELECT * FROM (analyser_test a, analyser_test b)
+				RIGHT OUTER JOIN (analyser_test c, analyser_test d) ON 0
+			",
+		];
+
 		yield 'multiple JOINs - track outer JOINs - LEFT' => [
 			'query' => "
 				SELECT a.id aid, b.id bid, c.id cid

@@ -21,40 +21,29 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
 
 use function array_merge;
-use function array_search;
 use function assert;
 use function count;
 use function in_array;
-use function key;
-use function reset;
 use function stripos;
 
 final class SelectAnalyser
 {
-	/** @var array<string, array<string, Schema\Column>> $columnSchemasByName */
-	private array $columnSchemasByName = [];
-
-	/** @var array<string, string> $tablesByAlias alias => table name */
-	private array $tablesByAlias = [];
-
 	/** @var array<AnalyserError> */
 	private array $errors = [];
-
-	/** @var array<string, bool> */
-	private array $outerJoinedTableMap = [];
+	private ColumnResolver $columnResolver;
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
 		private readonly SelectQuery $selectAst,
 		private readonly string $query,
 	) {
+		$this->columnResolver = new ColumnResolver();
 	}
 
 	private function init(): void
 	{
 		// Prevent phpstan from incorrectly remembering these values.
 		// e.g. errors like: Offset string on array{} on left side of ?? does not exist.
-		$this->tablesByAlias = [];
 		$this->errors = [];
 	}
 
@@ -62,39 +51,19 @@ final class SelectAnalyser
 	public function analyse(): AnalyserResult
 	{
 		$this->init();
-		$tableNamesInOrder = [];
 		$fromClause = $this->selectAst->from;
 
 		if ($fromClause !== null) {
-			$tableNamesInOrder = $this->analyseTableReference($fromClause);
+			$this->analyseTableReference($fromClause);
 		}
 
-		$tableSchemas = [];
+		try {
+			$this->columnResolver->fetchSchemas($this->dbReflection);
+		} catch (DbReflectionException $e) {
+			$this->errors[] = new AnalyserError($e->getMessage());
+		}
+
 		$fields = [];
-
-		foreach ($tableNamesInOrder as $table) {
-			if (isset($this->tablesByAlias[$table])) {
-				$table = $this->tablesByAlias[$table];
-			}
-
-			if (isset($tableSchemas[$table])) {
-				continue;
-			}
-
-			try {
-				$tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
-			} catch (DbReflectionException $e) {
-				$this->errors[] = new AnalyserError($e->getMessage());
-			}
-		}
-
-		$this->columnSchemasByName = [];
-
-		foreach ($tableSchemas as $tableSchema) {
-			foreach ($tableSchema->columns as $column) {
-				$this->columnSchemasByName[$column->name][$tableSchema->name] = $column;
-			}
-		}
 
 		foreach ($this->selectAst->select as $selectExpr) {
 			switch ($selectExpr::getSelectExprType()) {
@@ -110,24 +79,7 @@ final class SelectAnalyser
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
-					$tableNames = $selectExpr->tableName !== null
-						? [$selectExpr->tableName]
-						: $tableNamesInOrder;
-
-					foreach ($tableNames as $tableName) {
-						$normalizedTableName = $this->tablesByAlias[$tableName] ?? $tableName;
-						$tableSchema = $tableSchemas[$normalizedTableName] ?? null;
-						$isOuterTable = $this->outerJoinedTableMap[$tableName] ?? false;
-
-						foreach ($tableSchema?->columns ?? [] as $column) {
-							$fields[] = new QueryResultField(
-								$column->name,
-								$column->type,
-								$column->isNullable || $isOuterTable,
-							);
-						}
-					}
-
+					$fields = array_merge($fields, $this->columnResolver->resolveAllColumns($selectExpr->tableName));
 					break;
 			}
 		}
@@ -141,26 +93,21 @@ final class SelectAnalyser
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
 				assert($fromClause instanceof Table);
-
-				if ($fromClause->alias !== null) {
-					$this->tablesByAlias[$fromClause->alias] = $fromClause->name;
-				}
+				$this->columnResolver->registerTable($fromClause->name, $fromClause->alias);
 
 				return [$fromClause->alias ?? $fromClause->name];
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
 				$rightTables = $this->analyseTableReference($fromClause->rightTable);
-				assert(count($leftTables) > 0);
-				// JOIN is left associative
-				assert(count($rightTables) === 1);
 
 				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
-					$rightTable = reset($rightTables);
-					$this->outerJoinedTableMap[$rightTable] = true;
+					foreach ($rightTables as $rightTable) {
+						$this->columnResolver->registerOuterJoinedTable($rightTable);
+					}
 				} elseif ($fromClause->joinType === JoinTypeEnum::RIGHT_OUTER_JOIN) {
 					foreach ($leftTables as $leftTable) {
-						$this->outerJoinedTableMap[$leftTable] = true;
+						$this->columnResolver->registerOuterJoinedTable($leftTable);
 					}
 				}
 
@@ -177,46 +124,14 @@ final class SelectAnalyser
 		switch ($expr::getExprType()) {
 			case Expr\ExprTypeEnum::COLUMN:
 				assert($expr instanceof Expr\Column);
-				/** @var ?Schema\Column $columnSchema */
-				$columnSchema = null;
-				$candidateTables = $this->columnSchemasByName[$expr->name] ?? [];
-				$tableName = null;
 
-				if ($expr->tableName !== null) {
-					$columnSchema = $candidateTables[$expr->tableName]
-						?? $candidateTables[$this->tablesByAlias[$expr->tableName] ?? null]
-						?? null;
-					$tableName = $expr->tableName;
-
-					if ($columnSchema === null) {
-						$this->errors[] = new AnalyserError("Unknown column {$expr->tableName}.{$expr->name}");
-					}
-				} else {
-					switch (count($candidateTables)) {
-						case 0:
-							$this->errors[] = new AnalyserError("Unknown column {$expr->name}");
-							break;
-						case 1:
-							$columnSchema = reset($candidateTables);
-							$tableName = key($candidateTables);
-							$alias = array_search($tableName, $this->tablesByAlias, true);
-
-							if ($alias !== false) {
-								$tableName = $alias;
-							}
-
-							break;
-						default:
-							$this->errors[] = new AnalyserError("Ambiguous column {$expr->name}");
-							break;
-					}
+				try {
+					return $this->columnResolver->resolveColumn($expr->name, $expr->tableName);
+				} catch (AnalyserException $e) {
+					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
-				$isOuterTable = $this->outerJoinedTableMap[$tableName] ?? false;
-
-				return $columnSchema !== null
-					? new QueryResultField($expr->name, $columnSchema->type, $columnSchema->isNullable || $isOuterTable)
-					: new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
+				return new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
 			case Expr\ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof Expr\LiteralInt);
 
@@ -350,9 +265,6 @@ final class SelectAnalyser
 			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
 			$this->query,
 		);
-		$other->columnSchemasByName = $this->columnSchemasByName;
-		$other->tablesByAlias = $this->tablesByAlias;
-		$other->outerJoinedTableMap = $this->outerJoinedTableMap;
 		// phpcs:ignore SlevomatCodingStandard.PHP.DisallowReference
 		$other->errors = &$this->errors;
 
