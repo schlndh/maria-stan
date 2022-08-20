@@ -24,6 +24,9 @@ enum DbTypeEnum: string
 	/** @see NullType */
 	case NULL = 'NULL';
 
+	/** @see EnumType */
+	case ENUM = 'ENUM';
+
 	/** @see MixedType */
 	case MIXED = 'MIXED';
 }

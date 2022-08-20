@@ -11,6 +11,7 @@ use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DecimalType;
+use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
@@ -22,6 +23,8 @@ use mysqli_sql_exception;
 use function array_combine;
 use function array_map;
 use function explode;
+use function preg_match;
+use function trim;
 
 class MariaDbOnlineDbReflection
 {
@@ -107,6 +110,14 @@ class MariaDbOnlineDbReflection
 			case 'timestamp':
 			case 'year':
 				return new DateTimeType();
+			case 'enum':
+				$matches = [];
+
+				// TODO: Do this properly: the enum values themselves could contain "','".
+				if (preg_match("/enum\(([^\)]+)\)/i", $origType, $matches)) {
+					return new EnumType(explode("','", trim($matches[1], "'")));
+				}
+				// fall-through intentional: invalid enum type.
 			default:
 				// TODO: return MixedType instead with some warning?
 				throw new UnexpectedValueException("Unrecognized type {$origType}");

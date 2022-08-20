@@ -7,6 +7,7 @@ namespace MariaStan\DbReflection;
 use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
+use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +37,8 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 				val_time TIME NOT NULL,
 				val_datetime DATETIME NOT NULL,
 				val_timestamp TIMESTAMP NOT NULL,
-				val_year YEAR NOT NULL
+				val_year YEAR NOT NULL,
+				val_enum ENUM('a', 'b', 'c') NOT NULL
 			);
 		");
 		$reflection = new MariaDbOnlineDbReflection($db);
@@ -63,6 +65,7 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 			'val_datetime' => new Column('val_datetime', new DateTimeType(), false),
 			'val_timestamp' => new Column('val_timestamp', new DateTimeType(), false),
 			'val_year' => new Column('val_year', new DateTimeType(), false),
+			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
 		], $schema->columns);
 	}
 }

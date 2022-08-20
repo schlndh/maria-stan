@@ -18,6 +18,7 @@ use function count;
 use function implode;
 
 use const MYSQLI_ASSOC;
+use const MYSQLI_ENUM_FLAG;
 use const MYSQLI_NOT_NULL_FLAG;
 use const MYSQLI_TYPE_DATE;
 use const MYSQLI_TYPE_DATETIME;
@@ -115,7 +116,8 @@ class AnalyserTest extends TestCase
 				col_decimal DECIMAL(10, 2) NOT NULL,
 				col_float FLOAT NOT NULL,
 				col_double DOUBLE NOT NULL,
-				col_datetime DATETIME NOT NULL
+				col_datetime DATETIME NOT NULL,
+				col_enum ENUM('a', 'b', 'c') NOT NULL
 			);
 		");
 		$db->query("
@@ -145,6 +147,10 @@ class AnalyserTest extends TestCase
 
 		yield 'column - datetime' => [
 			'query' => "SELECT col_datetime FROM {$dataTypesTable}",
+		];
+
+		yield 'column - enum' => [
+			'query' => "SELECT col_enum FROM {$dataTypesTable}",
 		];
 
 		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP.
@@ -389,6 +395,9 @@ class AnalyserTest extends TestCase
 			// check that the returned values are all null.
 			if ($parserField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
 				$forceNullsForColumns[$field->name] = true;
+			} elseif ($parserField->type::getTypeEnum() === DbTypeEnum::ENUM) {
+				$this->assertTrue(($field->flags & MYSQLI_ENUM_FLAG) !== 0);
+				$this->assertSame(DbTypeEnum::VARCHAR, $actualType);
 			} else {
 				$this->assertSame(
 					$parserField->type::getTypeEnum(),

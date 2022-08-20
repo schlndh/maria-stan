@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Schema\DbType;
 
-class DateTimeType implements DbType
+final class DateTimeType implements DbType
 {
 	public static function getTypeEnum(): DbTypeEnum
 	{
