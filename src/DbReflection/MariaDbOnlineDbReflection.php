@@ -84,8 +84,17 @@ class MariaDbOnlineDbReflection
 
 		switch ($type) {
 			case 'varchar':
+			case 'tinytext':
+			case 'text':
+			case 'mediumtext':
+			case 'longtext':
+			case 'char':
 				return new VarcharType();
 			case 'int':
+			case 'tinyint':
+			case 'smallint':
+			case 'mediumint':
+			case 'bigint':
 				return new IntType();
 			case 'decimal':
 				return new DecimalType();
@@ -93,6 +102,10 @@ class MariaDbOnlineDbReflection
 			case 'double':
 				return new FloatType();
 			case 'datetime':
+			case 'date':
+			case 'time':
+			case 'timestamp':
+			case 'year':
 				return new DateTimeType();
 			default:
 				// TODO: return MixedType instead with some warning?
