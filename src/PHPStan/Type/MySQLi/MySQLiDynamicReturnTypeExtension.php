@@ -6,24 +6,22 @@ namespace MariaStan\PHPStan\Type\MySQLi;
 
 use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\PHPStan\PHPStanReturnTypeHelper;
 use mysqli_result;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantArrayType;
-use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
-
-use function count;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-	public function __construct(private readonly Analyser $analyser, private readonly DbToPhpstanTypeMapper $typeMapper)
-	{
+	public function __construct(
+		private readonly Analyser $analyser,
+		private readonly PHPStanReturnTypeHelper $phpstanHelper,
+	) {
 	}
 
 	public function getClass(): string
@@ -53,38 +51,10 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 			return null;
 		}
 
-		if (count($analyzerResult->resultFields) === 0) {
-			return null;
-		}
+		$rowType = $this->phpstanHelper->getRowTypeFromFields($analyzerResult->resultFields);
 
-		$keys = [];
-		$values = [];
-		$i = 0;
-		static $colKeyTypes = [
-			new ConstantIntegerType(0),
-			new ConstantIntegerType(1),
-		];
-
-		foreach ($analyzerResult->resultFields as $field) {
-			$keys[] = new ConstantIntegerType($i);
-			$type = $this->typeMapper->mapDbTypeToPhpstanType($field->type);
-
-			if ($field->isNullable) {
-				$type = TypeCombinator::addNull($type);
-			}
-
-			$values[] = new ConstantArrayType(
-				$colKeyTypes,
-				[
-					new ConstantStringType($field->name),
-					$type,
-				],
-			);
-			$i++;
-		}
-
-		$rowType = new ConstantArrayType($keys, $values);
-
-		return new GenericObjectType(mysqli_result::class, [$rowType]);
+		return $rowType !== null
+			? new GenericObjectType(mysqli_result::class, [$rowType])
+			: null;
 	}
 }
