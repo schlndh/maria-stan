@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan;
 
 use function array_map;
+use function assert;
 use function explode;
 use function file_get_contents;
 use function implode;
@@ -76,6 +77,7 @@ function filesInDir(string $directory, string $fileExtension): iterable
 	$it = new \RegexIterator($it, '(\.' . preg_quote($fileExtension) . '$)');
 
 	foreach ($it as $file) {
+		assert($file instanceof \SplFileInfo);
 		$fileName = $file->getPathname();
 
 		yield $fileName => file_get_contents($fileName);

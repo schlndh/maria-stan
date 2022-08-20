@@ -302,7 +302,7 @@ enum TokenTypeEnum: string
 		static $result = null;
 
 		if ($result === null) {
-			/** @phpstan-var array<TokenTypeEnum> $result Analysis is needlessly slow without this. */
+			/** @phpstan-var array<int, TokenTypeEnum> $result Analysis is needlessly slow without this. */
 			$result = self::cases();
 			$eoiIdx = array_search(self::END_OF_INPUT, $result, true);
 			$result = array_slice($result, $eoiIdx + 1);

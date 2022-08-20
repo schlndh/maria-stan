@@ -815,7 +815,11 @@ class MariaDbParserState
 		$token = $this->findCurrentToken();
 
 		if ($token === null) {
-			throw new UnexpectedTokenException("Expected {$type->value}, but reached end of token list.");
+			$expectedToken = is_string($type)
+				? "'{$type}'"
+				: $type->value;
+
+			throw new UnexpectedTokenException("Expected {$expectedToken}, but reached end of token list.");
 		}
 
 		if (is_string($type)) {

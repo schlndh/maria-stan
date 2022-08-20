@@ -1,7 +1,9 @@
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 parameters:
-	level: 6
+	level: 9
+	# Skip level 7 so that I don't have to deal with PHP's built-in functions.
+	checkUnionTypes: false
 	paths:
 		- src
 		- tests

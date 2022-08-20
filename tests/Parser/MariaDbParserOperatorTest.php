@@ -82,7 +82,8 @@ class MariaDbParserOperatorTest extends TestCase
 		return $val;
 	}
 
-	private function getValueFromAstExpression(Expr $expr): mixed
+	/** @return int|string|float|array<mixed>|null */
+	private function getValueFromAstExpression(Expr $expr): int|string|float|array|null
 	{
 		switch ($expr::getExprType()) {
 			case ExprTypeEnum::BINARY_OP:
