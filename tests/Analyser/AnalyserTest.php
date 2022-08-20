@@ -326,6 +326,26 @@ class AnalyserTest extends TestCase
 		yield 'subquery as SELECT expression - same name as outer table' => [
 			'query' => 'SELECT (SELECT id FROM analyser_test WHERE id = analyser_test.id LIMIT 1) FROM analyser_test',
 		];
+
+		yield 'subquery as SELECT expression - reference field from outer table' => [
+			'query' => 'SELECT (SELECT name) FROM analyser_test',
+		];
+
+		yield 'subquery as SELECT expression - same field name as outer table' => [
+			'query' => 'SELECT (SELECT name FROM analyser_test LIMIT 1) FROM analyser_test',
+		];
+
+		yield 'subquery in FROM' => [
+			'query' => 'SELECT t.`1` FROM (SELECT 1) t',
+		];
+
+		yield 'SELECT * FROM subquery' => [
+			'query' => 'SELECT * FROM (SELECT * FROM analyser_test) t',
+		];
+
+		yield 'subquery in FROM - reuse outer alias inside subquery' => [
+			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1 FROM (SELECT 1) t) b',
+		];
 	}
 
 	/** @dataProvider provideTestData */
@@ -397,16 +417,48 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	public function provideInvalidData(): iterable
 	{
-		yield 'unknown column in SELECT' => [
+		// TODO: improve the error messages to match MariaDB errors more closely.
+		yield 'unknown column in field list' => [
 			'query' => 'SELECT v.id FROM analyser_test',
 			'error' => 'Unknown column v.id',
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		yield 'unknown column in subquery' => [
+		yield 'unknown column in subquery in field list' => [
 			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
 			'error' => 'Unknown column v.id',
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery in FROM' => [
+			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'not unique subquery alias' => [
+			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
+			'error' => "Not unique table/alias: 't'",
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		// TODO: implement this
+		//yield 'not unique table in subquery' => [
+		//	'query' => 'SELECT * FROM (SELECT * FROM analyser_test, analyser_test) t',
+		//	'error' => "Not unique table/alias: 'analyser_test'",
+		//	'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		//];
+		//
+		//yield 'duplicate column name in subquery' => [
+		//	'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
+		//	'error' => "Duplicate column name 'id'",
+		//	'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+		//];
+
+		yield 'ambiguous column in field list' => [
+			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
+			'error' => "Ambiguous column id",
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 	}
 

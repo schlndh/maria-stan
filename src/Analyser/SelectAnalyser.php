@@ -10,6 +10,7 @@ use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
+use MariaStan\Ast\Query\TableReference\Subquery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
@@ -30,14 +31,15 @@ final class SelectAnalyser
 {
 	/** @var array<AnalyserError> */
 	private array $errors = [];
-	private ColumnResolver $columnResolver;
+	private readonly ColumnResolver $columnResolver;
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
 		private readonly SelectQuery $selectAst,
 		private readonly string $query,
+		?ColumnResolver $columnResolver = null,
 	) {
-		$this->columnResolver = new ColumnResolver();
+		$this->columnResolver = $columnResolver ?? new ColumnResolver($this->dbReflection);
 	}
 
 	private function init(): void
@@ -54,13 +56,11 @@ final class SelectAnalyser
 		$fromClause = $this->selectAst->from;
 
 		if ($fromClause !== null) {
-			$this->analyseTableReference($fromClause);
-		}
-
-		try {
-			$this->columnResolver->fetchSchemas($this->dbReflection);
-		} catch (DbReflectionException $e) {
-			$this->errors[] = new AnalyserError($e->getMessage());
+			try {
+				$this->analyseTableReference($fromClause);
+			} catch (AnalyserException | DbReflectionException $e) {
+				$this->errors[] = new AnalyserError($e->getMessage());
+			}
 		}
 
 		$fields = [];
@@ -87,7 +87,10 @@ final class SelectAnalyser
 		return new AnalyserResult($fields, $this->errors);
 	}
 
-	/** @return array<string> table names in order */
+	/**
+	 * @return array<string> table names in order
+	 * @throws AnalyserException|DbReflectionException
+	 */
 	private function analyseTableReference(TableReference $fromClause): array
 	{
 		switch ($fromClause::getTableReferenceType()) {
@@ -96,6 +99,12 @@ final class SelectAnalyser
 				$this->columnResolver->registerTable($fromClause->name, $fromClause->alias);
 
 				return [$fromClause->alias ?? $fromClause->name];
+			case TableReferenceTypeEnum::SUBQUERY:
+				assert($fromClause instanceof Subquery);
+				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
+				$this->columnResolver->registerSubquery($subqueryResult->resultFields, $fromClause->alias);
+
+				return [$fromClause->alias];
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
@@ -264,6 +273,7 @@ final class SelectAnalyser
 			$subquery,
 			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
 			$this->query,
+			new ColumnResolver($this->dbReflection, $this->columnResolver),
 		);
 		// phpcs:ignore SlevomatCodingStandard.PHP.DisallowReference
 		$other->errors = &$this->errors;
