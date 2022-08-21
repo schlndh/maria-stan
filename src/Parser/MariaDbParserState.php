@@ -541,7 +541,8 @@ class MariaDbParserState
 				: new Tuple($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $expressions);
 		}
 
-		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
+		$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+		$ident = $this->acceptAnyOfTokenTypes(...$identTokenTypes);
 
 		if ($ident) {
 			if ($this->acceptToken('(')) {
@@ -560,13 +561,31 @@ class MariaDbParserState
 			}
 
 			$tableIdent = $ident;
-			$ident = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+			$ident = $this->expectAnyOfTokens(
+				...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(),
+			);
 
 			return new Column(
 				$startPosition,
 				$ident->getEndPosition(),
 				$this->cleanIdentifier($ident->content),
 				$this->cleanIdentifier($tableIdent->content),
+			);
+		}
+
+		$functionIdent = $this->acceptAnyOfTokenTypes(...$this->parser->getExplicitTokenTypesForFunctions());
+
+		if ($functionIdent) {
+			// These functions can be called even without parentheses.
+			$arguments = $this->acceptToken('(')
+				? $this->parseExpressionListEndedByClosingParenthesis()
+				: [];
+
+			return new FunctionCall(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$functionIdent->content,
+				$arguments,
 			);
 		}
 

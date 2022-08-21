@@ -6,6 +6,8 @@ namespace MariaStan\Parser;
 
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\ExprTypeEnum;
+use MariaStan\Ast\Expr\FunctionCall;
+use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\SelectExpr\RegularExpr;
@@ -16,6 +18,8 @@ use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
 use function assert;
+use function implode;
+use function in_array;
 
 // phpcs:disable SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch.NonCapturingCatchRequired
 class MariaDbParserKeywordAsIdentifierTest extends TestCase
@@ -139,6 +143,104 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 
 		return $field;
+	}
+
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestColumnNameData(): iterable
+	{
+		$tableName = 'parser_keyword_test_col';
+
+		/** @phpstan-var array<TokenTypeEnum> $cases */
+		$cases = TokenTypeEnum::cases();
+		$columns = [];
+
+		foreach ($cases as $tokenType) {
+			$columns[] = "`{$tokenType->value}` TINYINT(1) NOT NULL";
+		}
+
+		$columnSql = implode(",\n", $columns);
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db->query("
+			CREATE OR REPLACE TABLE {$tableName} (
+				{$columnSql}
+			);
+		");
+
+		foreach ($cases as $tokenType) {
+			yield "column name - {$tokenType->value}" => [
+				'select' => "SELECT {$tokenType->value} FROM {$tableName};",
+			];
+
+			yield "table.column - {$tokenType->value}" => [
+				'select' => "SELECT {$tableName}.{$tokenType->value} FROM {$tableName};",
+			];
+		}
+	}
+
+	/** @dataProvider provideTestColumnNameData */
+	public function testColumnName(string $select): void
+	{
+		$parserResult = null;
+		$dbField = null;
+		$dbException = null;
+		$parserException = null;
+		$parser = new MariaDbParser();
+
+		try {
+			$dbField = $this->getFieldFromSql($select);
+		} catch (mysqli_sql_exception $dbException) {
+		}
+
+		if ($dbField !== null && $dbField->orgtable === '' && in_array($dbField->name, ['TRUE', 'FALSE'], true)) {
+			// TODO: implement boolean literals
+			$this->markTestIncomplete('Boolean literals are not yet implemented.');
+		}
+
+		try {
+			$parserResult = $parser->parseSingleQuery($select);
+		} catch (ParserException $parserException) {
+		}
+
+		$this->makeSureExceptionsMatch($dbException, $parserException);
+
+		if ($dbException !== null) {
+			// Make phpunit happy.
+			$this->assertNotNull($parserException);
+
+			return;
+		}
+
+		$this->assertNotNull($dbField);
+		$this->assertNotNull($parserResult);
+		$this->assertInstanceOf(SelectQuery::class, $parserResult);
+		$this->assertCount(1, $parserResult->select);
+		$firstSelectExpr = $parserResult->select[0];
+		$this->assertInstanceOf(RegularExpr::class, $firstSelectExpr);
+		$this->assertSame($dbField->name, $this->getNameFromSelectExpr($select, $firstSelectExpr));
+
+		if ($dbField->orgtable === '') {
+			switch ($dbField->name) {
+				case 'CURRENT_DATE':
+				case 'CURRENT_ROLE':
+				case 'CURRENT_TIME':
+				case 'CURRENT_TIMESTAMP':
+				case 'CURRENT_USER':
+				case 'LOCALTIME':
+				case 'LOCALTIMESTAMP':
+				case 'UTC_DATE':
+				case 'UTC_TIME':
+				case 'UTC_TIMESTAMP':
+					$this->assertInstanceOf(FunctionCall::class, $firstSelectExpr->expr);
+					break;
+				case 'NULL':
+					$this->assertInstanceOf(LiteralNull::class, $firstSelectExpr->expr);
+					break;
+				default:
+					$this->fail("Unhandled non-column {$dbField->name}");
+			}
+		} else {
+			$this->assertInstanceOf(Column::class, $firstSelectExpr->expr);
+		}
 	}
 
 	private function getNameFromSelectExpr(string $query, SelectExpr $selectExpr): string

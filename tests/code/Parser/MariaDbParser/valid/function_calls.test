@@ -74,3 +74,316 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT CURRENT_DATE, CURRENT_ROLE, CURRENT_TIME, CURRENT_TIMESTAMP, CURRENT_USER, LOCALTIME, LOCALTIMESTAMP, UTC_DATE,
+UTC_TIME, UTC_TIMESTAMP
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_DATE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_ROLE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_USER
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_DATE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[9] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+		)
+)
+-----
+SELECT CURRENT_DATE(), CURRENT_ROLE(), CURRENT_TIME(), CURRENT_TIMESTAMP(), CURRENT_USER(), LOCALTIME(),
+LOCALTIMESTAMP(), UTC_DATE(), UTC_TIME(), UTC_TIMESTAMP()
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_DATE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_ROLE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_USER
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_DATE
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIME
+							[arguments] => Array
+								(
+								)
+						)
+				)
+			[9] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIMESTAMP
+							[arguments] => Array
+								(
+								)
+						)
+				)
+		)
+)
+-----
+SELECT CURRENT_TIME(1), CURRENT_TIMESTAMP(2), LOCALTIME(1), LOCALTIMESTAMP(2), UTC_TIME(1), UTC_TIMESTAMP(2)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIME
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => CURRENT_TIMESTAMP
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIME
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => LOCALTIMESTAMP
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIME
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall
+						(
+							[name] => UTC_TIMESTAMP
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+		)
+)

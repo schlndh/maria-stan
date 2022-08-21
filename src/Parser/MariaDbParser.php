@@ -8,6 +8,7 @@ use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
 
 use function array_filter;
+use function array_values;
 
 class MariaDbParser
 {
@@ -15,6 +16,9 @@ class MariaDbParser
 
 	/** @var ?array<TokenTypeEnum> */
 	private ?array $tableAliasTokenTypes = null;
+
+	/** @var ?array<TokenTypeEnum> */
+	private ?array $identifierAfterDotTokenTypes = null;
 
 	public function __construct()
 	{
@@ -64,5 +68,33 @@ class MariaDbParser
 			// From MariaDB 10.2.12 only disallowed for table aliases.
 			static fn (TokenTypeEnum $t) => $t !== TokenTypeEnum::WINDOW,
 		);
+	}
+
+	/** @return array<TokenTypeEnum> */
+	public function getExplicitTokenTypesForFunctions(): array
+	{
+		return [
+			TokenTypeEnum::CURRENT_DATE,
+			TokenTypeEnum::CURRENT_ROLE,
+			TokenTypeEnum::CURRENT_TIME,
+			TokenTypeEnum::CURRENT_TIMESTAMP,
+			TokenTypeEnum::CURRENT_USER,
+			TokenTypeEnum::LOCALTIME,
+			TokenTypeEnum::LOCALTIMESTAMP,
+			TokenTypeEnum::UTC_DATE,
+			TokenTypeEnum::UTC_TIME,
+			TokenTypeEnum::UTC_TIMESTAMP,
+		];
+	}
+
+	/** @return array<TokenTypeEnum> */
+	public function getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(): array
+	{
+		if ($this->identifierAfterDotTokenTypes === null) {
+			$this->identifierAfterDotTokenTypes = array_values(TokenTypeEnum::getKeywordsMap());
+			$this->identifierAfterDotTokenTypes[] = TokenTypeEnum::IDENTIFIER;
+		}
+
+		return $this->identifierAfterDotTokenTypes;
 	}
 }

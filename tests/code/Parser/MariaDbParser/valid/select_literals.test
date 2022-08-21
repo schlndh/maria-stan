@@ -221,7 +221,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT "\'\"\n\r\t\\\%\_\a", '\'\"\n\r\t\\\%\_\a', "\\\\\a"
+SELECT "\'\"\n\t\\\%\_\a\r", '\'\"\n\t\\\%\_\a\r', "\\\\\a"
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -232,9 +232,9 @@ MariaStan\Ast\Query\SelectQuery
 					[expr] => MariaStan\Ast\Expr\LiteralString
 						(
 							[value] => '"
-									\%_a
+									\%_a
 							[firstConcatPart] => '"
-									\%_a
+									\%_a
 						)
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -242,9 +242,9 @@ MariaStan\Ast\Query\SelectQuery
 					[expr] => MariaStan\Ast\Expr\LiteralString
 						(
 							[value] => '"
-									\%_a
+									\%_a
 							[firstConcatPart] => '"
-									\%_a
+									\%_a
 						)
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -253,6 +253,21 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[value] => \\a
 							[firstConcatPart] => \\a
+						)
+				)
+		)
+)
+-----
+SELECT NULL
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralNull
+						(
 						)
 				)
 		)
