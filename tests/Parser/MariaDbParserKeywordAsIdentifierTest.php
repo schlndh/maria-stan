@@ -23,7 +23,10 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestFieldAliasData(): iterable
 	{
-		foreach (TokenTypeEnum::cases() as $tokenType) {
+		/** @phpstan-var array<TokenTypeEnum> $cases */
+		$cases = TokenTypeEnum::cases();
+
+		foreach ($cases as $tokenType) {
 			yield "field alias - {$tokenType->value}" => [
 				'select' => "SELECT 1 {$tokenType->value}",
 			];
@@ -76,7 +79,10 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 			);
 		");
 
-		foreach (TokenTypeEnum::cases() as $tokenType) {
+		/** @phpstan-var array<TokenTypeEnum> $cases */
+		$cases = TokenTypeEnum::cases();
+
+		foreach ($cases as $tokenType) {
 			yield "table alias - {$tokenType->value}" => [
 				'select' => "SELECT id FROM {$tableName} {$tokenType->value};",
 			];
