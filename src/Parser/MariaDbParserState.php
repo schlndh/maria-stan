@@ -338,12 +338,13 @@ class MariaDbParserState
 	private function parseTableAlias(): ?string
 	{
 		$alias = null;
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableAlias();
 
 		if ($this->acceptToken(TokenTypeEnum::AS)) {
-			$alias = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+			$alias = $this->expectAnyOfTokens(...$tokenTypes);
 		}
 
-		$alias ??= $this->acceptToken(TokenTypeEnum::IDENTIFIER);
+		$alias ??= $this->acceptAnyOfTokenTypes(...$tokenTypes);
 
 		return $alias !== null
 			? $this->cleanIdentifier($alias->content)

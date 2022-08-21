@@ -7,6 +7,7 @@ namespace MariaStan\Parser;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\DatabaseTestCaseHelper;
@@ -48,13 +49,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		} catch (ParserException $parserException) {
 		}
 
-		if ($dbException === null && $parserException !== null) {
-			$this->fail("DB accepts the query, but parser fails with: {$parserException->getMessage()}");
-		}
-
-		if ($dbException !== null && $parserException === null) {
-			$this->fail("Parser accepts the query, even though DB fails with: {$dbException->getMessage()}");
-		}
+		$this->makeSureExceptionsMatch($dbException, $parserException);
 
 		if ($dbException !== null) {
 			// Make phpunit happy.
@@ -68,6 +63,61 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$this->assertInstanceOf(SelectQuery::class, $parserResult);
 		$this->assertCount(1, $parserResult->select);
 		$this->assertSame($dbField->name, $this->getNameFromSelectExpr($select, $parserResult->select[0]));
+	}
+
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestTableAliasData(): iterable
+	{
+		$tableName = 'parser_keyword_test';
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db->query("
+			CREATE OR REPLACE TABLE {$tableName} (
+				id INT NULL
+			);
+		");
+
+		foreach (TokenTypeEnum::cases() as $tokenType) {
+			yield "table alias - {$tokenType->value}" => [
+				'select' => "SELECT id FROM {$tableName} {$tokenType->value};",
+			];
+		}
+	}
+
+	/** @dataProvider provideTestTableAliasData */
+	public function testTableAlias(string $select): void
+	{
+		$parserResult = null;
+		$dbField = null;
+		$dbException = null;
+		$parserException = null;
+		$parser = new MariaDbParser();
+
+		try {
+			$dbField = $this->getFieldFromSql($select);
+		} catch (mysqli_sql_exception $dbException) {
+		}
+
+		try {
+			$parserResult = $parser->parseSingleQuery($select);
+		} catch (ParserException $parserException) {
+		}
+
+		$this->makeSureExceptionsMatch($dbException, $parserException);
+
+		if ($dbException !== null) {
+			// Make phpunit happy.
+			$this->assertNotNull($parserException);
+
+			return;
+		}
+
+		$this->assertNotNull($dbField);
+		$this->assertNotNull($parserResult);
+		$this->assertInstanceOf(SelectQuery::class, $parserResult);
+		$this->assertNotNull($parserResult->from);
+		$this->assertInstanceOf(Table::class, $parserResult->from);
+		$this->assertSame($dbField->orgtable, $parserResult->from->name);
+		$this->assertSame($dbField->table, $parserResult->from->alias);
 	}
 
 	/** @throws mysqli_sql_exception */
@@ -102,6 +152,19 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 				return $expr->name;
 			default:
 				return $expr->getStartPosition()->findSubstringToEndPosition($query, $expr->getEndPosition());
+		}
+	}
+
+	private function makeSureExceptionsMatch(
+		?mysqli_sql_exception $dbException,
+		?ParserException $parserException,
+	): void {
+		if ($dbException === null && $parserException !== null) {
+			$this->fail("DB accepts the query, but parser fails with: {$parserException->getMessage()}");
+		}
+
+		if ($dbException !== null && $parserException === null) {
+			$this->fail("Parser accepts the query, even though DB fails with: {$dbException->getMessage()}");
 		}
 	}
 }

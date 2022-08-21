@@ -7,9 +7,14 @@ namespace MariaStan\Parser;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
 
+use function array_filter;
+
 class MariaDbParser
 {
 	private readonly MariaDbLexer $lexer;
+
+	/** @var ?array<TokenTypeEnum> */
+	private ?array $tableAliasTokenTypes = null;
 
 	public function __construct()
 	{
@@ -49,5 +54,15 @@ class MariaDbParser
 			TokenTypeEnum::TIMESTAMP,
 			TokenTypeEnum::WINDOW,
 		];
+	}
+
+	/** @return array<TokenTypeEnum> */
+	public function getTokenTypesWhichCanBeUsedAsUnquotedTableAlias(): array
+	{
+		return $this->tableAliasTokenTypes ??= array_filter(
+			$this->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias(),
+			// From MariaDB 10.2.12 only disallowed for table aliases.
+			static fn (TokenTypeEnum $t) => $t !== TokenTypeEnum::WINDOW,
+		);
 	}
 }
