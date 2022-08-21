@@ -29,7 +29,7 @@ class MariaDbParser
 	public function parseSingleQuery(string $sqlQuery): Query
 	{
 		$tokens = $this->lexer->tokenize($sqlQuery);
-		$parserState = new MariaDbParserState($this, $tokens);
+		$parserState = new MariaDbParserState($this, $sqlQuery, $tokens);
 
 		return $parserState->parseStrictSingleQuery();
 	}

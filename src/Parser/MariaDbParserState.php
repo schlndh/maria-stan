@@ -40,15 +40,12 @@ use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function array_map;
-use function array_slice;
 use function chr;
 use function count;
 use function implode;
 use function in_array;
 use function is_string;
 use function max;
-use function min;
-use function print_r;
 use function reset;
 use function str_replace;
 use function str_starts_with;
@@ -61,8 +58,11 @@ class MariaDbParserState
 	private int $tokenCount;
 
 	/** @param array<Token> $tokens */
-	public function __construct(private readonly MariaDbParser $parser, private readonly array $tokens)
-	{
+	public function __construct(
+		private readonly MariaDbParser $parser,
+		private readonly string $query,
+		private readonly array $tokens,
+	) {
 		$this->tokenCount = count($this->tokens);
 	}
 
@@ -653,11 +653,8 @@ class MariaDbParserState
 		}
 
 		throw new UnexpectedTokenException(
-			($this->findCurrentToken()?->type->value ?? 'Out of tokens')
-			. ' after: ' . print_r(
-				array_slice($this->tokens, max($this->position - 5, 0), min($this->position, 5)),
-				true,
-			),
+			"Unexpected token: {$this->printToken($this->findCurrentToken())} after: "
+				. $this->getContextPriorToTokenPosition(),
 		);
 	}
 
@@ -876,10 +873,16 @@ class MariaDbParserState
 		);
 
 		if ($token === null) {
-			throw new UnexpectedTokenException("Expected one of {$typesMsg}, but reached end of token list.");
+			throw new UnexpectedTokenException(
+				"Expected one of {$typesMsg}, but reached end of token list after: "
+					. $this->getContextPriorToTokenPosition(),
+			);
 		}
 
-		throw new UnexpectedTokenException("Expected one of {$typesMsg}, got {$token->type->value}.");
+		throw new UnexpectedTokenException(
+			"Expected one of {$typesMsg}, got {$this->printToken($token)} after: "
+				. $this->getContextPriorToTokenPosition(),
+		);
 	}
 
 	/**
@@ -895,15 +898,24 @@ class MariaDbParserState
 				? "'{$type}'"
 				: $type->value;
 
-			throw new UnexpectedTokenException("Expected {$expectedToken}, but reached end of token list.");
+			throw new UnexpectedTokenException(
+				"Expected {$expectedToken}, but reached end of token list after: "
+				. $this->getContextPriorToTokenPosition(),
+			);
 		}
 
 		if (is_string($type)) {
 			if ($token->type !== TokenTypeEnum::SINGLE_CHAR || $token->content !== $type) {
-				throw new UnexpectedTokenException("Expected {$type}, but found {$token->type->value}.");
+				throw new UnexpectedTokenException(
+					"Expected '{$type}', got {$this->printToken($token)} after: "
+					. $this->getContextPriorToTokenPosition(),
+				);
 			}
 		} elseif ($token->type !== $type) {
-			throw new UnexpectedTokenException("Expected {$type->value}, but found {$token->type->value}.");
+			throw new UnexpectedTokenException(
+				"Expected {$type->value}, got {$this->printToken($token)} after: "
+				. $this->getContextPriorToTokenPosition(),
+			);
 		}
 
 		$this->position++;
@@ -957,5 +969,32 @@ class MariaDbParserState
 		}
 
 		return strtr($contents, $map);
+	}
+
+	/** @param int|null $tokenPosition null = current token */
+	private function getContextPriorToTokenPosition(?int $tokenPosition = null): string
+	{
+		$tokenPosition ??= $this->position;
+		$token = $tokenPosition >= $this->tokenCount
+			? null
+			: $this->tokens[$tokenPosition];
+
+		return $token !== null
+			? $this->tokens[max($this->position - 5, 0)]->position
+				->findSubstringToEndPosition($this->query, $token->position)
+			: substr($this->query, -50);
+	}
+
+	private function printToken(?Token $token): string
+	{
+		if ($token === null) {
+			return 'Out of tokens';
+		}
+
+		if ($token->type === TokenTypeEnum::SINGLE_CHAR) {
+			return "'{$token->content}'";
+		}
+
+		return $token->type->value;
 	}
 }
