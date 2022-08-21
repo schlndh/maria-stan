@@ -39,9 +39,11 @@ use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
+use function array_map;
 use function array_slice;
 use function chr;
 use function count;
+use function implode;
 use function in_array;
 use function is_string;
 use function max;
@@ -59,7 +61,7 @@ class MariaDbParserState
 	private int $tokenCount;
 
 	/** @param array<Token> $tokens */
-	public function __construct(private readonly array $tokens)
+	public function __construct(private readonly MariaDbParser $parser, private readonly array $tokens)
 	{
 		$this->tokenCount = count($this->tokens);
 	}
@@ -207,7 +209,7 @@ class MariaDbParserState
 			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
 				$query = $this->parseSelectQuery();
 				$this->expectToken(')');
-				$alias = $this->parseAlias();
+				$alias = $this->parseTableAlias();
 
 				if ($alias === null) {
 					throw new InvalidSqlException('Subquery has to have an alias!');
@@ -228,7 +230,7 @@ class MariaDbParserState
 		}
 
 		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
-		$alias = $this->parseAlias();
+		$alias = $this->parseTableAlias();
 
 		return new Table(
 			$table->position,
@@ -303,7 +305,7 @@ class MariaDbParserState
 		unset($ident);
 		$this->position = $position;
 		$expr = $this->parseExpression();
-		$alias = $this->parseAlias();
+		$alias = $this->parseFieldAlias();
 		$prevToken = $this->getPreviousTokenUnsafe();
 
 		return new RegularExpr($prevToken->getEndPosition(), $expr, $alias);
@@ -313,7 +315,27 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseAlias(): ?string
+	private function parseFieldAlias(): ?string
+	{
+		$alias = null;
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+
+		if ($this->acceptToken(TokenTypeEnum::AS)) {
+			$alias = $this->expectAnyOfTokens(...$tokenTypes);
+		}
+
+		$alias ??= $this->acceptAnyOfTokenTypes(...$tokenTypes);
+
+		return $alias !== null
+			? $this->cleanIdentifier($alias->content)
+			: null;
+	}
+
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function parseTableAlias(): ?string
 	{
 		$alias = null;
 
@@ -804,6 +826,40 @@ class MariaDbParserState
 		$this->position++;
 
 		return $token;
+	}
+
+	/**
+	 * @phpstan-impure
+	 * @throws UnexpectedTokenException
+	 */
+	private function expectAnyOfTokens(TokenTypeEnum|string ...$types): Token
+	{
+		if (count($types) === 0) {
+			throw new UnexpectedTokenException(__METHOD__ . ' cannot be used with no token types.');
+		}
+
+		$token = $this->acceptAnyOfTokenTypes(...$types);
+
+		if ($token !== null) {
+			return $token;
+		}
+
+		$token = $this->findCurrentToken();
+		$typesMsg = implode(
+			', ',
+			array_map(
+				static fn (TokenTypeEnum|string $t) => is_string($t)
+					? "'{$t}'"
+					: $t->value,
+				$types,
+			),
+		);
+
+		if ($token === null) {
+			throw new UnexpectedTokenException("Expected one of {$typesMsg}, but reached end of token list.");
+		}
+
+		throw new UnexpectedTokenException("Expected one of {$typesMsg}, got {$token->type->value}.");
 	}
 
 	/**

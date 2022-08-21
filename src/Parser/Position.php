@@ -43,6 +43,13 @@ final class Position
 	{
 		return substr($str, $this->offset, $length);
 	}
+
+	public function findSubstringToEndPosition(string $str, self $endPosition): string|false
+	{
+		$length = $endPosition->offset - $this->offset;
+
+		return substr($str, $this->offset, $length);
+	}
 }
 
 /**

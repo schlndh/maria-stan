@@ -261,9 +261,7 @@ final class SelectAnalyser
 
 	private function getNodeContent(Node $node): string
 	{
-		$length = $node->getEndPosition()->offset - $node->getStartPosition()->offset;
-
-		return $node->getStartPosition()->findSubstringStartingWithPosition($this->query, $length);
+		return $node->getStartPosition()->findSubstringToEndPosition($this->query, $node->getEndPosition());
 	}
 
 	private function getSubqueryAnalyser(SelectQuery $subquery): self
