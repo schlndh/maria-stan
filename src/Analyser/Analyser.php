@@ -29,7 +29,7 @@ final class Analyser
 		} catch (ParserException $e) {
 			return new AnalyserResult(
 				[],
-				[new AnalyserError("Coudln't parse query: {$e->getMessage()}")],
+				[new AnalyserError("Couldn't parse query: {$e->getMessage()}")],
 			);
 		}
 
