@@ -1,0 +1,15 @@
+includes:
+    - extension.neon
+services:
+	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiDynamicReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiResultDynamicReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: MariaStan\PHPStan\Rules\MySQLi\MySQLiRule
+		tags:
+			- phpstan.rules.rule

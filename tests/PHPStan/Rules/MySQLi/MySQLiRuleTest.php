@@ -34,7 +34,7 @@ class MySQLiRuleTest extends MariaStanRuleTestCase
 	public static function getAdditionalConfigFiles(): array
 	{
 		return [
-			__DIR__ . '/../../../../extension.neon',
+			__DIR__ . '/../../../../extension.mysqli.neon',
 			__DIR__ . '/../../test.neon',
 		];
 	}

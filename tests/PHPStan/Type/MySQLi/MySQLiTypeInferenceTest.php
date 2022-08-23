@@ -33,7 +33,7 @@ class MySQLiTypeInferenceTest extends TypeInferenceTestCase
 	public static function getAdditionalConfigFiles(): array
 	{
 		return [
-			__DIR__ . '/../../../../extension.neon',
+			__DIR__ . '/../../../../extension.mysqli.neon',
 			__DIR__ . '/../../test.neon',
 		];
 	}
