@@ -1,5 +1,6 @@
 {
 	"name": "schlndh/maria-stan",
+	"description": "Static analyser for MariaDB queries",
 	"type": "phpstan-extension",
 	"license": "MIT",
 	"autoload": {
