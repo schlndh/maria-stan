@@ -316,6 +316,23 @@ class AnalyserTest extends TestCase
 				'query' => "SELECT {$expr}",
 			];
 		}
+
+		$exprs = [
+			'1 IS TRUE',
+			'1 IS NOT TRUE',
+			'NULL IS TRUE',
+			'1 BETWEEN 0 AND 2',
+			'1 NOT BETWEEN 0 AND 2',
+			'1 NOT BETWEEN 0 AND NULL',
+			'1 NOT BETWEEN NULL AND 2',
+			'NULL BETWEEN 0 AND 2',
+		];
+
+		foreach ($exprs as $expr) {
+			yield "operator {$expr}" => [
+				'query' => "SELECT {$expr}",
+			];
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */

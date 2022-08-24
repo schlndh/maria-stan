@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
+use MariaStan\Ast\Expr\Is;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\Tuple;
@@ -49,6 +50,9 @@ class MariaDbParserOperatorTest extends TestCase
 			'0 + 1 BETWEEN 1 AND 2',
 			'"a" REGEXP "b" RLIKE "0"',
 			'1 + 2 REGEXP 2 + 1',
+			'1 AND 1 IS NULL',
+			'1 IS NULL AND 1',
+			'1 * 2 IS NULL',
 		];
 
 		foreach ($expressions as $expr) {
@@ -151,6 +155,18 @@ class MariaDbParserOperatorTest extends TestCase
 				$max = $this->getValueFromAstExpression($expr->max);
 
 				return $left >= $min && $left <= $max
+					? 1
+					: 0;
+			case ExprTypeEnum::IS:
+				assert($expr instanceof Is);
+				$left = $this->getValueFromAstExpression($expr->expression);
+				$this->assertIsNotArray($left);
+
+				return match ($expr->test) {
+					true => $left > 0,
+					false => $left <= 0,
+					null => $left === null,
+				}
 					? 1
 					: 0;
 			default:

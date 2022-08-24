@@ -21,7 +21,9 @@ use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
 
+use function array_map;
 use function array_merge;
+use function array_reduce;
 use function assert;
 use function count;
 use function in_array;
@@ -247,6 +249,29 @@ final class SelectAnalyser
 					// TODO: Change it to false if we can statically determine that the query will always return
 					// a result: e.g. SELECT 1
 					true,
+				);
+			case Expr\ExprTypeEnum::IS:
+				assert($expr instanceof Expr\Is);
+				// Make sure there are no errors on the left of IS.
+				$this->resolveExprType($expr->expression);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\IntType(),
+					false,
+				);
+			case Expr\ExprTypeEnum::BETWEEN:
+				assert($expr instanceof Expr\Between);
+				$isNullable = array_reduce(
+					array_map($this->resolveExprType(...), [$expr->expression, $expr->min, $expr->max]),
+					static fn (bool $isNullable, QueryResultField $f) => $isNullable || $f->isNullable,
+					false,
+				);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\IntType(),
+					$isNullable,
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
