@@ -165,7 +165,7 @@ final class SelectAnalyser
 				return new QueryResultField($expr->firstConcatPart, new Schema\DbType\VarcharType(), false);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
-				$resolvedInnerExpr = $this->resolveExprType($expr->expr);
+				$resolvedInnerExpr = $this->resolveExprType($expr->expression);
 
 				$type = match ($expr->operation) {
 					Expr\UnaryOpTypeEnum::PLUS => $resolvedInnerExpr->type,

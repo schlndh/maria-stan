@@ -16,7 +16,7 @@ MariaStan\Ast\Query\SelectQuery
 									[0] => MariaStan\Ast\Expr\UnaryOp
 										(
 											[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
-											[expr] => MariaStan\Ast\Expr\LiteralInt
+											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
 												)

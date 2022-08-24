@@ -123,7 +123,7 @@ class MariaDbParserOperatorTest extends TestCase
 				};
 			case ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof UnaryOp);
-				$inner = $this->getValueFromAstExpression($expr->expr);
+				$inner = $this->getValueFromAstExpression($expr->expression);
 
 				return match ($expr->operation) {
 					UnaryOpTypeEnum::PLUS => $inner,
