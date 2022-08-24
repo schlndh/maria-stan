@@ -272,6 +272,7 @@ enum TokenTypeEnum: string
 	case UNDO = 'UNDO';
 	case UNION = 'UNION';
 	case UNIQUE = 'UNIQUE';
+	case UNKNOWN = 'UNKNOWN';
 	case UNLOCK = 'UNLOCK';
 	case UNSIGNED = 'UNSIGNED';
 	case UPDATE = 'UPDATE';

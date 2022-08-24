@@ -41,4 +41,7 @@ enum ExprTypeEnum: string
 
 	/** @see Between */
 	case BETWEEN = 'BETWEEN';
+
+	/** @see Is */
+	case IS = 'IS';
 }

@@ -1102,3 +1102,327 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT 1 IS NULL, 1 IS NOT NULL, NOT 1 IS NULL, 1 IS NULL AND 1, 1 IS NULL IS NULL
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
+							[left] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 IS UNKNOWN, 1 IS NOT UNKNOWN, NOT 1 IS UNKNOWN, 1 IS UNKNOWN AND 1, 1 IS UNKNOWN IS UNKNOWN
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
+							[left] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT 1 IS TRUE, 1 IS NOT TRUE, NOT 1 IS TRUE, 1 IS TRUE AND 1, 1 IS TRUE IS TRUE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[test] => true
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => true
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => true
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
+							[left] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => true
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => true
+								)
+							[test] => true
+						)
+				)
+		)
+)
+-----
+SELECT 1 IS FALSE, 1 IS NOT FALSE, NOT 1 IS FALSE, 1 IS FALSE AND 1, 1 IS FALSE IS FALSE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[test] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => false
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => false
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
+							[left] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => false
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Is
+						(
+							[expr] => MariaStan\Ast\Expr\Is
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[test] => false
+								)
+							[test] => false
+						)
+				)
+		)
+)

@@ -6,3 +6,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got '*' after: SELECT *
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '** FROM FROM' at line 1
+-----
+SELECT NULL IS 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of NULL, UNKNOWN, TRUE, FALSE, got INT_LITERAL after: SELECT NULL IS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1' at line 1
+-----
+SELECT 1 IS TRUE * 20
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Only NULL, UNKNOWN, TRUE and FALSE can be right of IS. Got * after: SELECT 1 IS TRUE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '* 20' at line 1
+-----
+SELECT 1 IS (TRUE)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of NULL, UNKNOWN, TRUE, FALSE, got '(' after: SELECT 1 IS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(TRUE)' at line 1

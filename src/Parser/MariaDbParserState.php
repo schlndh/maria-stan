@@ -11,6 +11,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
+use MariaStan\Ast\Expr\Is;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
@@ -403,8 +404,10 @@ class MariaDbParserState
 				break;
 			}
 
-			// TODO: add missing operators: IS, LIKE
-			if ($isNot && ! in_array($operator, [BinaryOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN], true)) {
+			// TODO: add missing operators: LIKE
+			$operatorsUsableWithNot = [BinaryOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN, SpecialOpTypeEnum::IS];
+
+			if ($isNot && ! in_array($operator, $operatorsUsableWithNot, true)) {
 				throw new UnexpectedTokenException("Operator {$operator->value} cannot be used with NOT.");
 			}
 
@@ -416,13 +419,17 @@ class MariaDbParserState
 				break;
 			}
 
-			// left-associative operation => +1
-			$right = $this->parseExpression($opPrecedence + ($this->isRightAssociative($operator) ? 0 : 1));
-			$exp = $operator instanceof BinaryOpTypeEnum
-				? new BinaryOp($operator, $exp, $right)
-				: match ($operator) {
-					SpecialOpTypeEnum::BETWEEN => $this->parseRestOfBetweenOperator($exp, $right),
-				};
+			if ($operator === SpecialOpTypeEnum::IS) {
+				$exp = $this->parseRestOfIsOperator($exp);
+			} else {
+				// left-associative operation => +1
+				$right = $this->parseExpression($opPrecedence + ($this->isRightAssociative($operator) ? 0 : 1));
+				$exp = $operator instanceof BinaryOpTypeEnum
+					? new BinaryOp($operator, $exp, $right)
+					: match ($operator) {
+						SpecialOpTypeEnum::BETWEEN => $this->parseRestOfBetweenOperator($exp, $right),
+					};
+			}
 
 			if ($isNot) {
 				$exp = new UnaryOp($exp->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $exp);
@@ -444,6 +451,48 @@ class MariaDbParserState
 		return new Between($left, $min, $max);
 	}
 
+	/** @throws ParserException */
+	private function parseRestOfIsOperator(Expr $left): Is|UnaryOp
+	{
+		static $precedence = null;
+		// IS is left-associative so + 1
+		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IS) + 1;
+		$isNot = $this->acceptToken(TokenTypeEnum::NOT) !== null;
+
+		$testToken = $this->expectAnyOfTokens(
+			TokenTypeEnum::NULL,
+			TokenTypeEnum::UNKNOWN,
+			TokenTypeEnum::TRUE,
+			TokenTypeEnum::FALSE,
+		);
+		$test = match ($testToken->type) {
+			TokenTypeEnum::TRUE => true,
+			TokenTypeEnum::FALSE => false,
+			default => null,
+		};
+
+		$currentToken = $this->findCurrentToken();
+
+		if ($currentToken !== null) {
+			$operator = $this->findBinaryOrSpecialOpFromToken($currentToken);
+
+			if ($operator !== null) {
+				if ($precedence < $this->getOperatorPrecedence($operator)) {
+					throw new UnexpectedTokenException(
+						"Only NULL, UNKNOWN, TRUE and FALSE can be right of IS. Got {$currentToken->content} after: "
+							. $this->getContextPriorToTokenPosition(),
+					);
+				}
+			}
+		}
+
+		$result = new Is($left->getStartPosition(), $this->getCurrentPosition(), $left, $test);
+
+		return $isNot
+			? new UnaryOp($result->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $result)
+			: $result;
+	}
+
 	private function findBinaryOrSpecialOpFromToken(Token $token): BinaryOpTypeEnum|SpecialOpTypeEnum|null
 	{
 		return match ($token->type) {
@@ -462,6 +511,7 @@ class MariaDbParserState
 			TokenTypeEnum::IN => BinaryOpTypeEnum::IN,
 			TokenTypeEnum::REGEXP, TokenTypeEnum::RLIKE => BinaryOpTypeEnum::REGEXP,
 			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
+			TokenTypeEnum::IS => SpecialOpTypeEnum::IS,
 			default => null,
 		};
 	}
@@ -493,10 +543,11 @@ class MariaDbParserState
 			BinaryOpTypeEnum::SHIFT_LEFT, BinaryOpTypeEnum::SHIFT_RIGHT => 9,
 			BinaryOpTypeEnum::BITWISE_AND => 8,
 			BinaryOpTypeEnum::BITWISE_OR => 7,
-			// LIKE, IS => 6
+			// LIKE => 6
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
-				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP => 6,
+				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP,
+				SpecialOpTypeEnum::IS => 6,
 			// CASE, WHEN, THEN, ELSE, END => 5
 			SpecialOpTypeEnum::BETWEEN => 5,
 			// NOT - handled separately => 4,

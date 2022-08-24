@@ -55,11 +55,12 @@ class MariaDbParserTest extends TestCase
 	): void {
 		$parser = $this->createParser();
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		[, $parserOutput] = $this->getParseOutput($parser, $code);
+		[$e, $parserOutput] = $this->getParseOutput($parser, $code);
 		[, $dbOutput] = $this->getDbOutput($db, $code);
 
 		$this->assertSame($expectedDbError, $dbOutput, $name);
 		$this->assertSame($expectedParserOutput, $parserOutput, $name);
+		$this->assertInstanceOf(ParserException::class, $e);
 	}
 
 	public function createParser(): MariaDbParser

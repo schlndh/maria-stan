@@ -24,7 +24,7 @@ enum BinaryOpTypeEnum: string
 	case NOT_EQUAL = '!=';
 	case IN = 'IN';
 	case REGEXP = 'REGEXP';
-	// TODO: IS, LIKE
+	// TODO: LIKE
 	case BITWISE_OR = '|';
 	case BITWISE_AND = '&';
 	case SHIFT_LEFT = '<<';

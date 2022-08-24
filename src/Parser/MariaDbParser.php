@@ -56,6 +56,7 @@ class MariaDbParser
 			TokenTypeEnum::TEXT,
 			TokenTypeEnum::TIME,
 			TokenTypeEnum::TIMESTAMP,
+			TokenTypeEnum::UNKNOWN,
 			TokenTypeEnum::WINDOW,
 		];
 	}
