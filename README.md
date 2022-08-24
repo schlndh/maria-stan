@@ -8,7 +8,7 @@ bugs, incomplete features, ...**
 
 ## Installation
 
-Install MariaStan using `composer require --dev schldnh/maria-stan:dev-master`. Then you'll need to add the following
+Install MariaStan using `composer require --dev schlndh/maria-stan:dev-master`. Then you'll need to add the following
 to your `phpstan.neon`:
 
 ```neon
