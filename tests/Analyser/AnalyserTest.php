@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Analyser;
 
+use DateTimeImmutable;
 use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
@@ -329,6 +330,11 @@ class AnalyserTest extends TestCase
 			'1 NOT BETWEEN 0 AND NULL',
 			'1 NOT BETWEEN NULL AND 2',
 			'NULL BETWEEN 0 AND 2',
+			'"2022-08-27" - INTERVAL 10 DAY',
+			'"2022-08-27" - INTERVAL 10 DAY + INTERVAL 10 DAY',
+			'"2022-08-27" - INTERVAL NULL DAY',
+			'"aaa" - INTERVAL 10 DAY',
+			'NOW() - INTERVAL 10 DAY',
 		];
 
 		foreach ($exprs as $expr) {
@@ -442,6 +448,7 @@ class AnalyserTest extends TestCase
 		$this->assertSameSize($result->resultFields, $fields);
 		$forceNullsForColumns = [];
 		$unnecessaryNullableFields = [];
+		$datetimeFields = [];
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
@@ -465,6 +472,12 @@ class AnalyserTest extends TestCase
 			} elseif ($parserField->type::getTypeEnum() === DbTypeEnum::ENUM) {
 				$this->assertTrue(($field->flags & MYSQLI_ENUM_FLAG) !== 0);
 				$this->assertSame(DbTypeEnum::VARCHAR, $actualType);
+			} elseif ($parserField->type::getTypeEnum() === DbTypeEnum::DATETIME) {
+				if ($actualType === DbTypeEnum::VARCHAR) {
+					$datetimeFields[] = $i;
+				} else {
+					$this->assertSame($actualType, $parserField->type::getTypeEnum());
+				}
 			} else {
 				$this->assertSame(
 					$parserField->type::getTypeEnum(),
@@ -480,6 +493,24 @@ class AnalyserTest extends TestCase
 
 			foreach (array_keys($forceNullsForColumns) as $col) {
 				$this->assertNull($row[$col]);
+			}
+
+			$colNames = array_keys($row);
+
+			foreach ($datetimeFields as $colIdx) {
+				$val = $row[$colNames[$colIdx]];
+
+				if ($val === null) {
+					continue;
+				}
+
+				$parsedDateTime = false;
+
+				foreach (['Y-m-d H:i:s', 'Y-m-d'] as $format) {
+					$parsedDateTime = $parsedDateTime ?: DateTimeImmutable::createFromFormat($format, $val);
+				}
+
+				$this->assertNotFalse($parsedDateTime);
 			}
 		}
 
@@ -603,6 +634,12 @@ class AnalyserTest extends TestCase
 
 		yield 'unknown column in ORDER BY' => [
 			'query' => 'SELECT * FROM analyser_test ORDER BY v.id',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in INTERVAL' => [
+			'query' => 'SELECT "2022-08-27" - INTERVAL v.id DAY FROM analyser_test',
 			'error' => 'Unknown column v.id',
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];

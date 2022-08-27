@@ -219,6 +219,26 @@ final class SelectAnalyser
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
 				$leftResult = $this->resolveExprType($expr->left);
+
+				if (
+					(
+						$expr->operation === Expr\BinaryOpTypeEnum::PLUS
+						|| $expr->operation === Expr\BinaryOpTypeEnum::MINUS
+					) && $expr->right::getExprType() === Expr\ExprTypeEnum::INTERVAL
+				) {
+					$intervalExpr = $expr->right;
+					assert($intervalExpr instanceof Expr\Interval);
+					$timeQuantityResult = $this->resolveExprType($intervalExpr->timeQuantity);
+
+					return new QueryResultField(
+						$this->getNodeContent($expr),
+						new Schema\DbType\DateTimeType(),
+						$leftResult->isNullable
+							|| $timeQuantityResult->isNullable
+							|| $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME,
+					);
+				}
+
 				$rightResult = $this->resolveExprType($expr->right);
 				$lt = $leftResult->type::getTypeEnum();
 				$rt = $rightResult->type::getTypeEnum();
