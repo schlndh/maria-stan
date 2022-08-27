@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Analyser\Exception\DuplicateFieldNameException;
 use MariaStan\Analyser\Exception\NotUniqueTableAliasException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
@@ -81,14 +82,20 @@ final class ColumnResolver
 	 */
 	public function registerSubquery(array $fields, string $alias): void
 	{
-		// TODO: check also $tablesByAlias?
+		// Subquery can have the same alias as a normal table, so we don't have to check it.
 		if (isset($this->subquerySchemas[$alias])) {
 			throw new AnalyserException("Not unique table/alias: '{$alias}'");
 		}
 
 		$this->tableNamesInOrder[] = [null, $alias];
+		$uniqueFieldNameMap = [];
 
 		foreach ($fields as $field) {
+			if (isset($uniqueFieldNameMap[$field->name])) {
+				throw new DuplicateFieldNameException("Duplicate column name '{$field->name}'");
+			}
+
+			$uniqueFieldNameMap[$field->name] = true;
 			$this->subquerySchemas[$alias][$field->name] = $field;
 			$fieldSchema = new Schema\Column($field->name, $field->type, $field->isNullable);
 			$this->columnSchemasByName[$field->name][] = [$alias, $fieldSchema];

@@ -109,7 +109,12 @@ final class SelectAnalyser
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
 				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
-				$this->columnResolver->registerSubquery($subqueryResult->resultFields, $fromClause->alias);
+
+				try {
+					$this->columnResolver->registerSubquery($subqueryResult->resultFields, $fromClause->alias);
+				} catch (AnalyserException $e) {
+					$this->errors[] = new AnalyserError($e->getMessage());
+				}
 
 				return [$fromClause->alias];
 			case TableReferenceTypeEnum::JOIN:

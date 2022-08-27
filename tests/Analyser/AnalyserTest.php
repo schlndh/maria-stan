@@ -369,6 +369,15 @@ class AnalyserTest extends TestCase
 		yield 'subquery in FROM - reuse outer alias inside subquery' => [
 			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1 FROM (SELECT 1) t) b',
 		];
+
+		// TODO: implement this
+		//yield 'subquery in FROM - same name as normal table' => [
+		//	'query' => 'SELECT * FROM analyser_test, (SELECT 1) analyser_test',
+		//];
+		//
+		//yield 'subquery in FROM - same alias as normal table' => [
+		//	'query' => 'SELECT * FROM analyser_test t, (SELECT 1) t',
+		//];
 	}
 
 	/** @dataProvider provideTestData */
@@ -486,18 +495,17 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
-		// TODO: implement this
 		yield 'not unique table in subquery' => [
-			'query' => 'SELECT * FROM (SELECT * FROM analyser_test, analyser_test) t',
+			'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
 			'error' => "Not unique table/alias: 'analyser_test'",
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
-		//yield 'duplicate column name in subquery' => [
-		//	'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
-		//	'error' => "Duplicate column name 'id'",
-		//	'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
-		//];
+		yield 'duplicate column name in subquery' => [
+			'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
+			'error' => "Duplicate column name 'id'",
+			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+		];
 
 		yield 'ambiguous column in field list' => [
 			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
