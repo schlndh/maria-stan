@@ -11,6 +11,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
+use MariaStan\Ast\Expr\Interval;
 use MariaStan\Ast\Expr\Is;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
@@ -19,6 +20,7 @@ use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\Placeholder;
 use MariaStan\Ast\Expr\SpecialOpTypeEnum;
 use MariaStan\Ast\Expr\Subquery;
+use MariaStan\Ast\Expr\TimeUnitEnum;
 use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
@@ -41,6 +43,7 @@ use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function array_map;
+use function assert;
 use function chr;
 use function count;
 use function implode;
@@ -50,6 +53,7 @@ use function max;
 use function reset;
 use function str_replace;
 use function str_starts_with;
+use function strtoupper;
 use function strtr;
 use function substr;
 
@@ -422,6 +426,8 @@ class MariaDbParserState
 			if ($operator === SpecialOpTypeEnum::IS) {
 				$exp = $this->parseRestOfIsOperator($exp);
 			} else {
+				// INTERVAL is handled as a unary operator
+				assert($operator !== SpecialOpTypeEnum::INTERVAL);
 				// left-associative operation => +1
 				$right = $this->parseExpression($opPrecedence + ($this->isRightAssociative($operator) ? 0 : 1));
 				$exp = $operator instanceof BinaryOpTypeEnum
@@ -493,6 +499,30 @@ class MariaDbParserState
 			: $result;
 	}
 
+	/** @throws ParserException */
+	private function parseTimeUnit(): TimeUnitEnum
+	{
+		$token = $this->expectAnyOfTokens(
+			TokenTypeEnum::IDENTIFIER,
+			TokenTypeEnum::SECOND_MICROSECOND,
+			TokenTypeEnum::MINUTE_MICROSECOND,
+			TokenTypeEnum::MINUTE_SECOND,
+			TokenTypeEnum::HOUR_MICROSECOND,
+			TokenTypeEnum::HOUR_SECOND,
+			TokenTypeEnum::HOUR_MINUTE,
+			TokenTypeEnum::DAY_MICROSECOND,
+			TokenTypeEnum::DAY_SECOND,
+			TokenTypeEnum::DAY_MINUTE,
+			TokenTypeEnum::DAY_HOUR,
+			TokenTypeEnum::YEAR_MONTH,
+		);
+
+		return TimeUnitEnum::tryFrom(strtoupper($token->content)) ?? throw new UnexpectedTokenException(
+			"Expected time unit. Got {$this->printToken($token)} after: "
+				. $this->getContextPriorToTokenPosition($this->position - 1),
+		);
+	}
+
 	private function findBinaryOrSpecialOpFromToken(Token $token): BinaryOpTypeEnum|SpecialOpTypeEnum|null
 	{
 		return match ($token->type) {
@@ -517,11 +547,12 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
-	private function getUnaryOpFromToken(Token $token): UnaryOpTypeEnum
+	private function getUnaryOpFromToken(Token $token): UnaryOpTypeEnum|SpecialOpTypeEnum
 	{
 		return match ($token->type) {
 			TokenTypeEnum::SINGLE_CHAR => UnaryOpTypeEnum::from($token->content),
 			TokenTypeEnum::NOT => UnaryOpTypeEnum::LOGIC_NOT,
+			TokenTypeEnum::INTERVAL => SpecialOpTypeEnum::INTERVAL,
 			default => throw new UnexpectedTokenException("Expected unary op token, got: {$token->content}"),
 		};
 	}
@@ -531,7 +562,7 @@ class MariaDbParserState
 	{
 		// https://mariadb.com/kb/en/operator-precedence/
 		return match ($op) {
-			// INTERVAL => 17
+			SpecialOpTypeEnum::INTERVAL => 17,
 			// BINARY, COLLATE => 16
 			UnaryOpTypeEnum::LOGIC_NOT => 15,
 			UnaryOpTypeEnum::PLUS, UnaryOpTypeEnum::MINUS, UnaryOpTypeEnum::BITWISE_NOT => 14,
@@ -649,15 +680,48 @@ class MariaDbParserState
 			);
 		}
 
-		$unaryOpToken = $this->acceptAnyOfTokenTypes('+', '-', '!', '~', TokenTypeEnum::NOT);
+		$unaryOpToken = $this->acceptAnyOfTokenTypes('+', '-', '!', '~', TokenTypeEnum::NOT, TokenTypeEnum::INTERVAL);
 
 		if ($unaryOpToken) {
 			$unaryOp = $this->getUnaryOpFromToken($unaryOpToken);
+
+			if ($unaryOp === SpecialOpTypeEnum::INTERVAL) {
+				if ($this->position < 2) {
+					throw new UnexpectedTokenException('INTERVAL cannot be within first 2 tokens.');
+				}
+
+				// TODO: allow INTERVAL in supported functions (e.g. ADDDATE etc).
+				// TODO: disallow standalone INTERVAL with unary +-
+				$tokenBeforeInterval = $this->tokens[$this->position - 2];
+
+				if (
+					$tokenBeforeInterval->type !== TokenTypeEnum::SINGLE_CHAR
+					|| ! in_array($tokenBeforeInterval->content, ['+', '-'], true)
+				) {
+					throw new UnexpectedTokenException(
+						'Got unexpected token INTERVAL after: '
+							. $this->getContextPriorToTokenPosition($this->position - 1),
+					);
+				}
+
+				// No precedence here: it should be parsed completely and then there's the time unit afterwards.
+				$expr = $this->parseExpression();
+				$timeUnit = $this->parseTimeUnit();
+
+				return new Interval(
+					$startPosition,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$expr,
+					$timeUnit,
+				);
+			}
+
 			// NOT has a lower precedence than !
 			$precedence = $unaryOpToken->type === TokenTypeEnum::NOT
 				? 4
 				: $this->getOperatorPrecedence($unaryOp);
 			$expr = $this->parseExpression($precedence);
+			assert($unaryOp instanceof UnaryOpTypeEnum);
 
 			return new UnaryOp($startPosition, $unaryOp, $expr);
 		}

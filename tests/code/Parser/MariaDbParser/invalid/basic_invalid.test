@@ -27,3 +27,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of NULL, UNKNOWN, TRUE, FALSE, got '(' after: SELECT 1 IS
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(TRUE)' at line 1
+-----
+SELECT NOW() + (INTERVAL 1 HOUR)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Got unexpected token INTERVAL after: () + (
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT NOW() + INTERVAL 2 HOURS
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected time unit. Got IDENTIFIER after: ) + INTERVAL 2
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HOURS' at line 1
+-----
+SELECT NOW() * INTERVAL 2 HOUR
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Got unexpected token INTERVAL after: NOW() *
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1

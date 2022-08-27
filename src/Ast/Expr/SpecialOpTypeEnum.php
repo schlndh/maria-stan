@@ -11,4 +11,7 @@ enum SpecialOpTypeEnum: string
 
 	/** @see Is */
 	case IS = 'IS';
+
+	/** @see Interval */
+	case INTERVAL = 'INTERVAL';
 }

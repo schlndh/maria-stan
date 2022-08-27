@@ -1426,3 +1426,315 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT NOW() + INTERVAL 1 MICROSECOND + INTERVAL 2 SECOND + INTERVAL 3 MINUTE + INTERVAL 4 HOUR + INTERVAL 5 DAY,
+    NOW() + INTERVAL 6 WEEK + INTERVAL 7 MONTH + INTERVAL 8 QUARTER + INTERVAL 9 YEAR - INTERVAL 10 SECOND_MICROSECOND,
+    NOW() - INTERVAL '11:1:2' MINUTE_MICROSECOND - INTERVAL 12 MINUTE_SECOND - INTERVAL 13 HOUR_MICROSECOND,
+    NOW() - INTERVAL 14 HOUR_SECOND - INTERVAL 15 HOUR_MINUTE - INTERVAL 16 day_microsecond - INTERVAL 17 dAy_SeCoNd,
+    NOW() - INTERVAL 18 day_minute - INTERVAL 5+5 DAY_HOUR - INTERVAL col YEAR_MONTH
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+											[left] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+													[left] => MariaStan\Ast\Expr\BinaryOp
+														(
+															[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+															[left] => MariaStan\Ast\Expr\FunctionCall
+																(
+																	[name] => NOW
+																	[arguments] => Array
+																		(
+																		)
+																)
+															[right] => MariaStan\Ast\Expr\Interval
+																(
+																	[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																	[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MICROSECOND
+																)
+														)
+													[right] => MariaStan\Ast\Expr\Interval
+														(
+															[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 2
+																)
+															[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::SECOND
+														)
+												)
+											[right] => MariaStan\Ast\Expr\Interval
+												(
+													[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 3
+														)
+													[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MINUTE
+												)
+										)
+									[right] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 4
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Interval
+								(
+									[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::DAY
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+											[left] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+													[left] => MariaStan\Ast\Expr\BinaryOp
+														(
+															[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+															[left] => MariaStan\Ast\Expr\FunctionCall
+																(
+																	[name] => NOW
+																	[arguments] => Array
+																		(
+																		)
+																)
+															[right] => MariaStan\Ast\Expr\Interval
+																(
+																	[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 6
+																		)
+																	[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::WEEK
+																)
+														)
+													[right] => MariaStan\Ast\Expr\Interval
+														(
+															[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 7
+																)
+															[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MONTH
+														)
+												)
+											[right] => MariaStan\Ast\Expr\Interval
+												(
+													[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 8
+														)
+													[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::QUARTER
+												)
+										)
+									[right] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 9
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::YEAR
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Interval
+								(
+									[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 10
+										)
+									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::SECOND_MICROSECOND
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+											[left] => MariaStan\Ast\Expr\FunctionCall
+												(
+													[name] => NOW
+													[arguments] => Array
+														(
+														)
+												)
+											[right] => MariaStan\Ast\Expr\Interval
+												(
+													[timeQuantity] => MariaStan\Ast\Expr\LiteralString
+														(
+															[value] => 11:1:2
+															[firstConcatPart] => 11:1:2
+														)
+													[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MINUTE_MICROSECOND
+												)
+										)
+									[right] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 12
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MINUTE_SECOND
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Interval
+								(
+									[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 13
+										)
+									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR_MICROSECOND
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+											[left] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+													[left] => MariaStan\Ast\Expr\FunctionCall
+														(
+															[name] => NOW
+															[arguments] => Array
+																(
+																)
+														)
+													[right] => MariaStan\Ast\Expr\Interval
+														(
+															[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 14
+																)
+															[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR_SECOND
+														)
+												)
+											[right] => MariaStan\Ast\Expr\Interval
+												(
+													[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 15
+														)
+													[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR_MINUTE
+												)
+										)
+									[right] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 16
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::DAY_MICROSECOND
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Interval
+								(
+									[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 17
+										)
+									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::DAY_SECOND
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+							[left] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+									[left] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
+											[left] => MariaStan\Ast\Expr\FunctionCall
+												(
+													[name] => NOW
+													[arguments] => Array
+														(
+														)
+												)
+											[right] => MariaStan\Ast\Expr\Interval
+												(
+													[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 18
+														)
+													[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::DAY_MINUTE
+												)
+										)
+									[right] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+													[left] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 5
+														)
+													[right] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 5
+														)
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::DAY_HOUR
+										)
+								)
+							[right] => MariaStan\Ast\Expr\Interval
+								(
+									[timeQuantity] => MariaStan\Ast\Expr\Column
+										(
+											[name] => col
+										)
+									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::YEAR_MONTH
+								)
+						)
+				)
+		)
+)
