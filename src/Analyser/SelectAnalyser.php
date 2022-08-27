@@ -98,7 +98,12 @@ final class SelectAnalyser
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
 				assert($fromClause instanceof Table);
-				$this->columnResolver->registerTable($fromClause->name, $fromClause->alias);
+
+				try {
+					$this->columnResolver->registerTable($fromClause->name, $fromClause->alias);
+				} catch (AnalyserException $e) {
+					$this->errors[] = new AnalyserError($e->getMessage());
+				}
 
 				return [$fromClause->alias ?? $fromClause->name];
 			case TableReferenceTypeEnum::SUBQUERY:

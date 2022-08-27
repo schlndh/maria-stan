@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Analyser\Exception\NotUniqueTableAliasException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
@@ -39,20 +40,32 @@ final class ColumnResolver
 	/** @var array<string, array<string, QueryResultField>> subquery alias => name => field */
 	private array $subquerySchemas = [];
 
+	/** @var array<string, true> table => true */
+	private array $tablesWithoutAliasMap = [];
+
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
 		private readonly ?self $parent = null,
 	) {
 	}
 
-	/** @throws DbReflectionException */
+	/** @throws DbReflectionException | AnalyserException */
 	public function registerTable(string $table, ?string $alias = null): void
 	{
 		$this->tableNamesInOrder[] = [$table, $alias];
 
 		if ($alias !== null) {
-			// TODO: check unique alias
+			if (isset($this->tablesByAlias[$alias])) {
+				throw new NotUniqueTableAliasException("Not unique table/alias: '{$alias}'");
+			}
+
 			$this->tablesByAlias[$alias] = $table;
+		} else {
+			if (isset($this->tablesWithoutAliasMap[$table])) {
+				throw new NotUniqueTableAliasException("Not unique table/alias: '{$table}'");
+			}
+
+			$this->tablesWithoutAliasMap[$table] = true;
 		}
 
 		$schema = $this->tableSchemas[$table] ??= $this->dbReflection->findTableSchema($table);

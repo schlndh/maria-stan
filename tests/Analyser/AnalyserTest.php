@@ -462,6 +462,24 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
+		yield 'unknown column in field list - IS' => [
+			'query' => 'SELECT v.id IS NULL FROM analyser_test',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'not unique table name in top-level query' => [
+			'query' => 'SELECT * FROM analyser_test, analyser_test',
+			'error' => "Not unique table/alias: 'analyser_test'",
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'not unique table alias in top-level query' => [
+			'query' => 'SELECT * FROM analyser_test t, analyser_test t',
+			'error' => "Not unique table/alias: 't'",
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
 		yield 'not unique subquery alias' => [
 			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
 			'error' => "Not unique table/alias: 't'",
@@ -469,12 +487,12 @@ class AnalyserTest extends TestCase
 		];
 
 		// TODO: implement this
-		//yield 'not unique table in subquery' => [
-		//	'query' => 'SELECT * FROM (SELECT * FROM analyser_test, analyser_test) t',
-		//	'error' => "Not unique table/alias: 'analyser_test'",
-		//	'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		//];
-		//
+		yield 'not unique table in subquery' => [
+			'query' => 'SELECT * FROM (SELECT * FROM analyser_test, analyser_test) t',
+			'error' => "Not unique table/alias: 'analyser_test'",
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
 		//yield 'duplicate column name in subquery' => [
 		//	'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
 		//	'error' => "Duplicate column name 'id'",
