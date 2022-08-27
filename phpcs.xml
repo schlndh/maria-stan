@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="MariaStan">
+	<ini name="memory_limit" value="256M"/>
 	<config name="php_version" value="80100"/>
 	<arg name="basepath" value="."/>
 	<arg name="colors"/>
