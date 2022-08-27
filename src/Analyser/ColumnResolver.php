@@ -44,6 +44,9 @@ final class ColumnResolver
 	/** @var array<string, true> table => true */
 	private array $tablesWithoutAliasMap = [];
 
+	/** @var array<string, QueryResultField> name => field */
+	private array $fieldList = [];
+
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
 		private readonly ?self $parent = null,
@@ -107,9 +110,26 @@ final class ColumnResolver
 		$this->outerJoinedTableMap[$table] = true;
 	}
 
+	/** @param array<QueryResultField> $fields */
+	public function registerFieldList(array $fields): void
+	{
+		$this->fieldList = [];
+
+		foreach ($fields as $field) {
+			// TODO: how to handle duplicate names? It seems that for ORDER BY/HAVING the first column with given
+			// name has priority. However, if there is an alias then it trumps columns without alias.
+			// SELECT id, -id id, 2*id id FROM analyser_test ORDER BY id;
+			$this->fieldList[$field->name] ??= $field;
+		}
+	}
+
 	/** @throws AnalyserException */
 	public function resolveColumn(string $column, ?string $table): QueryResultField
 	{
+		if ($table === null && isset($this->fieldList[$column])) {
+			return $this->fieldList[$column];
+		}
+
 		$candidateTables = $this->columnSchemasByName[$column] ?? [];
 
 		if ($table !== null) {

@@ -86,6 +86,24 @@ final class SelectAnalyser
 			}
 		}
 
+		if ($this->selectAst->where) {
+			$this->resolveExprType($this->selectAst->where);
+		}
+
+		foreach ($this->selectAst->groupBy?->expressions ?? [] as $groupByExpr) {
+			$this->resolveExprType($groupByExpr->expr);
+		}
+
+		$this->columnResolver->registerFieldList($fields);
+
+		if ($this->selectAst->having) {
+			$this->resolveExprType($this->selectAst->having);
+		}
+
+		foreach ($this->selectAst->orderBy?->expressions ?? [] as $orderByExpr) {
+			$this->resolveExprType($orderByExpr->expr);
+		}
+
 		return new AnalyserResult($fields, $this->errors);
 	}
 

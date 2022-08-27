@@ -12,10 +12,12 @@ use MariaStan\Util\MariaDbErrorCodes;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
+use function array_filter;
 use function array_keys;
 use function array_map;
 use function count;
 use function implode;
+use function str_starts_with;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_ENUM_FLAG;
@@ -74,6 +76,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
 		yield from $this->provideSubqueryTestData();
+		yield from $this->provideHavingOrderTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -380,6 +383,34 @@ class AnalyserTest extends TestCase
 		//];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideHavingOrderTestData(): iterable
+	{
+		yield 'use alias from field list in HAVING' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING aaa > 0',
+		];
+
+		yield 'use columns from field list in HAVING - *' => [
+			'query' => 'SELECT * FROM analyser_test HAVING name',
+		];
+
+		yield 'use columns from field list in HAVING - explicit' => [
+			'query' => 'SELECT name FROM analyser_test HAVING name',
+		];
+
+		yield 'use columns from GROUP BY in HAVING' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY name HAVING name',
+		];
+
+		yield 'use any column in HAVING as part of an aggregate' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING COUNT(name)',
+		];
+
+		yield 'use alias from field list in ORDER BY' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test ORDER BY aaa',
+		];
+	}
+
 	/** @dataProvider provideTestData */
 	public function test(string $query): void
 	{
@@ -388,11 +419,21 @@ class AnalyserTest extends TestCase
 		$reflection = new MariaDbOnlineDbReflection($db);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
+		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
+			$e->message,
+			'Unhandled expression type',
+		);
+		$unhandledExpressionTypeErrors = array_filter($result->errors, $isUnhanhledExpressionTypeError);
+		$otherErrors = array_filter(
+			$result->errors,
+			static fn (AnalyserError $e) => ! $isUnhanhledExpressionTypeError($e),
+		);
+
 		$this->assertCount(
 			0,
-			$result->errors,
+			$otherErrors,
 			"Expected no errors. Got: "
-			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
+			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $otherErrors)),
 		);
 
 		$stmt = $db->query($query);
@@ -447,6 +488,16 @@ class AnalyserTest extends TestCase
 				"These fields don't have to be nullable:\n" . implode(",\n", $unnecessaryNullableFields),
 			);
 		}
+
+		if (count($unhandledExpressionTypeErrors) > 0) {
+			$this->markTestIncomplete(
+				"There are unhandled expression types:\n"
+					. implode(
+						",\n",
+						array_map(static fn (AnalyserError $e) => $e->message, $unhandledExpressionTypeErrors),
+					),
+			);
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -456,6 +507,12 @@ class AnalyserTest extends TestCase
 		yield 'unknown column in field list' => [
 			'query' => 'SELECT v.id FROM analyser_test',
 			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'usage of previous alias in field list' => [
+			'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
+			'error' => 'Unknown column aaa',
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
@@ -511,6 +568,43 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
 			'error' => "Ambiguous column id",
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'unknown column in WHERE' => [
+			'query' => 'SELECT * FROM analyser_test WHERE v.id',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'using field list alias in WHERE' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test WHERE aaa',
+			'error' => 'Unknown column aaa',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in GROUP BY' => [
+			'query' => 'SELECT * FROM analyser_test GROUP BY v.id',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in HAVING' => [
+			'query' => 'SELECT * FROM analyser_test HAVING v.id',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		// TODO: implement this
+		//yield 'unknown column in HAVING - not in field list nor in GROUP BY nor aggregate' => [
+		//	'query' => 'SELECT 1 FROM analyser_test GROUP BY id HAVING name',
+		//	'error' => 'Unknown column name',
+		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		//];
+
+		yield 'unknown column in ORDER BY' => [
+			'query' => 'SELECT * FROM analyser_test ORDER BY v.id',
+			'error' => 'Unknown column v.id',
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 	}
 
