@@ -321,6 +321,9 @@ final class SelectAnalyser
 					new Schema\DbType\IntType(),
 					$isNullable,
 				);
+			case Expr\ExprTypeEnum::PLACEHOLDER:
+				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
+				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\VarcharType(), true);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 

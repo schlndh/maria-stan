@@ -78,6 +78,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideJoinData();
 		yield from $this->provideSubqueryTestData();
 		yield from $this->provideHavingOrderTestData();
+		yield from $this->providePlaceholderTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -417,8 +418,31 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function providePlaceholderTestData(): iterable
+	{
+		$values = [
+			'int' => 1,
+			'null' => null,
+			'float' => 1.23,
+			'string' => 'aaa',
+		];
+
+		foreach ($values as $label => $value) {
+			yield "bound param - {$label}" => [
+				'query' => 'SELECT ? id',
+				'params' => [$value],
+			];
+
+			yield "bound param - {$label} + 1" => [
+				'query' => 'SELECT ? + 1 id',
+				'params' => [$value],
+			];
+		}
+	}
+
 	/** @dataProvider provideTestData */
-	public function test(string $query): void
+	public function test(string $query, array $params = []): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
@@ -442,7 +466,14 @@ class AnalyserTest extends TestCase
 			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $otherErrors)),
 		);
 
-		$stmt = $db->query($query);
+		if (count($params) > 0) {
+			$stmt = $db->prepare($query);
+			$stmt->execute($params);
+			$stmt = $stmt->get_result();
+		} else {
+			$stmt = $db->query($query);
+		}
+
 		$fieldKeys = $this->getFieldKeys($result->resultFields);
 		$fields = $stmt->fetch_fields();
 		$this->assertSameSize($result->resultFields, $fields);
@@ -514,7 +545,9 @@ class AnalyserTest extends TestCase
 			}
 		}
 
-		if (count($unnecessaryNullableFields) > 0) {
+		// With bound params mysqli has the advantage of knowing the values, which we don't. So let's allow it to be
+		// nullable.
+		if (count($unnecessaryNullableFields) > 0 && count($params) === 0) {
 			$this->markTestIncomplete(
 				"These fields don't have to be nullable:\n" . implode(",\n", $unnecessaryNullableFields),
 			);
