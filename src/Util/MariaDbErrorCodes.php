@@ -18,4 +18,7 @@ class MariaDbErrorCodes
 
 	// 1066	42000	ER_NONUNIQ_TABLE	Not unique table/alias: '%s'
 	public const ER_NONUNIQ_TABLE = 1066;
+
+	// 1146	42S02	ER_NO_SUCH_TABLE	Table '%s.%s' doesn't exist
+	public const ER_NO_SUCH_TABLE = 1146;
 }

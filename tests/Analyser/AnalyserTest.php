@@ -641,7 +641,7 @@ class AnalyserTest extends TestCase
 
 		yield 'ambiguous column in field list' => [
 			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
-			'error' => "Ambiguous column id",
+			'error' => $this->createAmbiguousColumnErrorMessage('id'),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
@@ -686,6 +686,24 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT "2022-08-27" - INTERVAL v.id DAY FROM analyser_test',
 			'error' => $this->createUnknownColumnErrorMessage('v.id'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown table in JOIN' => [
+			'query' => 'SELECT * FROM analyser_test JOIN aaabbbccc',
+			'error' => $this->createTableDoesntExistErrorMessage('aaabbbccc'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'unknown column in JOIN ... ON' => [
+			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = b.aaa',
+			'error' => $this->createUnknownColumnErrorMessage('b.aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'ambiguous column in JOIN ... ON' => [
+			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = id',
+			'error' => $this->createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 	}
 
@@ -753,5 +771,23 @@ class AnalyserTest extends TestCase
 	private function createNotUniqueTableAliasErrorMessage(string $table): string
 	{
 		return "Not unique table/alias: '{$table}'";
+	}
+
+	private function createTableDoesntExistErrorMessage(string $table): string
+	{
+		static $dbname = null;
+
+		if ($dbname === null) {
+			$stmt = DatabaseTestCaseHelper::getDefaultSharedConnection()->query('SELECT DATABASE()');
+			$dbname = $stmt->fetch_column();
+			$stmt->close();
+		}
+
+		return "Table '{$dbname}.{$table}' doesn't exist";
+	}
+
+	private function createAmbiguousColumnErrorMessage(string $column): string
+	{
+		return "Ambiguous column {$column}";
 	}
 }

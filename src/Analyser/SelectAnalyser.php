@@ -143,6 +143,10 @@ final class SelectAnalyser
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
 				$rightTables = $this->analyseTableReference($fromClause->rightTable);
 
+				if ($fromClause->onCondition !== null) {
+					$this->resolveExprType($fromClause->onCondition);
+				}
+
 				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
 					foreach ($rightTables as $rightTable) {
 						$this->columnResolver->registerOuterJoinedTable($rightTable);
