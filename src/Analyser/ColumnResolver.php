@@ -46,6 +46,7 @@ final class ColumnResolver
 
 	/** @var array<string, QueryResultField> name => field */
 	private array $fieldList = [];
+	private bool $preferFieldList = false;
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
@@ -123,10 +124,15 @@ final class ColumnResolver
 		}
 	}
 
+	public function setPreferFieldList(bool $shouldPreferFieldList): void
+	{
+		$this->preferFieldList = $shouldPreferFieldList;
+	}
+
 	/** @throws AnalyserException */
 	public function resolveColumn(string $column, ?string $table): QueryResultField
 	{
-		if ($table === null && isset($this->fieldList[$column])) {
+		if ($table === null && $this->preferFieldList && isset($this->fieldList[$column])) {
 			return $this->fieldList[$column];
 		}
 
@@ -141,7 +147,10 @@ final class ColumnResolver
 
 		switch (count($candidateTables)) {
 			case 0:
+				// TODO: add test to make sure that the prioritization is the same as in the database.
+				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
 				return $this->parent?->resolveColumn($column, $table)
+					?? ($table === null ? $this->fieldList[$column] ?? null : null)
 					?? throw new AnalyserException("Unknown column {$this->formatColumnName($column, $table)}");
 			case 1:
 				[$alias, $columnSchema] = reset($candidateTables);

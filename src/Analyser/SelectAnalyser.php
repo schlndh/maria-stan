@@ -90,11 +90,14 @@ final class SelectAnalyser
 			$this->resolveExprType($this->selectAst->where);
 		}
 
+		$this->columnResolver->setPreferFieldList(false);
+		$this->columnResolver->registerFieldList($fields);
+
 		foreach ($this->selectAst->groupBy?->expressions ?? [] as $groupByExpr) {
 			$this->resolveExprType($groupByExpr->expr);
 		}
 
-		$this->columnResolver->registerFieldList($fields);
+		$this->columnResolver->setPreferFieldList(true);
 
 		if ($this->selectAst->having) {
 			$this->resolveExprType($this->selectAst->having);

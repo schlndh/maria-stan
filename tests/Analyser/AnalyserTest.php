@@ -77,7 +77,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideDataTypeData();
 		yield from $this->provideJoinData();
 		yield from $this->provideSubqueryTestData();
-		yield from $this->provideHavingOrderTestData();
+		yield from $this->provideGroupByHavingOrderTestData();
 		yield from $this->providePlaceholderTestData();
 	}
 
@@ -391,8 +391,16 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideHavingOrderTestData(): iterable
+	private function provideGroupByHavingOrderTestData(): iterable
 	{
+		yield 'use alias from field list in GROUP BY' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY aaa',
+		];
+
+		yield 'use column in GROUP BY - same alias in field list' => [
+			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
+		];
+
 		yield 'use alias from field list in HAVING' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING aaa > 0',
 		];
@@ -441,7 +449,10 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestData */
+	/**
+	 * @dataProvider provideTestData
+	 * @param array<scalar|null> $params
+	 */
 	public function test(string $query, array $params = []): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
