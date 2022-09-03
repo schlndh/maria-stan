@@ -21,4 +21,13 @@ class MariaDbErrorCodes
 
 	// 1146	42S02	ER_NO_SUCH_TABLE	Table '%s.%s' doesn't exist
 	public const ER_NO_SUCH_TABLE = 1146;
+
+	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
+	public const ER_OPERAND_COLUMNS = 1241;
+
+	// 4078	ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION	Illegal parameter data types %s and %s for operation '%s'
+	public const ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION = 4078;
+
+	// 4079	ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION	Illegal parameter data type %s for operation '%s'
+	public const ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION = 4079;
 }

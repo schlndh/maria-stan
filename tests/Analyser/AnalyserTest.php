@@ -5,14 +5,19 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use DateTimeImmutable;
+use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
+use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
+use MariaStan\Schema\DbType\IntType;
+use MariaStan\Schema\DbType\TupleType;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
+use function array_fill;
 use function array_filter;
 use function array_keys;
 use function array_map;
@@ -336,6 +341,26 @@ class AnalyserTest extends TestCase
 			'"2022-08-27" - INTERVAL NULL DAY',
 			'"aaa" - INTERVAL 10 DAY',
 			'NOW() - INTERVAL 10 DAY',
+			'1 IN (1, 2)',
+			'1 IN (NULL)',
+			'NULL IN (1)',
+			'NULL IN (NULL)',
+			'(1, 2) IN ((1, NULL))',
+			'(1, 2) IN ((1, 2), (1,2))',
+			'((1,2), 3) IN (((1,2), 3))',
+			'(1, 2) = (3, 4)',
+			'(1, 2) != (3, 4)',
+			'(1, 2) > (3, 4)',
+			'(1, 2) >= (3, 4)',
+			'(1, 2) < (3, 4)',
+			'(1, 2) <= (3, 4)',
+			'(1, 2) <=> (3, 4)',
+			'(1,1) = (SELECT 1, 1)',
+			'(1,1) IN (SELECT 1, 1)',
+			'(1,"aa") IN (SELECT id, name FROM analyser_test)',
+			'(SELECT 1) = (SELECT 1)',
+			'(SELECT id FROM analyser_test LIMIT 1) = (SELECT id FROM analyser_test LIMIT 1)',
+			'(SELECT * FROM analyser_test LIMIT 1) = (SELECT * FROM analyser_test LIMIT 1)',
 		];
 
 		foreach ($exprs as $expr) {
@@ -500,8 +525,8 @@ class AnalyserTest extends TestCase
 
 			if ($parserField->isNullable && ! $isFieldNullable) {
 				$unnecessaryNullableFields[] = $parserField->name;
-			} else {
-				$this->assertSame($isFieldNullable, $parserField->isNullable);
+			} elseif (! $parserField->isNullable && $isFieldNullable) {
+				$forceNullsForColumns[$field->name] = false;
 			}
 
 			$actualType = $this->mysqliTypeToDbTypeEnum($field->type);
@@ -533,8 +558,12 @@ class AnalyserTest extends TestCase
 		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
 			$this->assertSame($fieldKeys, array_keys($row));
 
-			foreach (array_keys($forceNullsForColumns) as $col) {
-				$this->assertNull($row[$col]);
+			foreach ($forceNullsForColumns as $col => $mustBeNull) {
+				if ($mustBeNull) {
+					$this->assertNull($row[$col]);
+				} else {
+					$this->assertNotNull($row[$col]);
+				}
 			}
 
 			$colNames = array_keys($row);
@@ -705,6 +734,106 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
+
+		yield 'unknown column in tuple' => [
+			'query' => 'SELECT (id, name) = (id, aaa) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'tuple size does not match' => [
+			'query' => 'SELECT (id, name, 1) = (id, name) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				$this->createMockTuple(3),
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield 'tuple: single value vs multi-column SELECT' => [
+			'query' => 'SELECT 1 IN (SELECT 1, 2)',
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				new IntType(),
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield 'tuple: flat tuple both on left and right with IN' => [
+			'query' => 'SELECT (1, 2) IN (1, 2)',
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				$this->createMockTuple(2),
+				new IntType(),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+		];
+
+		yield 'tuple: (tuple) IN (SELECT ..., SELECT ...)' => [
+			'query' =>
+				'SELECT (1,2) IN ((SELECT id FROM analyser_test LIMIT 1), (SELECT id FROM analyser_test LIMIT 1))',
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				$this->createMockTuple(2),
+				new IntType(),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+		];
+
+		yield 'tuple: nested tuples with IN and missing parentheses on right' => [
+			// This works if right side is wrapped in one more parentheses
+			'query' => 'SELECT ((1,2), 3) IN ((1,2), 3)',
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				$this->createMockTuple(2),
+				new IntType(),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+		];
+
+		// TODO: add LIKE once it's implemented.
+		$invalidOperators = [
+			MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION => [
+				'+',
+				'-',
+				'*',
+				'/',
+				'%',
+			],
+			MariaDbErrorCodes::ER_OPERAND_COLUMNS => [
+				'DIV',
+				'AND',
+				'OR',
+				'XOR',
+			],
+			MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION => [
+				'<<',
+				'>>',
+				'&',
+				'|',
+			],
+		];
+
+		foreach ($invalidOperators as $mariadbErrorCode => $operators) {
+			foreach ($operators as $invalidOperator) {
+				yield "invalid operator with tuples - {$invalidOperator}" => [
+					'query' => "SELECT (id, name, 1) {$invalidOperator} (1, 'aa') FROM analyser_test",
+					'error' => AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
+						BinaryOpTypeEnum::from($invalidOperator),
+						DbTypeEnum::TUPLE,
+						DbTypeEnum::TUPLE,
+					),
+					'DB error code' => $mariadbErrorCode,
+				];
+
+				yield "invalid operator with tuples - tuple {$invalidOperator} 1" => [
+					'query' => "SELECT (id, name, 1) {$invalidOperator} 1 FROM analyser_test",
+					'error' => AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
+						BinaryOpTypeEnum::from($invalidOperator),
+						DbTypeEnum::TUPLE,
+						DbTypeEnum::INT,
+					),
+					'DB error code' => $mariadbErrorCode,
+				];
+			}
+		}
 	}
 
 	/** @dataProvider provideInvalidData */
@@ -761,5 +890,12 @@ class AnalyserTest extends TestCase
 			// MYSQLI_TYPE_GEOMETRY, MYSQLI_TYPE_JSON, blob/binary types
 			default => throw new \RuntimeException("Unhandled type {$type}"),
 		};
+	}
+
+	private function createMockTuple(int $count): TupleType
+	{
+		$types = array_fill(0, $count, $this->createMock(DbType::class));
+
+		return new TupleType($types, false);
 	}
 }

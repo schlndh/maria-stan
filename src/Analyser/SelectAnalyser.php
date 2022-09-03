@@ -254,7 +254,36 @@ final class SelectAnalyser
 					$rt->value => 1,
 				];
 
-				if (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
+				if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
+					if (
+						// phpcs:ignore SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition
+						! in_array(
+							$expr->operation,
+							[
+								Expr\BinaryOpTypeEnum::EQUAL,
+								Expr\BinaryOpTypeEnum::NOT_EQUAL,
+								Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL,
+								Expr\BinaryOpTypeEnum::GREATER,
+								Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
+								Expr\BinaryOpTypeEnum::LOWER,
+								Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
+							],
+							true,
+						)
+					) {
+						$this->errors[] = new AnalyserError(
+							AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
+								$expr->operation,
+								$lt,
+								$rt,
+							),
+						);
+						$type = new Schema\DbType\MixedType();
+					} else {
+						$this->checkSameTypeShape($leftResult->type, $rightResult->type);
+						$type = new Schema\DbType\IntType();
+					}
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
 					$type = new Schema\DbType\NullType();
 				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::MIXED->value])) {
 					$type = new Schema\DbType\MixedType();
@@ -295,15 +324,23 @@ final class SelectAnalyser
 				assert($expr instanceof Expr\Subquery);
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
-				// TODO: support row subqueries: e.g. for = operator
-				assert(count($result->resultFields) === 1);
+
+				if (count($result->resultFields) === 1) {
+					return new QueryResultField(
+						$this->getNodeContent($expr),
+						$result->resultFields[0]->type,
+						// TODO: Change it to false if we can statically determine that the query will always return
+						// a result: e.g. SELECT 1
+						true,
+					);
+				}
+
+				$innerTypes = array_map(static fn (QueryResultField $f) => $f->type, $result->resultFields);
 
 				return new QueryResultField(
 					$this->getNodeContent($expr),
-					$result->resultFields[0]->type,
-					// TODO: Change it to false if we can statically determine that the query will always return
-					// a result: e.g. SELECT 1
-					true,
+					new Schema\DbType\TupleType($innerTypes, true),
+					$this->isAnyFieldNullable($result->resultFields),
 				);
 			case Expr\ExprTypeEnum::IS:
 				assert($expr instanceof Expr\Is);
@@ -331,6 +368,38 @@ final class SelectAnalyser
 			case Expr\ExprTypeEnum::PLACEHOLDER:
 				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
 				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\VarcharType(), true);
+			case Expr\ExprTypeEnum::TUPLE:
+				assert($expr instanceof Expr\Tuple);
+				$innerFields = array_map($this->resolveExprType(...), $expr->expressions);
+				$innerTypes = array_map(static fn (QueryResultField $f) => $f->type, $innerFields);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\TupleType($innerTypes, false),
+					$this->isAnyFieldNullable($innerFields),
+				);
+			case Expr\ExprTypeEnum::IN:
+				assert($expr instanceof Expr\In);
+				$leftResult = $this->resolveExprType($expr->left);
+				$rightResult = $this->resolveExprType($expr->right);
+				$rightType = $rightResult->type;
+				assert($rightType instanceof Schema\DbType\TupleType);
+
+				if ($rightType->isFromSubquery) {
+					$this->checkSameTypeShape($leftResult->type, $rightType);
+				} else {
+					foreach ($rightType->types as $rowType) {
+						if (! $this->checkSameTypeShape($leftResult->type, $rowType)) {
+							break;
+						}
+					}
+				}
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\IntType(),
+					$leftResult->isNullable || $rightResult->isNullable,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 
@@ -360,5 +429,56 @@ final class SelectAnalyser
 		$other->errors = &$this->errors;
 
 		return $other;
+	}
+
+	private function checkSameTypeShape(Schema\DbType\DbType $left, Schema\DbType\DbType $right): bool
+	{
+		$lt = $left::getTypeEnum();
+		$rt = $right::getTypeEnum();
+
+		if ($lt !== Schema\DbType\DbTypeEnum::TUPLE && $rt !== Schema\DbType\DbTypeEnum::TUPLE) {
+			return true;
+		}
+
+		if ($lt !== Schema\DbType\DbTypeEnum::TUPLE) {
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
+			);
+
+			return false;
+		}
+
+		if ($rt !== Schema\DbType\DbTypeEnum::TUPLE) {
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
+			);
+
+			return false;
+		}
+
+		assert($left instanceof Schema\DbType\TupleType);
+		assert($right instanceof Schema\DbType\TupleType);
+
+		if ($left->typeCount !== $right->typeCount) {
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
+			);
+
+			return false;
+		}
+
+		for ($i = 0; $i < $left->typeCount; $i++) {
+			if (! $this->checkSameTypeShape($left->types[$i], $right->types[$i])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/** @param array<QueryResultField> $fields */
+	private function isAnyFieldNullable(array $fields): bool
+	{
+		return array_reduce($fields, static fn (bool $carry, QueryResultField $f) => $carry || $f->isNullable, false);
 	}
 }

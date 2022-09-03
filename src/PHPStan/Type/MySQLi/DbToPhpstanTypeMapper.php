@@ -9,6 +9,7 @@ use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\EnumType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
@@ -42,6 +43,8 @@ class DbToPhpstanTypeMapper
 				return TypeCombinator::union(
 					...array_map(static fn (string $c) => new ConstantStringType($c), $dbType->cases),
 				);
+			case DbTypeEnum::TUPLE:
+				return new ErrorType();
 			default:
 				return TypeCombinator::union(new IntegerType(), new StringType(), new FloatType());
 		}
