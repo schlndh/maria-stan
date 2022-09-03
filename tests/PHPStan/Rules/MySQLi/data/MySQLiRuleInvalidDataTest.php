@@ -47,7 +47,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		try {
 			assertFirstArgumentErrors(
 				$db->query('SELECT missing'),
-				'Unknown column missing',
+				"Unknown column 'missing'",
 			);
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {

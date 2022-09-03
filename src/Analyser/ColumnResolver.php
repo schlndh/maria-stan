@@ -61,13 +61,17 @@ final class ColumnResolver
 
 		if ($alias !== null) {
 			if (isset($this->tablesByAlias[$alias])) {
-				throw new NotUniqueTableAliasException("Not unique table/alias: '{$alias}'");
+				throw new NotUniqueTableAliasException(
+					AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
+				);
 			}
 
 			$this->tablesByAlias[$alias] = $table;
 		} else {
 			if (isset($this->tablesWithoutAliasMap[$table])) {
-				throw new NotUniqueTableAliasException("Not unique table/alias: '{$table}'");
+				throw new NotUniqueTableAliasException(
+					AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($table),
+				);
 			}
 
 			$this->tablesWithoutAliasMap[$table] = true;
@@ -88,7 +92,9 @@ final class ColumnResolver
 	{
 		// Subquery can have the same alias as a normal table, so we don't have to check it.
 		if (isset($this->subquerySchemas[$alias])) {
-			throw new AnalyserException("Not unique table/alias: '{$alias}'");
+			throw new NotUniqueTableAliasException(
+				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
+			);
 		}
 
 		$this->tableNamesInOrder[] = [null, $alias];
@@ -96,7 +102,9 @@ final class ColumnResolver
 
 		foreach ($fields as $field) {
 			if (isset($uniqueFieldNameMap[$field->name])) {
-				throw new DuplicateFieldNameException("Duplicate column name '{$field->name}'");
+				throw new DuplicateFieldNameException(
+					AnalyserErrorMessageBuilder::createDuplicateColumnName($field->name),
+				);
 			}
 
 			$uniqueFieldNameMap[$field->name] = true;
@@ -151,12 +159,16 @@ final class ColumnResolver
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
 				return $this->parent?->resolveColumn($column, $table)
 					?? ($table === null ? $this->fieldList[$column] ?? null : null)
-					?? throw new AnalyserException("Unknown column {$this->formatColumnName($column, $table)}");
+					?? throw new AnalyserException(
+						AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
+					);
 			case 1:
 				[$alias, $columnSchema] = reset($candidateTables);
 				break;
 			default:
-				throw new AnalyserException("Ambiguous column {$this->formatColumnName($column, $table)}");
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
+				);
 		}
 
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
@@ -197,12 +209,5 @@ final class ColumnResolver
 		}
 
 		return $fields;
-	}
-
-	private function formatColumnName(string $column, ?string $table): string
-	{
-		return $table === null
-			? $column
-			: "{$table}.{$column}";
 	}
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace MariaStan\DbReflection;
 
+use MariaStan\Analyser\AnalyserErrorMessageBuilder;
 use MariaStan\DbReflection\Exception\DatabaseException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
+use MariaStan\DbReflection\Exception\TableDoesNotExistException;
 use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -16,6 +18,7 @@ use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\Table;
+use MariaStan\Util\MariaDbErrorCodes;
 use MariaStan\Util\MysqliUtil;
 use mysqli;
 use mysqli_sql_exception;
@@ -40,6 +43,14 @@ class MariaDbOnlineDbReflection
 		try {
 			$tableCols = $this->mysqli->query("SHOW FULL COLUMNS FROM {$tableEsc}")->fetch_all(\MYSQLI_ASSOC);
 		} catch (mysqli_sql_exception $e) {
+			if ($e->getCode() === MariaDbErrorCodes::ER_NO_SUCH_TABLE) {
+				throw new TableDoesNotExistException(
+					AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage($table),
+					$e->getCode(),
+					$e,
+				);
+			}
+
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
 		}
 

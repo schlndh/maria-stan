@@ -581,91 +581,91 @@ class AnalyserTest extends TestCase
 		// TODO: improve the error messages to match MariaDB errors more closely.
 		yield 'unknown column in field list' => [
 			'query' => 'SELECT v.id FROM analyser_test',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'usage of previous alias in field list' => [
 			'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
-			'error' => $this->createUnknownColumnErrorMessage('aaa'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in subquery in field list' => [
 			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in subquery in FROM' => [
 			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in field list - IS' => [
 			'query' => 'SELECT v.id IS NULL FROM analyser_test',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'not unique table name in top-level query' => [
 			'query' => 'SELECT * FROM analyser_test, analyser_test',
-			'error' => $this->createNotUniqueTableAliasErrorMessage('analyser_test'),
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'not unique table alias in top-level query' => [
 			'query' => 'SELECT * FROM analyser_test t, analyser_test t',
-			'error' => $this->createNotUniqueTableAliasErrorMessage('t'),
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('t'),
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'not unique subquery alias' => [
 			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
-			'error' => $this->createNotUniqueTableAliasErrorMessage('t'),
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('t'),
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'not unique table in subquery' => [
 			'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
-			'error' => $this->createNotUniqueTableAliasErrorMessage('analyser_test'),
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'duplicate column name in subquery' => [
 			'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
-			'error' => "Duplicate column name 'id'",
+			'error' => AnalyserErrorMessageBuilder::createDuplicateColumnName('id'),
 			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
 		];
 
 		yield 'ambiguous column in field list' => [
 			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
-			'error' => $this->createAmbiguousColumnErrorMessage('id'),
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'unknown column in WHERE' => [
 			'query' => 'SELECT * FROM analyser_test WHERE v.id',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'using field list alias in WHERE' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test WHERE aaa',
-			'error' => $this->createUnknownColumnErrorMessage('aaa'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in GROUP BY' => [
 			'query' => 'SELECT * FROM analyser_test GROUP BY v.id',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in HAVING' => [
 			'query' => 'SELECT * FROM analyser_test HAVING v.id',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
@@ -678,31 +678,31 @@ class AnalyserTest extends TestCase
 
 		yield 'unknown column in ORDER BY' => [
 			'query' => 'SELECT * FROM analyser_test ORDER BY v.id',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in INTERVAL' => [
 			'query' => 'SELECT "2022-08-27" - INTERVAL v.id DAY FROM analyser_test',
-			'error' => $this->createUnknownColumnErrorMessage('v.id'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown table in JOIN' => [
 			'query' => 'SELECT * FROM analyser_test JOIN aaabbbccc',
-			'error' => $this->createTableDoesntExistErrorMessage('aaabbbccc'),
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('aaabbbccc'),
 			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'unknown column in JOIN ... ON' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = b.aaa',
-			'error' => $this->createUnknownColumnErrorMessage('b.aaa'),
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa', 'b'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'ambiguous column in JOIN ... ON' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = id',
-			'error' => $this->createAmbiguousColumnErrorMessage('id'),
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 	}
@@ -761,33 +761,5 @@ class AnalyserTest extends TestCase
 			// MYSQLI_TYPE_GEOMETRY, MYSQLI_TYPE_JSON, blob/binary types
 			default => throw new \RuntimeException("Unhandled type {$type}"),
 		};
-	}
-
-	private function createUnknownColumnErrorMessage(string $column): string
-	{
-		return "Unknown column {$column}";
-	}
-
-	private function createNotUniqueTableAliasErrorMessage(string $table): string
-	{
-		return "Not unique table/alias: '{$table}'";
-	}
-
-	private function createTableDoesntExistErrorMessage(string $table): string
-	{
-		static $dbname = null;
-
-		if ($dbname === null) {
-			$stmt = DatabaseTestCaseHelper::getDefaultSharedConnection()->query('SELECT DATABASE()');
-			$dbname = $stmt->fetch_column();
-			$stmt->close();
-		}
-
-		return "Table '{$dbname}.{$table}' doesn't exist";
-	}
-
-	private function createAmbiguousColumnErrorMessage(string $column): string
-	{
-		return "Ambiguous column {$column}";
 	}
 }
