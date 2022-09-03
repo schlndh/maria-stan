@@ -48,3 +48,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Got unexpected token INTERVAL after: NOW() *
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT 1 IN 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got INT_LITERAL after: SELECT 1 IN
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1' at line 1
+-----
+SELECT 1 IN (1, 2) + 3
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Got + after: (1, 2)
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 3' at line 1

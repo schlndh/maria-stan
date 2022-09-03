@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
+use MariaStan\Ast\Expr\In;
 use MariaStan\Ast\Expr\Is;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralString;
@@ -23,9 +24,11 @@ use RuntimeException;
 
 use function array_map;
 use function assert;
+use function in_array;
 use function is_array;
 use function preg_match;
 
+// phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
 class MariaDbParserOperatorTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
@@ -45,6 +48,7 @@ class MariaDbParserOperatorTest extends TestCase
 			'1 * 2 NOT IN (0, 2)',
 			'!1 IN (0, 2)',
 			'1 IN (1)',
+			'1 IN (1) AND 0',
 			'0 BETWEEN 0 AND 1 XOR 1',
 			'1 BETWEEN 0 AND 2 BETWEEN 0 AND 1',
 			'0 + 1 BETWEEN 1 AND 2',
@@ -115,14 +119,6 @@ class MariaDbParserOperatorTest extends TestCase
 						0 => 0,
 						false => throw new RuntimeException("Invalid {$left} REGEXP {$right}"),
 					},
-					// phpcs:ignore
-					BinaryOpTypeEnum::IN => in_array(
-						$left,
-						is_array($right)
-							? $right
-							: [$right],
-						false,
-					) ? 1 : 0,
 					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};
 			case ExprTypeEnum::UNARY_OP:
@@ -167,6 +163,20 @@ class MariaDbParserOperatorTest extends TestCase
 					false => $left <= 0,
 					null => $left === null,
 				}
+					? 1
+					: 0;
+			case ExprTypeEnum::IN:
+				assert($expr instanceof In);
+				$left = $this->getValueFromAstExpression($expr->left);
+				$right = $this->getValueFromAstExpression($expr->right);
+
+				return in_array(
+					$left,
+					is_array($right)
+						? $right
+						: [$right],
+					false,
+				)
 					? 1
 					: 0;
 			default:

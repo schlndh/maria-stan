@@ -11,6 +11,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
+use MariaStan\Ast\Expr\In;
 use MariaStan\Ast\Expr\Interval;
 use MariaStan\Ast\Expr\Is;
 use MariaStan\Ast\Expr\LiteralFloat;
@@ -409,7 +410,7 @@ class MariaDbParserState
 			}
 
 			// TODO: add missing operators: LIKE
-			$operatorsUsableWithNot = [BinaryOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN, SpecialOpTypeEnum::IS];
+			$operatorsUsableWithNot = [SpecialOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN, SpecialOpTypeEnum::IS];
 
 			if ($isNot && ! in_array($operator, $operatorsUsableWithNot, true)) {
 				throw new UnexpectedTokenException("Operator {$operator->value} cannot be used with NOT.");
@@ -425,6 +426,8 @@ class MariaDbParserState
 
 			if ($operator === SpecialOpTypeEnum::IS) {
 				$exp = $this->parseRestOfIsOperator($exp);
+			} elseif ($operator === SpecialOpTypeEnum::IN) {
+				$exp = $this->parseRestOfInOperator($exp);
 			} else {
 				// INTERVAL is handled as a unary operator
 				assert($operator !== SpecialOpTypeEnum::INTERVAL);
@@ -500,6 +503,39 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
+	private function parseRestOfInOperator(Expr $left): In
+	{
+		static $inPrecedence = null;
+		$this->expectToken('(');
+		$right = $this->parseRestOfSubqueryOrTuple(true);
+		assert($right instanceof Subquery || $right instanceof Tuple);
+
+		$nextToken = $this->findCurrentToken();
+
+		if ($nextToken !== null) {
+			$operator = $this->findBinaryOrSpecialOpFromToken($nextToken);
+
+			if ($operator !== null) {
+				$opPrecedence = $this->getOperatorPrecedence($operator);
+				$inPrecedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IN);
+
+				if ($opPrecedence > $inPrecedence) {
+					throw new UnexpectedTokenException(
+						"Got {$operator->value} after: {$this->getContextPriorToTokenPosition()}",
+					);
+				}
+			}
+		}
+
+		return new In(
+			$left->getStartPosition(),
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$left,
+			$right,
+		);
+	}
+
+	/** @throws ParserException */
 	private function parseTimeUnit(): TimeUnitEnum
 	{
 		$token = $this->expectAnyOfTokens(
@@ -538,7 +574,7 @@ class MariaDbParserState
 			TokenTypeEnum::OP_NE => BinaryOpTypeEnum::NOT_EQUAL,
 			TokenTypeEnum::OP_SHIFT_LEFT => BinaryOpTypeEnum::SHIFT_LEFT,
 			TokenTypeEnum::OP_SHIFT_RIGHT => BinaryOpTypeEnum::SHIFT_RIGHT,
-			TokenTypeEnum::IN => BinaryOpTypeEnum::IN,
+			TokenTypeEnum::IN => SpecialOpTypeEnum::IN,
 			TokenTypeEnum::REGEXP, TokenTypeEnum::RLIKE => BinaryOpTypeEnum::REGEXP,
 			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
 			TokenTypeEnum::IS => SpecialOpTypeEnum::IS,
@@ -577,7 +613,7 @@ class MariaDbParserState
 			// LIKE => 6
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
-				BinaryOpTypeEnum::NOT_EQUAL, BinaryOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP,
+				BinaryOpTypeEnum::NOT_EQUAL, SpecialOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP,
 				SpecialOpTypeEnum::IS => 6,
 			// CASE, WHEN, THEN, ELSE, END => 5
 			SpecialOpTypeEnum::BETWEEN => 5,
@@ -594,6 +630,31 @@ class MariaDbParserState
 		return $op === SpecialOpTypeEnum::BETWEEN;
 	}
 
+	/** @throws ParserException */
+	private function parseRestOfSubqueryOrTuple(bool $strictTuple): Expr
+	{
+		$startPosition = $this->getPreviousTokenUnsafe()->position;
+
+		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+			$query = $this->parseSelectQuery();
+			$this->expectToken(')');
+
+			return new Subquery($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $query);
+		}
+
+		$expressions = [$this->parseExpression()];
+
+		while ($this->acceptToken(',')) {
+			$expressions[] = $this->parseExpression();
+		}
+
+		$this->expectToken(')');
+
+		return count($expressions) === 1 && ! $strictTuple
+			? reset($expressions)
+			: new Tuple($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $expressions);
+	}
+
 	/**
 	 * @phpstan-impure
 	 * @throws ParserException
@@ -603,24 +664,7 @@ class MariaDbParserState
 		$startPosition = $this->getCurrentPosition();
 
 		if ($this->acceptToken('(')) {
-			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
-				$query = $this->parseSelectQuery();
-				$this->expectToken(')');
-
-				return new Subquery($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $query);
-			}
-
-			$expressions = [$this->parseExpression()];
-
-			while ($this->acceptToken(',')) {
-				$expressions[] = $this->parseExpression();
-			}
-
-			$this->expectToken(')');
-
-			return count($expressions) === 1
-				? reset($expressions)
-				: new Tuple($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $expressions);
+			return $this->parseRestOfSubqueryOrTuple(false);
 		}
 
 		$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();

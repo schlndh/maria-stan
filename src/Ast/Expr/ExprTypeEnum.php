@@ -45,6 +45,9 @@ enum ExprTypeEnum: string
 	/** @see Is */
 	case IS = 'IS';
 
+	/** @see In */
+	case IN = 'IN';
+
 	/** @see Interval */
 	case INTERVAL = 'INTERVAL';
 }
