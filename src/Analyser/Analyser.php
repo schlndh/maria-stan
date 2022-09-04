@@ -30,6 +30,7 @@ final class Analyser
 			return new AnalyserResult(
 				[],
 				[new AnalyserError("Couldn't parse query: {$e->getMessage()}")],
+				0,
 			);
 		}
 
@@ -37,6 +38,7 @@ final class Analyser
 			return new AnalyserResult(
 				[],
 				[new AnalyserError("Unsupported query: {$ast::getQueryType()->value}")],
+				0,
 			);
 		}
 

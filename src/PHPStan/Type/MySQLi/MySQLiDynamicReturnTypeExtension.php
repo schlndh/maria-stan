@@ -8,13 +8,17 @@ use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\PHPStan\PHPStanReturnTypeHelper;
 use mysqli_result;
+use mysqli_stmt;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
+
+use function in_array;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -31,7 +35,7 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 
 	public function isMethodSupported(MethodReflection $methodReflection): bool
 	{
-		return $methodReflection->getName() === 'query';
+		return in_array($methodReflection->getName(), ['query', 'prepare'], true);
 	}
 
 	public function getTypeFromMethodCall(
@@ -52,9 +56,15 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		}
 
 		$rowType = $this->phpstanHelper->getRowTypeFromFields($analyzerResult->resultFields);
+		$placeholderCountType = new ConstantIntegerType($analyzerResult->positionalPlaceholderCount);
+		$returnClass = match ($methodReflection->getName()) {
+			'query' => mysqli_result::class,
+			'prepare' => mysqli_stmt::class,
+			default => null,
+		};
 
-		return $rowType !== null
-			? new GenericObjectType(mysqli_result::class, [$rowType])
+		return $rowType !== null && $returnClass !== null
+			? new GenericObjectType($returnClass, [$rowType, $placeholderCountType])
 			: null;
 	}
 }

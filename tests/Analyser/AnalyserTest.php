@@ -860,6 +860,87 @@ class AnalyserTest extends TestCase
 		}
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	public function provideTestPositionPlaceholderCountData(): iterable
+	{
+		yield 'no placeholders' => [
+			'query' => 'SELECT 1',
+			'expected count' => 0,
+		];
+
+		yield 'no placeholders - ? as string' => [
+			'query' => 'SELECT "?"',
+			'expected count' => 0,
+		];
+
+		yield 'placeholder in field list' => [
+			'query' => 'SELECT ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in subquery' => [
+			'query' => 'SELECT 0 FROM (SELECT ?, ? + ?) a',
+			'expected count' => 3,
+		];
+
+		yield 'placeholder in ON' => [
+			'query' => 'SELECT 0 FROM (SELECT 1) a JOIN (SELECT 2) b ON ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in WHERE' => [
+			'query' => 'SELECT 0 WHERE ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in GROUP BY' => [
+			'query' => 'SELECT 0 GROUP BY ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in HAVING' => [
+			'query' => 'SELECT 0 HAVING ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in ORDER BY' => [
+			'query' => 'SELECT 0 ORDER BY ?',
+			'expected count' => 1,
+		];
+
+		yield 'placeholder in LIMIT' => [
+			'query' => 'SELECT 0 LIMIT ?, ?',
+			'expected count' => 2,
+		];
+	}
+
+	/** @dataProvider provideTestPositionPlaceholderCountData */
+	public function testPositionalPlaceholderCount(string $query, int $expectedCount): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$parser = new MariaDbParser();
+		$reflection = new MariaDbOnlineDbReflection($db);
+		$analyser = new Analyser($parser, $reflection);
+		$result = $analyser->analyzeQuery($query);
+		$this->assertCount(
+			0,
+			$result->errors,
+			"Expected 0 errors. Got: "
+			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
+		);
+
+		if ($expectedCount === 0) {
+			$db->query($query);
+		} else {
+			$stmt = $db->prepare($query);
+			$values = array_fill(0, $expectedCount, '1');
+			$stmt->execute($values);
+			$stmt->close();
+		}
+
+		$this->assertSame($expectedCount, $result->positionalPlaceholderCount);
+	}
+
 	/**
 	 * @param array<QueryResultField> $expectedFields
 	 * @return array<string> without duplicates, in the same order as returned by the query

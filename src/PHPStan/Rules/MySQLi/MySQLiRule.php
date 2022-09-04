@@ -8,12 +8,17 @@ use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\AnalyserError;
 use MariaStan\Analyser\Exception\AnalyserException;
 use mysqli;
+use mysqli_stmt;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 
 use function array_map;
@@ -36,7 +41,6 @@ class MySQLiRule implements Rule
 	public function processNode(Node $node, Scope $scope): array
 	{
 		assert($node instanceof MethodCall);
-		$methodName = '';
 
 		if ($node->name instanceof Node\Identifier) {
 			$methodName = $node->name->name;
@@ -50,16 +54,22 @@ class MySQLiRule implements Rule
 			$methodName = $methodNameType->getValue();
 		}
 
-		if ($methodName !== 'query' || count($node->getArgs()) === 0) {
-			return [];
-		}
-
 		$objectType = $scope->getType($node->var);
 
-		if (! $objectType instanceof ObjectType || $objectType->getClassName() !== mysqli::class) {
+		if (! $objectType instanceof ObjectType) {
 			return [];
 		}
 
+		return match ($objectType->getClassName()) {
+			mysqli::class => $this->handleMysqliCall($methodName, $node, $scope),
+			mysqli_stmt::class => $this->handleMysqliStmtCall($methodName, $node, $scope),
+			default => [],
+		};
+	}
+
+	/** @return array<string|RuleError> */
+	private function handleMysqliCall(string $methodName, MethodCall $node, Scope $scope): array
+	{
 		$queryType = $scope->getType($node->getArgs()[0]->value);
 
 		if (! $queryType instanceof ConstantStringType) {
@@ -72,6 +82,54 @@ class MySQLiRule implements Rule
 			return [$e->getMessage()];
 		}
 
-		return array_map(static fn (AnalyserError $err) => $err->message, $analyserResult->errors);
+		$errors = array_map(static fn (AnalyserError $err) => $err->message, $analyserResult->errors);
+
+		if ($methodName === 'query' && $analyserResult->positionalPlaceholderCount > 0) {
+			$errors[] = 'Placeholders cannot be used with query(), use prepared statements.';
+		}
+
+		return $errors;
+	}
+
+	/** @return array<string|RuleError> */
+	private function handleMysqliStmtCall(string $methodName, MethodCall $node, Scope $scope): array
+	{
+		$callerType = $scope->getType($node->var);
+
+		if (! $callerType instanceof GenericObjectType || count($callerType->getTypes()) < 2) {
+			return [];
+		}
+
+		if ($methodName !== 'execute') {
+			return [];
+		}
+
+		$remainingPlaceholdersType = $callerType->getTypes()[1];
+
+		if (! $remainingPlaceholdersType instanceof ConstantIntegerType) {
+			return [];
+		}
+
+		if (count($node->getArgs()) > 0) {
+			$paramsType = $scope->getType($node->getArgs()[0]->value);
+
+			if ($paramsType instanceof NullType) {
+				$paramsCount = 0;
+			} elseif ($paramsType instanceof ConstantArrayType) {
+				$paramsCount = count($paramsType->getValueTypes());
+			} else {
+				return [];
+			}
+		} else {
+			$paramsCount = 0;
+		}
+
+		if ($paramsCount === $remainingPlaceholdersType->getValue()) {
+			return [];
+		}
+
+		return [
+			"Prepared statement needs {$remainingPlaceholdersType->getValue()} parameters, got {$paramsCount}.",
+		];
 	}
 }

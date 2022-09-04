@@ -34,6 +34,7 @@ final class SelectAnalyser
 	/** @var array<AnalyserError> */
 	private array $errors = [];
 	private readonly ColumnResolver $columnResolver;
+	private int $positionalPlaceholderCount = 0;
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
@@ -107,7 +108,15 @@ final class SelectAnalyser
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
-		return new AnalyserResult($fields, $this->errors);
+		if ($this->selectAst->limit?->count !== null) {
+			$this->resolveExprType($this->selectAst->limit->count);
+		}
+
+		if ($this->selectAst->limit?->offset !== null) {
+			$this->resolveExprType($this->selectAst->limit->offset);
+		}
+
+		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
 	}
 
 	/**
@@ -366,6 +375,8 @@ final class SelectAnalyser
 					$isNullable,
 				);
 			case Expr\ExprTypeEnum::PLACEHOLDER:
+				$this->positionalPlaceholderCount++;
+
 				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
 				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\VarcharType(), true);
 			case Expr\ExprTypeEnum::TUPLE:
@@ -425,8 +436,10 @@ final class SelectAnalyser
 			$this->query,
 			new ColumnResolver($this->dbReflection, $this->columnResolver),
 		);
-		// phpcs:ignore SlevomatCodingStandard.PHP.DisallowReference
+		// phpcs:disable SlevomatCodingStandard.PHP.DisallowReference
 		$other->errors = &$this->errors;
+		$other->positionalPlaceholderCount = &$this->positionalPlaceholderCount;
+		// phpcs:enable SlevomatCodingStandard.PHP.DisallowReference
 
 		return $other;
 	}

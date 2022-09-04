@@ -47,7 +47,7 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 	): ?Type {
 		$callerType = $scope->getType($methodCall->var);
 
-		if (! $callerType instanceof GenericObjectType || count($callerType->getTypes()) !== 1) {
+		if (! $callerType instanceof GenericObjectType || count($callerType->getTypes()) < 1) {
 			return null;
 		}
 

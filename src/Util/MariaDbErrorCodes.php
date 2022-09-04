@@ -16,6 +16,9 @@ class MariaDbErrorCodes
 	// 1060	42S21	ER_DUP_FIELDNAME	Duplicate column name '%s'
 	public const ER_DUP_FIELDNAME = 1060;
 
+	// 1064	42000	ER_PARSE_ERROR	%s near '%s' at line %d
+	public const ER_PARSE_ERROR = 1064;
+
 	// 1066	42000	ER_NONUNIQ_TABLE	Not unique table/alias: '%s'
 	public const ER_NONUNIQ_TABLE = 1066;
 
@@ -30,4 +33,7 @@ class MariaDbErrorCodes
 
 	// 4079	ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION	Illegal parameter data type %s for operation '%s'
 	public const ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION = 4079;
+
+	// No data supplied for parameters in prepared statement
+	public const MYSQLI_NO_DATA_FOR_PREPARED_PARAMS = 2031;
 }
