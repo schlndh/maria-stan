@@ -14,6 +14,7 @@ use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\In;
 use MariaStan\Ast\Expr\Interval;
 use MariaStan\Ast\Expr\Is;
+use MariaStan\Ast\Expr\Like;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
@@ -409,8 +410,12 @@ class MariaDbParserState
 				break;
 			}
 
-			// TODO: add missing operators: LIKE
-			$operatorsUsableWithNot = [SpecialOpTypeEnum::IN, SpecialOpTypeEnum::BETWEEN, SpecialOpTypeEnum::IS];
+			$operatorsUsableWithNot = [
+				SpecialOpTypeEnum::IN,
+				SpecialOpTypeEnum::BETWEEN,
+				SpecialOpTypeEnum::IS,
+				SpecialOpTypeEnum::LIKE,
+			];
 
 			if ($isNot && ! in_array($operator, $operatorsUsableWithNot, true)) {
 				throw new UnexpectedTokenException("Operator {$operator->value} cannot be used with NOT.");
@@ -437,6 +442,7 @@ class MariaDbParserState
 					? new BinaryOp($operator, $exp, $right)
 					: match ($operator) {
 						SpecialOpTypeEnum::BETWEEN => $this->parseRestOfBetweenOperator($exp, $right),
+						SpecialOpTypeEnum::LIKE => $this->parseRestOfLikeOperator($exp, $right),
 					};
 			}
 
@@ -458,6 +464,20 @@ class MariaDbParserState
 		$max = $this->parseExpression($precedence);
 
 		return new Between($left, $min, $max);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfLikeOperator(Expr $expression, Expr $pattern): Like
+	{
+		static $precedence = null;
+		$escapeChar = null;
+
+		if ($this->acceptToken(TokenTypeEnum::ESCAPE)) {
+			$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::LIKE) + 1;
+			$escapeChar = $this->parseExpression($precedence);
+		}
+
+		return new Like($expression, $pattern, $escapeChar);
 	}
 
 	/** @throws ParserException */
@@ -578,6 +598,7 @@ class MariaDbParserState
 			TokenTypeEnum::REGEXP, TokenTypeEnum::RLIKE => BinaryOpTypeEnum::REGEXP,
 			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
 			TokenTypeEnum::IS => SpecialOpTypeEnum::IS,
+			TokenTypeEnum::LIKE => SpecialOpTypeEnum::LIKE,
 			default => null,
 		};
 	}
@@ -610,11 +631,10 @@ class MariaDbParserState
 			BinaryOpTypeEnum::SHIFT_LEFT, BinaryOpTypeEnum::SHIFT_RIGHT => 9,
 			BinaryOpTypeEnum::BITWISE_AND => 8,
 			BinaryOpTypeEnum::BITWISE_OR => 7,
-			// LIKE => 6
 			BinaryOpTypeEnum::EQUAL, BinaryOpTypeEnum::NULL_SAFE_EQUAL, BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
 				BinaryOpTypeEnum::NOT_EQUAL, SpecialOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP,
-				SpecialOpTypeEnum::IS => 6,
+				SpecialOpTypeEnum::IS, SpecialOpTypeEnum::LIKE => 6,
 			// CASE, WHEN, THEN, ELSE, END => 5
 			SpecialOpTypeEnum::BETWEEN => 5,
 			// NOT - handled separately => 4,

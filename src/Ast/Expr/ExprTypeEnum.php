@@ -48,6 +48,9 @@ enum ExprTypeEnum: string
 	/** @see In */
 	case IN = 'IN';
 
+	/** @see Like */
+	case LIKE = 'LIKE';
+
 	/** @see Interval */
 	case INTERVAL = 'INTERVAL';
 }

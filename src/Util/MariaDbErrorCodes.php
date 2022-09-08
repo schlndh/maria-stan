@@ -25,6 +25,9 @@ class MariaDbErrorCodes
 	// 1146	42S02	ER_NO_SUCH_TABLE	Table '%s.%s' doesn't exist
 	public const ER_NO_SUCH_TABLE = 1146;
 
+	// 1210	HY000	ER_WRONG_ARGUMENTS	Incorrect arguments to %s
+	public const ER_WRONG_ARGUMENTS = 1210;
+
 	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
 	public const ER_OPERAND_COLUMNS = 1241;
 

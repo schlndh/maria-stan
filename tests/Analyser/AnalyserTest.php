@@ -361,6 +361,12 @@ class AnalyserTest extends TestCase
 			'(SELECT 1) = (SELECT 1)',
 			'(SELECT id FROM analyser_test LIMIT 1) = (SELECT id FROM analyser_test LIMIT 1)',
 			'(SELECT * FROM analyser_test LIMIT 1) = (SELECT * FROM analyser_test LIMIT 1)',
+			'"a" LIKE "b"',
+			'"a" LIKE NULL',
+			'NULL LIKE "b"',
+			'"a" LIKE "b" ESCAPE NULL',
+			// TODO: match field name without alias to MariaDB: "c" LIKE "?_" ESCAPE "?"
+			'"c" LIKE "😀_" ESCAPE "😀" non_unicode_name',
 		];
 
 		foreach ($exprs as $expr) {
@@ -638,6 +644,18 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
+		yield 'unknown column in field list - LIKE - left' => [
+			'query' => 'SELECT v.id LIKE "a" FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in field list - LIKE - right' => [
+			'query' => 'SELECT "a" LIKE v.id FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
 		yield 'not unique table name in top-level query' => [
 			'query' => 'SELECT * FROM analyser_test, analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
@@ -834,6 +852,40 @@ class AnalyserTest extends TestCase
 				];
 			}
 		}
+
+		yield "invalid operator with tuples - LIKE" => [
+			'query' => "SELECT (id, name, 1) LIKE (1, 'aa') FROM analyser_test",
+			'error' => AnalyserErrorMessageBuilder::createInvalidLikeUsageErrorMessage(
+				DbTypeEnum::TUPLE,
+				DbTypeEnum::TUPLE,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "invalid operator with tuples - LIKE - tuple in escape char" => [
+			'query' => "SELECT name LIKE 'a' ESCAPE (1, 2) FROM analyser_test",
+			'error' => AnalyserErrorMessageBuilder::createInvalidLikeUsageErrorMessage(
+				DbTypeEnum::VARCHAR,
+				DbTypeEnum::VARCHAR,
+				DbTypeEnum::TUPLE,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "invalid operator with tuples - tuple LIKE 1" => [
+			'query' => "SELECT (id, name, 1) LIKE 1 FROM analyser_test",
+			'error' => AnalyserErrorMessageBuilder::createInvalidLikeUsageErrorMessage(
+				DbTypeEnum::TUPLE,
+				DbTypeEnum::INT,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "LIKE - multichar ESCAPE literal" => [
+			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
+			'error' => AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage('cd'),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
+		];
 	}
 
 	/** @dataProvider provideInvalidData */

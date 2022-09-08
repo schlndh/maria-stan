@@ -27,6 +27,7 @@ use function array_reduce;
 use function assert;
 use function count;
 use function in_array;
+use function mb_strlen;
 use function stripos;
 
 final class SelectAnalyser
@@ -410,6 +411,50 @@ final class SelectAnalyser
 					$this->getNodeContent($expr),
 					new Schema\DbType\IntType(),
 					$leftResult->isNullable || $rightResult->isNullable,
+				);
+			case Expr\ExprTypeEnum::LIKE:
+				assert($expr instanceof Expr\Like);
+				$expressionResult = $this->resolveExprType($expr->expression);
+				$patternResult = $this->resolveExprType($expr->pattern);
+				// TODO: check for valid escape char expressions.
+				// For example "ESCAPE IF(0, 'a', 'b')" seems to work, but "ESCAPE IF(id = id, 'a', 'b')" doesn't.
+				$escapeCharResult = $expr->escapeChar !== null
+					? $this->resolveExprType($expr->escapeChar)
+					: null;
+
+				// phpcs:ignore SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition
+				if (
+					in_array(
+						Schema\DbType\DbTypeEnum::TUPLE,
+						[
+							$expressionResult->type::getTypeEnum(),
+							$patternResult->type::getTypeEnum(),
+							$escapeCharResult?->type::getTypeEnum(),
+						],
+						true,
+					)
+				) {
+					$this->errors[] = new AnalyserError(
+						AnalyserErrorMessageBuilder::createInvalidLikeUsageErrorMessage(
+							$expressionResult->type::getTypeEnum(),
+							$patternResult->type::getTypeEnum(),
+							$escapeCharResult?->type::getTypeEnum(),
+						),
+					);
+				}
+
+				if ($expr->escapeChar instanceof Expr\LiteralString && mb_strlen($expr->escapeChar->value) > 1) {
+					$this->errors[] = new AnalyserError(
+						AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage(
+							$expr->escapeChar->value,
+						),
+					);
+				}
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\IntType(),
+					$expressionResult->isNullable || $patternResult->isNullable,
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");

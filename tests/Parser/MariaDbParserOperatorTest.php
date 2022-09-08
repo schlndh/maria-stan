@@ -11,6 +11,7 @@ use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\In;
 use MariaStan\Ast\Expr\Is;
+use MariaStan\Ast\Expr\Like;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\Tuple;
@@ -27,6 +28,7 @@ use function assert;
 use function in_array;
 use function is_array;
 use function preg_match;
+use function str_contains;
 
 // phpcs:disable SlevomatCodingStandard.Functions.StrictCall.NonStrictComparison
 class MariaDbParserOperatorTest extends TestCase
@@ -57,6 +59,7 @@ class MariaDbParserOperatorTest extends TestCase
 			'1 AND 1 IS NULL',
 			'1 IS NULL AND 1',
 			'1 * 2 IS NULL',
+			'1 LIKE "a" LIKE "a"',
 		];
 
 		foreach ($expressions as $expr) {
@@ -177,6 +180,22 @@ class MariaDbParserOperatorTest extends TestCase
 						: [$right],
 					false,
 				)
+					? 1
+					: 0;
+			case ExprTypeEnum::LIKE:
+				assert($expr instanceof Like);
+				$left = $this->getValueFromAstExpression($expr->expression);
+				$pattern = $this->getValueFromAstExpression($expr->pattern);
+				// Otherwise it's not implemented
+				assert($expr->escapeChar === null);
+
+				if ($left === null || $pattern === null) {
+					return null;
+				}
+
+				assert(! str_contains($pattern, '%') && ! str_contains($pattern, '_'));
+
+				return str_contains((string) $left, (string) $pattern)
 					? 1
 					: 0;
 			default:

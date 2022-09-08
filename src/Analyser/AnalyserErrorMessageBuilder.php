@@ -51,6 +51,23 @@ class AnalyserErrorMessageBuilder
 		return "Operator {$operator->value} cannot be used between {$leftType->value} and {$rightType->value}";
 	}
 
+	public static function createInvalidLikeUsageErrorMessage(
+		DbTypeEnum $expressionType,
+		DbTypeEnum $patternType,
+		?DbTypeEnum $escapeCharType = null,
+	): string {
+		$suffix = $escapeCharType !== null
+			? " ESCAPE {$escapeCharType->value}"
+			: '';
+
+		return "Operator LIKE cannot be used as: {$expressionType->value} LIKE {$patternType->value}{$suffix}";
+	}
+
+	public static function createInvalidLikeEscapeMulticharErrorMessage(string $escape): string
+	{
+		return "ESCAPE can only be single character. Got '{$escape}'.";
+	}
+
 	public static function createInvalidTupleComparisonErrorMessage(DbType $left, DbType $right): string
 	{
 		$leftStr = self::formatDbType($left);

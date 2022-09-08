@@ -1844,3 +1844,94 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT "a" LIKE "b", "a" LIKE "b" ESCAPE "c", "a" NOT LIKE "b", "a" NOT LIKE "b" ESCAPE "c"
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Like
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[pattern] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => b
+									[firstConcatPart] => b
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Like
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[pattern] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => b
+									[firstConcatPart] => b
+								)
+							[escapeChar] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => c
+									[firstConcatPart] => c
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expression] => MariaStan\Ast\Expr\Like
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[pattern] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => b
+											[firstConcatPart] => b
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\UnaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
+							[expression] => MariaStan\Ast\Expr\Like
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[pattern] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => b
+											[firstConcatPart] => b
+										)
+									[escapeChar] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => c
+											[firstConcatPart] => c
+										)
+								)
+						)
+				)
+		)
+)

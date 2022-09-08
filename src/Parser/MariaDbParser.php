@@ -45,6 +45,7 @@ class MariaDbParser
 			TokenTypeEnum::BIT,
 			TokenTypeEnum::DATE,
 			TokenTypeEnum::ENUM,
+			TokenTypeEnum::ESCAPE,
 			TokenTypeEnum::GENERAL,
 			TokenTypeEnum::IGNORE_SERVER_IDS,
 			TokenTypeEnum::MASTER_HEARTBEAT_PERIOD,
