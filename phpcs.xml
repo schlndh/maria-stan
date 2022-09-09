@@ -182,4 +182,10 @@
 			<property name="linesCountAfterLastUseWhenLastInClass" value="0" />
 		</properties>
 	</rule>
+	<rule ref="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition">
+		<properties>
+			<property name="maxLineLength" value="120" />
+			<property name="alwaysForSimpleConditions" value="false" />
+		</properties>
+	</rule>
 </ruleset>

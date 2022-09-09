@@ -266,7 +266,6 @@ final class SelectAnalyser
 
 				if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
 					if (
-						// phpcs:ignore SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition
 						! in_array(
 							$expr->operation,
 							[
@@ -422,7 +421,6 @@ final class SelectAnalyser
 					? $this->resolveExprType($expr->escapeChar)
 					: null;
 
-				// phpcs:ignore SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition
 				if (
 					in_array(
 						Schema\DbType\DbTypeEnum::TUPLE,
