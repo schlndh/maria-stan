@@ -230,7 +230,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 				case 'UTC_DATE':
 				case 'UTC_TIME':
 				case 'UTC_TIMESTAMP':
-					$this->assertInstanceOf(FunctionCall::class, $firstSelectExpr->expr);
+					$this->assertInstanceOf(FunctionCall\StandardFunctionCall::class, $firstSelectExpr->expr);
 					break;
 				case 'NULL':
 					$this->assertInstanceOf(LiteralNull::class, $firstSelectExpr->expr);

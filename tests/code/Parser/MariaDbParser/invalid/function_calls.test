@@ -1,0 +1,22 @@
+Invalid function calls
+-----
+SELECT COUNT(DISTINCT *) FROM (SELECT 1) t;
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: '*' after: SELECT COUNT(DISTINCT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '*) FROM (SELECT 1) t' at line 1
+-----
+SELECT COUNT() FROM (SELECT 1) t;
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ')' after: SELECT COUNT(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1) t' at line 1
+-----
+SELECT COUNT(a, b) FROM (SELECT 1 a, 2 b) t;
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: SELECT COUNT(a
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' b) FROM (SELECT 1 a, 2 b) t' at line 1

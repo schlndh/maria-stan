@@ -84,6 +84,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideSubqueryTestData();
 		yield from $this->provideGroupByHavingOrderTestData();
 		yield from $this->providePlaceholderTestData();
+		yield from $this->provideFunctionCallTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -480,6 +481,25 @@ class AnalyserTest extends TestCase
 		}
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideFunctionCallTestData(): iterable
+	{
+		$tableName = 'analyser_test';
+
+		$selects = [
+			'COUNT all' => "SELECT COUNT(*) FROM {$tableName}",
+			'COUNT column' => "SELECT COUNT(id) FROM {$tableName}",
+			'COUNT DISTINCT - single column' => "SELECT COUNT(DISTINCT id) FROM {$tableName}",
+			'COUNT DISTINCT - multiple columns' => "SELECT COUNT(DISTINCT id, name) FROM {$tableName}",
+		];
+
+		foreach ($selects as $label => $select) {
+			yield $label => [
+				'query' => $select,
+			];
+		}
+	}
+
 	/**
 	 * @dataProvider provideTestData
 	 * @param array<scalar|null> $params
@@ -522,16 +542,17 @@ class AnalyserTest extends TestCase
 		$forceNullsForColumns = [];
 		$unnecessaryNullableFields = [];
 		$datetimeFields = [];
+		$mixedFieldErrors = [];
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
-			$parserField = $result->resultFields[$i];
-			$this->assertSame($parserField->name, $field->name);
+			$analyzedField = $result->resultFields[$i];
+			$this->assertSame($analyzedField->name, $field->name);
 			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
 
-			if ($parserField->isNullable && ! $isFieldNullable) {
-				$unnecessaryNullableFields[] = $parserField->name;
-			} elseif (! $parserField->isNullable && $isFieldNullable) {
+			if ($analyzedField->isNullable && ! $isFieldNullable) {
+				$unnecessaryNullableFields[] = $analyzedField->name;
+			} elseif (! $analyzedField->isNullable && $isFieldNullable) {
 				$forceNullsForColumns[$field->name] = false;
 			}
 
@@ -540,22 +561,24 @@ class AnalyserTest extends TestCase
 			// It seems that in some cases the type returned by the database does not propagate NULL in all cases.
 			// E.g. 1 + NULL is double for some reason. Let's allow the analyser to get away with null, but force
 			// check that the returned values are all null.
-			if ($parserField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
+			if ($analyzedField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
 				$forceNullsForColumns[$field->name] = true;
-			} elseif ($parserField->type::getTypeEnum() === DbTypeEnum::ENUM) {
+			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::ENUM) {
 				$this->assertTrue(($field->flags & MYSQLI_ENUM_FLAG) !== 0);
 				$this->assertSame(DbTypeEnum::VARCHAR, $actualType);
-			} elseif ($parserField->type::getTypeEnum() === DbTypeEnum::DATETIME) {
+			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::DATETIME) {
 				if ($actualType === DbTypeEnum::VARCHAR) {
 					$datetimeFields[] = $i;
 				} else {
-					$this->assertSame($actualType, $parserField->type::getTypeEnum());
+					$this->assertSame($actualType, $analyzedField->type::getTypeEnum());
 				}
+			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::MIXED) {
+				$mixedFieldErrors[] = "DB type for {$analyzedField->name} should be {$actualType->value} got MIXED.";
 			} else {
 				$this->assertSame(
-					$parserField->type::getTypeEnum(),
+					$analyzedField->type::getTypeEnum(),
 					$actualType,
-					"The test says {$parserField->name} should be {$parserField->type::getTypeEnum()->name} "
+					"The test says {$analyzedField->name} should be {$analyzedField->type::getTypeEnum()->name} "
 					. "but got {$actualType->name} from the database.",
 				);
 			}
@@ -591,22 +614,29 @@ class AnalyserTest extends TestCase
 			}
 		}
 
+		$incompleteTestErrors = [];
+
 		// With bound params mysqli has the advantage of knowing the values, which we don't. So let's allow it to be
 		// nullable.
 		if (count($unnecessaryNullableFields) > 0 && count($params) === 0) {
-			$this->markTestIncomplete(
-				"These fields don't have to be nullable:\n" . implode(",\n", $unnecessaryNullableFields),
-			);
+			$incompleteTestErrors[] = "These fields don't have to be nullable:\n"
+				. implode(",\n", $unnecessaryNullableFields);
 		}
 
 		if (count($unhandledExpressionTypeErrors) > 0) {
-			$this->markTestIncomplete(
-				"There are unhandled expression types:\n"
-					. implode(
-						",\n",
-						array_map(static fn (AnalyserError $e) => $e->message, $unhandledExpressionTypeErrors),
-					),
-			);
+			$incompleteTestErrors[] = "There are unhandled expression types:\n"
+				. implode(
+					",\n",
+					array_map(static fn (AnalyserError $e) => $e->message, $unhandledExpressionTypeErrors),
+				);
+		}
+
+		if (count($mixedFieldErrors) > 0) {
+			$incompleteTestErrors[] = 'Some fields are MIXED: ' . implode("\n", $mixedFieldErrors);
+		}
+
+		if (count($incompleteTestErrors) > 0) {
+			$this->markTestIncomplete(implode("\n-----------\n", $incompleteTestErrors));
 		}
 	}
 

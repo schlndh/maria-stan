@@ -1560,7 +1560,7 @@ MariaStan\Ast\Query\SelectQuery
 													[left] => MariaStan\Ast\Expr\BinaryOp
 														(
 															[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-															[left] => MariaStan\Ast\Expr\FunctionCall
+															[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 																(
 																	[name] => NOW
 																	[arguments] => Array
@@ -1630,7 +1630,7 @@ MariaStan\Ast\Query\SelectQuery
 													[left] => MariaStan\Ast\Expr\BinaryOp
 														(
 															[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-															[left] => MariaStan\Ast\Expr\FunctionCall
+															[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 																(
 																	[name] => NOW
 																	[arguments] => Array
@@ -1694,7 +1694,7 @@ MariaStan\Ast\Query\SelectQuery
 									[left] => MariaStan\Ast\Expr\BinaryOp
 										(
 											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
-											[left] => MariaStan\Ast\Expr\FunctionCall
+											[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 												(
 													[name] => NOW
 													[arguments] => Array
@@ -1744,7 +1744,7 @@ MariaStan\Ast\Query\SelectQuery
 											[left] => MariaStan\Ast\Expr\BinaryOp
 												(
 													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
-													[left] => MariaStan\Ast\Expr\FunctionCall
+													[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 														(
 															[name] => NOW
 															[arguments] => Array
@@ -1799,7 +1799,7 @@ MariaStan\Ast\Query\SelectQuery
 									[left] => MariaStan\Ast\Expr\BinaryOp
 										(
 											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MINUS
-											[left] => MariaStan\Ast\Expr\FunctionCall
+											[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 												(
 													[name] => NOW
 													[arguments] => Array

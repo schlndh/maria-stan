@@ -692,14 +692,15 @@ class MariaDbParserState
 
 		if ($ident) {
 			if ($this->acceptToken('(')) {
-				$arguments = $this->parseExpressionListEndedByClosingParenthesis();
-
-				return new FunctionCall(
-					$startPosition,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
-					$ident->content,
-					$arguments,
-				);
+				return match (strtoupper($ident->content)) {
+					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
+					default => new FunctionCall\StandardFunctionCall(
+						$startPosition,
+						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$ident->content,
+						$this->parseExpressionListEndedByClosingParenthesis(),
+					)
+				};
 			}
 
 			if (! $this->acceptToken('.')) {
@@ -727,7 +728,7 @@ class MariaDbParserState
 				? $this->parseExpressionListEndedByClosingParenthesis()
 				: [];
 
-			return new FunctionCall(
+			return new FunctionCall\StandardFunctionCall(
 				$startPosition,
 				$this->getPreviousTokenUnsafe()->getEndPosition(),
 				$functionIdent->content,
@@ -834,6 +835,45 @@ class MariaDbParserState
 		throw new UnexpectedTokenException(
 			"Unexpected token: {$this->printToken($this->findCurrentToken())} after: "
 				. $this->getContextPriorToTokenPosition(),
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfCountFunctionCall(Position $startPosition): FunctionCall\Count
+	{
+		if ($this->acceptToken('*')) {
+			$this->expectToken(')');
+
+			return FunctionCall\Count::createCountAll(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+			);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::DISTINCT)) {
+			$arguments = $this->parseExpressionListEndedByClosingParenthesis();
+
+			if (count($arguments) === 0) {
+				throw new UnexpectedTokenException(
+					'Expected at least one argument for COUNT(DISTINCT ... Got: '
+						. $this->getContextPriorToTokenPosition(),
+				);
+			}
+
+			return FunctionCall\Count::createCountDistinct(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$arguments,
+			);
+		}
+
+		$argument = $this->parseExpression();
+		$this->expectToken(')');
+
+		return FunctionCall\Count::createCount(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$argument,
 		);
 	}
 

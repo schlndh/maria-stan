@@ -8,7 +8,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => ABS
 							[arguments] => Array
@@ -35,7 +35,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => COALESCE
 							[arguments] => Array
@@ -64,7 +64,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => nOw
 							[arguments] => Array
@@ -84,7 +84,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_DATE
 							[arguments] => Array
@@ -94,7 +94,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_ROLE
 							[arguments] => Array
@@ -104,7 +104,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIME
 							[arguments] => Array
@@ -114,7 +114,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIMESTAMP
 							[arguments] => Array
@@ -124,7 +124,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_USER
 							[arguments] => Array
@@ -134,7 +134,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIME
 							[arguments] => Array
@@ -144,7 +144,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[6] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIMESTAMP
 							[arguments] => Array
@@ -154,7 +154,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[7] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_DATE
 							[arguments] => Array
@@ -164,7 +164,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[8] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIME
 							[arguments] => Array
@@ -174,7 +174,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[9] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIMESTAMP
 							[arguments] => Array
@@ -194,7 +194,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_DATE
 							[arguments] => Array
@@ -204,7 +204,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_ROLE
 							[arguments] => Array
@@ -214,7 +214,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIME
 							[arguments] => Array
@@ -224,7 +224,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIMESTAMP
 							[arguments] => Array
@@ -234,7 +234,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_USER
 							[arguments] => Array
@@ -244,7 +244,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIME
 							[arguments] => Array
@@ -254,7 +254,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[6] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIMESTAMP
 							[arguments] => Array
@@ -264,7 +264,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[7] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_DATE
 							[arguments] => Array
@@ -274,7 +274,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[8] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIME
 							[arguments] => Array
@@ -284,7 +284,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[9] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIMESTAMP
 							[arguments] => Array
@@ -303,7 +303,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIME
 							[arguments] => Array
@@ -317,7 +317,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => CURRENT_TIMESTAMP
 							[arguments] => Array
@@ -331,7 +331,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIME
 							[arguments] => Array
@@ -345,7 +345,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => LOCALTIMESTAMP
 							[arguments] => Array
@@ -359,7 +359,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIME
 							[arguments] => Array
@@ -373,7 +373,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\FunctionCall
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 						(
 							[name] => UTC_TIMESTAMP
 							[arguments] => Array
@@ -385,5 +385,78 @@ MariaStan\Ast\Query\SelectQuery
 								)
 						)
 				)
+		)
+)
+-----
+SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+						(
+							[arguments] => Array
+								(
+								)
+							[isDistinct] => false
+							[isCountAll] => true
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+						(
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+							[isCountAll] => false
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+						(
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => true
+							[isCountAll] => false
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+						(
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[1] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[isDistinct] => true
+							[isCountAll] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => tbl
 		)
 )
