@@ -20,3 +20,45 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: SELECT COUNT(a
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' b) FROM (SELECT 1 a, 2 b) t' at line 1
+-----
+SELECT AVG(DISTINCT) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected at least one argument after: SELECT AVG(DISTINCT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
+-----
+SELECT MAX(DISTINCT) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected at least one argument after: SELECT MAX(DISTINCT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
+-----
+SELECT MIN(DISTINCT) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected at least one argument after: SELECT MIN(DISTINCT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
+-----
+SELECT SUM(DISTINCT) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected at least one argument after: SELECT SUM(DISTINCT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
+-----
+SELECT STD(DISTINCT id) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: DISTINCT after: SELECT STD(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT id) FROM (SELECT 1 id) t' at line 1
+-----
+SELECT ABS(DISTINCT id) FROM (SELECT 1 id) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: DISTINCT after: SELECT ABS(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT id) FROM (SELECT 1 id) t' at line 1

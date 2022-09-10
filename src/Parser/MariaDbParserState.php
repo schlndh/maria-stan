@@ -692,15 +692,37 @@ class MariaDbParserState
 
 		if ($ident) {
 			if ($this->acceptToken('(')) {
-				return match (strtoupper($ident->content)) {
+				$uppercaseFunctionName = strtoupper($ident->content);
+				$result = match ($uppercaseFunctionName) {
 					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
-					default => new FunctionCall\StandardFunctionCall(
-						$startPosition,
-						$this->getPreviousTokenUnsafe()->getEndPosition(),
-						$ident->content,
-						$this->parseExpressionListEndedByClosingParenthesis(),
-					)
+					default => null,
 				};
+
+				if ($result !== null) {
+					return $result;
+				}
+
+				$isDistinct = in_array(
+					$uppercaseFunctionName,
+					$this->parser->getFunctionsThatSupportDistinct(),
+					true,
+				) && $this->acceptToken(TokenTypeEnum::DISTINCT);
+				$arguments = $this->parseExpressionListEndedByClosingParenthesis();
+
+				if ($isDistinct && count($arguments) === 0) {
+					throw new UnexpectedTokenException(
+						'Expected at least one argument after: '
+							. $this->getContextPriorToTokenPosition($this->position - 1),
+					);
+				}
+
+				return new FunctionCall\StandardFunctionCall(
+					$startPosition,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$ident->content,
+					$arguments,
+					$isDistinct,
+				);
 			}
 
 			if (! $this->acceptToken('.')) {

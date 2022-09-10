@@ -89,6 +89,18 @@ class MariaDbParser
 		];
 	}
 
+	/** @return array<string> uppercase names */
+	public function getFunctionsThatSupportDistinct(): array
+	{
+		return [
+			'AVG',
+			'MAX',
+			'MIN',
+			'SUM',
+			// Also COUNT, GROUP_CONCAT and JSON_ARRAYAGG but those have to be handled separately.
+		];
+	}
+
 	/** @return array<TokenTypeEnum> */
 	public function getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(): array
 	{

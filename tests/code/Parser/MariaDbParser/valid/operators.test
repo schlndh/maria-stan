@@ -1566,6 +1566,7 @@ MariaStan\Ast\Query\SelectQuery
 																	[arguments] => Array
 																		(
 																		)
+																	[isDistinct] => false
 																)
 															[right] => MariaStan\Ast\Expr\Interval
 																(
@@ -1636,6 +1637,7 @@ MariaStan\Ast\Query\SelectQuery
 																	[arguments] => Array
 																		(
 																		)
+																	[isDistinct] => false
 																)
 															[right] => MariaStan\Ast\Expr\Interval
 																(
@@ -1700,6 +1702,7 @@ MariaStan\Ast\Query\SelectQuery
 													[arguments] => Array
 														(
 														)
+													[isDistinct] => false
 												)
 											[right] => MariaStan\Ast\Expr\Interval
 												(
@@ -1750,6 +1753,7 @@ MariaStan\Ast\Query\SelectQuery
 															[arguments] => Array
 																(
 																)
+															[isDistinct] => false
 														)
 													[right] => MariaStan\Ast\Expr\Interval
 														(
@@ -1805,6 +1809,7 @@ MariaStan\Ast\Query\SelectQuery
 													[arguments] => Array
 														(
 														)
+													[isDistinct] => false
 												)
 											[right] => MariaStan\Ast\Expr\Interval
 												(

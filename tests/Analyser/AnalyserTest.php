@@ -491,7 +491,13 @@ class AnalyserTest extends TestCase
 			'COUNT column' => "SELECT COUNT(id) FROM {$tableName}",
 			'COUNT DISTINCT - single column' => "SELECT COUNT(DISTINCT id) FROM {$tableName}",
 			'COUNT DISTINCT - multiple columns' => "SELECT COUNT(DISTINCT id, name) FROM {$tableName}",
+			'AVG DISTINCT' => "SELECT COUNT(DISTINCT id, name) FROM {$tableName}",
 		];
+
+		foreach (['AVG', 'MAX', 'MIN', 'SUM'] as $fn) {
+			$selects["{$fn}"] = "SELECT {$fn}(id) FROM {$tableName}";
+			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
+		}
 
 		foreach ($selects as $label => $select) {
 			yield $label => [

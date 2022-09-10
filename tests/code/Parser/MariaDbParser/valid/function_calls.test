@@ -22,6 +22,7 @@ MariaStan\Ast\Query\SelectQuery
 												)
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -51,6 +52,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 5
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -70,6 +72,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -90,6 +93,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -100,6 +104,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -110,6 +115,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -120,6 +126,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -130,6 +137,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -140,6 +148,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[6] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -150,6 +159,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[7] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -160,6 +170,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[8] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -170,6 +181,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[9] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -180,6 +192,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -200,6 +213,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -210,6 +224,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -220,6 +235,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -230,6 +246,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -240,6 +257,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -250,6 +268,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[6] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -260,6 +279,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[7] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -270,6 +290,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[8] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -280,6 +301,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 			[9] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -290,6 +312,7 @@ MariaStan\Ast\Query\SelectQuery
 							[arguments] => Array
 								(
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -313,6 +336,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 1
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -327,6 +351,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 2
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 			[2] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -341,6 +366,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 1
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 			[3] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -355,6 +381,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 2
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -369,6 +396,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 1
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 			[5] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -383,6 +411,7 @@ MariaStan\Ast\Query\SelectQuery
 											[value] => 2
 										)
 								)
+							[isDistinct] => false
 						)
 				)
 		)
@@ -458,5 +487,157 @@ MariaStan\Ast\Query\SelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => tbl
+		)
+)
+-----
+SELECT
+    aVg(id), AvG(DISTINCT id),
+    maX(id), MaX(DISTINCT id),
+    mIn(id), MiN(DISTINCT id),
+    sUm(id), SuM(DISTINCT id)
+FROM (SELECT 1 id) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => aVg
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => AvG
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => true
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => maX
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => MaX
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => true
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => mIn
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => MiN
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => true
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => sUm
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SuM
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => true
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+						)
+				)
+			[alias] => t
 		)
 )

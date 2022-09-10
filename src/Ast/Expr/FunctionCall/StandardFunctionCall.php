@@ -15,6 +15,7 @@ final class StandardFunctionCall extends BaseFunctionCall
 		Position $endPosition,
 		public readonly string $name,
 		public readonly array $arguments,
+		public readonly bool $isDistinct = false,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}
