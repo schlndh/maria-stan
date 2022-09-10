@@ -1,6 +1,6 @@
 FROM clauses
 -----
-SELECT * FROM a, b
+SELECT * FROM parser_test_join_a, parser_test_join_b
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -15,16 +15,16 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 		)
 )
 -----
-SELECT * FROM a JOIN b
+SELECT * FROM parser_test_join_a JOIN parser_test_join_b
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -39,16 +39,16 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 		)
 )
 -----
-SELECT * FROM a CROSS JOIN b
+SELECT * FROM parser_test_join_a CROSS JOIN parser_test_join_b
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -63,16 +63,16 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 		)
 )
 -----
-SELECT * FROM a JOIN b ON 1
+SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -87,11 +87,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -100,7 +100,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a INNER JOIN b ON 1
+SELECT * FROM parser_test_join_a INNER JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -115,11 +115,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -128,7 +128,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a LEFT JOIN b ON 1
+SELECT * FROM parser_test_join_a LEFT JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -143,11 +143,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::LEFT_OUTER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -156,7 +156,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a LEFT OUTER JOIN b ON 1
+SELECT * FROM parser_test_join_a LEFT OUTER JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -171,11 +171,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::LEFT_OUTER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -184,7 +184,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a RIGHT JOIN b ON 1
+SELECT * FROM parser_test_join_a RIGHT JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -199,11 +199,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::RIGHT_OUTER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -212,7 +212,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a RIGHT OUTER JOIN b ON 1
+SELECT * FROM parser_test_join_a RIGHT OUTER JOIN parser_test_join_b ON 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -227,11 +227,11 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::RIGHT_OUTER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => a
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => b
+					[name] => parser_test_join_b
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -240,7 +240,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM a, b, c
+SELECT * FROM parser_test_join_a, parser_test_join_b, parser_test_join_c
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -258,21 +258,21 @@ MariaStan\Ast\Query\SelectQuery
 					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 					[leftTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => a
+							[name] => parser_test_join_a
 						)
 					[rightTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => b
+							[name] => parser_test_join_b
 						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => c
+					[name] => parser_test_join_c
 				)
 		)
 )
 -----
-SELECT * FROM a JOIN b JOIN c
+SELECT * FROM parser_test_join_a JOIN parser_test_join_b JOIN parser_test_join_c
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -290,21 +290,21 @@ MariaStan\Ast\Query\SelectQuery
 					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 					[leftTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => a
+							[name] => parser_test_join_a
 						)
 					[rightTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => b
+							[name] => parser_test_join_b
 						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => c
+					[name] => parser_test_join_c
 				)
 		)
 )
 -----
-SELECT * FROM a JOIN b ON 1 JOIN c ON 2
+SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1 JOIN parser_test_join_c ON 2
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -322,11 +322,11 @@ MariaStan\Ast\Query\SelectQuery
 					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
 					[leftTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => a
+							[name] => parser_test_join_a
 						)
 					[rightTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => b
+							[name] => parser_test_join_b
 						)
 					[onCondition] => MariaStan\Ast\Expr\LiteralInt
 						(
@@ -335,7 +335,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => c
+					[name] => parser_test_join_c
 				)
 			[onCondition] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -344,7 +344,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM (tbl1, tbl2)
+SELECT * FROM (parser_test_join_a, parser_test_join_b)
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -359,16 +359,19 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl1
+					[name] => parser_test_join_a
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl2
+					[name] => parser_test_join_b
 				)
 		)
 )
 -----
-SELECT * FROM ((tbl1 JOIN tbl2 ON tbl1.id = tbl2.id), tbl3), tbl4
+SELECT * FROM (
+    (parser_test_join_a JOIN parser_test_join_b ON parser_test_join_a.id = parser_test_join_b.id),
+    parser_test_join_c
+), parser_test_join_d
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -389,11 +392,11 @@ MariaStan\Ast\Query\SelectQuery
 							[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
 							[leftTable] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl1
+									[name] => parser_test_join_a
 								)
 							[rightTable] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl2
+									[name] => parser_test_join_b
 								)
 							[onCondition] => MariaStan\Ast\Expr\BinaryOp
 								(
@@ -401,23 +404,23 @@ MariaStan\Ast\Query\SelectQuery
 									[left] => MariaStan\Ast\Expr\Column
 										(
 											[name] => id
-											[tableName] => tbl1
+											[tableName] => parser_test_join_a
 										)
 									[right] => MariaStan\Ast\Expr\Column
 										(
 											[name] => id
-											[tableName] => tbl2
+											[tableName] => parser_test_join_b
 										)
 								)
 						)
 					[rightTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => tbl3
+							[name] => parser_test_join_c
 						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl4
+					[name] => parser_test_join_d
 				)
 		)
 )
@@ -493,7 +496,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT * FROM tbl JOIN (SELECT 1 id) AS t ON t.id = tbl.id
+SELECT * FROM parser_test JOIN (SELECT 1 id) AS t ON t.id = parser_test.id
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -508,7 +511,7 @@ MariaStan\Ast\Query\SelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => parser_test
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
 				(
@@ -539,7 +542,7 @@ MariaStan\Ast\Query\SelectQuery
 					[right] => MariaStan\Ast\Expr\Column
 						(
 							[name] => id
-							[tableName] => tbl
+							[tableName] => parser_test
 						)
 				)
 		)

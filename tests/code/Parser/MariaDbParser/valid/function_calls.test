@@ -417,7 +417,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM tbl
+SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM parser_test
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -486,7 +486,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 )
 -----

@@ -17,6 +17,7 @@ use UnitEnum;
 
 use function array_filter;
 use function array_map;
+use function count;
 use function is_array;
 use function is_bool;
 use function MariaStan\canonicalize;
@@ -30,9 +31,50 @@ class MariaDbParserTest extends TestCase
 {
 	use CodeTestCase;
 
+	public static function setUpBeforeClass(): void
+	{
+		parent::setUpBeforeClass();
+
+		$initTable = static function (string $suffix): void {
+			$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+			$tableName = 'parser_test' . $suffix;
+			$db->query("
+				CREATE OR REPLACE TABLE {$tableName} (
+					id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(255) NULL
+				);		
+			");
+			$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
+		};
+
+		foreach (['', '_join_a', '_join_b', '_join_c', '_join_d'] as $suffix) {
+			$initTable($suffix);
+		}
+	}
+
 	/** @dataProvider provideTestParseValidData */
 	public function testParseValid(string $name, string $code, string $expected): void
 	{
+		$lexer = new MariaDbLexer();
+		$tokens = $lexer->tokenize($code);
+		$params = [];
+
+		foreach ($tokens as $token) {
+			if ($token->type === TokenTypeEnum::SINGLE_CHAR && $token->content === '?') {
+				$params[] = 1;
+			}
+		}
+
+		// Make sure the query doesn't throw an exception
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+		if (count($params) === 0) {
+			$db->query($code)->close();
+		} else {
+			$db->prepare($code)->execute($params);
+		}
+
 		$parser = $this->createParser();
 		[$query, $output] = $this->getParseOutput($parser, $code);
 

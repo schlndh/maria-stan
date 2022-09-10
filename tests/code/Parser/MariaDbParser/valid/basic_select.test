@@ -1,6 +1,6 @@
 Basic select
 -----
-SELECT * FROM tbl
+SELECT * FROM parser_test
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -12,11 +12,11 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 )
 -----
-SELECT id, `aa bb`, `cc``dd` FROM `tbl`
+SELECT id, `aa bb`, `cc``dd` FROM (SELECT 1 id, "aa bb", "cc`dd") `sub query`
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -44,13 +44,43 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
-	[from] => MariaStan\Ast\Query\TableReference\Table
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[name] => tbl
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aa bb
+											[firstConcatPart] => aa bb
+										)
+								)
+							[2] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => cc`dd
+											[firstConcatPart] => cc`dd
+										)
+								)
+						)
+				)
+			[alias] => sub query
 		)
 )
 -----
-SELECT tbl.id, `tbl`.`aa bb` FROM `tbl`
+SELECT `sub query`.id, `sub query`.`aa bb` FROM (SELECT 1 id, "aa bb") `sub query`
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -61,7 +91,7 @@ MariaStan\Ast\Query\SelectQuery
 					[expr] => MariaStan\Ast\Expr\Column
 						(
 							[name] => id
-							[tableName] => tbl
+							[tableName] => sub query
 						)
 				)
 			[1] => MariaStan\Ast\SelectExpr\RegularExpr
@@ -69,13 +99,35 @@ MariaStan\Ast\Query\SelectQuery
 					[expr] => MariaStan\Ast\Expr\Column
 						(
 							[name] => aa bb
-							[tableName] => tbl
+							[tableName] => sub query
 						)
 				)
 		)
-	[from] => MariaStan\Ast\Query\TableReference\Table
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[name] => tbl
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aa bb
+											[firstConcatPart] => aa bb
+										)
+								)
+						)
+				)
+			[alias] => sub query
 		)
 )
 -----
@@ -107,7 +159,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT 1 FROM tbl WHERE 1
+SELECT 1 FROM parser_test WHERE 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -123,7 +175,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 	[where] => MariaStan\Ast\Expr\LiteralInt
 		(
@@ -170,7 +222,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT id FROM tbl GROUP BY tag DESC
+SELECT id FROM parser_test GROUP BY name DESC
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -186,7 +238,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 	[groupBy] => MariaStan\Ast\GroupBy
 		(
@@ -196,7 +248,7 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
-									[name] => tag
+									[name] => name
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::DESC
 						)
@@ -205,7 +257,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT id FROM tbl WHERE val > 5 GROUP BY tag WITH ROLLUP
+SELECT id FROM parser_test WHERE id > 5 GROUP BY name WITH ROLLUP
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -221,14 +273,14 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 	[where] => MariaStan\Ast\Expr\BinaryOp
 		(
 			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
 			[left] => MariaStan\Ast\Expr\Column
 				(
-					[name] => val
+					[name] => id
 				)
 			[right] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -243,7 +295,7 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
-									[name] => tag
+									[name] => name
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::ASC
 						)
@@ -272,7 +324,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT id FROM tbl GROUP BY tag HAVING val > 1
+SELECT id FROM parser_test GROUP BY id HAVING id > 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -288,7 +340,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 	[groupBy] => MariaStan\Ast\GroupBy
 		(
@@ -298,7 +350,7 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
-									[name] => tag
+									[name] => id
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::ASC
 						)
@@ -310,7 +362,7 @@ MariaStan\Ast\Query\SelectQuery
 			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
 			[left] => MariaStan\Ast\Expr\Column
 				(
-					[name] => val
+					[name] => id
 				)
 			[right] => MariaStan\Ast\Expr\LiteralInt
 				(
@@ -357,7 +409,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT id FROM tbl ORDER BY x ASC, y DESC
+SELECT id FROM parser_test ORDER BY id ASC, name DESC
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -373,7 +425,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => tbl
+			[name] => parser_test
 		)
 	[orderBy] => MariaStan\Ast\OrderBy
 		(
@@ -383,7 +435,7 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
-									[name] => x
+									[name] => id
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::ASC
 						)
@@ -391,7 +443,7 @@ MariaStan\Ast\Query\SelectQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Column
 								(
-									[name] => y
+									[name] => name
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::DESC
 						)
@@ -399,7 +451,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT 1 LIMIT 5 + 5
+SELECT 1 LIMIT 5
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -415,22 +467,14 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[limit] => MariaStan\Ast\Limit
 		(
-			[count] => MariaStan\Ast\Expr\BinaryOp
+			[count] => MariaStan\Ast\Expr\LiteralInt
 				(
-					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-					[left] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
-					[right] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
+					[value] => 5
 				)
 		)
 )
 -----
-SELECT 1 LIMIT 5 + 5, 10
+SELECT 1 LIMIT 5, 10
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -450,22 +494,14 @@ MariaStan\Ast\Query\SelectQuery
 				(
 					[value] => 10
 				)
-			[offset] => MariaStan\Ast\Expr\BinaryOp
+			[offset] => MariaStan\Ast\Expr\LiteralInt
 				(
-					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-					[left] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
-					[right] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
+					[value] => 5
 				)
 		)
 )
 -----
-SELECT 1 LIMIT 5 + 5 OFFSET 1 + 1
+SELECT 1 LIMIT 5 OFFSET 1
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -481,29 +517,13 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[limit] => MariaStan\Ast\Limit
 		(
-			[count] => MariaStan\Ast\Expr\BinaryOp
+			[count] => MariaStan\Ast\Expr\LiteralInt
 				(
-					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-					[left] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
-					[right] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 5
-						)
+					[value] => 5
 				)
-			[offset] => MariaStan\Ast\Expr\BinaryOp
+			[offset] => MariaStan\Ast\Expr\LiteralInt
 				(
-					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
-					[left] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 1
-						)
-					[right] => MariaStan\Ast\Expr\LiteralInt
-						(
-							[value] => 1
-						)
+					[value] => 1
 				)
 		)
 )

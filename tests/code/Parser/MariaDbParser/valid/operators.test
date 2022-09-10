@@ -519,7 +519,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT 1 = (SELECT id FROM tbl LIMIT 1)
+SELECT 1 = (SELECT id FROM parser_test LIMIT 1)
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -550,7 +550,7 @@ MariaStan\Ast\Query\SelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => tbl
+													[name] => parser_test
 												)
 											[limit] => MariaStan\Ast\Limit
 												(
@@ -566,7 +566,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT (1, 0) = ((SELECT id FROM tbl LIMIT 1), (SELECT id FROM tbl LIMIT 1))
+SELECT (1, 0) = ((SELECT id FROM parser_test LIMIT 1), (SELECT id FROM parser_test LIMIT 1))
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -611,7 +611,7 @@ MariaStan\Ast\Query\SelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => tbl
+																	[name] => parser_test
 																)
 															[limit] => MariaStan\Ast\Limit
 																(
@@ -638,7 +638,7 @@ MariaStan\Ast\Query\SelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => tbl
+																	[name] => parser_test
 																)
 															[limit] => MariaStan\Ast\Limit
 																(
@@ -778,7 +778,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT 1 IN (SELECT id FROM tbl)
+SELECT 1 IN (SELECT id FROM parser_test)
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -808,7 +808,7 @@ MariaStan\Ast\Query\SelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => tbl
+													[name] => parser_test
 												)
 										)
 								)
@@ -817,7 +817,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
-SELECT 1 IN ((SELECT id FROM tbl))
+SELECT 1 IN ((SELECT id FROM parser_test))
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -851,7 +851,7 @@ MariaStan\Ast\Query\SelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => tbl
+																	[name] => parser_test
 																)
 														)
 												)
@@ -1537,7 +1537,8 @@ SELECT NOW() + INTERVAL 1 MICROSECOND + INTERVAL 2 SECOND + INTERVAL 3 MINUTE + 
     NOW() + INTERVAL 6 WEEK + INTERVAL 7 MONTH + INTERVAL 8 QUARTER + INTERVAL 9 YEAR - INTERVAL 10 SECOND_MICROSECOND,
     NOW() - INTERVAL '11:1:2' MINUTE_MICROSECOND - INTERVAL 12 MINUTE_SECOND - INTERVAL 13 HOUR_MICROSECOND,
     NOW() - INTERVAL 14 HOUR_SECOND - INTERVAL 15 HOUR_MINUTE - INTERVAL 16 day_microsecond - INTERVAL 17 dAy_SeCoNd,
-    NOW() - INTERVAL 18 day_minute - INTERVAL 5+5 DAY_HOUR - INTERVAL col YEAR_MONTH
+    NOW() - INTERVAL 18 day_minute - INTERVAL 5+5 DAY_HOUR - INTERVAL id YEAR_MONTH
+    FROM parser_test
 -----
 MariaStan\Ast\Query\SelectQuery
 (
@@ -1841,12 +1842,16 @@ MariaStan\Ast\Query\SelectQuery
 								(
 									[timeQuantity] => MariaStan\Ast\Expr\Column
 										(
-											[name] => col
+											[name] => id
 										)
 									[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::YEAR_MONTH
 								)
 						)
 				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
 		)
 )
 -----
