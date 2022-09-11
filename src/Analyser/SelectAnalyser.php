@@ -395,9 +395,9 @@ final class SelectAnalyser
 				$leftResult = $this->resolveExprType($expr->left);
 				$rightResult = $this->resolveExprType($expr->right);
 				$rightType = $rightResult->type;
-				assert($rightType instanceof Schema\DbType\TupleType);
 
-				if ($rightType->isFromSubquery) {
+				// $rightType may not be a tuple if it's a subquery (e.g. "1 IN (SELECT 1)")
+				if (! $rightType instanceof Schema\DbType\TupleType || $rightType->isFromSubquery) {
 					$this->checkSameTypeShape($leftResult->type, $rightType);
 				} else {
 					foreach ($rightType->types as $rowType) {

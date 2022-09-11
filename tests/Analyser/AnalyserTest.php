@@ -420,6 +420,10 @@ class AnalyserTest extends TestCase
 		//yield 'subquery in FROM - same alias as normal table' => [
 		//	'query' => 'SELECT * FROM analyser_test t, (SELECT 1) t',
 		//];
+
+		yield 'value IN (subquery)' => [
+			'query' => 'SELECT 1 IN (SELECT 1)',
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */
