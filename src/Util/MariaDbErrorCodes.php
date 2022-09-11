@@ -31,6 +31,9 @@ class MariaDbErrorCodes
 	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
 	public const ER_OPERAND_COLUMNS = 1241;
 
+	// 4014	ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS Unacceptable combination of window frame bound specifications
+	public const ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS = 4014;
+
 	// 4078	ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION	Illegal parameter data types %s and %s for operation '%s'
 	public const ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION = 4078;
 

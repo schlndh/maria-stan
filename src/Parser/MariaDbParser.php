@@ -43,20 +43,25 @@ class MariaDbParser
 			TokenTypeEnum::IDENTIFIER,
 			TokenTypeEnum::ACTION,
 			TokenTypeEnum::BIT,
+			TokenTypeEnum::CURRENT,
 			TokenTypeEnum::DATE,
 			TokenTypeEnum::ENUM,
 			TokenTypeEnum::ESCAPE,
+			TokenTypeEnum::FOLLOWING,
 			TokenTypeEnum::GENERAL,
 			TokenTypeEnum::IGNORE_SERVER_IDS,
 			TokenTypeEnum::MASTER_HEARTBEAT_PERIOD,
 			TokenTypeEnum::NO,
 			TokenTypeEnum::OPTION,
 			TokenTypeEnum::POSITION,
+			TokenTypeEnum::PRECEDING,
 			TokenTypeEnum::ROLLUP,
+			TokenTypeEnum::ROW,
 			TokenTypeEnum::SLOW,
 			TokenTypeEnum::TEXT,
 			TokenTypeEnum::TIME,
 			TokenTypeEnum::TIMESTAMP,
+			TokenTypeEnum::UNBOUNDED,
 			TokenTypeEnum::UNKNOWN,
 			TokenTypeEnum::WINDOW,
 		];
@@ -98,6 +103,42 @@ class MariaDbParser
 			'MIN',
 			'SUM',
 			// Also COUNT, GROUP_CONCAT and JSON_ARRAYAGG but those have to be handled separately.
+		];
+	}
+
+	/** @return array<string> uppercase names */
+	public function getWindowFunctions(): array
+	{
+		return [
+			'AVG',
+			'BIT_AND',
+			'BIT_OR',
+			'BIT_XOR',
+			'COUNT',
+			'CUME_DIST',
+			'DENSE_RANK',
+			'FIRST_VALUE',
+			'LAG',
+			'LAST_VALUE',
+			'LEAD',
+			'MAX',
+			'MEDIAN',
+			'MIN',
+			'NTILE',
+			'NTH_VALUE',
+			'PERCENT_RANK',
+			'RANK',
+			'ROW_NUMBER',
+			'NTILE',
+			'STD',
+			'STDDEV',
+			'STDDEV_POP',
+			'STDDEV_SAMP',
+			'SUM',
+			'VARIANCE',
+			'VAR_POP',
+			'VAR_SAMP',
+			// PERCENTILE_DISC and PERCENTILE_CONT will have to be handled separately because of their special syntax.
 		];
 	}
 

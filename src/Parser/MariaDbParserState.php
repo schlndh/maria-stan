@@ -39,6 +39,9 @@ use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
+use MariaStan\Ast\WindowFrame;
+use MariaStan\Ast\WindowFrameBound;
+use MariaStan\Ast\WindowFrameTypeEnum;
 use MariaStan\Parser\Exception\InvalidSqlException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
@@ -693,36 +696,47 @@ class MariaDbParserState
 		if ($ident) {
 			if ($this->acceptToken('(')) {
 				$uppercaseFunctionName = strtoupper($ident->content);
-				$result = match ($uppercaseFunctionName) {
+				$functionCall = match ($uppercaseFunctionName) {
 					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
 					default => null,
 				};
 
-				if ($result !== null) {
-					return $result;
+				if ($functionCall === null) {
+					$isDistinct = in_array(
+						$uppercaseFunctionName,
+						$this->parser->getFunctionsThatSupportDistinct(),
+						true,
+					) && $this->acceptToken(TokenTypeEnum::DISTINCT);
+					$arguments = $this->parseExpressionListEndedByClosingParenthesis();
+
+					if ($isDistinct && count($arguments) === 0) {
+						throw new UnexpectedTokenException(
+							'Expected at least one argument after: '
+							. $this->getContextPriorToTokenPosition($this->position - 1),
+						);
+					}
+
+					$functionCall = new FunctionCall\StandardFunctionCall(
+						$startPosition,
+						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$ident->content,
+						$arguments,
+						$isDistinct,
+					);
 				}
 
-				$isDistinct = in_array(
-					$uppercaseFunctionName,
-					$this->parser->getFunctionsThatSupportDistinct(),
-					true,
-				) && $this->acceptToken(TokenTypeEnum::DISTINCT);
-				$arguments = $this->parseExpressionListEndedByClosingParenthesis();
+				if (! $this->acceptToken(TokenTypeEnum::OVER)) {
+					return $functionCall;
+				}
 
-				if ($isDistinct && count($arguments) === 0) {
+				if (! in_array($uppercaseFunctionName, $this->parser->getWindowFunctions(), true)) {
 					throw new UnexpectedTokenException(
-						'Expected at least one argument after: '
+						"{$ident->content} is not a recognized window function. Got OVER after: "
 							. $this->getContextPriorToTokenPosition($this->position - 1),
 					);
 				}
 
-				return new FunctionCall\StandardFunctionCall(
-					$startPosition,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
-					$ident->content,
-					$arguments,
-					$isDistinct,
-				);
+				return $this->parseRestOfWindowFunctionCall($functionCall);
 			}
 
 			if (! $this->acceptToken('.')) {
@@ -858,6 +872,99 @@ class MariaDbParserState
 			"Unexpected token: {$this->printToken($this->findCurrentToken())} after: "
 				. $this->getContextPriorToTokenPosition(),
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfWindowFunctionCall(
+		FunctionCall\FunctionCall $functionCall,
+	): FunctionCall\WindowFunctionCall {
+		$this->expectToken('(');
+		$partitionBy = null;
+
+		if ($this->acceptToken(TokenTypeEnum::PARTITION)) {
+			$this->expectToken(TokenTypeEnum::BY);
+			$partitionBy = [$this->parseExpression()];
+
+			while ($this->acceptToken(',')) {
+				$partitionBy[] = $this->parseExpression();
+			}
+		}
+
+		$orderBy = $this->parseOrderBy();
+		$windowFrame = null;
+		$frameTypeToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::ROWS, TokenTypeEnum::RANGE);
+
+		if ($frameTypeToken) {
+			$frameType = WindowFrameTypeEnum::from($frameTypeToken->type->value);
+			$hasUpperBound = $this->acceptToken(TokenTypeEnum::BETWEEN) !== null;
+			$upperBound = null;
+			$lowerBound = $this->parseWindowFrameBound(TokenTypeEnum::PRECEDING);
+
+			if ($hasUpperBound) {
+				$this->expectToken(TokenTypeEnum::AND);
+				$upperBound = $this->parseWindowFrameBound(TokenTypeEnum::FOLLOWING);
+			}
+
+			$windowFrame = new WindowFrame(
+				$frameTypeToken->position,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$frameType,
+				$lowerBound,
+				$upperBound,
+			);
+		}
+
+		$this->expectToken(')');
+
+		return new FunctionCall\WindowFunctionCall(
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$functionCall,
+			$partitionBy,
+			$orderBy,
+			$windowFrame,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseWindowFrameBound(TokenTypeEnum $typeToken): WindowFrameBound
+	{
+		$startPosition = $this->findCurrentToken()?->position;
+		$boundStartToken = $this->expectAnyOfTokens(
+			TokenTypeEnum::CURRENT,
+			TokenTypeEnum::UNBOUNDED,
+			TokenTypeEnum::LITERAL_INT,
+			TokenTypeEnum::TRUE,
+			TokenTypeEnum::FALSE,
+		);
+
+		if ($boundStartToken->type === TokenTypeEnum::CURRENT) {
+			$this->expectToken(TokenTypeEnum::ROW);
+		} else {
+			$this->expectToken($typeToken);
+		}
+
+		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
+
+		return match ($boundStartToken->type) {
+			TokenTypeEnum::CURRENT => WindowFrameBound::createCurrentRow($startPosition, $endPosition),
+			TokenTypeEnum::UNBOUNDED => WindowFrameBound::createUnbounded($startPosition, $endPosition),
+			TokenTypeEnum::LITERAL_INT, TokenTypeEnum::TRUE, TokenTypeEnum::FALSE => WindowFrameBound::createExpression(
+				$startPosition,
+				$endPosition,
+				new LiteralInt(
+					$boundStartToken->position,
+					$boundStartToken->getEndPosition(),
+					// phpcs:disable PSR2.Methods.FunctionCallSignature.Indent
+					match ($boundStartToken->type) {
+						TokenTypeEnum::LITERAL_INT => (int) $boundStartToken->content,
+						TokenTypeEnum::TRUE => 1,
+						TokenTypeEnum::FALSE => 1,
+					},
+					// phpcs:enable PSR2.Methods.FunctionCallSignature.Indent
+				),
+			),
+			default => throw new ParserException('This should not happen'),
+		};
 	}
 
 	/** @throws ParserException */

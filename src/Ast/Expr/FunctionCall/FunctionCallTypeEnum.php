@@ -9,6 +9,9 @@ enum FunctionCallTypeEnum: string
 	/** @see StandardFunctionCall */
 	case STANDARD = 'STANDARD';
 
+	/** @see Window */
+	case WINDOW = 'WINDOW';
+
 	/** @see Count */
 	case COUNT = 'COUNT';
 }

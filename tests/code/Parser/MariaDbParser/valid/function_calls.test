@@ -641,3 +641,1768 @@ MariaStan\Ast\Query\SelectQuery
 			[alias] => t
 		)
 )
+-----
+SELECT
+    AVG(id) OVER (),
+    AVG(id) OVER (PARTITION BY id),
+    AVG(id) OVER (ORDER BY id),
+    AVG(id) OVER (ORDER BY id ROWS UNBOUNDED PRECEDING),
+    AVG(id) OVER (ORDER BY id ROWS 1 PRECEDING),
+    AVG(id) OVER (ORDER BY id ROWS TRUE PRECEDING),
+    AVG(id) OVER (ORDER BY id ROWS CURRENT ROW),
+    AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+    AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING),
+    AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
+    AVG(id) OVER (PARTITION BY id ROWS UNBOUNDED PRECEDING),
+    AVG(id) OVER (PARTITION BY id ORDER BY id, name DESC ROWS UNBOUNDED PRECEDING),
+    AVG(id) OVER (ROWS UNBOUNDED PRECEDING)
+FROM (SELECT 1 id, 'a' name) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[9] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+			[10] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[11] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+											[1] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => name
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::DESC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[12] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[alias] => name
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT
+    AVG(id) OVER (PARTITION BY id),
+    AVG(id) OVER (ORDER BY id),
+    AVG(id) OVER (ORDER BY id RANGE UNBOUNDED PRECEDING),
+    AVG(id) OVER (ORDER BY id RANGE 1 PRECEDING),
+    AVG(id) OVER (ORDER BY id RANGE TRUE PRECEDING),
+    AVG(id) OVER (ORDER BY id RANGE CURRENT ROW),
+    AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+    AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND 1 FOLLOWING),
+    AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM (SELECT 1 id) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+										)
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[preceding] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+									[following] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT
+    AVG(id) OVER (PARTITION BY id),
+    BIT_AND(id) OVER (PARTITION BY id),
+    BIT_OR(id) OVER (PARTITION BY id),
+    BIT_XOR(id) OVER (PARTITION BY id),
+    COUNT(id) OVER (PARTITION BY id),
+    CUME_DIST() OVER (PARTITION BY id ORDER BY id),
+    DENSE_RANK() OVER (PARTITION BY id ORDER BY id),
+    FIRST_VALUE(id) OVER (PARTITION BY id),
+    LAG(id) OVER (PARTITION BY id ORDER BY id),
+    LAST_VALUE(id) OVER (PARTITION BY id),
+    LEAD(id) OVER (PARTITION BY id ORDER BY id),
+    MAX(id) OVER (PARTITION BY id),
+    MEDIAN(id) OVER (PARTITION BY id),
+    MIN(id) OVER (PARTITION BY id),
+    NTILE(id) OVER (PARTITION BY id),
+    NTH_VALUE(id, 5) OVER (PARTITION BY id),
+    PERCENT_RANK() OVER (PARTITION BY id ORDER BY id),
+    RANK() OVER (PARTITION BY id ORDER BY id),
+    ROW_NUMBER() OVER (PARTITION BY id),
+    NTILE(id) OVER (PARTITION BY id),
+    STD(id) OVER (PARTITION BY id),
+    STDDEV(id) OVER (PARTITION BY id),
+    STDDEV_POP(id) OVER (PARTITION BY id),
+    STDDEV_SAMP(id) OVER (PARTITION BY id),
+    SUM(id) OVER (PARTITION BY id),
+    VARIANCE(id) OVER (PARTITION BY id),
+    VAR_POP(id) OVER (PARTITION BY id),
+    VAR_SAMP(id) OVER (PARTITION BY id)
+FROM (SELECT 1 id) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => BIT_AND
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => BIT_OR
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => BIT_XOR
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\Count
+								(
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+									[isCountAll] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => CUME_DIST
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => DENSE_RANK
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => LAG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[9] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => LAST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[10] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => LEAD
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[11] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => MAX
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[12] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => MEDIAN
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[13] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => MIN
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[14] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NTILE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[15] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NTH_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+											[1] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[16] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => PERCENT_RANK
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[17] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => RANK
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+			[18] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => ROW_NUMBER
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[19] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NTILE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[20] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => STD
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[21] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => STDDEV
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[22] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => STDDEV_POP
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[23] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => STDDEV_SAMP
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[24] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => SUM
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[25] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => VARIANCE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[26] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => VAR_POP
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+			[27] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => VAR_SAMP
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[alias] => id
+								)
+						)
+				)
+			[alias] => t
+		)
+)

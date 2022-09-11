@@ -9,15 +9,16 @@ use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
 use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use UnitEnum;
 
 use function array_filter;
 use function array_map;
 use function count;
+use function in_array;
 use function is_array;
 use function is_bool;
 use function MariaStan\canonicalize;
@@ -56,23 +57,12 @@ class MariaDbParserTest extends TestCase
 	/** @dataProvider provideTestParseValidData */
 	public function testParseValid(string $name, string $code, string $expected): void
 	{
-		$lexer = new MariaDbLexer();
-		$tokens = $lexer->tokenize($code);
-		$params = [];
-
-		foreach ($tokens as $token) {
-			if ($token->type === TokenTypeEnum::SINGLE_CHAR && $token->content === '?') {
-				$params[] = 1;
-			}
-		}
-
 		// Make sure the query doesn't throw an exception
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		[$dbException] = $this->getDbOutput($db, $code);
 
-		if (count($params) === 0) {
-			$db->query($code)->close();
-		} else {
-			$db->prepare($code)->execute($params);
+		if ($dbException !== null) {
+			throw $dbException;
 		}
 
 		$parser = $this->createParser();
@@ -98,7 +88,25 @@ class MariaDbParserTest extends TestCase
 		$parser = $this->createParser();
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		[$e, $parserOutput] = $this->getParseOutput($parser, $code);
-		[, $dbOutput] = $this->getDbOutput($db, $code);
+		[$dbException, $dbOutput] = $this->getDbOutput($db, $code);
+
+		if ($dbException === null) {
+			$this->fail("Expected query to fail, but it didn't.");
+		}
+
+		if (
+			! in_array(
+				$dbException->getCode(),
+				[
+					MariaDbErrorCodes::ER_PARSE_ERROR,
+					// The AST doesn't even allow this, so we have to handle it in the parser.
+					MariaDbErrorCodes::ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS,
+				],
+				true,
+			)
+		) {
+			$this->fail("Expected DB to return parse error. Got: '{$dbOutput}'. This should be tested somewhere else.");
+		}
 
 		$this->assertSame($expectedDbError, $dbOutput, $name);
 		$this->assertSame($expectedParserOutput, $parserOutput, $name);
@@ -127,20 +135,34 @@ class MariaDbParserTest extends TestCase
 	}
 
 	/**
-	 * @return array{mysqli_sql_exception, string} [result, output]
+	 * @return array{?mysqli_sql_exception, string} [result, output]
 	 *
 	 * Must be public for updateTests.php
 	 */
 	public function getDbOutput(mysqli $db, string $code): array
 	{
+		$lexer = new MariaDbLexer();
+		$tokens = $lexer->tokenize($code);
+		$params = [];
+
+		foreach ($tokens as $token) {
+			if ($token->type === TokenTypeEnum::SINGLE_CHAR && $token->content === '?') {
+				$params[] = 1;
+			}
+		}
+
 		try {
-			$db->query($code);
+			if (count($params) === 0) {
+				$db->query($code)->close();
+			} else {
+				$db->prepare($code)->execute($params);
+			}
+
+			return [null, 'Query ran without exception'];
 		} catch (mysqli_sql_exception $e) {
 			// TODO: Is it a good idea to put the error message there?
 			return [$e, canonicalize($e->getCode() . ": {$e->getMessage()}")];
 		}
-
-		throw new RuntimeException("'{$code}' was supposed to throw an exception, but didn't.");
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */

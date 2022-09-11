@@ -69,6 +69,7 @@ enum TokenTypeEnum: string
 	case CONVERT = 'CONVERT';
 	case CREATE = 'CREATE';
 	case CROSS = 'CROSS';
+	case CURRENT = 'CURRENT';
 	case CURRENT_DATE = 'CURRENT_DATE';
 	case CURRENT_ROLE = 'CURRENT_ROLE';
 	case CURRENT_TIME = 'CURRENT_TIME';
@@ -115,6 +116,7 @@ enum TokenTypeEnum: string
 	case FLOAT = 'FLOAT';
 	case FLOAT4 = 'FLOAT4';
 	case FLOAT8 = 'FLOAT8';
+	case FOLLOWING = 'FOLLOWING';
 	case FOR = 'FOR';
 	case FORCE = 'FORCE';
 	case FOREIGN = 'FOREIGN';
@@ -204,6 +206,7 @@ enum TokenTypeEnum: string
 	case PARSE_VCOL_EXPR = 'PARSE_VCOL_EXPR';
 	case PARTITION = 'PARTITION';
 	case POSITION = 'POSITION';
+	case PRECEDING = 'PRECEDING';
 	case PRECISION = 'PRECISION';
 	case PRIMARY = 'PRIMARY';
 	case PROCEDURE = 'PROCEDURE';
@@ -230,6 +233,7 @@ enum TokenTypeEnum: string
 	case RIGHT = 'RIGHT';
 	case RLIKE = 'RLIKE';
 	case ROLLUP = 'ROLLUP';
+	case ROW = 'ROW';
 	case ROWS = 'ROWS';
 	case SCHEMA = 'SCHEMA';
 	case SCHEMAS = 'SCHEMAS';
@@ -270,6 +274,7 @@ enum TokenTypeEnum: string
 	case TRAILING = 'TRAILING';
 	case TRIGGER = 'TRIGGER';
 	case TRUE = 'TRUE';
+	case UNBOUNDED = 'UNBOUNDED';
 	case UNDO = 'UNDO';
 	case UNION = 'UNION';
 	case UNIQUE = 'UNIQUE';
