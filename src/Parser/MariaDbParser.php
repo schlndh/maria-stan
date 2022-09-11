@@ -86,11 +86,36 @@ class MariaDbParser
 			TokenTypeEnum::CURRENT_TIME,
 			TokenTypeEnum::CURRENT_TIMESTAMP,
 			TokenTypeEnum::CURRENT_USER,
+			TokenTypeEnum::DATABASE,
+			TokenTypeEnum::DEFAULT,
+			TokenTypeEnum::IF,
+			TokenTypeEnum::LEFT,
 			TokenTypeEnum::LOCALTIME,
 			TokenTypeEnum::LOCALTIMESTAMP,
+			TokenTypeEnum::MOD,
+			TokenTypeEnum::REPLACE,
+			TokenTypeEnum::RIGHT,
+			TokenTypeEnum::SCHEMA,
 			TokenTypeEnum::UTC_DATE,
 			TokenTypeEnum::UTC_TIME,
 			TokenTypeEnum::UTC_TIMESTAMP,
+		];
+	}
+
+	/** @return array<string> */
+	public function getFunctionsWhichCanBeCalledWithoutParentheses(): array
+	{
+		return [
+			'CURRENT_DATE',
+			'CURRENT_ROLE',
+			'CURRENT_TIME',
+			'CURRENT_TIMESTAMP',
+			'CURRENT_USER',
+			'LOCALTIME',
+			'LOCALTIMESTAMP',
+			'UTC_DATE',
+			'UTC_TIME',
+			'UTC_TIMESTAMP',
 		];
 	}
 

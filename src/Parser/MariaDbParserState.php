@@ -759,16 +759,27 @@ class MariaDbParserState
 		$functionIdent = $this->acceptAnyOfTokenTypes(...$this->parser->getExplicitTokenTypesForFunctions());
 
 		if ($functionIdent) {
-			// These functions can be called even without parentheses.
-			$arguments = $this->acceptToken('(')
+			$canBeWithoutParentheses = in_array(
+				strtoupper($functionIdent->content),
+				$this->parser->getFunctionsWhichCanBeCalledWithoutParentheses(),
+				true,
+			);
+			$hasParentheses = $this->acceptToken('(') !== null;
+			$arguments = $hasParentheses
 				? $this->parseExpressionListEndedByClosingParenthesis()
 				: [];
 
-			return new FunctionCall\StandardFunctionCall(
-				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
-				$functionIdent->content,
-				$arguments,
+			if ($canBeWithoutParentheses || $hasParentheses) {
+				return new FunctionCall\StandardFunctionCall(
+					$startPosition,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$functionIdent->content,
+					$arguments,
+				);
+			}
+
+			throw new UnexpectedTokenException(
+				"Got {$this->printToken($functionIdent)} after: " . $this->getContextPriorToTokenPosition(),
 			);
 		}
 
