@@ -29,6 +29,7 @@ use function count;
 use function in_array;
 use function mb_strlen;
 use function stripos;
+use function strtoupper;
 
 final class SelectAnalyser
 {
@@ -453,6 +454,48 @@ final class SelectAnalyser
 					$this->getNodeContent($expr),
 					new Schema\DbType\IntType(),
 					$expressionResult->isNullable || $patternResult->isNullable,
+				);
+			case Expr\ExprTypeEnum::FUNCTION_CALL:
+				assert($expr instanceof Expr\FunctionCall\FunctionCall);
+				$position = 0;
+				$arguments = $expr->getArguments();
+				$normalizedFunctionName = strtoupper($expr->getFunctionName());
+
+				foreach ($arguments as $arg) {
+					$position++;
+					$resolvedArg = $this->resolveExprType($arg);
+
+					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
+						$this->errors[] = new AnalyserError(
+							AnalyserErrorMessageBuilder::createInvalidFunctionArgumentErrorMessage(
+								$expr->getFunctionName(),
+								$position,
+								$resolvedArg->type,
+							),
+						);
+					}
+				}
+
+				// TODO: handle this more elegantly. For now it's just like this so that I have a function to use
+				// for tests.
+				if ($expr instanceof Expr\FunctionCall\StandardFunctionCall && $normalizedFunctionName === 'AVG') {
+					if (count($arguments) !== 1) {
+						$this->errors[] = new AnalyserError(
+							AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
+								$expr->getFunctionName(),
+								count($arguments),
+								[1],
+							),
+						);
+					}
+				} else {
+					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
+				}
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\MixedType(),
+					true,
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");

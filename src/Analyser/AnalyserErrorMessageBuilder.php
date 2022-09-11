@@ -11,6 +11,8 @@ use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\TupleType;
 
 use function assert;
+use function max;
+use function min;
 
 class AnalyserErrorMessageBuilder
 {
@@ -66,6 +68,31 @@ class AnalyserErrorMessageBuilder
 	public static function createInvalidLikeEscapeMulticharErrorMessage(string $escape): string
 	{
 		return "ESCAPE can only be single character. Got '{$escape}'.";
+	}
+
+	public static function createInvalidFunctionArgumentErrorMessage(
+		string $functionName,
+		int $position,
+		DbType $argumentType,
+	): string {
+		$typeStr = self::formatDbType($argumentType);
+
+		return "Function {$functionName} does not accept {$typeStr} as argument {$position}.";
+	}
+
+	/** @param non-empty-array<int> $possibleCounts */
+	public static function createMismatchedFunctionArgumentsErrorMessage(
+		string $functionName,
+		int $argumentCount,
+		array $possibleCounts,
+	): string {
+		$min = min($possibleCounts);
+		$max = max($possibleCounts);
+		$acceptedArgs = $min === $max
+			? (string) $min
+			: "{$min} - {$max}";
+
+		return "Function {$functionName} requires {$acceptedArgs} arguments, {$argumentCount} given.";
 	}
 
 	public static function createInvalidTupleComparisonErrorMessage(DbType $left, DbType $right): string

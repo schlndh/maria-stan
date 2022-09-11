@@ -522,9 +522,11 @@ class AnalyserTest extends TestCase
 			'Unhandled expression type',
 		);
 		$unhandledExpressionTypeErrors = array_filter($result->errors, $isUnhanhledExpressionTypeError);
+		$isUnhandledFunctionError = static fn (AnalyserError $e) => str_starts_with($e->message, 'Unhandled function:');
+		$unhandledFunctionErrors = array_filter($result->errors, $isUnhandledFunctionError);
 		$otherErrors = array_filter(
 			$result->errors,
-			static fn (AnalyserError $e) => ! $isUnhanhledExpressionTypeError($e),
+			static fn (AnalyserError $e) => ! $isUnhanhledExpressionTypeError($e) && ! $isUnhandledFunctionError($e),
 		);
 
 		$this->assertCount(
@@ -634,6 +636,14 @@ class AnalyserTest extends TestCase
 				. implode(
 					",\n",
 					array_map(static fn (AnalyserError $e) => $e->message, $unhandledExpressionTypeErrors),
+				);
+		}
+
+		if (count($unhandledFunctionErrors) > 0) {
+			$incompleteTestErrors[] = "There are functions:\n"
+				. implode(
+					",\n",
+					array_map(static fn (AnalyserError $e) => $e->message, $unhandledFunctionErrors),
 				);
 		}
 
@@ -752,6 +762,12 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
+		yield 'unknown column as function argument' => [
+			'query' => 'SELECT AVG(v.id) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
 		// TODO: implement this
 		//yield 'unknown column in HAVING - not in field list nor in GROUP BY nor aggregate' => [
 		//	'query' => 'SELECT 1 FROM analyser_test GROUP BY id HAVING name',
@@ -785,6 +801,12 @@ class AnalyserTest extends TestCase
 
 		yield 'ambiguous column in JOIN ... ON' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'ambiguous column as function argument' => [
+			'query' => 'SELECT AVG(id) FROM analyser_test a, analyser_test b',
 			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
@@ -921,6 +943,26 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
 			'error' => AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage('cd'),
 			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
+		];
+
+		yield 'tuple as function argument' => [
+			'query' => 'SELECT AVG((id, name)) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createInvalidFunctionArgumentErrorMessage(
+				'AVG',
+				1,
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield 'mismatched arguments' => [
+			'query' => 'SELECT AVG(id, name) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
+				'AVG',
+				2,
+				[1],
+			),
+			'DB error code' => MariaDbErrorCodes::ER_PARSE_ERROR,
 		];
 	}
 
