@@ -11,8 +11,6 @@ use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
-use function MariaStan\Testing\assertFirstArgumentErrors;
-
 class MySQLiRuleInvalidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
@@ -71,20 +69,14 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 
 		try {
-			assertFirstArgumentErrors(
-				$db->query('SELECT missing'),
-				"Unknown column 'missing'",
-			);
+			$db->query('SELECT missing');
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::ER_BAD_FIELD_ERROR, $e->getCode());
 		}
 
 		try {
-			assertFirstArgumentErrors(
-				$db->query('SELECT ?'),
-				'Placeholders cannot be used with query(), use prepared statements.',
-			);
+			$db->query('SELECT ?');
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::ER_PARSE_ERROR, $e->getCode());
@@ -93,10 +85,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt = $db->prepare('SELECT ?');
 
 		try {
-			assertFirstArgumentErrors(
-				$stmt->execute(),
-				'Prepared statement needs 1 parameters, got 0.',
-			);
+			$stmt->execute();
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::MYSQLI_NO_DATA_FOR_PREPARED_PARAMS, $e->getCode());
@@ -105,10 +94,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt = $db->prepare('SELECT ?');
 
 		try {
-			assertFirstArgumentErrors(
-				$stmt->execute([]),
-				'Prepared statement needs 1 parameters, got 0.',
-			);
+			$stmt->execute([]);
 			$this->fail('Exception expected');
 		} catch (ValueError) {
 		}
@@ -116,10 +102,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt = $db->prepare('SELECT ?');
 
 		try {
-			assertFirstArgumentErrors(
-				$stmt->execute(null),
-				'Prepared statement needs 1 parameters, got 0.',
-			);
+			$stmt->execute(null);
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::MYSQLI_NO_DATA_FOR_PREPARED_PARAMS, $e->getCode());
@@ -128,10 +111,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt = $db->prepare('SELECT 1');
 
 		try {
-			assertFirstArgumentErrors(
-				$stmt->execute([1, 2, 3]),
-				'Prepared statement needs 0 parameters, got 3.',
-			);
+			$stmt->execute([1, 2, 3]);
 			$this->fail('Exception expected');
 		} catch (ValueError) {
 		}

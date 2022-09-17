@@ -7,16 +7,19 @@ namespace MariaStan;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbLexerTest;
 use MariaStan\Parser\MariaDbParserTest;
+use MariaStan\PHPStan\Rules\MySQLi\MySQLiRuleTest;
 use PHPUnit\TextUI\XmlConfiguration\Loader;
 use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
 use function file_put_contents;
+use function preg_replace;
 use function strpos;
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/Parser/CodeTestParser.php';
 require __DIR__ . '/Parser/MariaDbParserTest.php';
 require __DIR__ . '/Parser/MariaDbLexerTest.php';
+require __DIR__ . '/PHPStan/Rules/MySQLi/MySQLiRuleTest.php';
 require __DIR__ . '/../vendor/autoload.php';
 
 // Load DB credentials from phpunit.xml to make DatabaseTestCaseHelper work.
@@ -87,6 +90,15 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 
 	$newCode = $testParser->reconstructTest($name, $newTests);
 	file_put_contents($fileName, $newCode);
+}
+
+$dir = __DIR__ . '/PHPStan/Rules/MySQLi/data';
+$mysqliRuleTest = new MySQLiRuleTest();
+
+foreach (fileNamesInDir($dir, 'php') as $fileName) {
+	$errors = $mysqliRuleTest->getTestOutput($fileName);
+	$errorsFileName = preg_replace('/\.php$/', '.errors', $fileName);
+	file_put_contents($errorsFileName, $errors);
 }
 
 /**

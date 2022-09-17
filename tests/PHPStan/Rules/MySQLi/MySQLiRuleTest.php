@@ -9,7 +9,13 @@ use MariaStan\PHPStan\Rules\MySQLi\data\MySQLiRuleInvalidDataTest;
 use mysqli;
 use PHPStan\Rules\Rule;
 
+use function array_map;
 use function assert;
+use function basename;
+use function file_get_contents;
+use function implode;
+use function MariaStan\fileNamesInDir;
+use function preg_replace;
 
 /** @extends MariaStanRuleTestCase<MySQLiRule> */
 class MySQLiRuleTest extends MariaStanRuleTestCase
@@ -19,23 +25,35 @@ class MySQLiRuleTest extends MariaStanRuleTestCase
 		return self::getContainer()->getByType(MySQLiRule::class);
 	}
 
-	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestRuleData(): iterable
+	public function getTestOutput(string $file): string
 	{
 		$mysqli = self::getContainer()->getService('mariaStanDb');
 		assert($mysqli instanceof mysqli);
 		MySQLiRuleInvalidDataTest::initData($mysqli);
 
-		yield 'invalid' => $this->gatherAssertErrors(__DIR__ . '/data/MySQLiRuleInvalidDataTest.php');
+		$errors = $this->getAnalyserErrors([$file]);
+
+		return implode("\n", array_map($this->formatPHPStanError(...), $errors)) . "\n";
 	}
 
-	/**
-	 * @dataProvider provideTestRuleData()
-	 * @param array<array{string, int}> $errors [[error, line number]]
-	 */
-	public function testRule(string $file, array $errors): void
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestData(): iterable
 	{
-		$this->analyse([$file], $errors);
+		foreach (fileNamesInDir(__DIR__ . '/data', 'php') as $fileName) {
+			$errors = file_get_contents(preg_replace('/\.php$/', '.errors', $fileName));
+
+			yield basename($fileName) => [
+				'file' => $fileName,
+				'expected output' => $errors,
+			];
+		}
+	}
+
+	/** @dataProvider provideTestData */
+	public function test(string $file, string $expectedOutput): void
+	{
+		$output = $this->getTestOutput($file);
+		$this->assertSame($expectedOutput, $output);
 	}
 
 	/** @return array<string> */

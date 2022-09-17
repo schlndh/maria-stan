@@ -20,3 +20,9 @@ parameters:
 		-
 			message: '#.*throws checked exception.*#'
 			path: tests/
+		-
+			message: '#Calling PHPStan\\Analyser\\Analyser::analyse\(\) is not covered by backward compatibility promise.*#'
+			path: tests/PHPStan/Rules/MariaStanRuleTestCase.php
+		-
+			message: '#Calling PHPStan\\Analyser\\AnalyserResult::.*\(\) is not covered by backward compatibility promise.*#'
+			path: tests/PHPStan/Rules/MariaStanRuleTestCase.php

@@ -15,7 +15,6 @@ use function rtrim;
 use function str_replace;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/Testing/functions.php';
 
 /**
  * The code below is based on
@@ -68,8 +67,8 @@ function canonicalize(string $str): string
 	return implode("\n", $lines);
 }
 
-/** @return iterable<string, string> file name => contents */
-function filesInDir(string $directory, string $fileExtension): iterable
+/** @return iterable<string> file name */
+function fileNamesInDir(string $directory, string $fileExtension): iterable
 {
 	$directory = realpath($directory);
 	$it = new \RecursiveDirectoryIterator($directory);
@@ -78,8 +77,15 @@ function filesInDir(string $directory, string $fileExtension): iterable
 
 	foreach ($it as $file) {
 		assert($file instanceof \SplFileInfo);
-		$fileName = $file->getPathname();
 
+		yield $file->getPathname();
+	}
+}
+
+/** @return iterable<string, string> file name => contents */
+function filesInDir(string $directory, string $fileExtension): iterable
+{
+	foreach (fileNamesInDir($directory, $fileExtension) as $fileName) {
 		yield $fileName => file_get_contents($fileName);
 	}
 }

@@ -1,0 +1,6 @@
+72: Unknown column 'missing'
+79: Placeholders cannot be used with query(), use prepared statements.
+88: Prepared statement needs 1 parameters, got 0.
+97: Prepared statement needs 1 parameters, got 0.
+105: Prepared statement needs 1 parameters, got 0.
+114: Prepared statement needs 0 parameters, got 3.
