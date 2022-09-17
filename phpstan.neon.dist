@@ -15,6 +15,7 @@ parameters:
 			missingCheckedExceptionInThrows: true
 		uncheckedExceptionClasses:
 			- 'MariaStan\\Ast\\Exception\\InvalidArgumentException'
+			- 'InvalidArgumentException'
 	ignoreErrors:
 		-
 			message: '#.*throws checked exception.*#'

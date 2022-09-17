@@ -34,5 +34,5 @@ services:
 	- MariaStan\DbReflection\MariaDbOnlineDbReflection(@mariaStanDb)
 	- MariaStan\Analyser\Analyser
 	- MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper
-	- MariaStan\PHPStan\PHPStanReturnTypeHelper
-
+	- MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
+	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper

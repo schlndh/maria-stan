@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi;
 
-use MariaStan\PHPStan\PHPStanReturnTypeHelper;
+use MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper;
+use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use mysqli_result;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\ArrayType;
-use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
 
 use function count;
-use function range;
 
-use const MYSQLI_ASSOC;
-use const MYSQLI_BOTH;
 use const MYSQLI_NUM;
 
 class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-	public function __construct(private readonly PHPStanReturnTypeHelper $phpstanHelper)
-	{
+	public function __construct(
+		private readonly PHPStanReturnTypeHelper $phpstanHelper,
+		private readonly PHPStanMySQLiHelper $phpstanMysqliHelper,
+	) {
 	}
 
 	public function getClass(): string
@@ -47,14 +44,13 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 	): ?Type {
 		$callerType = $scope->getType($methodCall->var);
 
-		if (! $callerType instanceof GenericObjectType || count($callerType->getTypes()) < 1) {
+		if (! $callerType instanceof GenericObjectType) {
 			return null;
 		}
 
-		$rowType = $callerType->getTypes()[0];
-		$columns = $this->phpstanHelper->getColumnsFromRowType($rowType);
+		$params = $this->phpstanHelper->tryUnpackAnalyserResultFromTypes($callerType->getTypes());
 
-		if ($columns === null) {
+		if ($params === null) {
 			return null;
 		}
 
@@ -70,29 +66,6 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 			$mode = MYSQLI_NUM;
 		}
 
-		switch ($mode) {
-			case MYSQLI_ASSOC:
-				return new ArrayType(new IntegerType(), $this->phpstanHelper->getAssociativeTypeForSingleRow($columns));
-			case MYSQLI_NUM:
-				return new ArrayType(
-					new IntegerType(),
-					$this->phpstanHelper->getNumericTypeForSingleRow($columns),
-				);
-			case MYSQLI_BOTH:
-			default:
-				$singleRow = $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
-
-				if ($mode !== MYSQLI_BOTH) {
-					$optionalKeys = range(0, count($singleRow->getKeyTypes()) - 1);
-					$singleRow = new ConstantArrayType(
-						$singleRow->getKeyTypes(),
-						$singleRow->getValueTypes(),
-						$singleRow->getNextAutoIndexes(),
-						$optionalKeys,
-					);
-				}
-
-				return new ArrayType(new IntegerType(), $singleRow);
-		}
+		return $this->phpstanMysqliHelper->fetchAll($params, $mode);
 	}
 }

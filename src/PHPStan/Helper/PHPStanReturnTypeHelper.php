@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MariaStan\PHPStan;
+namespace MariaStan\PHPStan\Helper;
 
+use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper;
 use PHPStan\Type\Constant\ConstantArrayType;
@@ -23,16 +24,44 @@ class PHPStanReturnTypeHelper
 	{
 	}
 
+	public function createPHPStanParamsFromAnalyserResult(AnalyserResult $analyserResult): AnalyserResultPHPStanParams
+	{
+		return new AnalyserResultPHPStanParams(
+			$this->getRowTypeFromFields($analyserResult->resultFields),
+			new ConstantIntegerType($analyserResult->positionalPlaceholderCount),
+		);
+	}
+
+	/** @return array<Type> */
+	public function packPHPStanParamsIntoTypes(AnalyserResultPHPStanParams $params): array
+	{
+		return [$params->rowType, $params->positionalPlaceholderCount];
+	}
+
+	/** @param array<Type> $types */
+	public function tryUnpackAnalyserResultFromTypes(array $types): ?AnalyserResultPHPStanParams
+	{
+		if (count($types) !== 2) {
+			return null;
+		}
+
+		if (! $types[0] instanceof ConstantArrayType || ! $types[1] instanceof ConstantIntegerType) {
+			return null;
+		}
+
+		return new AnalyserResultPHPStanParams($types[0], $types[1]);
+	}
+
 	/**
 	 * This method generates a type that encodes the result fields. It can be attached to the query result (e.g.
 	 * mysqli_result) and later used to obtain PHP types for various fetch methods.
 	 *
 	 * @param array<QueryResultField> $resultFields
 	 */
-	public function getRowTypeFromFields(array $resultFields): ?Type
+	public function getRowTypeFromFields(array $resultFields): ConstantArrayType
 	{
 		if (count($resultFields) === 0) {
-			return null;
+			return new ConstantArrayType([], []);
 		}
 
 		$keys = [];

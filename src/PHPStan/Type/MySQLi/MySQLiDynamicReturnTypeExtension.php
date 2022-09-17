@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi;
 
-use MariaStan\Analyser\Analyser;
-use MariaStan\Analyser\Exception\AnalyserException;
-use MariaStan\PHPStan\PHPStanReturnTypeHelper;
+use MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper;
+use MariaStan\PHPStan\Helper\MySQLi\QueryPrepareCallResult;
+use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use mysqli_result;
 use mysqli_stmt;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantIntegerType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 
+use function assert;
 use function in_array;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
 	public function __construct(
-		private readonly Analyser $analyser,
 		private readonly PHPStanReturnTypeHelper $phpstanHelper,
+		private readonly PHPStanMySQLiHelper $phpstanMysqliHelper,
 	) {
 	}
 
@@ -44,27 +43,22 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		Scope $scope,
 	): ?Type {
 		$queryType = $scope->getType($methodCall->getArgs()[0]->value);
-
-		if (! $queryType instanceof ConstantStringType) {
-			return null;
-		}
-
-		try {
-			$analyzerResult = $this->analyser->analyzeQuery($queryType->getValue());
-		} catch (AnalyserException) {
-			return null;
-		}
-
-		$rowType = $this->phpstanHelper->getRowTypeFromFields($analyzerResult->resultFields);
-		$placeholderCountType = new ConstantIntegerType($analyzerResult->positionalPlaceholderCount);
-		$returnClass = match ($methodReflection->getName()) {
-			'query' => mysqli_result::class,
-			'prepare' => mysqli_stmt::class,
-			default => null,
+		[$returnClass, $result] = match ($methodReflection->getName()) {
+			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->prepare($queryType)],
+			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->query($queryType)],
+			default => [null, null],
 		};
 
-		return $rowType !== null && $returnClass !== null
-			? new GenericObjectType($returnClass, [$rowType, $placeholderCountType])
-			: null;
+		// @phpstan-ignore-next-line This is here for phpstorm
+		assert($result === null || $result instanceof QueryPrepareCallResult);
+
+		if ($result?->analyserResult === null) {
+			return null;
+		}
+
+		$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($result->analyserResult);
+		$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
+
+		return new GenericObjectType($returnClass, $types);
 	}
 }

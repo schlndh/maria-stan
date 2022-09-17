@@ -1,0 +1,120 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MariaStan\PHPStan\Helper\MySQLi;
+
+use InvalidArgumentException;
+use MariaStan\Analyser\Analyser;
+use MariaStan\Analyser\AnalyserError;
+use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
+use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\Type;
+
+use function array_map;
+use function array_merge;
+use function count;
+use function range;
+
+use const MYSQLI_ASSOC;
+use const MYSQLI_BOTH;
+use const MYSQLI_NUM;
+
+final class PHPStanMySQLiHelper
+{
+	public function __construct(
+		private readonly Analyser $analyser,
+		private readonly PHPStanReturnTypeHelper $phpstanHelper,
+	) {
+	}
+
+	public function prepare(Type $queryType): ?QueryPrepareCallResult
+	{
+		if (! $queryType instanceof ConstantStringType) {
+			return null;
+		}
+
+		try {
+			$analyserResult = $this->analyser->analyzeQuery($queryType->getValue());
+		} catch (AnalyserException $e) {
+			return new QueryPrepareCallResult(
+				[$e->getMessage()],
+				null,
+			);
+		}
+
+		$errors = array_map(static fn (AnalyserError $err) => $err->message, $analyserResult->errors);
+
+		return new QueryPrepareCallResult($errors, $analyserResult);
+	}
+
+	public function query(Type $queryType): ?QueryPrepareCallResult
+	{
+		$result = $this->prepare($queryType);
+
+		if (($result?->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
+			return $result;
+		}
+
+		return new QueryPrepareCallResult(
+			array_merge($result->errors, ['Placeholders cannot be used with query(), use prepared statements.']),
+			$result->analyserResult,
+		);
+	}
+
+	/**
+	 * @param array<Type> $executeParamTypes
+	 * @return array<string>
+	 */
+	public function execute(AnalyserResultPHPStanParams $params, array $executeParamTypes): array
+	{
+		$executeParamCount = count($executeParamTypes);
+		$positionalParamsCount = $params->positionalPlaceholderCount->getValue();
+
+		if ($executeParamCount === $positionalParamsCount) {
+			return [];
+		}
+
+		return [
+			"Prepared statement needs {$positionalParamsCount} parameters, got {$executeParamCount}.",
+		];
+	}
+
+	public function fetchArray(AnalyserResultPHPStanParams $params, ?int $mode): Type
+	{
+		$columns = $this->phpstanHelper->getColumnsFromRowType($params->rowType);
+
+		switch ($mode) {
+			case MYSQLI_ASSOC:
+				return $this->phpstanHelper->getAssociativeTypeForSingleRow($columns);
+			case MYSQLI_NUM:
+				return $this->phpstanHelper->getNumericTypeForSingleRow($columns);
+			case MYSQLI_BOTH:
+			case null:
+				$singleRow = $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
+
+				if ($mode === MYSQLI_BOTH) {
+					return $singleRow;
+				}
+
+				return new ConstantArrayType(
+					$singleRow->getKeyTypes(),
+					$singleRow->getValueTypes(),
+					$singleRow->getNextAutoIndexes(),
+					range(0, count($singleRow->getKeyTypes()) - 1),
+				);
+			default:
+				throw new InvalidArgumentException("Unsupported mode {$mode}.");
+		}
+	}
+
+	public function fetchAll(AnalyserResultPHPStanParams $params, ?int $mode): Type
+	{
+		return new ArrayType(new IntegerType(), $this->fetchArray($params, $mode));
+	}
+}
