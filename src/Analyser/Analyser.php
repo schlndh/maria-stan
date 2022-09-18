@@ -28,17 +28,17 @@ final class Analyser
 			$ast = $this->parser->parseSingleQuery($query);
 		} catch (ParserException $e) {
 			return new AnalyserResult(
-				[],
+				null,
 				[new AnalyserError("Couldn't parse query: {$e->getMessage()}")],
-				0,
+				null,
 			);
 		}
 
 		if ($ast::getQueryType() !== QueryTypeEnum::SELECT) {
 			return new AnalyserResult(
-				[],
+				null,
 				[new AnalyserError("Unsupported query: {$ast::getQueryType()->value}")],
-				0,
+				null,
 			);
 		}
 

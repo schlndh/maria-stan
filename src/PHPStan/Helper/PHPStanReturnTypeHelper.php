@@ -24,8 +24,12 @@ class PHPStanReturnTypeHelper
 	{
 	}
 
-	public function createPHPStanParamsFromAnalyserResult(AnalyserResult $analyserResult): AnalyserResultPHPStanParams
+	public function createPHPStanParamsFromAnalyserResult(?AnalyserResult $analyserResult): ?AnalyserResultPHPStanParams
 	{
+		if ($analyserResult?->resultFields === null || $analyserResult->positionalPlaceholderCount === null) {
+			return null;
+		}
+
 		return new AnalyserResultPHPStanParams(
 			$this->getRowTypeFromFields($analyserResult->resultFields),
 			new ConstantIntegerType($analyserResult->positionalPlaceholderCount),
@@ -33,9 +37,11 @@ class PHPStanReturnTypeHelper
 	}
 
 	/** @return array<Type> */
-	public function packPHPStanParamsIntoTypes(AnalyserResultPHPStanParams $params): array
+	public function packPHPStanParamsIntoTypes(?AnalyserResultPHPStanParams $params): array
 	{
-		return [$params->rowType, $params->positionalPlaceholderCount];
+		return $params !== null
+			? [$params->rowType, $params->positionalPlaceholderCount]
+			: [];
 	}
 
 	/** @param array<Type> $types */
@@ -58,9 +64,9 @@ class PHPStanReturnTypeHelper
 	 *
 	 * @param array<QueryResultField> $resultFields
 	 */
-	public function getRowTypeFromFields(array $resultFields): ConstantArrayType
+	public function getRowTypeFromFields(?array $resultFields): ConstantArrayType
 	{
-		if (count($resultFields) === 0) {
+		if (count($resultFields ?? []) === 0) {
 			return new ConstantArrayType([], []);
 		}
 

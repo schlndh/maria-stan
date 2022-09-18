@@ -143,7 +143,7 @@ final class SelectAnalyser
 				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
 
 				try {
-					$this->columnResolver->registerSubquery($subqueryResult->resultFields, $fromClause->alias);
+					$this->columnResolver->registerSubquery($subqueryResult->resultFields ?? [], $fromClause->alias);
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
@@ -334,6 +334,16 @@ final class SelectAnalyser
 				assert($expr instanceof Expr\Subquery);
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
+
+				if ($result->resultFields === null) {
+					return new QueryResultField(
+						$this->getNodeContent($expr),
+						new Schema\DbType\MixedType(),
+						// TODO: Change it to false if we can statically determine that the query will always return
+						// a result: e.g. SELECT 1
+						true,
+					);
+				}
 
 				if (count($result->resultFields) === 1) {
 					return new QueryResultField(

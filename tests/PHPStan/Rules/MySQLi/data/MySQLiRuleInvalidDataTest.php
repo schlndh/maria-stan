@@ -115,5 +115,14 @@ class MySQLiRuleInvalidDataTest extends TestCase
 			$this->fail('Exception expected');
 		} catch (ValueError) {
 		}
+
+		try {
+			$stmt = $db->prepare('asdlajkd qeosdasd ?');
+			// Bug: this shouldn't complain about query needing 0 parameters.
+			$stmt->execute([1]);
+			$this->fail('Exception expected');
+		} catch (mysqli_sql_exception $e) {
+			$this->assertSame(MariaDbErrorCodes::ER_PARSE_ERROR, $e->getCode());
+		}
 	}
 }

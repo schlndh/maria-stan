@@ -555,6 +555,7 @@ class AnalyserTest extends TestCase
 		$unnecessaryNullableFields = [];
 		$datetimeFields = [];
 		$mixedFieldErrors = [];
+		$this->assertNotNull($result->resultFields);
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
