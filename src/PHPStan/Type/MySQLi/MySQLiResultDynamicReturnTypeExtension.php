@@ -16,6 +16,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 
 use function count;
+use function in_array;
 
 use const MYSQLI_NUM;
 
@@ -34,7 +35,15 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 
 	public function isMethodSupported(MethodReflection $methodReflection): bool
 	{
-		return $methodReflection->getName() === 'fetch_all';
+		return in_array(
+			$methodReflection->getName(),
+			[
+				'fetch_all',
+				'fetch_row',
+				'fetch_array',
+			],
+			true,
+		);
 	}
 
 	public function getTypeFromMethodCall(
@@ -54,18 +63,32 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 			return null;
 		}
 
-		$mode = null;
+		return match ($methodReflection->getName()) {
+			'fetch_all' => $this->phpstanMysqliHelper->fetchAll(
+				$params,
+				$this->extractModeFromFirstArg($methodCall, $scope),
+			),
+			'fetch_row' => $this->phpstanMysqliHelper->fetchArray($params, MYSQLI_NUM),
+			'fetch_array' => $this->phpstanMysqliHelper->fetchArray(
+				$params,
+				$this->extractModeFromFirstArg($methodCall, $scope),
+			),
+			default => null,
+		};
+	}
 
-		if (count($methodCall->getArgs()) > 0) {
-			$firstArgType = $scope->getType($methodCall->getArgs()[0]->value);
-
-			if ($firstArgType instanceof ConstantIntegerType) {
-				$mode = $firstArgType->getValue();
-			}
-		} else {
-			$mode = MYSQLI_NUM;
+	private function extractModeFromFirstArg(MethodCall $methodCall, Scope $scope): ?int
+	{
+		if (count($methodCall->getArgs()) === 0) {
+			return MYSQLI_NUM;
 		}
 
-		return $this->phpstanMysqliHelper->fetchAll($params, $mode);
+		$firstArgType = $scope->getType($methodCall->getArgs()[0]->value);
+
+		if ($firstArgType instanceof ConstantIntegerType) {
+			return $firstArgType->getValue();
+		}
+
+		return null;
 	}
 }

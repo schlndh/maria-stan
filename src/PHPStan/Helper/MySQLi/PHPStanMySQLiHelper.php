@@ -11,15 +11,16 @@ use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
-use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 use function array_map;
 use function array_merge;
 use function count;
-use function range;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
@@ -85,7 +86,7 @@ final class PHPStanMySQLiHelper
 		];
 	}
 
-	public function fetchArray(AnalyserResultPHPStanParams $params, ?int $mode): Type
+	public function getRowType(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
 		$columns = $this->phpstanHelper->getColumnsFromRowType($params->rowType);
 
@@ -95,26 +96,25 @@ final class PHPStanMySQLiHelper
 			case MYSQLI_NUM:
 				return $this->phpstanHelper->getNumericTypeForSingleRow($columns);
 			case MYSQLI_BOTH:
+				return $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
 			case null:
-				$singleRow = $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
-
-				if ($mode === MYSQLI_BOTH) {
-					return $singleRow;
-				}
-
-				return new ConstantArrayType(
-					$singleRow->getKeyTypes(),
-					$singleRow->getValueTypes(),
-					$singleRow->getNextAutoIndexes(),
-					range(0, count($singleRow->getKeyTypes()) - 1),
+				return TypeCombinator::union(
+					$this->phpstanHelper->getAssociativeTypeForSingleRow($columns),
+					$this->phpstanHelper->getNumericTypeForSingleRow($columns),
+					$this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns),
 				);
 			default:
 				throw new InvalidArgumentException("Unsupported mode {$mode}.");
 		}
 	}
 
+	public function fetchArray(AnalyserResultPHPStanParams $params, ?int $mode): Type
+	{
+		return TypeCombinator::union($this->getRowType($params, $mode), new NullType(), new ConstantBooleanType(false));
+	}
+
 	public function fetchAll(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
-		return new ArrayType(new IntegerType(), $this->fetchArray($params, $mode));
+		return new ArrayType(new IntegerType(), $this->getRowType($params, $mode));
 	}
 }

@@ -429,6 +429,60 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		}
 	}
 
+	public function testFetchRow(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$result = $db->query('
+			SELECT id FROM mysqli_test
+		');
+		$schemaProcessor = new Processor();
+		$schema = Expect::structure([
+			'0' => Expect::int(),
+		]);
+
+		do {
+			$row = $result->fetch_row();
+
+			if (function_exists('assertType')) {
+				assertType('array{int}|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertSame([0], array_keys($row));
+			$schemaProcessor->process($schema, $row);
+		} while (true);
+	}
+
+	public function testFetchArray(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$result = $db->query('
+			SELECT id FROM mysqli_test
+		');
+		$schemaProcessor = new Processor();
+		$schema = Expect::structure([
+			'id' => Expect::int(),
+		]);
+
+		do {
+			$row = $result->fetch_array(MYSQLI_ASSOC);
+
+			if (function_exists('assertType')) {
+				assertType('array{id: int}|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertSame(['id'], array_keys($row));
+			$schemaProcessor->process($schema, $row);
+		} while (true);
+	}
+
 	/** @param string|array<string> $allowedTypes */
 	private function assertGettype(string|array $allowedTypes, mixed $value): void
 	{
