@@ -12,7 +12,6 @@ use PHPUnit\TextUI\XmlConfiguration\Loader;
 use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
 use function file_put_contents;
-use function preg_replace;
 use function strpos;
 
 require __DIR__ . '/bootstrap.php';
@@ -97,7 +96,7 @@ $mysqliRuleTest = new MySQLiRuleTest();
 
 foreach (fileNamesInDir($dir, 'php') as $fileName) {
 	$errors = $mysqliRuleTest->getTestOutput($fileName);
-	$errorsFileName = preg_replace('/\.php$/', '.errors', $fileName);
+	$errorsFileName = MySQLiRuleTest::getErrorsFileForPhpFile($fileName);
 	file_put_contents($errorsFileName, $errors);
 }
 

@@ -49,9 +49,13 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 			default => [null, null],
 		};
 
+		if ($returnClass === null) {
+			return null;
+		}
+
 		// @phpstan-ignore-next-line This is here for phpstorm
 		assert($result === null || $result instanceof QueryPrepareCallResult);
-		$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($result->analyserResult);
+		$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($result?->analyserResult);
 		$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
 
 		return new GenericObjectType($returnClass, $types);

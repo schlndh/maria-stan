@@ -16,6 +16,7 @@ use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 use function assert;
 use function implode;
@@ -131,7 +132,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	}
 
 	/** @throws mysqli_sql_exception */
-	private function getFieldFromSql(string $select): object
+	private function getFieldFromSql(string $select): stdClass
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$stmt = $db->query($select);
@@ -141,6 +142,9 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		if ($field === false) {
 			$this->fail('Failed to fetch field from: ' . $select);
 		}
+
+		// stdClass to stop phpstan from complaining about access to undefined field on object.
+		assert($field instanceof stdClass);
 
 		return $field;
 	}

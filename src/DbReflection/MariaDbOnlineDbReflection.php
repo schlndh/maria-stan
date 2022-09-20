@@ -25,6 +25,7 @@ use mysqli_sql_exception;
 
 use function array_combine;
 use function array_map;
+use function assert;
 use function explode;
 use function preg_match;
 use function trim;
@@ -36,7 +37,7 @@ class MariaDbOnlineDbReflection
 	}
 
 	/** @throws DbReflectionException */
-	public function findTableSchema(string $table): ?Table
+	public function findTableSchema(string $table): Table
 	{
 		$tableEsc = MysqliUtil::quoteIdentifier($table);
 
@@ -70,18 +71,20 @@ class MariaDbOnlineDbReflection
 	}
 
 	/**
-	 * @param array<string, ?string> $showColumsnRow key => value
+	 * @param array<string, ?string> $showColumnsRow key => value
 	 * @throws DbReflectionException
 	 */
-	private function createColumnSchema(array $showColumsnRow): Column
+	private function createColumnSchema(array $showColumnsRow): Column
 	{
+		assert(isset($showColumnsRow['Field'], $showColumnsRow['Type'], $showColumnsRow['Null']));
+
 		return new Column(
-			$showColumsnRow['Field'],
-			$this->parseDbType($showColumsnRow['Type']),
-			match ($showColumsnRow['Null']) {
+			$showColumnsRow['Field'],
+			$this->parseDbType($showColumnsRow['Type']),
+			match ($showColumnsRow['Null']) {
 				'YES' => true,
 				'NO' => false,
-				default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumsnRow['Null']}"),
+				default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumnsRow['Null']}"),
 			},
 		);
 	}

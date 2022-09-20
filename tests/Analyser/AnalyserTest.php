@@ -548,6 +548,7 @@ class AnalyserTest extends TestCase
 			$stmt = $db->query($query);
 		}
 
+		$this->assertNotNull($result->resultFields);
 		$fieldKeys = $this->getFieldKeys($result->resultFields);
 		$fields = $stmt->fetch_fields();
 		$this->assertSameSize($result->resultFields, $fields);

@@ -193,6 +193,7 @@ class MariaDbParserOperatorTest extends TestCase
 					return null;
 				}
 
+				// @phpstan-ignore-next-line
 				assert(! str_contains($pattern, '%') && ! str_contains($pattern, '_'));
 
 				return str_contains((string) $left, (string) $pattern)

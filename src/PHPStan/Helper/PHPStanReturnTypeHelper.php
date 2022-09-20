@@ -7,11 +7,18 @@ namespace MariaStan\PHPStan\Helper;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 
 use function array_column;
 use function array_values;
@@ -126,17 +133,30 @@ class PHPStanReturnTypeHelper
 		return $columns;
 	}
 
-	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
-	public function getNumericTypeForSingleRow(array $columns): ConstantArrayType
+	private static function getScalarType(): Type
 	{
+		return new UnionType([new IntegerType(), new FloatType(), new StringType(), new BooleanType(), new NullType()]);
+	}
+
+	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
+	public function getNumericTypeForSingleRow(?array $columns): Type
+	{
+		if ($columns === null) {
+			return new ArrayType(new IntegerType(), self::getScalarType());
+		}
+
 		$valueTypes = array_column($columns, 1);
 
 		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes);
 	}
 
 	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
-	public function getAssociativeTypeForSingleRow(array $columns): ConstantArrayType
+	public function getAssociativeTypeForSingleRow(?array $columns): Type
 	{
+		if ($columns === null) {
+			return new ArrayType(new StringType(), self::getScalarType());
+		}
+
 		[$keyTypes, $valueTypes] = $this->filterDuplicateKeys(
 			array_column($columns, 0),
 			array_column($columns, 1),
@@ -146,8 +166,12 @@ class PHPStanReturnTypeHelper
 	}
 
 	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
-	public function getBothNumericAndAssociativeTypeForSingleRow(array $columns): ConstantArrayType
+	public function getBothNumericAndAssociativeTypeForSingleRow(?array $columns): Type
 	{
+		if ($columns === null) {
+			return new ArrayType(new UnionType([new StringType(), new IntegerType()]), self::getScalarType());
+		}
+
 		$combinedValueTypes = $combinedKeyTypes = [];
 		$i = 0;
 

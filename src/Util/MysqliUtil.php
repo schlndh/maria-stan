@@ -24,6 +24,6 @@ abstract class MysqliUtil
 			return 'NULL';
 		}
 
-		return '"' . $db->real_escape_string($value) . '"';
+		return '"' . $db->real_escape_string((string) $value) . '"';
 	}
 }

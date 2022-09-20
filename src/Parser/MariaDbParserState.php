@@ -292,7 +292,7 @@ class MariaDbParserState
 	 */
 	private function parseSelectExpression(): SelectExpr
 	{
-		$startExpressionToken = $this->findCurrentToken();
+		$startExpressionToken = $this->getCurrentToken();
 
 		if ($this->acceptToken('*')) {
 			return new AllColumns($startExpressionToken->position, $startExpressionToken->getEndPosition());
@@ -939,7 +939,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseWindowFrameBound(TokenTypeEnum $typeToken): WindowFrameBound
 	{
-		$startPosition = $this->findCurrentToken()?->position;
+		$startPosition = $this->getCurrentToken()->position;
 		$boundStartToken = $this->expectAnyOfTokens(
 			TokenTypeEnum::CURRENT,
 			TokenTypeEnum::UNBOUNDED,
@@ -1135,6 +1135,15 @@ class MariaDbParserState
 		}
 
 		return $this->tokens[$this->position];
+	}
+
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function getCurrentToken(): Token
+	{
+		return $this->tokens[$this->position] ?? throw new UnexpectedTokenException('Out of tokens');
 	}
 
 	/** @phpstan-impure */

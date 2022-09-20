@@ -1,9 +1,8 @@
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 parameters:
+	phpVersion: 80100
 	level: 9
-	# Skip level 7 so that I don't have to deal with PHP's built-in functions.
-	checkUnionTypes: false
 	paths:
 		- src
 		- tests
@@ -26,3 +25,16 @@ parameters:
 		-
 			message: '#Calling PHPStan\\Analyser\\AnalyserResult::.*\(\) is not covered by backward compatibility promise.*#'
 			path: tests/PHPStan/Rules/MariaStanRuleTestCase.php
+		# Annoying unions:
+		# mysqli methods can't return false: we have exceptions enabled.
+		- '#mysqli_stmt\|false#'
+		# query could return true instead of result for queries that don't product result set, but let's assume that
+		# we know what we're doing.
+		- '#bool\|mysqli_result#'
+		# MariaDbParserOperatorTest.php tries to evaluate expression from AST. We're just hoping for the best.
+		-
+			message: '#.*operation.*results in an error#'
+			path: tests/Parser/MariaDbParserOperatorTest.php
+		-
+			message: '# cast #'
+			path: tests/Parser/MariaDbParserOperatorTest.php

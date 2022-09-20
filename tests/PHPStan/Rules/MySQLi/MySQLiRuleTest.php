@@ -15,11 +15,18 @@ use function basename;
 use function file_get_contents;
 use function implode;
 use function MariaStan\fileNamesInDir;
+use function preg_last_error_msg;
 use function preg_replace;
 
 /** @extends MariaStanRuleTestCase<MySQLiRule> */
 class MySQLiRuleTest extends MariaStanRuleTestCase
 {
+	public static function getErrorsFileForPhpFile(string $phpFileName): string
+	{
+		return preg_replace('/\.php$/', '.errors', $phpFileName)
+			?? throw new \RuntimeException(preg_last_error_msg());
+	}
+
 	protected function getRule(): Rule
 	{
 		return self::getContainer()->getByType(MySQLiRule::class);
@@ -40,7 +47,7 @@ class MySQLiRuleTest extends MariaStanRuleTestCase
 	public function provideTestData(): iterable
 	{
 		foreach (fileNamesInDir(__DIR__ . '/data', 'php') as $fileName) {
-			$errors = file_get_contents(preg_replace('/\.php$/', '.errors', $fileName));
+			$errors = file_get_contents(self::getErrorsFileForPhpFile($fileName));
 
 			yield basename($fileName) => [
 				'file' => $fileName,

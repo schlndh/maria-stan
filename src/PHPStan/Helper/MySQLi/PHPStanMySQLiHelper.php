@@ -58,7 +58,7 @@ final class PHPStanMySQLiHelper
 	{
 		$result = $this->prepare($queryType);
 
-		if (($result?->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
+		if ($result === null || ($result->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
 			return $result;
 		}
 

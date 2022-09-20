@@ -8,7 +8,9 @@ use function array_chunk;
 use function array_merge;
 use function array_pop;
 use function array_shift;
+use function count;
 use function MariaStan\canonicalize;
+use function preg_last_error_msg;
 use function preg_split;
 use function strlen;
 use function strpos;
@@ -16,7 +18,10 @@ use function substr;
 
 class CodeTestParser
 {
-	/** @return array{string, array<array{?string, array<string>}>} [test name, [[mode, [inputs, ..., output]]]] */
+	/**
+	 * @param int<1, max> $chunksPerTest
+	 * @return array{string, array<array{?string, array<string>}>} [test name, [[mode, [inputs, ..., output]]]]
+	 */
 	public function parseTest(string $code, int $chunksPerTest): array
 	{
 		$code = canonicalize($code);
@@ -32,6 +37,14 @@ class CodeTestParser
 
 		// parse sections
 		$parts = preg_split("/\n-----(?:\n|$)/", $code);
+
+		if ($parts === false) {
+			throw new \RuntimeException(preg_last_error_msg());
+		}
+
+		if (count($parts) === 0) {
+			throw new \RuntimeException('There are no tests');
+		}
 
 		// first part is the name
 		$name = array_shift($parts);
@@ -49,7 +62,7 @@ class CodeTestParser
 		return [$name, $tests];
 	}
 
-	/** @param array<array{string, array<string>}> $tests [[mode, [inputs, ..., output]]] */
+	/** @param array<array{?string, array<string>}> $tests [[mode, [inputs, ..., output]]] */
 	public function reconstructTest(string $name, array $tests): string
 	{
 		$result = $name;

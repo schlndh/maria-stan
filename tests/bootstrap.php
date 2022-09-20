@@ -71,6 +71,11 @@ function canonicalize(string $str): string
 function fileNamesInDir(string $directory, string $fileExtension): iterable
 {
 	$directory = realpath($directory);
+
+	if (! $directory) {
+		throw new \RuntimeException("{$directory} doesn't exist");
+	}
+
 	$it = new \RecursiveDirectoryIterator($directory);
 	$it = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::LEAVES_ONLY);
 	$it = new \RegexIterator($it, '(\.' . preg_quote($fileExtension) . '$)');
@@ -86,6 +91,12 @@ function fileNamesInDir(string $directory, string $fileExtension): iterable
 function filesInDir(string $directory, string $fileExtension): iterable
 {
 	foreach (fileNamesInDir($directory, $fileExtension) as $fileName) {
-		yield $fileName => file_get_contents($fileName);
+		$contents = file_get_contents($fileName);
+
+		if ($contents === false) {
+			throw new \RuntimeException("Failed to read {$fileName}.");
+		}
+
+		yield $fileName => $contents;
 	}
 }

@@ -17,7 +17,10 @@ use function trim;
 
 trait CodeTestCase
 {
-	/** @return iterable<string, array<mixed>> test name => args */
+	/**
+	 * @param int<1, max> $chunksPerTest
+	 * @return iterable<string, array<mixed>> test name => args
+	 */
 	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
 	{
 		$parser = new CodeTestParser();

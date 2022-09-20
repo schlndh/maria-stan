@@ -39,12 +39,12 @@ final class Position
 		);
 	}
 
-	public function findSubstringStartingWithPosition(string $str, ?int $length = null): string|false
+	public function findSubstringStartingWithPosition(string $str, ?int $length = null): string
 	{
 		return substr($str, $this->offset, $length);
 	}
 
-	public function findSubstringToEndPosition(string $str, self $endPosition): string|false
+	public function findSubstringToEndPosition(string $str, self $endPosition): string
 	{
 		$length = $endPosition->offset - $this->offset;
 
