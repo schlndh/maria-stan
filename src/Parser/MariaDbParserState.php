@@ -82,7 +82,12 @@ class MariaDbParserState
 	 */
 	public function parseStrictSingleQuery(): Query
 	{
+		$parenthesisCount = 0;
 		$query = null;
+
+		while ($this->acceptToken('(')) {
+			$parenthesisCount++;
+		}
 
 		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
 			$query = $this->parseSelectQuery();
@@ -90,6 +95,11 @@ class MariaDbParserState
 
 		if ($query === null) {
 			throw new UnsupportedQueryException();
+		}
+
+		while ($parenthesisCount > 0) {
+			$this->expectToken(')');
+			$parenthesisCount--;
 		}
 
 		while ($this->acceptToken(';')) {

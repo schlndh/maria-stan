@@ -25,7 +25,6 @@ use function MariaStan\canonicalize;
 use function print_r;
 use function str_replace;
 use function substr;
-use function trim;
 
 // If valid output changes, re-run updateTests.php
 class MariaDbParserTest extends TestCase
@@ -69,10 +68,12 @@ class MariaDbParserTest extends TestCase
 		[$query, $output] = $this->getParseOutput($parser, $code);
 
 		if (! $query instanceof \Throwable) {
-			$this->assertSame(
-				trim($code, " \t\n\r\0\x0B;"),
-				substr($code, $query->getStartPosition()->offset, $query->getEndPosition()->offset),
-			);
+			// ignore ( and whitespace at the beginning
+			$beginning = substr($code, 0, $query->getStartPosition()->offset);
+			$this->assertMatchesRegularExpression('/[\s(]*/', $beginning);
+			$end = $query->getEndPosition()->findSubstringStartingWithPosition($code);
+			// ignore ), whitespace and ; at the end
+			$this->assertMatchesRegularExpression('/[\s)]*[\s;]*/', $end);
 		}
 
 		$this->assertSame($expected, $output, $name);
