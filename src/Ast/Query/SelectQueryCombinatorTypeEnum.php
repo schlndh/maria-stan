@@ -7,5 +7,6 @@ namespace MariaStan\Ast\Query;
 enum SelectQueryCombinatorTypeEnum: string
 {
 	case UNION = 'UNION';
-	// TODO: INTERSECT/EXCEPT
+	case EXCEPT = 'EXCEPT';
+	case INTERSECT = 'INTERSECT';
 }

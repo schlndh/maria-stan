@@ -1296,3 +1296,219 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 		)
 )
+-----
+SELECT 1
+UNION ALL (SELECT 1 UNION SELECT 2)
+INTERSECT SELECT 2
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::INTERSECT
+			[isDistinct] => true
+			[left] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => true
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+										)
+								)
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+		)
+)
+-----
+(SELECT 1 UNION SELECT 2)
+EXCEPT ALL SELECT 2
+INTERSECT SELECT 1;
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::EXCEPT
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+			[isDistinct] => true
+			[left] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::INTERSECT
+			[isDistinct] => true
+			[left] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+		)
+)
+-----
+(SELECT 1 UNION SELECT 2)
+EXCEPT ALL SELECT 2
+UNION SELECT 1;
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => true
+	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::EXCEPT
+			[isDistinct] => false
+			[left] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => true
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+										)
+								)
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+		)
+)

@@ -69,10 +69,11 @@ class MariaDbParserState
 {
 	private const SELECT_PRECEDENCE_NORMAL = 0;
 	private const SELECT_PRECEDENCE_UNION = 1;
+	private const SELECT_PRECEDENCE_EXCEPT = self::SELECT_PRECEDENCE_UNION;
+	private const SELECT_PRECEDENCE_INTERSECT = 2;
 
 	private int $position = 0;
 	private int $tokenCount;
-	// TODO: EXCEPT/INTERCEPT
 
 	/** @param array<Token> $tokens */
 	public function __construct(
@@ -163,11 +164,31 @@ class MariaDbParserState
 		int $precedence = self::SELECT_PRECEDENCE_NORMAL,
 	): SelectQuery|CombinedSelectQuery {
 		while (true) {
-			if (! $this->acceptToken(TokenTypeEnum::UNION)) {
+			$combinatorToken = $this->acceptAnyOfTokenTypes(
+				TokenTypeEnum::UNION,
+				TokenTypeEnum::EXCEPT,
+				TokenTypeEnum::INTERSECT,
+			);
+
+			if ($combinatorToken === null) {
 				break;
 			}
 
-			if ($precedence > self::SELECT_PRECEDENCE_UNION) {
+			$combinator = match ($combinatorToken->type) {
+				TokenTypeEnum::UNION => SelectQueryCombinatorTypeEnum::UNION,
+				TokenTypeEnum::EXCEPT => SelectQueryCombinatorTypeEnum::EXCEPT,
+				TokenTypeEnum::INTERSECT => SelectQueryCombinatorTypeEnum::INTERSECT,
+				default => throw new ParserException(
+					"Unmatched query combinator token {$combinatorToken->type->value}",
+				),
+			};
+			$combinatorPrecedence = match ($combinator) {
+				SelectQueryCombinatorTypeEnum::UNION => self::SELECT_PRECEDENCE_UNION,
+				SelectQueryCombinatorTypeEnum::EXCEPT => self::SELECT_PRECEDENCE_EXCEPT,
+				SelectQueryCombinatorTypeEnum::INTERSECT => self::SELECT_PRECEDENCE_INTERSECT,
+			};
+
+			if ($precedence > $combinatorPrecedence) {
 				$this->position--;
 
 				return $left;
@@ -176,14 +197,14 @@ class MariaDbParserState
 			$distinctAllToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::ALL);
 			$isDistinct = $distinctAllToken?->type !== TokenTypeEnum::ALL;
 			// left-associative = +1
-			$right = $this->parseSelectQuery(self::SELECT_PRECEDENCE_UNION + 1);
+			$right = $this->parseSelectQuery($combinatorPrecedence + 1);
 			$orderBy = $this->parseOrderBy();
 			$limit = $this->parseLimit();
 			$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
 			$left = new CombinedSelectQuery(
 				$left->getStartPosition(),
 				$endPosition,
-				SelectQueryCombinatorTypeEnum::UNION,
+				$combinator,
 				$isDistinct,
 				$left,
 				$right,
