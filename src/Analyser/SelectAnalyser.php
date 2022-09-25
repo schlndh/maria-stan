@@ -140,15 +140,26 @@ final class SelectAnalyser
 				return [$fromClause->alias ?? $fromClause->name];
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
+
+				// TODO: handle CombinedSelectQuery
+				if (! $fromClause->query instanceof SelectQuery) {
+					$this->errors[] = new AnalyserError($fromClause->query::class . ' is not handled yet');
+
+					return [$fromClause->getAliasOrThrow()];
+				}
+
 				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
 
 				try {
-					$this->columnResolver->registerSubquery($subqueryResult->resultFields ?? [], $fromClause->alias);
+					$this->columnResolver->registerSubquery(
+						$subqueryResult->resultFields ?? [],
+						$fromClause->getAliasOrThrow(),
+					);
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
-				return [$fromClause->alias];
+				return [$fromClause->getAliasOrThrow()];
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
@@ -332,6 +343,20 @@ final class SelectAnalyser
 				);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
+
+				// TODO: handle CombinedSelectQuery
+				if (! $expr->query instanceof SelectQuery) {
+					$this->errors[] = new AnalyserError($expr->query::class . ' is not handled yet');
+
+					return new QueryResultField(
+						$this->getNodeContent($expr),
+						new Schema\DbType\MixedType(),
+						// TODO: Change it to false if we can statically determine that the query will always return
+						// a result: e.g. SELECT 1
+						true,
+					);
+				}
+
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
 

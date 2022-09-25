@@ -1,0 +1,1228 @@
+UNION
+-----
+(SELECT COUNT(*) FROM parser_test)
+UNION ALL
+(SELECT COUNT(*) FROM parser_test)
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+								(
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+									[isCountAll] => true
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\FunctionCall\Count
+								(
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+									[isCountAll] => true
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+(SELECT * FROM parser_test)
+UNION DISTINCT
+(SELECT * FROM parser_test)
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => true
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+(SELECT * FROM parser_test)
+UNION
+(SELECT * FROM parser_test)
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => true
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+UNION DISTINCT
+(SELECT * FROM parser_test)
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => true
+	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+			[isDistinct] => false
+			[left] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+(SELECT * FROM parser_test WHERE id > 1 ORDER BY id LIMIT 5)
+UNION ALL
+(SELECT * FROM parser_test WHERE id > 1 ORDER BY id LIMIT 5)
+ORDER BY id DESC
+LIMIT 2
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[where] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+			[orderBy] => MariaStan\Ast\OrderBy
+				(
+					[expressions] => Array
+						(
+							[0] => MariaStan\Ast\ExprWithDirection
+								(
+									[expr] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[direction] => MariaStan\Ast\DirectionEnum::ASC
+								)
+						)
+				)
+			[limit] => MariaStan\Ast\Limit
+				(
+					[count] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[where] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+			[orderBy] => MariaStan\Ast\OrderBy
+				(
+					[expressions] => Array
+						(
+							[0] => MariaStan\Ast\ExprWithDirection
+								(
+									[expr] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[direction] => MariaStan\Ast\DirectionEnum::ASC
+								)
+						)
+				)
+			[limit] => MariaStan\Ast\Limit
+				(
+					[count] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 5
+						)
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::DESC
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 2
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+WHERE id > 1
+UNION ALL
+SELECT * FROM parser_test
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[where] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+GROUP BY id
+UNION ALL
+SELECT * FROM parser_test
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[groupBy] => MariaStan\Ast\GroupBy
+				(
+					[expressions] => Array
+						(
+							[0] => MariaStan\Ast\ExprWithDirection
+								(
+									[expr] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[direction] => MariaStan\Ast\DirectionEnum::ASC
+								)
+						)
+					[isWithRollup] => false
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+HAVING id > 1
+UNION ALL
+SELECT * FROM parser_test
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[having] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+WHERE id > 1
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[where] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+GROUP BY id
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[groupBy] => MariaStan\Ast\GroupBy
+				(
+					[expressions] => Array
+						(
+							[0] => MariaStan\Ast\ExprWithDirection
+								(
+									[expr] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[direction] => MariaStan\Ast\DirectionEnum::ASC
+								)
+						)
+					[isWithRollup] => false
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+HAVING id > 1
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[having] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[right] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+ORDER BY id
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+ORDER BY id
+LIMIT 2
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 2
+				)
+		)
+)
+-----
+SELECT * FROM (
+SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => false
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT * FROM (
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+) t
+WHERE id > 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => false
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[alias] => t
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM (
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+) t
+GROUP BY id;
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => false
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[alias] => t
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+			[isWithRollup] => false
+		)
+)
+-----
+SELECT * FROM (
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+) t
+HAVING id > 1;
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => false
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[alias] => t
+		)
+	[having] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)
+-----
+SELECT * FROM parser_test
+UNION ALL
+(SELECT * FROM parser_test
+UNION DISTINCT
+SELECT * FROM parser_test)
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+			[isDistinct] => true
+			[left] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+		)
+)
+-----
+SELECT 5 IN (
+SELECT id FROM parser_test
+UNION ALL
+SELECT id FROM parser_test
+)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\In
+						(
+							[left] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[right] => MariaStan\Ast\Expr\Subquery
+								(
+									[query] => MariaStan\Ast\Query\CombinedSelectQuery
+										(
+											[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+											[isDistinct] => false
+											[left] => MariaStan\Ast\Query\SelectQuery
+												(
+													[select] => Array
+														(
+															[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																(
+																	[expr] => MariaStan\Ast\Expr\Column
+																		(
+																			[name] => id
+																		)
+																)
+														)
+													[from] => MariaStan\Ast\Query\TableReference\Table
+														(
+															[name] => parser_test
+														)
+												)
+											[right] => MariaStan\Ast\Query\SelectQuery
+												(
+													[select] => Array
+														(
+															[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																(
+																	[expr] => MariaStan\Ast\Expr\Column
+																		(
+																			[name] => id
+																		)
+																)
+														)
+													[from] => MariaStan\Ast\Query\TableReference\Table
+														(
+															[name] => parser_test
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+)
+-----
+SELECT AVG(
+(SELECT id FROM parser_test
+UNION ALL
+SELECT id FROM parser_test LIMIT 1)
+)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => AVG
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Subquery
+										(
+											[query] => MariaStan\Ast\Query\CombinedSelectQuery
+												(
+													[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+													[isDistinct] => false
+													[left] => MariaStan\Ast\Query\SelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\Column
+																				(
+																					[name] => id
+																				)
+																		)
+																)
+															[from] => MariaStan\Ast\Query\TableReference\Table
+																(
+																	[name] => parser_test
+																)
+														)
+													[right] => MariaStan\Ast\Query\SelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\Column
+																				(
+																					[name] => id
+																				)
+																		)
+																)
+															[from] => MariaStan\Ast\Query\TableReference\Table
+																(
+																	[name] => parser_test
+																)
+														)
+													[limit] => MariaStan\Ast\Limit
+														(
+															[count] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 1
+																)
+														)
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+)
+-----
+(SELECT * FROM parser_test
+UNION ALL
+SELECT * FROM parser_test
+LIMIT 1)
+UNION ALL
+SELECT * FROM parser_test
+LIMIT 1
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[isDistinct] => false
+	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+			[isDistinct] => false
+			[left] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+				)
+			[limit] => MariaStan\Ast\Limit
+				(
+					[count] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+)

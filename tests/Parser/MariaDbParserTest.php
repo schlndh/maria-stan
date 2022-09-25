@@ -67,14 +67,16 @@ class MariaDbParserTest extends TestCase
 		$parser = $this->createParser();
 		[$query, $output] = $this->getParseOutput($parser, $code);
 
-		if (! $query instanceof \Throwable) {
-			// ignore ( and whitespace at the beginning
-			$beginning = substr($code, 0, $query->getStartPosition()->offset);
-			$this->assertMatchesRegularExpression('/[\s(]*/', $beginning);
-			$end = $query->getEndPosition()->findSubstringStartingWithPosition($code);
-			// ignore ), whitespace and ; at the end
-			$this->assertMatchesRegularExpression('/[\s)]*[\s;]*/', $end);
+		if ($query instanceof \Throwable) {
+			throw $query;
 		}
+
+		// ignore ( and whitespace at the beginning
+		$beginning = substr($code, 0, $query->getStartPosition()->offset);
+		$this->assertMatchesRegularExpression('/[\s(]*/', $beginning);
+		$end = $query->getEndPosition()->findSubstringStartingWithPosition($code);
+		// ignore ), whitespace and ; at the end
+		$this->assertMatchesRegularExpression('/[\s)]*[\s;]*/', $end);
 
 		$this->assertSame($expected, $output, $name);
 	}

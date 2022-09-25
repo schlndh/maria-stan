@@ -13,7 +13,8 @@ parameters:
 		check:
 			missingCheckedExceptionInThrows: true
 		uncheckedExceptionClasses:
-			- 'MariaStan\\Ast\\Exception\\InvalidArgumentException'
+			- 'MariaStan\Ast\Exception\InvalidAstException'
+			- 'MariaStan\Ast\Exception\InvalidArgumentException'
 			- 'InvalidArgumentException'
 	ignoreErrors:
 		-

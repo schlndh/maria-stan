@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use function mb_substr;
 use function strlen;
 use function strrpos;
 use function substr;
@@ -41,14 +42,18 @@ final class Position
 
 	public function findSubstringStartingWithPosition(string $str, ?int $length = null): string
 	{
+		// TODO: this is not UTF-8 safe.
 		return substr($str, $this->offset, $length);
 	}
 
-	public function findSubstringToEndPosition(string $str, self $endPosition): string
+	public function findSubstringToEndPosition(string $str, self $endPosition, ?int $maxLength = null): string
 	{
 		$length = $endPosition->offset - $this->offset;
+		$result = substr($str, $this->offset, $length);
 
-		return substr($str, $this->offset, $length);
+		return $maxLength !== null
+			? mb_substr($result, 0, $maxLength)
+			: $result;
 	}
 }
 

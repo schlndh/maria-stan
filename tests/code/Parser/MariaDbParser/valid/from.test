@@ -547,3 +547,61 @@ MariaStan\Ast\Query\SelectQuery
 				)
 		)
 )
+-----
+SELECT * FROM (((SELECT 1) t))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
+SELECT * FROM (((SELECT 1)) t)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+						)
+				)
+			[alias] => t
+		)
+)

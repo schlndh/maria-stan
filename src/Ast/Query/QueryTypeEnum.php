@@ -8,4 +8,7 @@ enum QueryTypeEnum: string
 {
 	/** @see SelectQuery */
 	case SELECT = 'SELECT';
+
+	/** @see CombinedSelectQuery */
+	case COMBINED_SELECT = 'COMBINED_SELECT';
 }

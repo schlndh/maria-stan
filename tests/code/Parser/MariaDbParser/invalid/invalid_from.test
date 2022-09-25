@@ -27,3 +27,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got IDENTIFIER after: FROM ((mysqli_test)
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'a)' at line 1
+-----
+SELECT * FROM ((SELECT 1))
+-----
+MariaStan\Parser\Exception\MissingSubqueryAliasException
+Subquery doesn't have alias: (SELECT 1)
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT * FROM ((SELECT 1) a) b
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got IDENTIFIER after: SELECT 1) a)
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'b' at line 1

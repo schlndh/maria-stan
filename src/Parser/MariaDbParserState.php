@@ -30,19 +30,22 @@ use MariaStan\Ast\ExprWithDirection;
 use MariaStan\Ast\GroupBy;
 use MariaStan\Ast\Limit;
 use MariaStan\Ast\OrderBy;
+use MariaStan\Ast\Query\CombinedSelectQuery;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
+use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Ast\WindowFrame;
 use MariaStan\Ast\WindowFrameBound;
 use MariaStan\Ast\WindowFrameTypeEnum;
-use MariaStan\Parser\Exception\InvalidSqlException;
+use MariaStan\Parser\Exception\MissingSubqueryAliasException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
@@ -64,8 +67,12 @@ use function substr;
 
 class MariaDbParserState
 {
+	private const SELECT_PRECEDENCE_NORMAL = 0;
+	private const SELECT_PRECEDENCE_UNION = 1;
+
 	private int $position = 0;
 	private int $tokenCount;
+	// TODO: EXCEPT/INTERCEPT
 
 	/** @param array<Token> $tokens */
 	public function __construct(
@@ -82,24 +89,16 @@ class MariaDbParserState
 	 */
 	public function parseStrictSingleQuery(): Query
 	{
-		$parenthesisCount = 0;
 		$query = null;
 
-		while ($this->acceptToken('(')) {
-			$parenthesisCount++;
-		}
-
-		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+		// It seems that only SELECT can be wrapped in top-level parentheses. INSERT, UPDATE, EXPLAIN, .. don't work.
+		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, '(')) {
+			$this->position--;
 			$query = $this->parseSelectQuery();
 		}
 
 		if ($query === null) {
 			throw new UnsupportedQueryException();
-		}
-
-		while ($parenthesisCount > 0) {
-			$this->expectToken(')');
-			$parenthesisCount--;
 		}
 
 		while ($this->acceptToken(';')) {
@@ -114,32 +113,82 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseSelectQuery(): SelectQuery
+	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery|CombinedSelectQuery
 	{
 		// TODO: https://mariadb.com/kb/en/common-table-expressions/
 		// TODO: FOR UPDATE / LOCK IN SHARE MODE
 		// TODO: INTO OUTFILE/DUMPFILE/variable
-		$startToken = $this->getPreviousTokenUnsafe();
-		$selectExpressions = $this->parseSelectExpressionsList();
-		$from = $this->parseFrom();
-		$where = $this->parseWhere();
-		$groupBy = $this->parseGroupBy();
-		$having = $this->parseHaving();
-		$orderBy = $this->parseOrderBy();
-		$limit = $this->parseLimit();
-		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
+		if ($this->acceptToken('(')) {
+			$left = $this->parseSelectQuery();
+			$this->expectToken(')');
+		} else {
+			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
+			$selectExpressions = $this->parseSelectExpressionsList();
+			$from = $this->parseFrom();
+			$where = $this->parseWhere();
+			$groupBy = $this->parseGroupBy();
+			$having = $this->parseHaving();
 
-		return new SelectQuery(
-			$startToken->position,
-			$endPosition,
-			$selectExpressions,
-			$from,
-			$where,
-			$groupBy,
-			$having,
-			$orderBy,
-			$limit,
-		);
+			$orderBy = $limit = null;
+
+			if ($precedence === self::SELECT_PRECEDENCE_NORMAL) {
+				$orderBy = $this->parseOrderBy();
+				$limit = $this->parseLimit();
+			}
+
+			$left = new SelectQuery(
+				$startToken->position,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$selectExpressions,
+				$from,
+				$where,
+				$groupBy,
+				$having,
+				$orderBy,
+				$limit,
+			);
+
+			// UNION/EXCEPT/INTERCEPT can't follow SELECT with ORDER/LIMIT unless it's wrapped in parentheses.
+			if ($orderBy !== null || $limit !== null) {
+				return $left;
+			}
+		}
+
+		while (true) {
+			if (! $this->acceptToken(TokenTypeEnum::UNION)) {
+				break;
+			}
+
+			if ($precedence > self::SELECT_PRECEDENCE_UNION) {
+				$this->position--;
+
+				return $left;
+			}
+
+			$distinctAllToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::ALL);
+			$isDistinct = $distinctAllToken?->type !== TokenTypeEnum::ALL;
+			// left-associative = +1
+			$right = $this->parseSelectQuery(self::SELECT_PRECEDENCE_UNION + 1);
+			$orderBy = $this->parseOrderBy();
+			$limit = $this->parseLimit();
+			$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
+			$left = new CombinedSelectQuery(
+				$left->getStartPosition(),
+				$endPosition,
+				SelectQueryCombinatorTypeEnum::UNION,
+				$isDistinct,
+				$left,
+				$right,
+				$orderBy,
+				$limit,
+			);
+
+			if ($orderBy !== null || $limit !== null) {
+				return $left;
+			}
+		}
+
+		return $left;
 	}
 
 	/**
@@ -152,7 +201,10 @@ class MariaDbParserState
 			return null;
 		}
 
-		return $this->parseJoins();
+		$result = $this->parseJoins();
+		$this->checkSubqueryAlias($result);
+
+		return $result;
 	}
 
 	/**
@@ -191,7 +243,9 @@ class MariaDbParserState
 				break;
 			}
 
+			$this->checkSubqueryAlias($leftTable);
 			$rightTable = $this->parseTableReference();
+			$this->checkSubqueryAlias($rightTable);
 			$tokenPositionBak = $this->position;
 
 			// TODO: USING(...)
@@ -214,6 +268,23 @@ class MariaDbParserState
 		return $leftTable;
 	}
 
+	/** @throws ParserException */
+	private function checkSubqueryAlias(TableReference $tableReference): void
+	{
+		if ($tableReference::getTableReferenceType() !== TableReferenceTypeEnum::SUBQUERY) {
+			return;
+		}
+
+		assert($tableReference instanceof \MariaStan\Ast\Query\TableReference\Subquery);
+
+		if ($tableReference->alias === null) {
+			$subqueryStr = $tableReference->getStartPosition()
+				->findSubstringToEndPosition($this->query, $tableReference->getEndPosition(), 50);
+
+			throw new MissingSubqueryAliasException("Subquery doesn't have alias: {$subqueryStr}");
+		}
+	}
+
 	/**
 	 * @phpstan-impure
 	 * @throws ParserException
@@ -222,18 +293,11 @@ class MariaDbParserState
 	{
 		$startPosition = $this->getCurrentPosition();
 
-		// TODO: There are many weird edge-cases when it comes to nested parentheses. A subquery can be nested
-		// in multiple parentheses and the alias can be on any level. But only once. For example these work:
-		// SELECT * FROM (((SELECT 1)) t); SELECT * FROM (((SELECT 1))) t;
 		if ($this->acceptToken('(')) {
 			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+				$this->position -= 2;
 				$query = $this->parseSelectQuery();
-				$this->expectToken(')');
 				$alias = $this->parseTableAlias();
-
-				if ($alias === null) {
-					throw new InvalidSqlException('Subquery has to have an alias!');
-				}
 
 				return new \MariaStan\Ast\Query\TableReference\Subquery(
 					$startPosition,
@@ -245,6 +309,19 @@ class MariaDbParserState
 
 			$result = $this->parseJoins();
 			$this->expectToken(')');
+
+			if ($result instanceof \MariaStan\Ast\Query\TableReference\Subquery && $result->alias === null) {
+				$alias = $this->parseTableAlias();
+
+				if ($alias !== null) {
+					return new \MariaStan\Ast\Query\TableReference\Subquery(
+						$startPosition,
+						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$result->query,
+						$alias,
+					);
+				}
+			}
 
 			return $result;
 		}
@@ -669,6 +746,7 @@ class MariaDbParserState
 		$startPosition = $this->getPreviousTokenUnsafe()->position;
 
 		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+			$this->position--;
 			$query = $this->parseSelectQuery();
 			$this->expectToken(')');
 

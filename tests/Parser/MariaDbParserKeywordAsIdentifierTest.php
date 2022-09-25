@@ -125,10 +125,11 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$this->assertNotNull($dbField);
 		$this->assertNotNull($parserResult);
 		$this->assertInstanceOf(SelectQuery::class, $parserResult);
-		$this->assertNotNull($parserResult->from);
-		$this->assertInstanceOf(Table::class, $parserResult->from);
-		$this->assertSame($dbField->orgtable, $parserResult->from->name);
-		$this->assertSame($dbField->table, $parserResult->from->alias);
+		$from = $parserResult->from;
+		$this->assertNotNull($from);
+		$this->assertInstanceOf(Table::class, $from);
+		$this->assertSame($dbField->orgtable, $from->name);
+		$this->assertSame($dbField->table, $from->alias);
 	}
 
 	/** @throws mysqli_sql_exception */
