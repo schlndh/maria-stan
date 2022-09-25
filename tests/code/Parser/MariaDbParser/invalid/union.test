@@ -87,3 +87,28 @@ UNION ALL
 (SELECT * FR
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 5
+-----
+SELECT * FROM (
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+) UNION SELECT 1 t
+-----
+MariaStan\Parser\Exception\MissingSubqueryAliasException
+Subquery doesn't have alias: (
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT *
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION SELECT 1 t' at line 5
+-----
+SELECT * FROM ((
+(SELECT * FROM parser_test)
+UNION ALL
+(SELECT * FROM parser_test)
+) UNION SELECT 1 id t)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got IDENTIFIER after: ) UNION SELECT 1 id
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't)' at line 5

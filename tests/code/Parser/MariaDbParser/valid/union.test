@@ -961,6 +961,76 @@ MariaStan\Ast\Query\SelectQuery
 		)
 )
 -----
+SELECT * FROM (
+((SELECT 1)
+UNION ALL
+(SELECT 2))
+UNION SELECT 3
+) t
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[isDistinct] => true
+					[left] => MariaStan\Ast\Query\CombinedSelectQuery
+						(
+							[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+							[isDistinct] => false
+							[left] => MariaStan\Ast\Query\SelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+										)
+								)
+							[right] => MariaStan\Ast\Query\SelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+												)
+										)
+								)
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 3
+												)
+										)
+								)
+						)
+				)
+			[alias] => t
+		)
+)
+-----
 SELECT * FROM parser_test
 UNION ALL
 (SELECT * FROM parser_test

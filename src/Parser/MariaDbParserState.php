@@ -154,6 +154,14 @@ class MariaDbParserState
 			}
 		}
 
+		return $this->parseRestOfCombinedQuery($left, $precedence);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfCombinedQuery(
+		SelectQuery|CombinedSelectQuery $left,
+		int $precedence = self::SELECT_PRECEDENCE_NORMAL,
+	): SelectQuery|CombinedSelectQuery {
 		while (true) {
 			if (! $this->acceptToken(TokenTypeEnum::UNION)) {
 				break;
@@ -311,13 +319,19 @@ class MariaDbParserState
 			$this->expectToken(')');
 
 			if ($result instanceof \MariaStan\Ast\Query\TableReference\Subquery && $result->alias === null) {
-				$alias = $this->parseTableAlias();
+				$newQuery = $this->parseRestOfCombinedQuery($result->query);
+				$queryChanged = $newQuery !== $result->query;
 
-				if ($alias !== null) {
+				// Can't parse both UNION and alias at the same time - alias must be after )
+				$alias = ! $queryChanged
+					? $this->parseTableAlias()
+					: null;
+
+				if ($alias !== null || $queryChanged) {
 					return new \MariaStan\Ast\Query\TableReference\Subquery(
 						$startPosition,
 						$this->getPreviousTokenUnsafe()->getEndPosition(),
-						$result->query,
+						$newQuery,
 						$alias,
 					);
 				}
