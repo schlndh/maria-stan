@@ -21,6 +21,11 @@
 			<property name="tabIndent" value="true"/>
 		</properties>
 	</rule>
+	<rule ref="Generic.Formatting.SpaceAfterNot">
+		<properties>
+			<property name="spacing" value="1" />
+		</properties>
+	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
 		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
