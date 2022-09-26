@@ -26,6 +26,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT COALESCE(NULL, NULL, 5)
@@ -56,6 +57,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT nOw()
@@ -76,6 +78,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT CURRENT_DATE, CURRENT_ROLE, CURRENT_TIME, CURRENT_TIMESTAMP, CURRENT_USER, LOCALTIME, LOCALTIMESTAMP, UTC_DATE,
@@ -196,6 +199,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT CURRENT_DATE(), CURRENT_ROLE(), CURRENT_TIME(), CURRENT_TIMESTAMP(), CURRENT_USER(), LOCALTIME(),
@@ -316,6 +320,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT CURRENT_TIME(1), CURRENT_TIMESTAMP(2), LOCALTIME(1), LOCALTIMESTAMP(2), UTC_TIME(1), UTC_TIMESTAMP(2)
@@ -415,6 +420,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM parser_test
@@ -488,6 +494,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[name] => parser_test
 		)
+	[isDistinct] => false
 )
 -----
 SELECT
@@ -637,9 +644,11 @@ MariaStan\Ast\Query\SelectQuery
 									[alias] => id
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => t
 		)
+	[isDistinct] => false
 )
 -----
 SELECT
@@ -1180,9 +1189,11 @@ MariaStan\Ast\Query\SelectQuery
 									[alias] => name
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => t
 		)
+	[isDistinct] => false
 )
 -----
 SELECT
@@ -1578,9 +1589,11 @@ MariaStan\Ast\Query\SelectQuery
 									[alias] => id
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => t
 		)
+	[isDistinct] => false
 )
 -----
 SELECT
@@ -2402,9 +2415,11 @@ MariaStan\Ast\Query\SelectQuery
 									[alias] => id
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => t
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id FROM (SELECT 1 id) t
@@ -2437,6 +2452,7 @@ MariaStan\Ast\Query\SelectQuery
 									[alias] => id
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => t
 		)
@@ -2472,6 +2488,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT
@@ -2635,4 +2652,5 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[name] => parser_test
 		)
+	[isDistinct] => false
 )

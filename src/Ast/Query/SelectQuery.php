@@ -26,6 +26,7 @@ final class SelectQuery extends BaseNode implements Query
 		public readonly ?Expr $having = null,
 		public readonly ?OrderBy $orderBy = null,
 		public readonly ?Limit $limit = null,
+		public readonly bool $isDistinct = false,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

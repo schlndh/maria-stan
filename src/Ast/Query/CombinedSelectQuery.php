@@ -15,11 +15,11 @@ final class CombinedSelectQuery extends BaseNode implements Query
 		Position $startPosition,
 		Position $endPosition,
 		public readonly SelectQueryCombinatorTypeEnum $combinator,
-		public readonly bool $isDistinct,
 		public readonly SelectQuery|CombinedSelectQuery $left,
 		public readonly SelectQuery|CombinedSelectQuery $right,
 		public readonly ?OrderBy $orderBy = null,
 		public readonly ?Limit $limit = null,
+		public readonly bool $isDistinct = true,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

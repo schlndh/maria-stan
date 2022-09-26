@@ -124,6 +124,12 @@ class MariaDbParserState
 			$this->expectToken(')');
 		} else {
 			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
+			$distinctToken = $this->acceptAnyOfTokenTypes(
+				TokenTypeEnum::ALL,
+				TokenTypeEnum::DISTINCT,
+				TokenTypeEnum::DISTINCTROW,
+			);
+			$isDistinct = $distinctToken !== null && $distinctToken->type !== TokenTypeEnum::ALL;
 			$selectExpressions = $this->parseSelectExpressionsList();
 			$from = $this->parseFrom();
 			$where = $this->parseWhere();
@@ -147,6 +153,7 @@ class MariaDbParserState
 				$having,
 				$orderBy,
 				$limit,
+				$isDistinct,
 			);
 
 			// UNION/EXCEPT/INTERCEPT can't follow SELECT with ORDER/LIMIT unless it's wrapped in parentheses.
@@ -205,11 +212,11 @@ class MariaDbParserState
 				$left->getStartPosition(),
 				$endPosition,
 				$combinator,
-				$isDistinct,
 				$left,
 				$right,
 				$orderBy,
 				$limit,
+				$isDistinct,
 			);
 
 			if ($orderBy !== null || $limit !== null) {

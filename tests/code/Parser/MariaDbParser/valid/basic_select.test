@@ -14,6 +14,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[name] => parser_test
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id, `aa bb`, `cc``dd` FROM (SELECT 1 id, "aa bb", "cc`dd") `sub query`
@@ -75,9 +76,11 @@ MariaStan\Ast\Query\SelectQuery
 										)
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => sub query
 		)
+	[isDistinct] => false
 )
 -----
 SELECT `sub query`.id, `sub query`.`aa bb` FROM (SELECT 1 id, "aa bb") `sub query`
@@ -126,9 +129,11 @@ MariaStan\Ast\Query\SelectQuery
 										)
 								)
 						)
+					[isDistinct] => false
 				)
 			[alias] => sub query
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 WHERE 1 + 1
@@ -157,6 +162,7 @@ MariaStan\Ast\Query\SelectQuery
 					[value] => 1
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 FROM parser_test WHERE 1
@@ -181,6 +187,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[value] => 1
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 GROUP BY 1 + 1
@@ -220,6 +227,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[isWithRollup] => false
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id FROM parser_test GROUP BY name DESC
@@ -255,6 +263,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[isWithRollup] => false
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id FROM parser_test WHERE id > 5 GROUP BY name WITH ROLLUP
@@ -302,6 +311,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[isWithRollup] => true
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 HAVING 1
@@ -322,6 +332,7 @@ MariaStan\Ast\Query\SelectQuery
 		(
 			[value] => 1
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id FROM parser_test GROUP BY id HAVING id > 1
@@ -369,6 +380,7 @@ MariaStan\Ast\Query\SelectQuery
 					[value] => 1
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 ORDER BY 1 + 1 DESC
@@ -407,6 +419,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT id FROM parser_test ORDER BY id ASC, name DESC
@@ -449,6 +462,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 LIMIT 5
@@ -472,6 +486,7 @@ MariaStan\Ast\Query\SelectQuery
 					[value] => 5
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 LIMIT 5, 10
@@ -499,6 +514,7 @@ MariaStan\Ast\Query\SelectQuery
 					[value] => 5
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT 1 LIMIT 5 OFFSET 1
@@ -526,6 +542,7 @@ MariaStan\Ast\Query\SelectQuery
 					[value] => 1
 				)
 		)
+	[isDistinct] => false
 )
 -----
 SELECT ?
@@ -541,6 +558,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 (SELECT 1)
@@ -557,6 +575,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
 )
 -----
 ((SELECT 1));
@@ -573,4 +592,56 @@ MariaStan\Ast\Query\SelectQuery
 						)
 				)
 		)
+	[isDistinct] => false
+)
+-----
+SELECT DISTINCT 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT DISTINCTROW 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT ALL 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
 )

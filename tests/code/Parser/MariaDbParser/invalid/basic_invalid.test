@@ -62,3 +62,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Got + after: (1, 2)
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 3' at line 1
+-----
+SELECT 1, DISTINCT 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: DISTINCT after: SELECT 1,
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT 1' at line 1
+-----
+SELECT 1, DISTINCTROW 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: DISTINCTROW after: SELECT 1,
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCTROW 1' at line 1
+-----
+SELECT 1, ALL 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ALL after: SELECT 1,
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL 1' at line 1
