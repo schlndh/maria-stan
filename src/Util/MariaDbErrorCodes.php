@@ -28,8 +28,14 @@ class MariaDbErrorCodes
 	// 1210	HY000	ER_WRONG_ARGUMENTS	Incorrect arguments to %s
 	public const ER_WRONG_ARGUMENTS = 1210;
 
+	// 1222	21000	ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT The used SELECT statements have a different number of columns
+	public const ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT = 1222;
+
 	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
 	public const ER_OPERAND_COLUMNS = 1241;
+
+	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
+	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 
 	// 4014	ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS Unacceptable combination of window frame bound specifications
 	public const ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS = 4014;

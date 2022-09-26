@@ -7,6 +7,7 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
+use MariaStan\Ast\Query\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
@@ -28,6 +29,7 @@ use function assert;
 use function count;
 use function in_array;
 use function mb_strlen;
+use function min;
 use function stripos;
 use function strtoupper;
 
@@ -40,25 +42,102 @@ final class SelectAnalyser
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
-		private readonly SelectQuery $selectAst,
+		private readonly SelectQuery|CombinedSelectQuery $selectAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
 	) {
 		$this->columnResolver = $columnResolver ?? new ColumnResolver($this->dbReflection);
 	}
 
-	private function init(): void
-	{
-		// Prevent phpstan from incorrectly remembering these values.
-		// e.g. errors like: Offset string on array{} on left side of ?? does not exist.
-		$this->errors = [];
-	}
-
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
-		$this->init();
-		$fromClause = $this->selectAst->from;
+		$fields = $this->selectAst instanceof CombinedSelectQuery
+			? $this->analyseCombinedSelectQuery($this->selectAst)
+			: $this->analyseSingleSelectQuery($this->selectAst);
+
+		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseCombinedSelectQuery(CombinedSelectQuery $select): array
+	{
+		$leftFields = $this->getSubqueryAnalyser($select->left)->analyse()->resultFields;
+
+		if ($leftFields === null) {
+			throw new AnalyserException('Subquery fields are null, this should not happen.');
+		}
+
+		$rightFields = $this->getSubqueryAnalyser($select->right)->analyse()->resultFields;
+
+		if ($rightFields === null) {
+			throw new AnalyserException('Subquery fields are null, this should not happen.');
+		}
+
+		$countLeft = count($leftFields);
+		$countRight = count($rightFields);
+		$commonCount = $countLeft;
+
+		if ($countLeft !== $countRight) {
+			$commonCount = min($countLeft, $countRight);
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createDifferentNumberOfColumnsErrorMessage($countLeft, $countRight),
+			);
+		}
+
+		$fields = [];
+		$i = 0;
+
+		for (; $i < $commonCount; $i++) {
+			$lf = $leftFields[$i];
+			$rf = $rightFields[$i];
+			$lt = $lf->type::getTypeEnum();
+			$rt = $rf->type::getTypeEnum();
+			$typesInvolved = [
+				$lt->value => $lf->type,
+				$rt->value => $rf->type,
+			];
+			// TODO: handle remaining types.
+			$combinedType = $typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->name]
+				?? $typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->name]
+				?? $typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->name]
+				?? $lf->type;
+
+			if ($combinedType::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
+				$combinedType = $rf->type;
+			}
+
+			$fields[] = new QueryResultField($lf->name, $combinedType, $lf->isNullable || $rf->isNullable);
+		}
+
+		unset($leftFields, $rightFields);
+		$this->columnResolver->registerFieldList($fields);
+
+		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
+			$this->resolveExprType($orderByExpr->expr);
+		}
+
+		if ($select->limit?->count !== null) {
+			$this->resolveExprType($select->limit->count);
+		}
+
+		if ($select->limit?->offset !== null) {
+			$this->resolveExprType($select->limit->offset);
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseSingleSelectQuery(SelectQuery $select): array
+	{
+		$fromClause = $select->from;
 
 		if ($fromClause !== null) {
 			try {
@@ -70,7 +149,7 @@ final class SelectAnalyser
 
 		$fields = [];
 
-		foreach ($this->selectAst->select as $selectExpr) {
+		foreach ($select->select as $selectExpr) {
 			switch ($selectExpr::getSelectExprType()) {
 				case SelectExprTypeEnum::REGULAR_EXPR:
 					assert($selectExpr instanceof RegularExpr);
@@ -89,36 +168,36 @@ final class SelectAnalyser
 			}
 		}
 
-		if ($this->selectAst->where) {
-			$this->resolveExprType($this->selectAst->where);
+		if ($select->where) {
+			$this->resolveExprType($select->where);
 		}
 
 		$this->columnResolver->setPreferFieldList(false);
 		$this->columnResolver->registerFieldList($fields);
 
-		foreach ($this->selectAst->groupBy?->expressions ?? [] as $groupByExpr) {
+		foreach ($select->groupBy?->expressions ?? [] as $groupByExpr) {
 			$this->resolveExprType($groupByExpr->expr);
 		}
 
 		$this->columnResolver->setPreferFieldList(true);
 
-		if ($this->selectAst->having) {
-			$this->resolveExprType($this->selectAst->having);
+		if ($select->having) {
+			$this->resolveExprType($select->having);
 		}
 
-		foreach ($this->selectAst->orderBy?->expressions ?? [] as $orderByExpr) {
+		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
-		if ($this->selectAst->limit?->count !== null) {
-			$this->resolveExprType($this->selectAst->limit->count);
+		if ($select->limit?->count !== null) {
+			$this->resolveExprType($select->limit->count);
 		}
 
-		if ($this->selectAst->limit?->offset !== null) {
-			$this->resolveExprType($this->selectAst->limit->offset);
+		if ($select->limit?->offset !== null) {
+			$this->resolveExprType($select->limit->offset);
 		}
 
-		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
+		return $fields;
 	}
 
 	/**
@@ -140,14 +219,6 @@ final class SelectAnalyser
 				return [$fromClause->alias ?? $fromClause->name];
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
-
-				// TODO: handle CombinedSelectQuery
-				if (! $fromClause->query instanceof SelectQuery) {
-					$this->errors[] = new AnalyserError($fromClause->query::class . ' is not handled yet');
-
-					return [$fromClause->getAliasOrThrow()];
-				}
-
 				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
 
 				try {
@@ -343,20 +414,6 @@ final class SelectAnalyser
 				);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
-
-				// TODO: handle CombinedSelectQuery
-				if (! $expr->query instanceof SelectQuery) {
-					$this->errors[] = new AnalyserError($expr->query::class . ' is not handled yet');
-
-					return new QueryResultField(
-						$this->getNodeContent($expr),
-						new Schema\DbType\MixedType(),
-						// TODO: Change it to false if we can statically determine that the query will always return
-						// a result: e.g. SELECT 1
-						true,
-					);
-				}
-
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
 
@@ -548,7 +605,7 @@ final class SelectAnalyser
 		return $node->getStartPosition()->findSubstringToEndPosition($this->query, $node->getEndPosition());
 	}
 
-	private function getSubqueryAnalyser(SelectQuery $subquery): self
+	private function getSubqueryAnalyser(SelectQuery|CombinedSelectQuery $subquery): self
 	{
 		$other = new self(
 			$this->dbReflection,

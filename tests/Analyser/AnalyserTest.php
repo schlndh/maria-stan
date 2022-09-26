@@ -6,6 +6,7 @@ namespace MariaStan\Analyser;
 
 use DateTimeImmutable;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
+use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
@@ -85,6 +86,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideGroupByHavingOrderTestData();
 		yield from $this->providePlaceholderTestData();
 		yield from $this->provideFunctionCallTestData();
+		yield from $this->provideUnionTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -506,6 +508,54 @@ class AnalyserTest extends TestCase
 		foreach ($selects as $label => $select) {
 			yield $label => [
 				'query' => $select,
+			];
+		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideUnionTestData(): iterable
+	{
+		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
+			$combinatorVal = $combinator->value;
+
+			yield "{$combinatorVal} - duplicated select" => [
+				'query' => "SELECT * FROM analyser_test {$combinatorVal} SELECT * FROM analyser_test",
+			];
+
+			yield "{$combinatorVal} - non-matching column names" => [
+				'query' => "SELECT 1 id {$combinatorVal} SELECT 2 aa",
+			];
+
+			yield "{$combinatorVal} - ORDER BY" => [
+				'query' => "SELECT id aa, name FROM analyser_test UNION ALL SELECT * FROM analyser_test ORDER BY aa",
+			];
+
+			$dataTypes = [
+				'int' => '1',
+				'string' => '"a"',
+				'decimal' => '1.2',
+				'float' => '1.2e3',
+				'null' => 'NULL',
+			];
+
+			foreach ($dataTypes as $leftLabel => $leftValue) {
+				foreach ($dataTypes as $rightLabel => $rightValue) {
+					yield "{$combinatorVal} - {$leftLabel} vs {$rightLabel}" => [
+						'query' => "SELECT {$leftValue} {$combinatorVal} SELECT {$rightValue}",
+					];
+				}
+			}
+
+			yield "{$combinatorVal} - nullable column vs non-nullable column" => [
+				'query' => "SELECT id FROM analyser_test {$combinatorVal} SELECT name FROM analyser_test",
+			];
+
+			yield "{$combinatorVal} - use in FROM" => [
+				'query' => "SELECT * FROM (SELECT 1 {$combinatorVal} SELECT 2) t",
+			];
+
+			yield "{$combinatorVal} - use as subquery expression" => [
+				'query' => "SELECT 1 IN (SELECT 1 {$combinatorVal} SELECT 2)",
 			];
 		}
 	}
@@ -970,6 +1020,86 @@ class AnalyserTest extends TestCase
 			),
 			'DB error code' => MariaDbErrorCodes::ER_PARSE_ERROR,
 		];
+
+		yield 'bug - valid subquery should not clear errors from parent query' => [
+			'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
+			$combinatorVal = $combinator->value;
+
+			yield "{$combinatorVal} - error in left query" => [
+				'query' => "SELECT v.id FROM analyser_test {$combinatorVal} SELECT id FROM analyser_test",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$combinatorVal} - error in right query" => [
+				'query' => "SELECT id FROM analyser_test {$combinatorVal} SELECT v.id FROM analyser_test",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$combinatorVal} - error in nested query" => [
+				'query' => "
+					SELECT id FROM analyser_test
+					{$combinatorVal}
+					SELECT v.id FROM analyser_test
+					{$combinatorVal} SELECT 1
+				",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$combinatorVal} - error when used as subquery in FROM" => [
+				'query' => "SELECT * FROM (SELECT 1 {$combinatorVal} SELECT 2, 3) t",
+				'error' => AnalyserErrorMessageBuilder::createDifferentNumberOfColumnsErrorMessage(1, 2),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
+			];
+
+			yield "{$combinatorVal} - error when used as subquery expression" => [
+				'query' => "SELECT 1 IN (SELECT 1 {$combinatorVal} SELECT 2, 3)",
+				'error' => AnalyserErrorMessageBuilder::createDifferentNumberOfColumnsErrorMessage(1, 2),
+				'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			];
+
+			yield "{$combinatorVal} - cannot use column name from second query in ORDER BY" => [
+				'query' => "SELECT 1 aa {$combinatorVal} SELECT 2 bb ORDER BY bb",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('bb'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$combinatorVal} - cannot use original name of aliased column in ORDER BY" => [
+				'query' => "SELECT id aa FROM analyser_test {$combinatorVal} SELECT 2 bb ORDER BY id",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$combinatorVal} - cannot use table.column ORDER BY" => [
+				'query' => "
+					SELECT id FROM analyser_test
+					{$combinatorVal}
+					SELECT id FROM analyser_test
+					ORDER BY analyser_test.id
+				",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'analyser_test'),
+				'DB error code' => MariaDbErrorCodes::ER_TABLENAME_NOT_ALLOWED_HERE,
+			];
+
+			yield "{$combinatorVal} - different number of columns" => [
+				'query' => "SELECT 1 {$combinatorVal} SELECT 2, 3",
+				'error' => AnalyserErrorMessageBuilder::createDifferentNumberOfColumnsErrorMessage(1, 2),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
+			];
+
+			yield "{$combinatorVal} - cannot use columns from first query in second query" => [
+				'query' => "SELECT id aa FROM analyser_test {$combinatorVal} SELECT 2 + aa",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aa'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+		}
 	}
 
 	/** @dataProvider provideInvalidData */

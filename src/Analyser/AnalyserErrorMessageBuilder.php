@@ -70,6 +70,11 @@ class AnalyserErrorMessageBuilder
 		return "ESCAPE can only be single character. Got '{$escape}'.";
 	}
 
+	public static function createDifferentNumberOfColumnsErrorMessage(int $left, int $right): string
+	{
+		return "The used SELECT statements have a different number of columns: {$left} vs {$right}.";
+	}
+
 	public static function createInvalidFunctionArgumentErrorMessage(
 		string $functionName,
 		int $position,
