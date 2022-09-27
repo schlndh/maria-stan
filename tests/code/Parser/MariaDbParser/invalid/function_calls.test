@@ -216,3 +216,45 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '?' after: (PARTITION BY id ROWS
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '? PRECEDING) FROM (SELECT 1 id, "a" name) t' at line 1
+-----
+SELECT DATE_ADD(NOW(), 5)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected INTERVAL, got INT_LITERAL after: (NOW(),
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
+-----
+SELECT DATE_SUB(NOW(), 5)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected INTERVAL, got INT_LITERAL after: (NOW(),
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
+-----
+SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR, 3)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: ), INTERVAL 1 HOUR
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 3)' at line 1
+-----
+SELECT DATE_SUB(NOW(), INTERVAL 1 HOUR, 3)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: ), INTERVAL 1 HOUR
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 3)' at line 1
+-----
+SELECT ADDDATE(NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ',', got ')' after: ADDDATE(NOW()
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT SUBDATE(NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ',', got ')' after: SUBDATE(NOW()
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1

@@ -2654,3 +2654,172 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR), dAtE_SuB(NOW(), INTERVAL 1 HOUR),
+ADDDATE('2022-01-01', INTERVAL 1 HOUR), subdate('2022-01-01', INTERVAL 1 HOUR)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => DATE_ADD
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+									[1] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => dAtE_SuB
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+									[1] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ADDDATE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => 2022-01-01
+											[firstConcatPart] => 2022-01-01
+										)
+									[1] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => subdate
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => 2022-01-01
+											[firstConcatPart] => 2022-01-01
+										)
+									[1] => MariaStan\Ast\Expr\Interval
+										(
+											[timeQuantity] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT ADDDATE(NOW(), 5), SUBDATE(NOW(), 5)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ADDDATE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBDATE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)

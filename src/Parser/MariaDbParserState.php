@@ -856,6 +856,8 @@ class MariaDbParserState
 				$uppercaseFunctionName = strtoupper($ident->content);
 				$functionCall = match ($uppercaseFunctionName) {
 					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
+					'DATE_ADD', 'DATE_SUB' => $this->parseRestOfDateAddSubFunctionCall($ident),
+					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
 					default => null,
 				};
 
@@ -960,7 +962,6 @@ class MariaDbParserState
 					throw new UnexpectedTokenException('INTERVAL cannot be within first 2 tokens.');
 				}
 
-				// TODO: allow INTERVAL in supported functions (e.g. ADDDATE etc).
 				// TODO: disallow standalone INTERVAL with unary +-
 				$tokenBeforeInterval = $this->tokens[$this->position - 2];
 
@@ -974,16 +975,9 @@ class MariaDbParserState
 					);
 				}
 
-				// No precedence here: it should be parsed completely and then there's the time unit afterwards.
-				$expr = $this->parseExpression();
-				$timeUnit = $this->parseTimeUnit();
+				$this->position--;
 
-				return new Interval(
-					$startPosition,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
-					$expr,
-					$timeUnit,
-				);
+				return $this->parseUncheckedInterval();
 			}
 
 			// NOT has a lower precedence than !
@@ -1040,6 +1034,22 @@ class MariaDbParserState
 		throw new UnexpectedTokenException(
 			"Unexpected token: {$this->printToken($this->findCurrentToken())} after: "
 				. $this->getContextPriorToTokenPosition(),
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseUncheckedInterval(): Interval
+	{
+		$startToken = $this->expectToken(TokenTypeEnum::INTERVAL);
+		// No precedence here: it should be parsed completely and then there's the time unit afterwards.
+		$expr = $this->parseExpression();
+		$timeUnit = $this->parseTimeUnit();
+
+		return new Interval(
+			$startToken->position,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$expr,
+			$timeUnit,
 		);
 	}
 
@@ -1172,6 +1182,45 @@ class MariaDbParserState
 			$startPosition,
 			$this->getPreviousTokenUnsafe()->getEndPosition(),
 			$argument,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfDateAddSubFunctionCall(Token $functionToken): FunctionCall\StandardFunctionCall
+	{
+		$firstArg = $this->parseExpression();
+		$this->expectToken(',');
+		$secondArg = $this->parseUncheckedInterval();
+		$this->expectToken(')');
+
+		return new FunctionCall\StandardFunctionCall(
+			$functionToken->position,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$functionToken->content,
+			[$firstArg, $secondArg],
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfAddSubDateFunctionCall(Token $functionToken): FunctionCall\StandardFunctionCall
+	{
+		$firstArg = $this->parseExpression();
+		$this->expectToken(',');
+
+		if ($this->acceptToken(TokenTypeEnum::INTERVAL)) {
+			$this->position--;
+			$secondArg = $this->parseUncheckedInterval();
+		} else {
+			$secondArg = $this->parseExpression();
+		}
+
+		$this->expectToken(')');
+
+		return new FunctionCall\StandardFunctionCall(
+			$functionToken->position,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$functionToken->content,
+			[$firstArg, $secondArg],
 		);
 	}
 

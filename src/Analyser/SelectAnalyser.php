@@ -293,6 +293,15 @@ final class SelectAnalyser
 				assert($expr instanceof Expr\LiteralString);
 
 				return new QueryResultField($expr->firstConcatPart, new Schema\DbType\VarcharType(), false);
+			case Expr\ExprTypeEnum::INTERVAL:
+				assert($expr instanceof Expr\Interval);
+				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\DateTimeType(),
+					$timeQuantityResult->isNullable,
+				);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
 				$resolvedInnerExpr = $this->resolveExprType($expr->expression);
@@ -327,14 +336,13 @@ final class SelectAnalyser
 					) && $expr->right::getExprType() === Expr\ExprTypeEnum::INTERVAL
 				) {
 					$intervalExpr = $expr->right;
-					assert($intervalExpr instanceof Expr\Interval);
-					$timeQuantityResult = $this->resolveExprType($intervalExpr->timeQuantity);
+					$intervalResult = $this->resolveExprType($intervalExpr);
 
 					return new QueryResultField(
 						$this->getNodeContent($expr),
 						new Schema\DbType\DateTimeType(),
 						$leftResult->isNullable
-							|| $timeQuantityResult->isNullable
+							|| $intervalResult->isNullable
 							|| $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME,
 					);
 				}
