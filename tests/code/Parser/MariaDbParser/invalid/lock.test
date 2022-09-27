@@ -1,0 +1,50 @@
+SELECT locks
+-----
+SELECT 1 FOR UPDATE WAIT 'a'
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got STRING_LITERAL after: SELECT 1 FOR UPDATE WAIT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''a'' at line 1
+-----
+SELECT 1 FOR UPDATE WAIT 1+1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '+' after: 1 FOR UPDATE WAIT 1
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
+-----
+SELECT 1 FOR UPDATE WAIT NULL
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got NULL after: SELECT 1 FOR UPDATE WAIT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NULL' at line 1
+-----
+SELECT 1 FOR UPDATE WAIT TRUE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got TRUE after: SELECT 1 FOR UPDATE WAIT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'TRUE' at line 1
+-----
+(SELECT * FROM parser_test) UNION (SELECT * FROM parser_test) FOR UPDATE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got FOR after: SELECT * FROM parser_test)
+-----
+1221: Incorrect usage of lock options and SELECT in brackets
+-----
+((SELECT * FROM parser_test) UNION (SELECT * FROM parser_test)) FOR UPDATE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got FOR after: * FROM parser_test))
+-----
+1221: Incorrect usage of lock options and SELECT in brackets
+-----
+SELECT 1 FOR UPDATE UNION SELECT 2 FOR UPDATE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got UNION after: SELECT 1 FOR UPDATE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION SELECT 2 FOR UPDATE' at line 1

@@ -28,6 +28,9 @@ class MariaDbErrorCodes
 	// 1210	HY000	ER_WRONG_ARGUMENTS	Incorrect arguments to %s
 	public const ER_WRONG_ARGUMENTS = 1210;
 
+	// 1221	HY000	ER_WRONG_USAGE	Incorrect usage of %s and %s
+	public const ER_WRONG_USAGE = 1221;
+
 	// 1222	21000	ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT The used SELECT statements have a different number of columns
 	public const ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT = 1222;
 

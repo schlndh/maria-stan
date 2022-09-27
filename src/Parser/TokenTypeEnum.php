@@ -168,6 +168,7 @@ enum TokenTypeEnum: string
 	case LOCALTIME = 'LOCALTIME';
 	case LOCALTIMESTAMP = 'LOCALTIMESTAMP';
 	case LOCK = 'LOCK';
+	case LOCKED = 'LOCKED';
 	case LONG = 'LONG';
 	case LONGBLOB = 'LONGBLOB';
 	case LONGTEXT = 'LONGTEXT';
@@ -184,10 +185,12 @@ enum TokenTypeEnum: string
 	case MINUTE_MICROSECOND = 'MINUTE_MICROSECOND';
 	case MINUTE_SECOND = 'MINUTE_SECOND';
 	case MOD = 'MOD';
+	case MODE = 'MODE';
 	case MODIFIES = 'MODIFIES';
 	case NATURAL = 'NATURAL';
 	case NO = 'NO';
 	case NOT = 'NOT';
+	case NOWAIT = 'NOWAIT';
 	case NO_WRITE_TO_BINLOG = 'NO_WRITE_TO_BINLOG';
 	case NULL = 'NULL';
 	case NUMERIC = 'NUMERIC';
@@ -242,8 +245,10 @@ enum TokenTypeEnum: string
 	case SENSITIVE = 'SENSITIVE';
 	case SEPARATOR = 'SEPARATOR';
 	case SET = 'SET';
+	case SHARE = 'SHARE';
 	case SHOW = 'SHOW';
 	case SIGNAL = 'SIGNAL';
+	case SKIP = 'SKIP';
 	case SLOW = 'SLOW';
 	case SMALLINT = 'SMALLINT';
 	case SPATIAL = 'SPATIAL';
@@ -293,6 +298,7 @@ enum TokenTypeEnum: string
 	case VARCHAR = 'VARCHAR';
 	case VARCHARACTER = 'VARCHARACTER';
 	case VARYING = 'VARYING';
+	case WAIT = 'WAIT';
 	case WHEN = 'WHEN';
 	case WHERE = 'WHERE';
 	case WHILE = 'WHILE';

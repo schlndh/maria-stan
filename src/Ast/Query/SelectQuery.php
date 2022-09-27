@@ -8,6 +8,7 @@ use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\GroupBy;
 use MariaStan\Ast\Limit;
+use MariaStan\Ast\Lock\SelectLock;
 use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -27,6 +28,7 @@ final class SelectQuery extends BaseNode implements Query
 		public readonly ?OrderBy $orderBy = null,
 		public readonly ?Limit $limit = null,
 		public readonly bool $isDistinct = false,
+		public readonly ?SelectLock $lock = null,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

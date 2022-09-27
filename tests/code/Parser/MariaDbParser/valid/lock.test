@@ -1,0 +1,371 @@
+SELECT locks
+-----
+SELECT 1 FOR UPDATE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+		)
+)
+-----
+(SELECT 1) FOR UPDATE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+		)
+)
+-----
+(SELECT 1 FOR UPDATE) UNION SELECT 2 FOR UPDATE
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[isDistinct] => false
+			[lock] => MariaStan\Ast\Lock\SelectLock
+				(
+					[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+				)
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 2
+								)
+						)
+				)
+			[isDistinct] => false
+			[lock] => MariaStan\Ast\Lock\SelectLock
+				(
+					[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT 1 UNION SELECT 2 FOR UPDATE
+-----
+MariaStan\Ast\Query\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+			[isDistinct] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 2
+								)
+						)
+				)
+			[isDistinct] => false
+			[lock] => MariaStan\Ast\Lock\SelectLock
+				(
+					[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT * FROM (SELECT 1 UNION SELECT 2) t FOR UPDATE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[left] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[isDistinct] => true
+				)
+			[alias] => t
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+		)
+)
+-----
+SELECT 1 LOCK IN SHARE MODE
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::SHARE
+		)
+)
+-----
+SELECT 1 FOR UPDATE WAIT 1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\Wait
+				(
+					[seconds] => 1
+				)
+		)
+)
+-----
+SELECT 1 FOR UPDATE WAIT 1.1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\Wait
+				(
+					[seconds] => 1.1
+				)
+		)
+)
+-----
+SELECT 1 FOR UPDATE WAIT 1.1e1
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\Wait
+				(
+					[seconds] => 11
+				)
+		)
+)
+-----
+SELECT 1 FOR UPDATE WAIT 0
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\Wait
+				(
+					[seconds] => 0
+				)
+		)
+)
+-----
+SELECT 1 FOR UPDATE NOWAIT
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\NoWait
+				(
+				)
+		)
+)
+-----
+SELECT 1 FOR UPDATE SKIP LOCKED
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+			[lockOption] => MariaStan\Ast\Lock\SkipLocked
+				(
+				)
+		)
+)
+-----
+((SELECT 1 FOR UPDATE) FOR UPDATE) LOCK IN SHARE MODE;
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[lock] => MariaStan\Ast\Lock\SelectLock
+		(
+			[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::SHARE
+		)
+)

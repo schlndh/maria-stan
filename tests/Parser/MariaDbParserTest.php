@@ -104,6 +104,9 @@ class MariaDbParserTest extends TestCase
 					MariaDbErrorCodes::ER_PARSE_ERROR,
 					// The AST doesn't even allow this, so we have to handle it in the parser.
 					MariaDbErrorCodes::ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS,
+					// (SELECT) UNION (SELECT) FOR UPDATE
+					// 1221: Incorrect usage of lock options and SELECT in brackets
+					MariaDbErrorCodes::ER_WRONG_USAGE,
 				],
 				true,
 			)

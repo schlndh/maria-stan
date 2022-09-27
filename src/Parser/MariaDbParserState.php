@@ -29,6 +29,11 @@ use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\ExprWithDirection;
 use MariaStan\Ast\GroupBy;
 use MariaStan\Ast\Limit;
+use MariaStan\Ast\Lock\NoWait;
+use MariaStan\Ast\Lock\SelectLock;
+use MariaStan\Ast\Lock\SelectLockTypeEnum;
+use MariaStan\Ast\Lock\SkipLocked;
+use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\CombinedSelectQuery;
 use MariaStan\Ast\Query\Query;
@@ -117,11 +122,32 @@ class MariaDbParserState
 	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery|CombinedSelectQuery
 	{
 		// TODO: https://mariadb.com/kb/en/common-table-expressions/
-		// TODO: FOR UPDATE / LOCK IN SHARE MODE
 		// TODO: INTO OUTFILE/DUMPFILE/variable
 		if ($this->acceptToken('(')) {
+			$startPosition = $this->getPreviousTokenUnsafe()->position;
 			$left = $this->parseSelectQuery();
 			$this->expectToken(')');
+
+			if ($precedence === self::SELECT_PRECEDENCE_NORMAL && $left instanceof SelectQuery) {
+				$lock = $this->parseSelectLock();
+
+				// UNION/EXCEPT/INTERCEPT can't follow SELECT with lock unless it's wrapped in parentheses.
+				if ($lock !== null) {
+					return new SelectQuery(
+						$startPosition,
+						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$left->select,
+						$left->from,
+						$left->where,
+						$left->groupBy,
+						$left->having,
+						$left->orderBy,
+						$left->limit,
+						$left->isDistinct,
+						$lock,
+					);
+				}
+			}
 		} else {
 			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
 			$distinctToken = $this->acceptAnyOfTokenTypes(
@@ -143,6 +169,7 @@ class MariaDbParserState
 				$limit = $this->parseLimit();
 			}
 
+			$lock = $this->parseSelectLock();
 			$left = new SelectQuery(
 				$startToken->position,
 				$this->getPreviousTokenUnsafe()->getEndPosition(),
@@ -154,10 +181,11 @@ class MariaDbParserState
 				$orderBy,
 				$limit,
 				$isDistinct,
+				$lock,
 			);
 
-			// UNION/EXCEPT/INTERCEPT can't follow SELECT with ORDER/LIMIT unless it's wrapped in parentheses.
-			if ($orderBy !== null || $limit !== null) {
+			// UNION/EXCEPT/INTERCEPT can't follow SELECT with ORDER/LIMIT/lock unless it's wrapped in parentheses.
+			if ($orderBy !== null || $limit !== null || $lock !== null) {
 				return $left;
 			}
 		}
@@ -1247,6 +1275,56 @@ class MariaDbParserState
 			$this->getPreviousTokenUnsafe()->position,
 			$count,
 			$offset,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseSelectLock(): ?SelectLock
+	{
+		if ($this->acceptToken(TokenTypeEnum::FOR)) {
+			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$this->expectToken(TokenTypeEnum::UPDATE);
+			$type = SelectLockTypeEnum::UPDATE;
+		} elseif ($this->acceptToken(TokenTypeEnum::LOCK)) {
+			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$this->expectToken(TokenTypeEnum::IN);
+			$this->expectToken(TokenTypeEnum::SHARE);
+			$this->expectToken(TokenTypeEnum::MODE);
+			$type = SelectLockTypeEnum::SHARE;
+		} else {
+			return null;
+		}
+
+		$lockOption = null;
+		$waitToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::WAIT, TokenTypeEnum::NOWAIT, TokenTypeEnum::SKIP);
+
+		switch ($waitToken?->type) {
+			case TokenTypeEnum::SKIP:
+				// help phpstan
+				assert($waitToken !== null);
+				$this->expectToken(TokenTypeEnum::LOCKED);
+				$lockOption = new SkipLocked($waitToken->position, $this->getPreviousTokenUnsafe()->getEndPosition());
+				break;
+			case TokenTypeEnum::WAIT:
+				assert($waitToken !== null);
+				$secondsToken = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, TokenTypeEnum::LITERAL_FLOAT);
+				$lockOption = new Wait(
+					$waitToken->position,
+					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					(float) $secondsToken->content,
+				);
+				break;
+			case TokenTypeEnum::NOWAIT:
+				assert($waitToken !== null);
+				$lockOption = new NoWait($waitToken->position, $waitToken->getEndPosition());
+				break;
+		}
+
+		return new SelectLock(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$type,
+			$lockOption,
 		);
 	}
 
