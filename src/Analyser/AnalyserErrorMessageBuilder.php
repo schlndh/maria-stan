@@ -45,6 +45,11 @@ class AnalyserErrorMessageBuilder
 		return "Duplicate column name '{$column}'";
 	}
 
+	public static function createInvalidTupleUsageErrorMessage(TupleType $tupleType): string
+	{
+		return "Expected single value, got " . self::formatDbType($tupleType);
+	}
+
 	public static function createInvalidBinaryOpUsageErrorMessage(
 		BinaryOpTypeEnum|SpecialOpTypeEnum $operator,
 		DbTypeEnum $leftType,

@@ -94,22 +94,7 @@ final class SelectAnalyser
 		for (; $i < $commonCount; $i++) {
 			$lf = $leftFields[$i];
 			$rf = $rightFields[$i];
-			$lt = $lf->type::getTypeEnum();
-			$rt = $rf->type::getTypeEnum();
-			$typesInvolved = [
-				$lt->value => $lf->type,
-				$rt->value => $rf->type,
-			];
-			// TODO: handle remaining types.
-			$combinedType = $typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->name]
-				?? $typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->name]
-				?? $typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->name]
-				?? $lf->type;
-
-			if ($combinedType::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
-				$combinedType = $rf->type;
-			}
-
+			$combinedType = $this->getCombinedType($lf->type, $rf->type);
 			$fields[] = new QueryResultField($lf->name, $combinedType, $lf->isNullable || $rf->isNullable);
 		}
 
@@ -597,6 +582,44 @@ final class SelectAnalyser
 					new Schema\DbType\MixedType(),
 					true,
 				);
+			case Expr\ExprTypeEnum::CASE_OP:
+				assert($expr instanceof Expr\CaseOp);
+
+				if ($expr->compareValue) {
+					$field = $this->resolveExprType($expr->compareValue);
+					$this->checkNotTuple($field->type);
+				}
+
+				$subresults = [];
+
+				foreach ($expr->conditions as $condition) {
+					$field = $this->resolveExprType($condition->when);
+					$this->checkNotTuple($field->type);
+					$subresults[] = $field = $this->resolveExprType($condition->then);
+					$this->checkNotTuple($field->type);
+				}
+
+				if ($expr->else) {
+					$subresults[] = $field = $this->resolveExprType($expr->else);
+					$this->checkNotTuple($field->type);
+				}
+
+				$isNullable = false;
+				$type = null;
+
+				foreach ($subresults as $subresult) {
+					$isNullable = $isNullable || $subresult->isNullable;
+
+					$type = $type === null
+						? $subresult->type
+						: $this->getCombinedType($type, $subresult->type);
+				}
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					$type,
+					$isNullable,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 
@@ -675,9 +698,40 @@ final class SelectAnalyser
 		return true;
 	}
 
+	private function checkNotTuple(Schema\DbType\DbType $type): void
+	{
+		if ($type::getTypeEnum() !== Schema\DbType\DbTypeEnum::TUPLE) {
+			return;
+		}
+
+		assert($type instanceof Schema\DbType\TupleType);
+		$this->errors[] = new AnalyserError(
+			AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage($type),
+		);
+	}
+
 	/** @param array<QueryResultField> $fields */
 	private function isAnyFieldNullable(array $fields): bool
 	{
 		return array_reduce($fields, static fn (bool $carry, QueryResultField $f) => $carry || $f->isNullable, false);
+	}
+
+	private function getCombinedType(Schema\DbType\DbType $left, Schema\DbType\DbType $right): Schema\DbType\DbType
+	{
+		$typesInvolved = [
+			$left::getTypeEnum()->value => $left,
+			$right::getTypeEnum()->value => $right,
+		];
+		// TODO: handle remaining types.
+		$combinedType = $typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->name]
+			?? $typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->name]
+			?? $typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->name]
+			?? $left;
+
+		if ($combinedType::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
+			$combinedType = $right;
+		}
+
+		return $combinedType;
 	}
 }

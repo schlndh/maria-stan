@@ -1,0 +1,15 @@
+Operators
+-----
+SELECT CASE WHEN THEN 5 END
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: THEN after: SELECT CASE WHEN
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'THEN 5 END' at line 1
+-----
+SELECT CASE 1 ELSE 5 END
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected WHEN after: SELECT CASE 1
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ELSE 5 END' at line 1

@@ -24,6 +24,7 @@ use function array_keys;
 use function array_map;
 use function count;
 use function implode;
+use function is_string;
 use function str_starts_with;
 
 use const MYSQLI_ASSOC;
@@ -328,6 +329,20 @@ class AnalyserTest extends TestCase
 			yield "operator {$expr}" => [
 				'query' => "SELECT {$expr}",
 			];
+		}
+
+		$caseValues = ['1', '1.1', '1.1e1', '"a"', 'NULL'];
+
+		foreach ($caseValues as $value1) {
+			foreach ($caseValues as $value2) {
+				if ($value1 === $value2) {
+					continue;
+				}
+
+				yield "operator CASE {$value1} vs {$value2}" => [
+					'query' => "SELECT CASE WHEN 0 THEN {$value1} ELSE {$value2} END",
+				];
+			}
 		}
 
 		$exprs = [
@@ -873,6 +888,30 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
+		yield 'unknown column in CASE' => [
+			'query' => 'SELECT CASE aaa WHEN 1 THEN 1 END FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in CASE WHEN' => [
+			'query' => 'SELECT CASE 1 WHEN aaa THEN 1 END FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in CASE THEN' => [
+			'query' => 'SELECT CASE 1 WHEN 1 THEN aaa END FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in CASE ELSE' => [
+			'query' => 'SELECT CASE 1 WHEN 1 THEN 1 ELSE aaa END FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
 		yield 'tuple size does not match' => [
 			'query' => 'SELECT (id, name, 1) = (id, name) FROM analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
@@ -966,6 +1005,43 @@ class AnalyserTest extends TestCase
 				];
 			}
 		}
+
+		yield "invalid operator with tuples - CASE WHEN" => [
+			'query' => "SELECT CASE WHEN (1,1) THEN 1 END",
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage(
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "invalid operator with tuples - CASE tuple WHEN tuple" => [
+			'query' => "SELECT CASE (1, 1) WHEN (1,1) THEN 1 END",
+			'error' => [
+				AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage(
+					$this->createMockTuple(2),
+				),
+				AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage(
+					$this->createMockTuple(2),
+				),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "invalid operator with tuples - CASE THEN" => [
+			'query' => "SELECT CASE WHEN 1 THEN (1,1) END",
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage(
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
+
+		yield "invalid operator with tuples - CASE ELSE" => [
+			'query' => "SELECT CASE WHEN 1 THEN 0 ELSE (1,1) END",
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage(
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+		];
 
 		yield "invalid operator with tuples - LIKE" => [
 			'query' => "SELECT (id, name, 1) LIKE (1, 'aa') FROM analyser_test",
@@ -1102,21 +1178,23 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideInvalidData */
-	public function testInvalid(string $query, string $error, int $dbErrorCode): void
+	/**
+	 * @param string|array<string> $error
+	 * @dataProvider provideInvalidData
+	 */
+	public function testInvalid(string $query, string|array $error, int $dbErrorCode): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
 		$reflection = new MariaDbOnlineDbReflection($db);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
-		$this->assertCount(
-			1,
-			$result->errors,
-			"Expected 1 error. Got: "
-			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $result->errors)),
-		);
-		$this->assertSame($error, $result->errors[0]->message);
+
+		if (is_string($error)) {
+			$error = [$error];
+		}
+
+		$this->assertSame($error, array_map(static fn (AnalyserError $e) => $e->message, $result->errors));
 
 		try {
 			$db->query($query);

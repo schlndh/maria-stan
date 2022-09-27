@@ -8,6 +8,7 @@ use MariaStan\Ast\DirectionEnum;
 use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
+use MariaStan\Ast\Expr\CaseOp;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
@@ -47,6 +48,7 @@ use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
+use MariaStan\Ast\WhenThen;
 use MariaStan\Ast\WindowFrame;
 use MariaStan\Ast\WindowFrameBound;
 use MariaStan\Ast\WindowFrameTypeEnum;
@@ -1031,9 +1033,50 @@ class MariaDbParserState
 			);
 		}
 
+		$case = $this->acceptToken(TokenTypeEnum::CASE);
+
+		if ($case !== null) {
+			return $this->parseRestOfCaseOperator($case);
+		}
+
 		throw new UnexpectedTokenException(
 			"Unexpected token: {$this->printToken($this->findCurrentToken())} after: "
 				. $this->getContextPriorToTokenPosition(),
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfCaseOperator(Token $caseToken): CaseOp
+	{
+		$compareValue = $this->getCurrentToken()->type === TokenTypeEnum::WHEN
+			? null
+			: $this->parseExpression();
+		$conditions = [];
+
+		while ($this->acceptToken(TokenTypeEnum::WHEN)) {
+			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$when = $this->parseExpression();
+			$this->expectToken(TokenTypeEnum::THEN);
+			$then = $this->parseExpression();
+			$conditions[] = new WhenThen($startPosition, $then->getEndPosition(), $when, $then);
+		}
+
+		if (count($conditions) === 0) {
+			throw new UnexpectedTokenException('Expected WHEN after: ' . $this->getContextPriorToTokenPosition());
+		}
+
+		$else = $this->acceptToken(TokenTypeEnum::ELSE)
+			? $this->parseExpression()
+			: null;
+
+		$this->expectToken(TokenTypeEnum::END);
+
+		return new CaseOp(
+			$caseToken->position,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$compareValue,
+			$conditions,
+			$else,
 		);
 	}
 

@@ -1982,3 +1982,430 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT CASE 1 WHEN 1 THEN 5 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1+1 WHEN 1 AND 1 THEN 5 * 6 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
+													[left] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[right] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+											[then] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+													[left] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 5
+														)
+													[right] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 6
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1 WHEN 1 > 0 THEN 5 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\BinaryOp
+												(
+													[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::GREATER
+													[left] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[right] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 0
+														)
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1 WHEN 1 THEN 5 ELSE 6 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+								)
+							[else] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 6
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1 WHEN 1 THEN 5 WHEN 2 THEN 6 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+									[1] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 6
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE WHEN 1 THEN 2 WHEN 2 THEN 3 ELSE 4 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+										)
+									[1] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 3
+												)
+										)
+								)
+							[else] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 4
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE CASE 1 WHEN 1 THEN 3 ELSE 4 END WHEN 1 THEN 5 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\CaseOp
+								(
+									[compareValue] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[conditions] => Array
+										(
+											[0] => MariaStan\Ast\WhenThen
+												(
+													[when] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[then] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 3
+														)
+												)
+										)
+									[else] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 4
+										)
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1 WHEN CASE 1 WHEN 1 THEN 3 ELSE 4 END THEN 5 END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\CaseOp
+												(
+													[compareValue] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[conditions] => Array
+														(
+															[0] => MariaStan\Ast\WhenThen
+																(
+																	[when] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																	[then] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 3
+																		)
+																)
+														)
+													[else] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 4
+														)
+												)
+											[then] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 5
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CASE 1 WHEN 1 THEN CASE 1 WHEN 1 THEN 3 ELSE 4 END END
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\CaseOp
+						(
+							[compareValue] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[conditions] => Array
+								(
+									[0] => MariaStan\Ast\WhenThen
+										(
+											[when] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[then] => MariaStan\Ast\Expr\CaseOp
+												(
+													[compareValue] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[conditions] => Array
+														(
+															[0] => MariaStan\Ast\WhenThen
+																(
+																	[when] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 1
+																		)
+																	[then] => MariaStan\Ast\Expr\LiteralInt
+																		(
+																			[value] => 3
+																		)
+																)
+														)
+													[else] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 4
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

@@ -104,6 +104,7 @@ enum TokenTypeEnum: string
 	case ELSE = 'ELSE';
 	case ELSEIF = 'ELSEIF';
 	case ENCLOSED = 'ENCLOSED';
+	case END = 'END';
 	case ENUM = 'ENUM';
 	case ESCAPE = 'ESCAPE';
 	case ESCAPED = 'ESCAPED';

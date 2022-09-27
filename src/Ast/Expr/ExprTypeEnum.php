@@ -30,6 +30,9 @@ enum ExprTypeEnum: string
 	/** @see BinaryOp */
 	case BINARY_OP = 'BINARY_OP';
 
+	/** @see CaseOp */
+	case CASE_OP = 'CASE_OP';
+
 	/** @see \MariaStan\Ast\Expr\FunctionCall\FunctionCall */
 	case FUNCTION_CALL = 'FUNCTION_CALL';
 

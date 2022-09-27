@@ -45,6 +45,7 @@ class MariaDbParser
 			TokenTypeEnum::BIT,
 			TokenTypeEnum::CURRENT,
 			TokenTypeEnum::DATE,
+			TokenTypeEnum::END,
 			TokenTypeEnum::ENUM,
 			TokenTypeEnum::ESCAPE,
 			TokenTypeEnum::FOLLOWING,
