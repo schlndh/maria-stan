@@ -40,6 +40,10 @@ class MariaDbErrorCodes
 	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
 	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 
+	// 1630	42000 ER_FUNC_INEXISTENT_NAME_COLLISION	FUNCTION %s does not exist. Check the
+	// 'Function Name Parsing and Resolution' section in the Reference Manual
+	public const ER_FUNC_INEXISTENT_NAME_COLLISION = 1630;
+
 	// 4014	ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS Unacceptable combination of window frame bound specifications
 	public const ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS = 4014;
 

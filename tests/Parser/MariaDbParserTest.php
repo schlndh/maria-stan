@@ -107,6 +107,9 @@ class MariaDbParserTest extends TestCase
 					// (SELECT) UNION (SELECT) FOR UPDATE
 					// 1221: Incorrect usage of lock options and SELECT in brackets
 					MariaDbErrorCodes::ER_WRONG_USAGE,
+					// Allow handling functions that may not have whitespace before parenthesis on parser level.
+					// E.g. POSITION ('a' IN 'b')
+					MariaDbErrorCodes::ER_FUNC_INEXISTENT_NAME_COLLISION,
 					// For some reason MariaDB returns this error instead of a parse error when encountering
 					// unsupported CAST(x AS INTERVAL ...).
 					MariaDbErrorCodes::ER_UNKNOWN_DATA_TYPE,

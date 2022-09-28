@@ -454,3 +454,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '(' after: CAST(5 AS INTEGER
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(11))' at line 1
+-----
+SELECT POSITION('a', 'b')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IN, got ',' after: SELECT POSITION('a'
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 'b')' at line 1
+-----
+SELECT POSITION ('a' IN 'b')
+-----
+MariaStan\Parser\Exception\ParserException
+POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''b')' at line 1
+-----
+SELECT POSITION ('a' IN (1, 2, 3))
+-----
+MariaStan\Parser\Exception\ParserException
+POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
+-----
+1630: FUNCTION mariastan_test.POSITION does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual

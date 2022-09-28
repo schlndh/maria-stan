@@ -3359,3 +3359,176 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT POSITION('a' IN 'baC')
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Position
+						(
+							[substr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => baC
+									[firstConcatPart] => baC
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT POSITION('a' IN ('abc'))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Position
+						(
+							[substr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => abc
+									[firstConcatPart] => abc
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT POSITION('a' IN NOW())
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Position
+						(
+							[substr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[str] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NOW
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT POSITION(('a' IN (1, 2, 3)) IN 5)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Position
+						(
+							[substr] => MariaStan\Ast\Expr\In
+								(
+									[left] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[right] => MariaStan\Ast\Expr\Tuple
+										(
+											[expressions] => Array
+												(
+													[0] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[1] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+													[2] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 3
+														)
+												)
+										)
+								)
+							[str] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT POSITION('1' IN 1 IN (1,2,3))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Position
+						(
+							[substr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => 1
+									[firstConcatPart] => 1
+								)
+							[str] => MariaStan\Ast\Expr\In
+								(
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[right] => MariaStan\Ast\Expr\Tuple
+										(
+											[expressions] => Array
+												(
+													[0] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[1] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+													[2] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 3
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

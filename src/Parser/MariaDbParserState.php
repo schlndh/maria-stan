@@ -885,6 +885,7 @@ class MariaDbParserState
 					'DATE_ADD', 'DATE_SUB' => $this->parseRestOfDateAddSubFunctionCall($ident),
 					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
 					'CAST' => $this->parseRestOfCastFunctionCall($startPosition),
+					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
 					default => null,
 				};
 
@@ -1464,6 +1465,38 @@ class MariaDbParserState
 		throw new UnexpectedTokenException(
 			"Expected cast type, got {$this->printToken($this->findCurrentToken())}, after: "
 				. $this->getContextPriorToTokenPosition(),
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfPositionFunctionCall(Token $functionIdent): FunctionCall\Position
+	{
+		$parenthesisStart = $this->getPreviousToken()->position->offset;
+		$functionIdentEnd = $functionIdent->getEndPosition()->offset;
+
+		// https://dev.mysql.com/doc/refman/8.0/en/function-resolution.html
+		if ($functionIdentEnd < $parenthesisStart) {
+			throw new ParserException(
+				"POSITION cannot have a space between function name and parenthesis, at: "
+					. $this->getContextPriorToTokenPosition(),
+			);
+		}
+
+		static $inPrecedence = null;
+		$inPrecedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IN);
+
+		// If we encounter IN we want to interpret it as the separator between the two arguments
+		$substrExpr = $this->parseExpression($inPrecedence + 1);
+		$this->expectToken(TokenTypeEnum::IN);
+		// str can contain IN operator
+		$strExpr = $this->parseExpression();
+		$this->expectToken(')');
+
+		return new FunctionCall\Position(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$substrExpr,
+			$strExpr,
 		);
 	}
 
