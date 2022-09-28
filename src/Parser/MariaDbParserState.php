@@ -9,6 +9,17 @@ use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\CaseOp;
+use MariaStan\Ast\Expr\CastType\BinaryCastType;
+use MariaStan\Ast\Expr\CastType\CastType;
+use MariaStan\Ast\Expr\CastType\CharCastType;
+use MariaStan\Ast\Expr\CastType\DateCastType;
+use MariaStan\Ast\Expr\CastType\DateTimeCastType;
+use MariaStan\Ast\Expr\CastType\DaySecondCastType;
+use MariaStan\Ast\Expr\CastType\DecimalCastType;
+use MariaStan\Ast\Expr\CastType\DoubleCastType;
+use MariaStan\Ast\Expr\CastType\FloatCastType;
+use MariaStan\Ast\Expr\CastType\IntegerCastType;
+use MariaStan\Ast\Expr\CastType\TimeCastType;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
@@ -68,6 +79,7 @@ use function max;
 use function reset;
 use function str_replace;
 use function str_starts_with;
+use function stripos;
 use function strtoupper;
 use function strtr;
 use function substr;
@@ -860,6 +872,7 @@ class MariaDbParserState
 					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
 					'DATE_ADD', 'DATE_SUB' => $this->parseRestOfDateAddSubFunctionCall($ident),
 					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
+					'CAST' => $this->parseRestOfCastFunctionCall($startPosition),
 					default => null,
 				};
 
@@ -1264,6 +1277,165 @@ class MariaDbParserState
 			$this->getPreviousTokenUnsafe()->getEndPosition(),
 			$functionToken->content,
 			[$firstArg, $secondArg],
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfCastFunctionCall(Position $startPosition): FunctionCall\Cast
+	{
+		$expr = $this->parseExpression();
+		$this->expectToken(TokenTypeEnum::AS);
+		$castType = $this->parseCastType();
+		$this->expectToken(')');
+
+		return new FunctionCall\Cast(
+			$startPosition,
+			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$expr,
+			$castType,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseCastType(): CastType
+	{
+		$startPosition = $this->getCurrentPosition();
+		$parseIntParameter = function (): int {
+			$paramToken = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, TokenTypeEnum::LITERAL_FLOAT);
+
+			if (stripos($paramToken->content, 'e') !== false) {
+				throw new UnexpectedTokenException(
+					"Expected literal INT/DECIMAL got '{$paramToken->content}', after: "
+						. $this->getContextPriorToTokenPosition($this->position - 1),
+				);
+			}
+
+			return (int) $paramToken->content;
+		};
+		$parseSingleOptionalIntParam = function () use ($parseIntParameter): ?int {
+			$param = null;
+
+			if ($this->acceptToken('(')) {
+				$param = $parseIntParameter();
+				$this->expectToken(')');
+			}
+
+			return $param;
+		};
+
+		if ($this->acceptToken(TokenTypeEnum::BINARY)) {
+			$length = $parseSingleOptionalIntParam();
+
+			return new BinaryCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $length);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::CHAR)) {
+			$characterSet = $collation = null;
+			$length = $parseSingleOptionalIntParam();
+
+			if ($this->acceptToken(TokenTypeEnum::CHARACTER)) {
+				$this->expectToken(TokenTypeEnum::SET);
+				$characterSet = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+			}
+
+			if ($this->acceptToken(TokenTypeEnum::COLLATE)) {
+				$collation = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+			}
+
+			return new CharCastType(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$length,
+				$characterSet,
+				$collation,
+			);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::DATE)) {
+			return new DateCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::DATETIME)) {
+			$microsecondPrecision = $parseSingleOptionalIntParam();
+
+			return new DateTimeCastType(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$microsecondPrecision,
+			);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::DECIMAL)) {
+			$maxDigits = $maxDecimals = null;
+
+			if ($this->acceptToken('(')) {
+				$maxDigits = $parseIntParameter();
+
+				if ($this->acceptToken(',')) {
+					$maxDecimals = $parseIntParameter();
+				}
+
+				$this->expectToken(')');
+			}
+
+			return new DecimalCastType(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$maxDigits ?? 10,
+				$maxDecimals ?? 0,
+			);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::DOUBLE)) {
+			return new DoubleCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::FLOAT)) {
+			return new FloatCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+		}
+
+		$intToken = $this->acceptAnyOfTokenTypes(
+			TokenTypeEnum::INTEGER,
+			TokenTypeEnum::SIGNED,
+			TokenTypeEnum::UNSIGNED,
+		);
+
+		if ($intToken) {
+			if ($intToken->type !== TokenTypeEnum::INTEGER) {
+				$this->acceptToken(TokenTypeEnum::INTEGER);
+			}
+
+			$isSigned = $intToken->type !== TokenTypeEnum::UNSIGNED;
+
+			return new IntegerCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $isSigned);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::TIME)) {
+			$microsecondPrecision = $parseSingleOptionalIntParam();
+
+			return new TimeCastType(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$microsecondPrecision,
+			);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::INTERVAL)) {
+			$this->expectToken(TokenTypeEnum::DAY_SECOND);
+			$this->expectToken('(');
+			$microsecondPrecision = $parseIntParameter();
+			$this->expectToken(')');
+
+			return new DaySecondCastType(
+				$startPosition,
+				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$microsecondPrecision,
+			);
+		}
+
+		throw new UnexpectedTokenException(
+			"Expected cast type, got {$this->printToken($this->findCurrentToken())}, after: "
+				. $this->getContextPriorToTokenPosition(),
 		);
 	}
 

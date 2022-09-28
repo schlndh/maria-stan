@@ -49,6 +49,9 @@ class MariaDbErrorCodes
 	// 4079	ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION	Illegal parameter data type %s for operation '%s'
 	public const ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION = 4079;
 
+	// 4161		ER_UNKNOWN_DATA_TYPE	Unknown data type: '%-.64s'
+	public const ER_UNKNOWN_DATA_TYPE = 4161;
+
 	// No data supplied for parameters in prepared statement
 	public const MYSQLI_NO_DATA_FOR_PREPARED_PARAMS = 2031;
 }

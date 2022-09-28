@@ -56,4 +56,7 @@ enum ExprTypeEnum: string
 
 	/** @see Interval */
 	case INTERVAL = 'INTERVAL';
+
+	/** @see CastType\CastType */
+	case CAST_TYPE = 'CAST_TYPE';
 }

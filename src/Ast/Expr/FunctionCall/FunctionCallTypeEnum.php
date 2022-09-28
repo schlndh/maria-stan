@@ -14,4 +14,7 @@ enum FunctionCallTypeEnum: string
 
 	/** @see Count */
 	case COUNT = 'COUNT';
+
+	/** @see Cast */
+	case CAST = 'CAST';
 }

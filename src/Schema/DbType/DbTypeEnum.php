@@ -12,13 +12,13 @@ enum DbTypeEnum: string
 	/** @see VarcharType */
 	case VARCHAR = 'VARCHAR';
 
-	/** @see DecimalType */
+	/** @see DecimalCastType */
 	case DECIMAL = 'DECIMAL';
 
-	/** @see FloatType */
+	/** @see FloatCastType */
 	case FLOAT = 'FLOAT';
 
-	/** @see DateTimeType */
+	/** @see DateTimeCastType */
 	case DATETIME = 'DATETIME';
 
 	/** @see NullType */

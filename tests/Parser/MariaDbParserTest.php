@@ -107,6 +107,9 @@ class MariaDbParserTest extends TestCase
 					// (SELECT) UNION (SELECT) FOR UPDATE
 					// 1221: Incorrect usage of lock options and SELECT in brackets
 					MariaDbErrorCodes::ER_WRONG_USAGE,
+					// For some reason MariaDB returns this error instead of a parse error when encountering
+					// unsupported CAST(x AS INTERVAL ...).
+					MariaDbErrorCodes::ER_UNKNOWN_DATA_TYPE,
 				],
 				true,
 			)

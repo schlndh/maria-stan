@@ -258,3 +258,199 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ',', got ')' after: SUBDATE(NOW()
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT CAST(5, INTEGER)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected AS, got ',' after: SELECT CAST(5
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' INTEGER)' at line 1
+-----
+SELECT CAST(5 AS 5)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got INT_LITERAL, after: SELECT CAST(5 AS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
+-----
+SELECT CAST(INTEGER AS INTEGER)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: INTEGER after: SELECT CAST(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INTEGER AS INTEGER)' at line 1
+-----
+SELECT CAST(INTEGER AS 5)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: INTEGER after: SELECT CAST(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INTEGER AS 5)' at line 1
+-----
+SELECT CAST(5 AS INTERVAL HOUR(5))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected DAY_SECOND, got IDENTIFIER after: CAST(5 AS INTERVAL
+-----
+4161: Unknown data type: 'INTERVAL'
+-----
+SELECT CAST(5 AS INTERVAL DAY_HOUR)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected DAY_SECOND, got DAY_HOUR after: CAST(5 AS INTERVAL
+-----
+4161: Unknown data type: 'INTERVAL'
+-----
+SELECT CAST(5 AS INTERVAL)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected DAY_SECOND, got ')' after: CAST(5 AS INTERVAL
+-----
+4161: Unknown data type: 'INTERVAL'
+-----
+SELECT CAST(5 AS ?)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got '?', after: SELECT CAST(5 AS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?)' at line 1
+-----
+SELECT CAST(id AS DECIMAL(id)) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got IDENTIFIER after: (id AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'id)) FROM parser_test' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(?))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got '?' after: (5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(1.1e1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected literal INT/DECIMAL got '1.1e1', after: 5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1.1e1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(1) UNSIGNED)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got UNSIGNED after: AS DECIMAL(1)
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNSIGNED)' at line 1
+-----
+SELECT CAST(5 AS UNSIGNED DECIMAL(1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got DECIMAL after: CAST(5 AS UNSIGNED
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DECIMAL(1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(1.1e1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected literal INT/DECIMAL got '1.1e1', after: 5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1.1e1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(+1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got '+' after: (5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(-1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got '-' after: (5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(1 + 1))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: 5 AS DECIMAL(1
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got ')' after: (5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(1,2,3))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: DECIMAL(1,2
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '3))' at line 1
+-----
+SELECT CAST(5 AS DECIMAL(NULL))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, FLOAT_LITERAL, got NULL after: (5 AS DECIMAL(
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NULL))' at line 1
+-----
+SELECT CAST(5 AS FLOAT(10, 5))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '(' after: CAST(5 AS FLOAT
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(10, 5))' at line 1
+-----
+SELECT CAST(5 AS DOUBLE(10))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '(' after: CAST(5 AS DOUBLE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '))' at line 1
+-----
+SELECT CAST(5 AS DOUBLE PRECISION)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got PRECISION after: CAST(5 AS DOUBLE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'PRECISION)' at line 1
+-----
+SELECT CAST(5 AS REAL)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got REAL, after: SELECT CAST(5 AS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'REAL)' at line 1
+-----
+SELECT CAST(5 AS DOUBLE UNSIGNED)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got UNSIGNED after: CAST(5 AS DOUBLE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNSIGNED)' at line 1
+-----
+SELECT CAST(5 AS NATIONAL CHAR(10))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got IDENTIFIER, after: SELECT CAST(5 AS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NATIONAL CHAR(10))' at line 1
+-----
+SELECT CAST(5 AS CHAR(10) COLLATE utf8mb4_unicode_ci CHARACTER SET utf8mb4)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got CHARACTER after: (10) COLLATE utf8mb4_unicode_ci
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'CHARACTER SET utf8mb4)' at line 1
+-----
+SELECT CAST(5 AS INTEGER(11))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '(' after: CAST(5 AS INTEGER
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(11))' at line 1

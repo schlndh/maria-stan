@@ -79,6 +79,7 @@ enum TokenTypeEnum: string
 	case DATABASE = 'DATABASE';
 	case DATABASES = 'DATABASES';
 	case DATE = 'DATE';
+	case DATETIME = 'DATETIME';
 	case DAY_HOUR = 'DAY_HOUR';
 	case DAY_MICROSECOND = 'DAY_MICROSECOND';
 	case DAY_MINUTE = 'DAY_MINUTE';
@@ -249,6 +250,7 @@ enum TokenTypeEnum: string
 	case SHARE = 'SHARE';
 	case SHOW = 'SHOW';
 	case SIGNAL = 'SIGNAL';
+	case SIGNED = 'SIGNED';
 	case SKIP = 'SKIP';
 	case SLOW = 'SLOW';
 	case SMALLINT = 'SMALLINT';
