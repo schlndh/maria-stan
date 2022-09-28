@@ -55,3 +55,10 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got '?' after: SELECT 1 FOR UPDATE WAIT
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+-----
+SELECT EXISTS (SELECT 1) FOR UPDATE, 5
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ',' after: SELECT 1) FOR UPDATE
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 5' at line 1

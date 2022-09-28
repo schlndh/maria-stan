@@ -645,3 +645,70 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT EXISTS (SELECT 1)
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Exists
+						(
+							[subquery] => MariaStan\Ast\Query\SelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT EXISTS ((SELECT 1, 2))
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Exists
+						(
+							[subquery] => MariaStan\Ast\Query\SelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+											[1] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

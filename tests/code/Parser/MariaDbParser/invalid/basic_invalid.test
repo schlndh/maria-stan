@@ -83,3 +83,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: ALL after: SELECT 1,
 -----
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL 1' at line 1
+-----
+SELECT EXISTS SELECT 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got SELECT after: SELECT EXISTS
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SELECT 1' at line 1
+-----
+SELECT EXISTS (1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got INT_LITERAL after: SELECT EXISTS (
+-----
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1)' at line 1

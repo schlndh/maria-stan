@@ -54,6 +54,9 @@ enum ExprTypeEnum: string
 	/** @see Like */
 	case LIKE = 'LIKE';
 
+	/** @see Exists */
+	case EXISTS = 'EXISTS';
+
 	/** @see Interval */
 	case INTERVAL = 'INTERVAL';
 

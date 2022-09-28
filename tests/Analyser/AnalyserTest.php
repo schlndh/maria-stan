@@ -385,6 +385,8 @@ class AnalyserTest extends TestCase
 			'"a" LIKE "b" ESCAPE NULL',
 			// TODO: match field name without alias to MariaDB: "c" LIKE "?_" ESCAPE "?"
 			'"c" LIKE "😀_" ESCAPE "😀" non_unicode_name',
+			'EXISTS (SELECT NULL)',
+			'EXISTS (SELECT NULL WHERE 0)',
 		];
 
 		foreach ($exprs as $expr) {
@@ -751,6 +753,12 @@ class AnalyserTest extends TestCase
 
 		yield 'unknown column in subquery in FROM' => [
 			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery in EXISTS' => [
+			'query' => 'SELECT EXISTS (SELECT v.id FROM analyser_test)',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];

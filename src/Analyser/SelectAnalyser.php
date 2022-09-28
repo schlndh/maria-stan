@@ -620,6 +620,15 @@ final class SelectAnalyser
 					$type,
 					$isNullable,
 				);
+			case Expr\ExprTypeEnum::EXISTS:
+				assert($expr instanceof Expr\Exists);
+				$this->getSubqueryAnalyser($expr->subquery)->analyse();
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\IntType(),
+					false,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 

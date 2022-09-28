@@ -21,6 +21,7 @@ use MariaStan\Ast\Expr\CastType\FloatCastType;
 use MariaStan\Ast\Expr\CastType\IntegerCastType;
 use MariaStan\Ast\Expr\CastType\TimeCastType;
 use MariaStan\Ast\Expr\Column;
+use MariaStan\Ast\Expr\Exists;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\In;
@@ -1050,6 +1051,14 @@ class MariaDbParserState
 
 		if ($case !== null) {
 			return $this->parseRestOfCaseOperator($case);
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::EXISTS)) {
+			$this->expectToken('(');
+			$subquery = $this->parseSelectQuery();
+			$this->expectToken(')');
+
+			return new Exists($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $subquery);
 		}
 
 		throw new UnexpectedTokenException(
