@@ -139,7 +139,7 @@ class MariaDbParserState
 		// TODO: https://mariadb.com/kb/en/common-table-expressions/
 		// TODO: INTO OUTFILE/DUMPFILE/variable
 		if ($this->acceptToken('(')) {
-			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$startPosition = $this->getPreviousToken()->position;
 			$left = $this->parseSelectQuery();
 			$this->expectToken(')');
 
@@ -150,7 +150,7 @@ class MariaDbParserState
 				if ($lock !== null) {
 					return new SelectQuery(
 						$startPosition,
-						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$this->getPreviousToken()->getEndPosition(),
 						$left->select,
 						$left->from,
 						$left->where,
@@ -187,7 +187,7 @@ class MariaDbParserState
 			$lock = $this->parseSelectLock();
 			$left = new SelectQuery(
 				$startToken->position,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$selectExpressions,
 				$from,
 				$where,
@@ -250,7 +250,7 @@ class MariaDbParserState
 			$right = $this->parseSelectQuery($combinatorPrecedence + 1);
 			$orderBy = $this->parseOrderBy();
 			$limit = $this->parseLimit();
-			$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
+			$endPosition = $this->getPreviousToken()->getEndPosition();
 			$left = new CombinedSelectQuery(
 				$left->getStartPosition(),
 				$endPosition,
@@ -380,7 +380,7 @@ class MariaDbParserState
 
 				return new \MariaStan\Ast\Query\TableReference\Subquery(
 					$startPosition,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$this->getPreviousToken()->getEndPosition(),
 					$query,
 					$alias,
 				);
@@ -401,7 +401,7 @@ class MariaDbParserState
 				if ($alias !== null || $queryChanged) {
 					return new \MariaStan\Ast\Query\TableReference\Subquery(
 						$startPosition,
-						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$this->getPreviousToken()->getEndPosition(),
 						$newQuery,
 						$alias,
 					);
@@ -416,7 +416,7 @@ class MariaDbParserState
 
 		return new Table(
 			$table->position,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$this->cleanIdentifier($table->content),
 			$alias,
 		);
@@ -475,7 +475,7 @@ class MariaDbParserState
 		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
 
 		if ($ident && $this->acceptToken('.') && $this->acceptToken('*')) {
-			$prevToken = $this->getPreviousTokenUnsafe();
+			$prevToken = $this->getPreviousToken();
 
 			return new AllColumns(
 				$startExpressionToken->position,
@@ -488,7 +488,7 @@ class MariaDbParserState
 		$this->position = $position;
 		$expr = $this->parseExpression();
 		$alias = $this->parseFieldAlias();
-		$prevToken = $this->getPreviousTokenUnsafe();
+		$prevToken = $this->getPreviousToken();
 
 		return new RegularExpr($prevToken->getEndPosition(), $expr, $alias);
 	}
@@ -695,7 +695,7 @@ class MariaDbParserState
 			}
 		}
 
-		$result = new Is($left->getStartPosition(), $this->getPreviousTokenUnsafe()->getEndPosition(), $left, $test);
+		$result = new Is($left->getStartPosition(), $this->getPreviousToken()->getEndPosition(), $left, $test);
 
 		return $isNot
 			? new UnaryOp(
@@ -734,7 +734,7 @@ class MariaDbParserState
 
 		return new In(
 			$left->getStartPosition(),
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$left,
 			$right,
 		);
@@ -839,14 +839,14 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseRestOfSubqueryOrTuple(bool $strictTuple): Expr
 	{
-		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$startPosition = $this->getPreviousToken()->position;
 
 		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
 			$this->position--;
 			$query = $this->parseSelectQuery();
 			$this->expectToken(')');
 
-			return new Subquery($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $query);
+			return new Subquery($startPosition, $this->getPreviousToken()->getEndPosition(), $query);
 		}
 
 		$expressions = [$this->parseExpression()];
@@ -859,7 +859,7 @@ class MariaDbParserState
 
 		return count($expressions) === 1 && ! $strictTuple
 			? reset($expressions)
-			: new Tuple($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $expressions);
+			: new Tuple($startPosition, $this->getPreviousToken()->getEndPosition(), $expressions);
 	}
 
 	/**
@@ -905,7 +905,7 @@ class MariaDbParserState
 
 					$functionCall = new FunctionCall\StandardFunctionCall(
 						$startPosition,
-						$this->getPreviousTokenUnsafe()->getEndPosition(),
+						$this->getPreviousToken()->getEndPosition(),
 						$ident->content,
 						$arguments,
 						$isDistinct,
@@ -959,7 +959,7 @@ class MariaDbParserState
 			if ($canBeWithoutParentheses || $hasParentheses) {
 				return new FunctionCall\StandardFunctionCall(
 					$startPosition,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$this->getPreviousToken()->getEndPosition(),
 					$functionIdent->content,
 					$arguments,
 				);
@@ -1022,7 +1022,7 @@ class MariaDbParserState
 			$expr = $this->parseExpression($precedence);
 			assert($unaryOp instanceof UnaryOpTypeEnum);
 
-			return new UnaryOp($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $unaryOp, $expr);
+			return new UnaryOp($startPosition, $this->getPreviousToken()->getEndPosition(), $unaryOp, $expr);
 		}
 
 		$literalInt = $this->acceptToken(TokenTypeEnum::LITERAL_INT);
@@ -1077,7 +1077,7 @@ class MariaDbParserState
 			$subquery = $this->parseSelectQuery();
 			$this->expectToken(')');
 
-			return new Exists($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $subquery);
+			return new Exists($startPosition, $this->getPreviousToken()->getEndPosition(), $subquery);
 		}
 
 		throw new UnexpectedTokenException(
@@ -1095,7 +1095,7 @@ class MariaDbParserState
 		$conditions = [];
 
 		while ($this->acceptToken(TokenTypeEnum::WHEN)) {
-			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$startPosition = $this->getPreviousToken()->position;
 			$when = $this->parseExpression();
 			$this->expectToken(TokenTypeEnum::THEN);
 			$then = $this->parseExpression();
@@ -1114,7 +1114,7 @@ class MariaDbParserState
 
 		return new CaseOp(
 			$caseToken->position,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$compareValue,
 			$conditions,
 			$else,
@@ -1131,7 +1131,7 @@ class MariaDbParserState
 
 		return new Interval(
 			$startToken->position,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$expr,
 			$timeUnit,
 		);
@@ -1170,7 +1170,7 @@ class MariaDbParserState
 
 			$windowFrame = new WindowFrame(
 				$frameTypeToken->position,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$frameType,
 				$lowerBound,
 				$upperBound,
@@ -1180,7 +1180,7 @@ class MariaDbParserState
 		$this->expectToken(')');
 
 		return new FunctionCall\WindowFunctionCall(
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$functionCall,
 			$partitionBy,
 			$orderBy,
@@ -1206,7 +1206,7 @@ class MariaDbParserState
 			$this->expectToken($typeToken);
 		}
 
-		$endPosition = $this->getPreviousTokenUnsafe()->getEndPosition();
+		$endPosition = $this->getPreviousToken()->getEndPosition();
 
 		return match ($boundStartToken->type) {
 			TokenTypeEnum::CURRENT => WindowFrameBound::createCurrentRow($startPosition, $endPosition),
@@ -1238,7 +1238,7 @@ class MariaDbParserState
 
 			return FunctionCall\Count::createCountAll(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 			);
 		}
 
@@ -1254,7 +1254,7 @@ class MariaDbParserState
 
 			return FunctionCall\Count::createCountDistinct(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$arguments,
 			);
 		}
@@ -1264,7 +1264,7 @@ class MariaDbParserState
 
 		return FunctionCall\Count::createCount(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$argument,
 		);
 	}
@@ -1279,7 +1279,7 @@ class MariaDbParserState
 
 		return new FunctionCall\StandardFunctionCall(
 			$functionToken->position,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$functionToken->content,
 			[$firstArg, $secondArg],
 		);
@@ -1302,7 +1302,7 @@ class MariaDbParserState
 
 		return new FunctionCall\StandardFunctionCall(
 			$functionToken->position,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$functionToken->content,
 			[$firstArg, $secondArg],
 		);
@@ -1318,7 +1318,7 @@ class MariaDbParserState
 
 		return new FunctionCall\Cast(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$expr,
 			$castType,
 		);
@@ -1354,7 +1354,7 @@ class MariaDbParserState
 		if ($this->acceptToken(TokenTypeEnum::BINARY)) {
 			$length = $parseSingleOptionalIntParam();
 
-			return new BinaryCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $length);
+			return new BinaryCastType($startPosition, $this->getPreviousToken()->getEndPosition(), $length);
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::CHAR)) {
@@ -1372,7 +1372,7 @@ class MariaDbParserState
 
 			return new CharCastType(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$length,
 				$characterSet,
 				$collation,
@@ -1380,7 +1380,7 @@ class MariaDbParserState
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::DATE)) {
-			return new DateCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+			return new DateCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::DATETIME)) {
@@ -1388,7 +1388,7 @@ class MariaDbParserState
 
 			return new DateTimeCastType(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$microsecondPrecision,
 			);
 		}
@@ -1408,18 +1408,18 @@ class MariaDbParserState
 
 			return new DecimalCastType(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$maxDigits ?? 10,
 				$maxDecimals ?? 0,
 			);
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::DOUBLE)) {
-			return new DoubleCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+			return new DoubleCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::FLOAT)) {
-			return new FloatCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition());
+			return new FloatCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
 		$intToken = $this->acceptAnyOfTokenTypes(
@@ -1435,7 +1435,7 @@ class MariaDbParserState
 
 			$isSigned = $intToken->type !== TokenTypeEnum::UNSIGNED;
 
-			return new IntegerCastType($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $isSigned);
+			return new IntegerCastType($startPosition, $this->getPreviousToken()->getEndPosition(), $isSigned);
 		}
 
 		if ($this->acceptToken(TokenTypeEnum::TIME)) {
@@ -1443,7 +1443,7 @@ class MariaDbParserState
 
 			return new TimeCastType(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$microsecondPrecision,
 			);
 		}
@@ -1456,7 +1456,7 @@ class MariaDbParserState
 
 			return new DaySecondCastType(
 				$startPosition,
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$microsecondPrecision,
 			);
 		}
@@ -1474,7 +1474,7 @@ class MariaDbParserState
 			return null;
 		}
 
-		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$startPosition = $this->getPreviousToken()->position;
 		$this->expectToken(TokenTypeEnum::BY);
 		$expressions = $this->parseListOfExprWithDirection();
 		$isWithRollup = false;
@@ -1486,7 +1486,7 @@ class MariaDbParserState
 
 		return new GroupBy(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$expressions,
 			$isWithRollup,
 		);
@@ -1499,13 +1499,13 @@ class MariaDbParserState
 			return null;
 		}
 
-		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$startPosition = $this->getPreviousToken()->position;
 		$this->expectToken(TokenTypeEnum::BY);
 		$expressions = $this->parseListOfExprWithDirection();
 
 		return new OrderBy(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$expressions,
 		);
 	}
@@ -1523,7 +1523,7 @@ class MariaDbParserState
 			$direction = $this->parseDirectionOrDefaultAsc();
 			$expressions[] = new ExprWithDirection(
 				$expr->getStartPosition(),
-				$this->getPreviousTokenUnsafe()->getEndPosition(),
+				$this->getPreviousToken()->getEndPosition(),
 				$expr,
 				$direction,
 			);
@@ -1551,7 +1551,7 @@ class MariaDbParserState
 		}
 
 		// TODO: implement SELECT ... OFFSET ... FETCH https://mariadb.com/kb/en/select-offset-fetch/
-		$startPosition = $this->getPreviousTokenUnsafe()->position;
+		$startPosition = $this->getPreviousToken()->position;
 		$count = $this->parseExpression();
 		$offset = null;
 
@@ -1564,7 +1564,7 @@ class MariaDbParserState
 
 		return new Limit(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->position,
+			$this->getPreviousToken()->position,
 			$count,
 			$offset,
 		);
@@ -1574,11 +1574,11 @@ class MariaDbParserState
 	private function parseSelectLock(): ?SelectLock
 	{
 		if ($this->acceptToken(TokenTypeEnum::FOR)) {
-			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$startPosition = $this->getPreviousToken()->position;
 			$this->expectToken(TokenTypeEnum::UPDATE);
 			$type = SelectLockTypeEnum::UPDATE;
 		} elseif ($this->acceptToken(TokenTypeEnum::LOCK)) {
-			$startPosition = $this->getPreviousTokenUnsafe()->position;
+			$startPosition = $this->getPreviousToken()->position;
 			$this->expectToken(TokenTypeEnum::IN);
 			$this->expectToken(TokenTypeEnum::SHARE);
 			$this->expectToken(TokenTypeEnum::MODE);
@@ -1595,14 +1595,14 @@ class MariaDbParserState
 				// help phpstan
 				assert($waitToken !== null);
 				$this->expectToken(TokenTypeEnum::LOCKED);
-				$lockOption = new SkipLocked($waitToken->position, $this->getPreviousTokenUnsafe()->getEndPosition());
+				$lockOption = new SkipLocked($waitToken->position, $this->getPreviousToken()->getEndPosition());
 				break;
 			case TokenTypeEnum::WAIT:
 				assert($waitToken !== null);
 				$secondsToken = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, TokenTypeEnum::LITERAL_FLOAT);
 				$lockOption = new Wait(
 					$waitToken->position,
-					$this->getPreviousTokenUnsafe()->getEndPosition(),
+					$this->getPreviousToken()->getEndPosition(),
 					(float) $secondsToken->content,
 				);
 				break;
@@ -1614,17 +1614,20 @@ class MariaDbParserState
 
 		return new SelectLock(
 			$startPosition,
-			$this->getPreviousTokenUnsafe()->getEndPosition(),
+			$this->getPreviousToken()->getEndPosition(),
 			$type,
 			$lockOption,
 		);
 	}
 
-	/** @phpstan-impure */
-	private function getPreviousTokenUnsafe(): Token
+	/**
+	 * @phpstan-impure
+	 * @throws ParserException
+	 */
+	private function getPreviousToken(): Token
 	{
 		// It can only be called after a token was consumed.
-		return $this->tokens[$this->position - 1];
+		return $this->tokens[$this->position - 1] ?? throw new UnexpectedTokenException('No previous token');
 	}
 
 	/** @phpstan-impure */
