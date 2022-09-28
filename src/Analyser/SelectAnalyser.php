@@ -298,6 +298,7 @@ final class SelectAnalyser
 						Schema\DbType\DbTypeEnum::DATETIME => new Schema\DbType\DecimalType(),
 						default => new Schema\DbType\FloatType(),
 					},
+					Expr\UnaryOpTypeEnum::BINARY => new Schema\DbType\VarcharType(),
 					default => new Schema\DbType\IntType(),
 				};
 

@@ -2409,3 +2409,32 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT BINARY 1 * 2
+-----
+MariaStan\Ast\Query\SelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::MULTIPLICATION
+							[left] => MariaStan\Ast\Expr\UnaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::BINARY
+									[expression] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 2
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

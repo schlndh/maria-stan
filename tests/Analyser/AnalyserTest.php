@@ -387,6 +387,9 @@ class AnalyserTest extends TestCase
 			'"c" LIKE "😀_" ESCAPE "😀" non_unicode_name',
 			'EXISTS (SELECT NULL)',
 			'EXISTS (SELECT NULL WHERE 0)',
+			'BINARY 1 + 2',
+			'BINARY (1 + 2)',
+			'BINARY NULL',
 		];
 
 		foreach ($exprs as $expr) {

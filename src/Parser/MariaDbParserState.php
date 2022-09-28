@@ -622,7 +622,12 @@ class MariaDbParserState
 			}
 
 			if ($isNot) {
-				$exp = new UnaryOp($exp->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $exp);
+				$exp = new UnaryOp(
+					$exp->getStartPosition(),
+					$exp->getEndPosition(),
+					UnaryOpTypeEnum::LOGIC_NOT,
+					$exp,
+				);
 			}
 		}
 
@@ -690,10 +695,15 @@ class MariaDbParserState
 			}
 		}
 
-		$result = new Is($left->getStartPosition(), $this->getCurrentPosition(), $left, $test);
+		$result = new Is($left->getStartPosition(), $this->getPreviousTokenUnsafe()->getEndPosition(), $left, $test);
 
 		return $isNot
-			? new UnaryOp($result->getStartPosition(), UnaryOpTypeEnum::LOGIC_NOT, $result)
+			? new UnaryOp(
+				$result->getStartPosition(),
+				$result->getEndPosition(),
+				UnaryOpTypeEnum::LOGIC_NOT,
+				$result,
+			)
 			: $result;
 	}
 
@@ -784,6 +794,7 @@ class MariaDbParserState
 		return match ($token->type) {
 			TokenTypeEnum::SINGLE_CHAR => UnaryOpTypeEnum::from($token->content),
 			TokenTypeEnum::NOT => UnaryOpTypeEnum::LOGIC_NOT,
+			TokenTypeEnum::BINARY => UnaryOpTypeEnum::BINARY,
 			TokenTypeEnum::INTERVAL => SpecialOpTypeEnum::INTERVAL,
 			default => throw new UnexpectedTokenException("Expected unary op token, got: {$token->content}"),
 		};
@@ -795,7 +806,8 @@ class MariaDbParserState
 		// https://mariadb.com/kb/en/operator-precedence/
 		return match ($op) {
 			SpecialOpTypeEnum::INTERVAL => 17,
-			// BINARY, COLLATE => 16
+			// COLLATE => 16
+			UnaryOpTypeEnum::BINARY => 16,
 			UnaryOpTypeEnum::LOGIC_NOT => 15,
 			UnaryOpTypeEnum::PLUS, UnaryOpTypeEnum::MINUS, UnaryOpTypeEnum::BITWISE_NOT => 14,
 			// || as string concat => 13
@@ -810,7 +822,6 @@ class MariaDbParserState
 				BinaryOpTypeEnum::GREATER, BinaryOpTypeEnum::LOWER_OR_EQUAL, BinaryOpTypeEnum::LOWER,
 				BinaryOpTypeEnum::NOT_EQUAL, SpecialOpTypeEnum::IN, BinaryOpTypeEnum::REGEXP,
 				SpecialOpTypeEnum::IS, SpecialOpTypeEnum::LIKE => 6,
-			// CASE, WHEN, THEN, ELSE, END => 5
 			SpecialOpTypeEnum::BETWEEN => 5,
 			// NOT - handled separately => 4,
 			BinaryOpTypeEnum::LOGIC_AND => 3,
@@ -968,7 +979,15 @@ class MariaDbParserState
 			);
 		}
 
-		$unaryOpToken = $this->acceptAnyOfTokenTypes('+', '-', '!', '~', TokenTypeEnum::NOT, TokenTypeEnum::INTERVAL);
+		$unaryOpToken = $this->acceptAnyOfTokenTypes(
+			'+',
+			'-',
+			'!',
+			'~',
+			TokenTypeEnum::NOT,
+			TokenTypeEnum::INTERVAL,
+			TokenTypeEnum::BINARY,
+		);
 
 		if ($unaryOpToken) {
 			$unaryOp = $this->getUnaryOpFromToken($unaryOpToken);
@@ -1003,7 +1022,7 @@ class MariaDbParserState
 			$expr = $this->parseExpression($precedence);
 			assert($unaryOp instanceof UnaryOpTypeEnum);
 
-			return new UnaryOp($startPosition, $unaryOp, $expr);
+			return new UnaryOp($startPosition, $this->getPreviousTokenUnsafe()->getEndPosition(), $unaryOp, $expr);
 		}
 
 		$literalInt = $this->acceptToken(TokenTypeEnum::LITERAL_INT);

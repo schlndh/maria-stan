@@ -11,10 +11,11 @@ final class UnaryOp extends BaseNode implements Expr
 {
 	public function __construct(
 		Position $startPosition,
+		Position $endPosition,
 		public readonly UnaryOpTypeEnum $operation,
 		public readonly Expr $expression,
 	) {
-		parent::__construct($startPosition, $this->expression->getEndPosition());
+		parent::__construct($startPosition, $endPosition);
 	}
 
 	public static function getExprType(): ExprTypeEnum
