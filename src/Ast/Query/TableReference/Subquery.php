@@ -6,8 +6,7 @@ namespace MariaStan\Ast\Query\TableReference;
 
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Exception\InvalidAstException;
-use MariaStan\Ast\Query\CombinedSelectQuery;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Parser\Position;
 
 final class Subquery extends BaseNode implements TableReference
@@ -15,8 +14,7 @@ final class Subquery extends BaseNode implements TableReference
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
-		// TODO: fix usages
-		public readonly SelectQuery|CombinedSelectQuery $query,
+		public readonly SelectQuery $query,
 		public readonly ?string $alias,
 	) {
 		parent::__construct($startPosition, $endPosition);

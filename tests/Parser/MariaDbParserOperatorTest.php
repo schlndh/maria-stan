@@ -17,7 +17,7 @@ use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Expr\Tuple;
 use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\DatabaseTestCaseHelper;
 use PHPUnit\Framework\TestCase;
@@ -75,7 +75,7 @@ class MariaDbParserOperatorTest extends TestCase
 		$dbValue = $this->getValueFromSql($select);
 		$parser = new MariaDbParser();
 		$selectQuery = $parser->parseSingleQuery($select);
-		$this->assertInstanceOf(SelectQuery::class, $selectQuery);
+		$this->assertInstanceOf(SimpleSelectQuery::class, $selectQuery);
 		$this->assertCount(1, $selectQuery->select);
 		$firstSelect = $selectQuery->select[0];
 		$this->assertInstanceOf(RegularExpr::class, $firstSelect);

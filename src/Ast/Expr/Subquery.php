@@ -5,18 +5,13 @@ declare(strict_types=1);
 namespace MariaStan\Ast\Expr;
 
 use MariaStan\Ast\BaseNode;
-use MariaStan\Ast\Query\CombinedSelectQuery;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Parser\Position;
 
 final class Subquery extends BaseNode implements Expr
 {
-	public function __construct(
-		Position $startPosition,
-		Position $endPosition,
-		// TODO: fix usages
-		public readonly SelectQuery|CombinedSelectQuery $query,
-	) {
+	public function __construct(Position $startPosition, Position $endPosition, public readonly SelectQuery $query)
+	{
 		parent::__construct($startPosition, $endPosition);
 	}
 

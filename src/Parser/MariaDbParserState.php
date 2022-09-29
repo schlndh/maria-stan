@@ -48,9 +48,10 @@ use MariaStan\Ast\Lock\SelectLockTypeEnum;
 use MariaStan\Ast\Lock\SkipLocked;
 use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
-use MariaStan\Ast\Query\CombinedSelectQuery;
 use MariaStan\Ast\Query\Query;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
@@ -134,7 +135,7 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery|CombinedSelectQuery
+	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery
 	{
 		// TODO: https://mariadb.com/kb/en/common-table-expressions/
 		// TODO: INTO OUTFILE/DUMPFILE/variable
@@ -143,12 +144,12 @@ class MariaDbParserState
 			$left = $this->parseSelectQuery();
 			$this->expectToken(')');
 
-			if ($precedence === self::SELECT_PRECEDENCE_NORMAL && $left instanceof SelectQuery) {
+			if ($precedence === self::SELECT_PRECEDENCE_NORMAL && $left instanceof SimpleSelectQuery) {
 				$lock = $this->parseSelectLock();
 
 				// UNION/EXCEPT/INTERCEPT can't follow SELECT with lock unless it's wrapped in parentheses.
 				if ($lock !== null) {
-					return new SelectQuery(
+					return new SimpleSelectQuery(
 						$startPosition,
 						$this->getPreviousToken()->getEndPosition(),
 						$left->select,
@@ -185,7 +186,7 @@ class MariaDbParserState
 			}
 
 			$lock = $this->parseSelectLock();
-			$left = new SelectQuery(
+			$left = new SimpleSelectQuery(
 				$startToken->position,
 				$this->getPreviousToken()->getEndPosition(),
 				$selectExpressions,
@@ -210,9 +211,9 @@ class MariaDbParserState
 
 	/** @throws ParserException */
 	private function parseRestOfCombinedQuery(
-		SelectQuery|CombinedSelectQuery $left,
+		SelectQuery $left,
 		int $precedence = self::SELECT_PRECEDENCE_NORMAL,
-	): SelectQuery|CombinedSelectQuery {
+	): SelectQuery {
 		while (true) {
 			$combinatorToken = $this->acceptAnyOfTokenTypes(
 				TokenTypeEnum::UNION,
@@ -251,6 +252,8 @@ class MariaDbParserState
 			$orderBy = $this->parseOrderBy();
 			$limit = $this->parseLimit();
 			$endPosition = $this->getPreviousToken()->getEndPosition();
+			$left = $this->ensureCombinedSelectSubqueryIsValid($combinator, $left);
+			$right = $this->ensureCombinedSelectSubqueryIsValid($combinator, $right);
 			$left = new CombinedSelectQuery(
 				$left->getStartPosition(),
 				$endPosition,
@@ -268,6 +271,20 @@ class MariaDbParserState
 		}
 
 		return $left;
+	}
+
+	/** @throws ParserException */
+	private function ensureCombinedSelectSubqueryIsValid(
+		SelectQueryCombinatorTypeEnum $combinator,
+		SelectQuery $subquery,
+	): SimpleSelectQuery|CombinedSelectQuery {
+		if (! ($subquery instanceof SimpleSelectQuery || $subquery instanceof CombinedSelectQuery)) {
+			throw new ParserException(
+				"Invalid {$combinator->value} subquery: {$subquery::getSelectQueryType()->value}",
+			);
+		}
+
+		return $subquery;
 	}
 
 	/**

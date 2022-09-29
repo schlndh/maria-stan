@@ -2,7 +2,7 @@ Operators
 -----
 SELECT 1 + 2 * 3
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -35,7 +35,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 / 2 + 3
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -68,7 +68,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 * 2 / 3 % 4 MOD 5 DIV 6 + 7 * 8 / 10
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -149,7 +149,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 AND 1 OR 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -182,7 +182,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 XOR 0 OR 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -215,7 +215,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 = 2 <=> 3 >= 4 > 5 <= 6 < 7 <> 8 != 9
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -296,7 +296,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 & 1 | 1 ^ 0
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -337,7 +337,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 << 2 >> 3
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -370,7 +370,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT NOT 1 - 1, !1 - 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -418,7 +418,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT (1, ((0 + 1) * 2, 1)) = (0, (1, 0))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -499,7 +499,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT (1 + 0) * 2
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -532,7 +532,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 = (SELECT id FROM parser_test LIMIT 1)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -547,7 +547,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[right] => MariaStan\Ast\Expr\Subquery
 								(
-									[query] => MariaStan\Ast\Query\SelectQuery
+									[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										(
 											[select] => Array
 												(
@@ -581,7 +581,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT (1, 0) = ((SELECT id FROM parser_test LIMIT 1), (SELECT id FROM parser_test LIMIT 1))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -610,7 +610,7 @@ MariaStan\Ast\Query\SelectQuery
 										(
 											[0] => MariaStan\Ast\Expr\Subquery
 												(
-													[query] => MariaStan\Ast\Query\SelectQuery
+													[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[select] => Array
 																(
@@ -638,7 +638,7 @@ MariaStan\Ast\Query\SelectQuery
 												)
 											[1] => MariaStan\Ast\Expr\Subquery
 												(
-													[query] => MariaStan\Ast\Query\SelectQuery
+													[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[select] => Array
 																(
@@ -674,7 +674,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT (1) IN (0), 1 IN ('a'), 1 IN (1.2), 1 IN (NULL)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -764,7 +764,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IN (0, 1)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -798,7 +798,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IN (SELECT id FROM parser_test)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -812,7 +812,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[right] => MariaStan\Ast\Expr\Subquery
 								(
-									[query] => MariaStan\Ast\Query\SelectQuery
+									[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										(
 											[select] => Array
 												(
@@ -839,7 +839,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IN ((SELECT id FROM parser_test))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -857,7 +857,7 @@ MariaStan\Ast\Query\SelectQuery
 										(
 											[0] => MariaStan\Ast\Expr\Subquery
 												(
-													[query] => MariaStan\Ast\Query\SelectQuery
+													[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[select] => Array
 																(
@@ -886,7 +886,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 NOT IN (0, 1)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -924,7 +924,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 * 2 NOT IN (0, 1)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -970,7 +970,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 BETWEEN 0 AND 1 XOR 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1006,7 +1006,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 BETWEEN 0 + 0 AND 1 + 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1050,7 +1050,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 NOT BETWEEN 0 AND 1 XOR 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1090,7 +1090,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 BETWEEN 0 AND 2 BETWEEN 0 AND 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1129,7 +1129,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 0 + 1 BETWEEN 1 AND 2
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1165,7 +1165,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT "a" REGEXP "b" RLIKE "0"
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1201,7 +1201,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 + 2 REGEXP 2 + 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1242,7 +1242,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IS NULL, 1 IS NOT NULL, NOT 1 IS NULL, 1 IS NULL AND 1, 1 IS NULL IS NULL
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1321,7 +1321,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IS UNKNOWN, 1 IS NOT UNKNOWN, NOT 1 IS UNKNOWN, 1 IS UNKNOWN AND 1, 1 IS UNKNOWN IS UNKNOWN
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1400,7 +1400,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IS TRUE, 1 IS NOT TRUE, NOT 1 IS TRUE, 1 IS TRUE AND 1, 1 IS TRUE IS TRUE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1485,7 +1485,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 IS FALSE, 1 IS NOT FALSE, NOT 1 IS FALSE, 1 IS FALSE AND 1, 1 IS FALSE IS FALSE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1575,7 +1575,7 @@ SELECT NOW() + INTERVAL 1 MICROSECOND + INTERVAL 2 SECOND + INTERVAL 3 MINUTE + 
     NOW() - INTERVAL 18 day_minute - INTERVAL 5+5 DAY_HOUR - INTERVAL id YEAR_MONTH
     FROM parser_test
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1893,7 +1893,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT "a" LIKE "b", "a" LIKE "b" ESCAPE "c", "a" NOT LIKE "b", "a" NOT LIKE "b" ESCAPE "c"
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1985,7 +1985,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN 1 THEN 5 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2019,7 +2019,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1+1 WHEN 1 AND 1 THEN 5 * 6 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2077,7 +2077,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN 1 > 0 THEN 5 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2119,7 +2119,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN 1 THEN 5 ELSE 6 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2157,7 +2157,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN 1 THEN 5 WHEN 2 THEN 6 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2202,7 +2202,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE WHEN 1 THEN 2 WHEN 2 THEN 3 ELSE 4 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2247,7 +2247,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE CASE 1 WHEN 1 THEN 3 ELSE 4 END WHEN 1 THEN 5 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2302,7 +2302,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN CASE 1 WHEN 1 THEN 3 ELSE 4 END THEN 5 END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2357,7 +2357,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CASE 1 WHEN 1 THEN CASE 1 WHEN 1 THEN 3 ELSE 4 END END
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2412,7 +2412,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT BINARY 1 * 2
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(

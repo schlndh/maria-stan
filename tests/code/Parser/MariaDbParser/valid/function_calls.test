@@ -2,7 +2,7 @@ Function calls
 -----
 SELECT ABS(-1)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -31,7 +31,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT COALESCE(NULL, NULL, 5)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -62,7 +62,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT nOw()
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -84,7 +84,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT CURRENT_DATE, CURRENT_ROLE, CURRENT_TIME, CURRENT_TIMESTAMP, CURRENT_USER, LOCALTIME, LOCALTIMESTAMP, UTC_DATE,
 UTC_TIME, UTC_TIMESTAMP
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -205,7 +205,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT CURRENT_DATE(), CURRENT_ROLE(), CURRENT_TIME(), CURRENT_TIMESTAMP(), CURRENT_USER(), LOCALTIME(),
 LOCALTIMESTAMP(), UTC_DATE(), UTC_TIME(), UTC_TIMESTAMP()
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -325,7 +325,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CURRENT_TIME(1), CURRENT_TIMESTAMP(2), LOCALTIME(1), LOCALTIMESTAMP(2), UTC_TIME(1), UTC_TIMESTAMP(2)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -425,7 +425,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM parser_test
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -504,7 +504,7 @@ SELECT
     sUm(id), SuM(DISTINCT id)
 FROM (SELECT 1 id) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -631,7 +631,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -667,7 +667,7 @@ SELECT
     AVG(id) OVER (ROWS UNBOUNDED PRECEDING)
 FROM (SELECT 1 id, 'a' name) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1167,7 +1167,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1208,7 +1208,7 @@ SELECT
     AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND CURRENT ROW)
 FROM (SELECT 1 id) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1576,7 +1576,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1627,7 +1627,7 @@ SELECT
     VAR_SAMP(id) OVER (PARTITION BY id)
 FROM (SELECT 1 id) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2402,7 +2402,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -2425,7 +2425,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT id FROM (SELECT 1 id) t
 ORDER BY AVG(id) OVER (PARTITION BY id)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2439,7 +2439,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -2498,7 +2498,7 @@ IF(1, 2, 3), REPLACE('aaa', 'a', 'b'), DATABASE(), SCHEMA(), LEFT('aa', 1), RIGH
 MOD(5, 2), DEFAULT(name)
 FROM parser_test
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2658,7 +2658,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR), dAtE_SuB(NOW(), INTERVAL 1 HOUR),
 ADDDATE('2022-01-01', INTERVAL 1 HOUR), subdate('2022-01-01', INTERVAL 1 HOUR)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2770,7 +2770,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT ADDDATE(NOW(), 5), SUBDATE(NOW(), 5)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2826,7 +2826,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 as BINARY), CAST(5 AS CHAR), CAST(5 AS DATE), CAST(5 AS DATETIME), CAST(5 AS DECIMAL)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2903,7 +2903,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS DECIMAL(5)), CAST(5 AS DECIMAL(10, 5)), CAST(5 AS DOUBLE), CAST(5 AS FLOAT), CAST(5 AS INTEGER)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -2984,7 +2984,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT CAST(5 AS SIGNED), CAST(5 AS SIGNED INTEGER), CAST(5 AS UNSIGNED), CAST(5 AS UNSIGNED INTEGER), CAST(5 AS TIME),
 CAST(5 AS INTERVAL DAY_SECOND(2))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3077,7 +3077,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS DECIMAL(1.1))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3102,7 +3102,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(? AS INTEGER)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3125,7 +3125,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS CHAR(10))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3149,7 +3149,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS CHAR(10) CHARACTER SET utf8mb4)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3174,7 +3174,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS CHAR(10) COLLATE utf8mb4_unicode_ci)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3199,7 +3199,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS CHAR(10) COLLATE `utf8mb4_unicode_ci`)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3224,7 +3224,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS BINARY(10))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3248,7 +3248,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS DATETIME(3))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3272,7 +3272,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS TIME(3))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3296,7 +3296,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT CAST(5 AS BINARY(1.1)), CAST(5 AS CHAR(1.1)), CAST(5 AS DATETIME(1.1)), CAST(5 AS TIME(1.1))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3362,7 +3362,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT POSITION('a' IN 'baC')
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3388,7 +3388,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT POSITION('a' IN ('abc'))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3414,7 +3414,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT POSITION('a' IN NOW())
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3443,7 +3443,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT POSITION(('a' IN (1, 2, 3)) IN 5)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -3489,7 +3489,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT POSITION('1' IN 1 IN (1,2,3))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(

@@ -3,7 +3,7 @@ SELECT literals
 SELECT
 10, +10, -10
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -43,7 +43,7 @@ MariaStan\Ast\Query\SelectQuery
 SELECT
 0.1, .1, +0.1, -.1, 0.2E3, .2e3, +0.2E3, -.2E3
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -125,7 +125,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT NULL, null, nUll
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -153,7 +153,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT "aaa", "aa" "bb", "cc""dd", "ee\"ff", 'aaa', 'aa' 'bb', 'cc''dd', 'ee\'ff'
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -227,7 +227,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT "\'\"\n\t\\\%\_\a\r", '\'\"\n\t\\\%\_\a\r', "\\\\\a"
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -265,7 +265,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT NULL
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(

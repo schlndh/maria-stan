@@ -4,10 +4,10 @@ UNION
 UNION ALL
 (SELECT COUNT(*) FROM parser_test)
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -29,7 +29,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -58,10 +58,10 @@ MariaStan\Ast\Query\CombinedSelectQuery
 UNION DISTINCT
 (SELECT * FROM parser_test)
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -75,7 +75,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -96,10 +96,10 @@ MariaStan\Ast\Query\CombinedSelectQuery
 UNION
 (SELECT * FROM parser_test)
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -113,7 +113,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -136,13 +136,13 @@ UNION ALL
 UNION DISTINCT
 (SELECT * FROM parser_test)
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-			[left] => MariaStan\Ast\Query\SelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -156,7 +156,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => false
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -172,7 +172,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -195,10 +195,10 @@ UNION ALL
 ORDER BY id DESC
 LIMIT 2
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -245,7 +245,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -321,10 +321,10 @@ WHERE id > 1
 UNION ALL
 SELECT * FROM parser_test
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -350,7 +350,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -372,10 +372,10 @@ GROUP BY id
 UNION ALL
 SELECT * FROM parser_test
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -404,7 +404,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -426,10 +426,10 @@ HAVING id > 1
 UNION ALL
 SELECT * FROM parser_test
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -455,7 +455,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -477,10 +477,10 @@ UNION ALL
 SELECT * FROM parser_test
 WHERE id > 1
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -494,7 +494,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -528,10 +528,10 @@ UNION ALL
 SELECT * FROM parser_test
 GROUP BY id
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -545,7 +545,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -582,10 +582,10 @@ UNION ALL
 SELECT * FROM parser_test
 HAVING id > 1
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -599,7 +599,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -633,10 +633,10 @@ UNION ALL
 SELECT * FROM parser_test
 ORDER BY id
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -650,7 +650,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -687,10 +687,10 @@ SELECT * FROM parser_test
 ORDER BY id
 LIMIT 2
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -704,7 +704,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -748,7 +748,7 @@ UNION ALL
 SELECT * FROM parser_test
 ) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -758,10 +758,10 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -775,7 +775,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -803,7 +803,7 @@ UNION ALL
 ) t
 WHERE id > 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -813,10 +813,10 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -830,7 +830,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -870,7 +870,7 @@ UNION ALL
 ) t
 GROUP BY id;
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -880,10 +880,10 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -897,7 +897,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -940,7 +940,7 @@ UNION ALL
 ) t
 HAVING id > 1;
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -950,10 +950,10 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -967,7 +967,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1007,7 +1007,7 @@ UNION ALL
 UNION SELECT 3
 ) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1017,13 +1017,13 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\CombinedSelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 						(
 							[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-							[left] => MariaStan\Ast\Query\SelectQuery
+							[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[select] => Array
 										(
@@ -1037,7 +1037,7 @@ MariaStan\Ast\Query\SelectQuery
 										)
 									[isDistinct] => false
 								)
-							[right] => MariaStan\Ast\Query\SelectQuery
+							[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[select] => Array
 										(
@@ -1053,7 +1053,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1080,10 +1080,10 @@ UNION ALL
 UNION DISTINCT
 SELECT * FROM parser_test)
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -1097,10 +1097,10 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-			[left] => MariaStan\Ast\Query\SelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1114,7 +1114,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => false
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1139,7 +1139,7 @@ UNION ALL
 SELECT id FROM parser_test
 )
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1153,10 +1153,10 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[right] => MariaStan\Ast\Expr\Subquery
 								(
-									[query] => MariaStan\Ast\Query\CombinedSelectQuery
+									[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 										(
 											[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-											[left] => MariaStan\Ast\Query\SelectQuery
+											[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												(
 													[select] => Array
 														(
@@ -1174,7 +1174,7 @@ MariaStan\Ast\Query\SelectQuery
 														)
 													[isDistinct] => false
 												)
-											[right] => MariaStan\Ast\Query\SelectQuery
+											[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												(
 													[select] => Array
 														(
@@ -1207,7 +1207,7 @@ UNION ALL
 SELECT id FROM parser_test LIMIT 1)
 )
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -1220,10 +1220,10 @@ MariaStan\Ast\Query\SelectQuery
 								(
 									[0] => MariaStan\Ast\Expr\Subquery
 										(
-											[query] => MariaStan\Ast\Query\CombinedSelectQuery
+											[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 												(
 													[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-													[left] => MariaStan\Ast\Query\SelectQuery
+													[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[select] => Array
 																(
@@ -1241,7 +1241,7 @@ MariaStan\Ast\Query\SelectQuery
 																)
 															[isDistinct] => false
 														)
-													[right] => MariaStan\Ast\Query\SelectQuery
+													[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[select] => Array
 																(
@@ -1285,13 +1285,13 @@ UNION ALL
 SELECT * FROM parser_test
 LIMIT 1
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-			[left] => MariaStan\Ast\Query\SelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1305,7 +1305,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => false
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1328,7 +1328,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -1356,10 +1356,10 @@ SELECT 1
 UNION ALL (SELECT 1 UNION SELECT 2)
 INTERSECT SELECT 2
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -1373,13 +1373,13 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::INTERSECT
-			[left] => MariaStan\Ast\Query\CombinedSelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1393,7 +1393,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1409,7 +1409,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => true
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1432,13 +1432,13 @@ MariaStan\Ast\Query\CombinedSelectQuery
 EXCEPT ALL SELECT 2
 INTERSECT SELECT 1;
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::EXCEPT
-	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-			[left] => MariaStan\Ast\Query\SelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1452,7 +1452,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => false
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1468,10 +1468,10 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => true
 		)
-	[right] => MariaStan\Ast\Query\CombinedSelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::INTERSECT
-			[left] => MariaStan\Ast\Query\SelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1485,7 +1485,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => false
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1508,16 +1508,16 @@ MariaStan\Ast\Query\CombinedSelectQuery
 EXCEPT ALL SELECT 2
 UNION SELECT 1;
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\CombinedSelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 		(
 			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::EXCEPT
-			[left] => MariaStan\Ast\Query\CombinedSelectQuery
+			[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1531,7 +1531,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -1547,7 +1547,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 						)
 					[isDistinct] => true
 				)
-			[right] => MariaStan\Ast\Query\SelectQuery
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -1563,7 +1563,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(

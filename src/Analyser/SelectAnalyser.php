@@ -7,8 +7,10 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
-use MariaStan\Ast\Query\CombinedSelectQuery;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
+use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Subquery;
@@ -42,7 +44,7 @@ final class SelectAnalyser
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
-		private readonly SelectQuery|CombinedSelectQuery $selectAst,
+		private readonly SelectQuery $selectAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
 	) {
@@ -52,9 +54,22 @@ final class SelectAnalyser
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
-		$fields = $this->selectAst instanceof CombinedSelectQuery
-			? $this->analyseCombinedSelectQuery($this->selectAst)
-			: $this->analyseSingleSelectQuery($this->selectAst);
+		switch ($this->selectAst::getSelectQueryType()) {
+			case SelectQueryTypeEnum::SIMPLE:
+				assert($this->selectAst instanceof SimpleSelectQuery);
+				$fields = $this->analyseSingleSelectQuery($this->selectAst);
+				break;
+			case SelectQueryTypeEnum::COMBINED:
+				assert($this->selectAst instanceof CombinedSelectQuery);
+				$fields = $this->analyseCombinedSelectQuery($this->selectAst);
+				break;
+			default:
+				$this->errors[] = new AnalyserError(
+					"Unhandled SELECT type {$this->selectAst::getSelectQueryType()->value}",
+				);
+				$fields = [];
+				break;
+		}
 
 		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
 	}
@@ -120,7 +135,7 @@ final class SelectAnalyser
 	 * @return array<QueryResultField>
 	 * @throws AnalyserException
 	 */
-	private function analyseSingleSelectQuery(SelectQuery $select): array
+	private function analyseSingleSelectQuery(SimpleSelectQuery $select): array
 	{
 		$fromClause = $select->from;
 
@@ -646,7 +661,7 @@ final class SelectAnalyser
 		return $node->getStartPosition()->findSubstringToEndPosition($this->query, $node->getEndPosition());
 	}
 
-	private function getSubqueryAnalyser(SelectQuery|CombinedSelectQuery $subquery): self
+	private function getSubqueryAnalyser(SelectQuery $subquery): self
 	{
 		$other = new self(
 			$this->dbReflection,

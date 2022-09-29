@@ -2,7 +2,7 @@ FROM clauses
 -----
 SELECT * FROM parser_test_join_a, parser_test_join_b
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -27,7 +27,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -52,7 +52,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a CROSS JOIN parser_test_join_b
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -77,7 +77,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -106,7 +106,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a INNER JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -135,7 +135,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a LEFT JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -164,7 +164,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a LEFT OUTER JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -193,7 +193,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a RIGHT JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -222,7 +222,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a RIGHT OUTER JOIN parser_test_join_b ON 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -251,7 +251,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a, parser_test_join_b, parser_test_join_c
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -284,7 +284,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b JOIN parser_test_join_c
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -317,7 +317,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1 JOIN parser_test_join_c ON 2
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -358,7 +358,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM (parser_test_join_a, parser_test_join_b)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -386,7 +386,7 @@ SELECT * FROM (
     parser_test_join_c
 ), parser_test_join_d
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -441,7 +441,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM (SELECT 1) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -451,7 +451,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -472,7 +472,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM (SELECT * FROM (SELECT 1) t) t
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -482,7 +482,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -492,7 +492,7 @@ MariaStan\Ast\Query\SelectQuery
 						)
 					[from] => MariaStan\Ast\Query\TableReference\Subquery
 						(
-							[query] => MariaStan\Ast\Query\SelectQuery
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[select] => Array
 										(
@@ -517,7 +517,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM parser_test JOIN (SELECT 1 id) AS t ON t.id = parser_test.id
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -534,7 +534,7 @@ MariaStan\Ast\Query\SelectQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
 				(
-					[query] => MariaStan\Ast\Query\SelectQuery
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -571,7 +571,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM (((SELECT 1) t))
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -581,7 +581,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(
@@ -602,7 +602,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT * FROM (((SELECT 1)) t)
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -612,7 +612,7 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\SelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[select] => Array
 						(

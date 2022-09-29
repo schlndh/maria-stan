@@ -8,7 +8,7 @@ use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\LiteralNull;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -68,7 +68,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 		$this->assertNotNull($dbField);
 		$this->assertNotNull($parserResult);
-		$this->assertInstanceOf(SelectQuery::class, $parserResult);
+		$this->assertInstanceOf(SimpleSelectQuery::class, $parserResult);
 		$this->assertCount(1, $parserResult->select);
 		$this->assertSame($dbField->name, $this->getNameFromSelectExpr($select, $parserResult->select[0]));
 	}
@@ -124,7 +124,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 		$this->assertNotNull($dbField);
 		$this->assertNotNull($parserResult);
-		$this->assertInstanceOf(SelectQuery::class, $parserResult);
+		$this->assertInstanceOf(SimpleSelectQuery::class, $parserResult);
 		$from = $parserResult->from;
 		$this->assertNotNull($from);
 		$this->assertInstanceOf(Table::class, $from);
@@ -217,7 +217,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 		$this->assertNotNull($dbField);
 		$this->assertNotNull($parserResult);
-		$this->assertInstanceOf(SelectQuery::class, $parserResult);
+		$this->assertInstanceOf(SimpleSelectQuery::class, $parserResult);
 		$this->assertCount(1, $parserResult->select);
 		$firstSelectExpr = $parserResult->select[0];
 		$this->assertInstanceOf(RegularExpr::class, $firstSelectExpr);

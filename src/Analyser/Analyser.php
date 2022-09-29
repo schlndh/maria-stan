@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
-use MariaStan\Ast\Query\CombinedSelectQuery;
 use MariaStan\Ast\Query\QueryTypeEnum;
-use MariaStan\Ast\Query\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
@@ -35,7 +34,7 @@ final class Analyser
 			);
 		}
 
-		if ($ast::getQueryType() !== QueryTypeEnum::SELECT && $ast::getQueryType() !== QueryTypeEnum::COMBINED_SELECT) {
+		if ($ast::getQueryType() !== QueryTypeEnum::SELECT) {
 			return new AnalyserResult(
 				null,
 				[new AnalyserError("Unsupported query: {$ast::getQueryType()->value}")],
@@ -43,7 +42,7 @@ final class Analyser
 			);
 		}
 
-		assert($ast instanceof SelectQuery || $ast instanceof CombinedSelectQuery);
+		assert($ast instanceof SelectQuery);
 
 		return (new SelectAnalyser($this->dbReflection, $ast, $query))->analyse();
 	}

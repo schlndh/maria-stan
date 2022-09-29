@@ -2,7 +2,7 @@ SELECT locks
 -----
 SELECT 1 FOR UPDATE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -23,7 +23,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 (SELECT 1) FOR UPDATE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -44,10 +44,10 @@ MariaStan\Ast\Query\SelectQuery
 -----
 (SELECT 1 FOR UPDATE) UNION SELECT 2 FOR UPDATE
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -65,7 +65,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 					[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
 				)
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -88,10 +88,10 @@ MariaStan\Ast\Query\CombinedSelectQuery
 -----
 SELECT 1 UNION SELECT 2 FOR UPDATE
 -----
-MariaStan\Ast\Query\CombinedSelectQuery
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 (
 	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-	[left] => MariaStan\Ast\Query\SelectQuery
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -105,7 +105,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 				)
 			[isDistinct] => false
 		)
-	[right] => MariaStan\Ast\Query\SelectQuery
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[select] => Array
 				(
@@ -128,7 +128,7 @@ MariaStan\Ast\Query\CombinedSelectQuery
 -----
 SELECT * FROM (SELECT 1 UNION SELECT 2) t FOR UPDATE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -138,10 +138,10 @@ MariaStan\Ast\Query\SelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Subquery
 		(
-			[query] => MariaStan\Ast\Query\CombinedSelectQuery
+			[query] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 				(
 					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
-					[left] => MariaStan\Ast\Query\SelectQuery
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -155,7 +155,7 @@ MariaStan\Ast\Query\SelectQuery
 								)
 							[isDistinct] => false
 						)
-					[right] => MariaStan\Ast\Query\SelectQuery
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[select] => Array
 								(
@@ -182,7 +182,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 LOCK IN SHARE MODE
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -203,7 +203,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE WAIT 1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -228,7 +228,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE WAIT 1.1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -253,7 +253,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE WAIT 1.1e1
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -278,7 +278,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE WAIT 0
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -303,7 +303,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE NOWAIT
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -327,7 +327,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 SELECT 1 FOR UPDATE SKIP LOCKED
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
@@ -351,7 +351,7 @@ MariaStan\Ast\Query\SelectQuery
 -----
 ((SELECT 1 FOR UPDATE) FOR UPDATE) LOCK IN SHARE MODE;
 -----
-MariaStan\Ast\Query\SelectQuery
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 (
 	[select] => Array
 		(
