@@ -76,6 +76,7 @@ enum TokenTypeEnum: string
 	case CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
 	case CURRENT_USER = 'CURRENT_USER';
 	case CURSOR = 'CURSOR';
+	case CYCLE = 'CYCLE';
 	case DATABASE = 'DATABASE';
 	case DATABASES = 'DATABASES';
 	case DATE = 'DATE';

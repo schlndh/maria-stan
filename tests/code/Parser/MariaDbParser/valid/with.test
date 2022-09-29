@@ -1,0 +1,871 @@
+WITH
+-----
+WITH tbl AS (SELECT 1 id)
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+SELECT * FROM (
+WITH tbl AS (SELECT 1 id)
+SELECT * FROM tbl
+) t
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Subquery
+		(
+			[query] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+				(
+					[commonTableExpressions] => Array
+						(
+							[0] => MariaStan\Ast\CommonTableExpression
+								(
+									[name] => tbl
+									[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\RegularExpr
+														(
+															[expr] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 1
+																)
+															[alias] => id
+														)
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+					[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+					[allowRecursive] => false
+				)
+			[alias] => t
+		)
+	[isDistinct] => false
+)
+-----
+WITH tbl AS (SELECT 1 id)
+SELECT * FROM tbl, (
+    WITH tbl AS (SELECT 1 id)
+    SELECT * FROM tbl
+) t
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => tbl
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+								(
+									[commonTableExpressions] => Array
+										(
+											[0] => MariaStan\Ast\CommonTableExpression
+												(
+													[name] => tbl
+													[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\LiteralInt
+																				(
+																					[value] => 1
+																				)
+																			[alias] => id
+																		)
+																)
+															[isDistinct] => false
+														)
+												)
+										)
+									[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\AllColumns
+														(
+														)
+												)
+											[from] => MariaStan\Ast\Query\TableReference\Table
+												(
+													[name] => tbl
+												)
+											[isDistinct] => false
+										)
+									[allowRecursive] => false
+								)
+							[alias] => t
+						)
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+WITH RECURSIVE tbl AS (SELECT 1 id)
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => true
+)
+-----
+WITH RECURSIVE tbl AS (SELECT 1 id UNION ALL SELECT * FROM tbl)
+CYCLE id RESTRICT
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+						(
+							[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+							[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[alias] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\AllColumns
+												(
+												)
+										)
+									[from] => MariaStan\Ast\Query\TableReference\Table
+										(
+											[name] => tbl
+										)
+									[isDistinct] => false
+								)
+							[isDistinct] => false
+						)
+					[restrictCycleColumnList] => Array
+						(
+							[0] => id
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => true
+)
+-----
+WITH RECURSIVE tbl AS (SELECT 1 id UNION ALL SELECT * FROM tbl)
+CYCLE id RESTRICT,
+tbl2 AS (SELECT * FROM tbl),
+tbl3 AS (SELECT * FROM tbl2 UNION ALL SELECT * FROM tbl3)
+SELECT * FROM tbl3
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+						(
+							[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+							[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[alias] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\AllColumns
+												(
+												)
+										)
+									[from] => MariaStan\Ast\Query\TableReference\Table
+										(
+											[name] => tbl
+										)
+									[isDistinct] => false
+								)
+							[isDistinct] => false
+						)
+					[restrictCycleColumnList] => Array
+						(
+							[0] => id
+						)
+				)
+			[1] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl2
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+				)
+			[2] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl3
+					[subquery] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+						(
+							[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+							[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\AllColumns
+												(
+												)
+										)
+									[from] => MariaStan\Ast\Query\TableReference\Table
+										(
+											[name] => tbl2
+										)
+									[isDistinct] => false
+								)
+							[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\AllColumns
+												(
+												)
+										)
+									[from] => MariaStan\Ast\Query\TableReference\Table
+										(
+											[name] => tbl3
+										)
+									[isDistinct] => false
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl3
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => true
+)
+-----
+WITH tbl (aa, bb) AS (SELECT 1 id, "abc" name)
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+									[1] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => abc
+													[firstConcatPart] => abc
+												)
+											[alias] => name
+										)
+								)
+							[isDistinct] => false
+						)
+					[columnList] => Array
+						(
+							[0] => aa
+							[1] => bb
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+WITH tbl (aa, bb) AS (SELECT 1 id, "abc" name),
+tbl2 AS (SELECT 1)
+SELECT * FROM tbl, tbl2
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+									[1] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => abc
+													[firstConcatPart] => abc
+												)
+											[alias] => name
+										)
+								)
+							[isDistinct] => false
+						)
+					[columnList] => Array
+						(
+							[0] => aa
+							[1] => bb
+						)
+				)
+			[1] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl2
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => tbl
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => tbl2
+						)
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+WITH tbl AS (SELECT 1 id)
+(SELECT * FROM tbl)
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+WITH tbl (a,b) AS (SELECT * FROM parser_test)
+(SELECT * FROM tbl)
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+							[isDistinct] => false
+						)
+					[columnList] => Array
+						(
+							[0] => a
+							[1] => b
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+WITH tbl AS (SELECT 1)
+SELECT * FROM tbl
+UNION ALL
+SELECT * FROM tbl
+UNION ALL
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+		(
+			[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+			[left] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+					[isDistinct] => false
+				)
+			[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => tbl
+						)
+					[isDistinct] => false
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => false
+)
+-----
+SELECT EXISTS (
+    WITH tbl AS (SELECT 1)
+    SELECT * FROM tbl
+)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Exists
+						(
+							[subquery] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+								(
+									[commonTableExpressions] => Array
+										(
+											[0] => MariaStan\Ast\CommonTableExpression
+												(
+													[name] => tbl
+													[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+														(
+															[select] => Array
+																(
+																	[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																		(
+																			[expr] => MariaStan\Ast\Expr\LiteralInt
+																				(
+																					[value] => 1
+																				)
+																		)
+																)
+															[isDistinct] => false
+														)
+												)
+										)
+									[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\AllColumns
+														(
+														)
+												)
+											[from] => MariaStan\Ast\Query\TableReference\Table
+												(
+													[name] => tbl
+												)
+											[isDistinct] => false
+										)
+									[allowRecursive] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+WITH RECURSIVE tbl AS (SELECT 1 id, 2 name) CYCLE id RESTRICT
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => tbl
+					[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[alias] => id
+										)
+									[1] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+											[alias] => name
+										)
+								)
+							[isDistinct] => false
+						)
+					[restrictCycleColumnList] => Array
+						(
+							[0] => id
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => tbl
+				)
+			[isDistinct] => false
+		)
+	[allowRecursive] => true
+)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\CommonTableExpression;
 use MariaStan\Ast\DirectionEnum;
 use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
@@ -51,7 +52,9 @@ use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
+use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
@@ -114,9 +117,13 @@ class MariaDbParserState
 		$query = null;
 
 		// It seems that only SELECT can be wrapped in top-level parentheses. INSERT, UPDATE, EXPLAIN, .. don't work.
-		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, '(')) {
+		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH, '(')) {
 			$this->position--;
 			$query = $this->parseSelectQuery();
+
+			if ($this->tokens[0]->content === '(' && $query::getSelectQueryType() === SelectQueryTypeEnum::WITH) {
+				throw new ParserException('Top-level WITH query cannot be wrapped in parentheses.');
+			}
 		}
 
 		if ($query === null) {
@@ -164,6 +171,25 @@ class MariaDbParserState
 					);
 				}
 			}
+		} elseif ($precedence === self::SELECT_PRECEDENCE_NORMAL && $this->acceptToken(TokenTypeEnum::WITH)) {
+			$startPosition = $this->getPreviousToken()->position;
+			$allowRecursive = $this->acceptToken(TokenTypeEnum::RECURSIVE) !== null;
+			$commonTableExpressions = [];
+
+			do {
+				$commonTableExpressions[] = $this->parseCommonTableExpression($allowRecursive);
+			} while ($this->acceptToken(','));
+
+			$selectQuery = $this->parseSelectQuery();
+			$selectQuery = $this->ensureSimpleOrCombinedSelectQuery($selectQuery);
+
+			return new WithSelectQuery(
+				$startPosition,
+				$this->getPreviousToken()->getEndPosition(),
+				$commonTableExpressions,
+				$selectQuery,
+				$allowRecursive,
+			);
 		} else {
 			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
 			$distinctToken = $this->acceptAnyOfTokenTypes(
@@ -252,8 +278,8 @@ class MariaDbParserState
 			$orderBy = $this->parseOrderBy();
 			$limit = $this->parseLimit();
 			$endPosition = $this->getPreviousToken()->getEndPosition();
-			$left = $this->ensureCombinedSelectSubqueryIsValid($combinator, $left);
-			$right = $this->ensureCombinedSelectSubqueryIsValid($combinator, $right);
+			$left = $this->ensureSimpleOrCombinedSelectQuery($left);
+			$right = $this->ensureSimpleOrCombinedSelectQuery($right);
 			$left = new CombinedSelectQuery(
 				$left->getStartPosition(),
 				$endPosition,
@@ -274,17 +300,63 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
-	private function ensureCombinedSelectSubqueryIsValid(
-		SelectQueryCombinatorTypeEnum $combinator,
-		SelectQuery $subquery,
-	): SimpleSelectQuery|CombinedSelectQuery {
+	private function ensureSimpleOrCombinedSelectQuery(SelectQuery $subquery): SimpleSelectQuery|CombinedSelectQuery
+	{
 		if (! ($subquery instanceof SimpleSelectQuery || $subquery instanceof CombinedSelectQuery)) {
 			throw new ParserException(
-				"Invalid {$combinator->value} subquery: {$subquery::getSelectQueryType()->value}",
+				"Only simple/combined query is possible here. Got {$subquery::getSelectQueryType()->value} after: "
+					. $this->getContextPriorToPosition($subquery->getStartPosition()),
 			);
 		}
 
 		return $subquery;
+	}
+
+	/** @throws ParserException */
+	private function parseCommonTableExpression(bool $allowRecursive): CommonTableExpression
+	{
+		$startPosition = $this->getCurrentPosition();
+		$tableNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedCteAlias();
+		$name = $this->cleanIdentifier($this->expectAnyOfTokens(...$tableNameTokens)->content);
+		$fieldNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+		$columnList = $restrictCycleColumnList = null;
+
+		if ($this->acceptToken('(')) {
+			$columnList = [];
+
+			do {
+				$columnList[] = $this->cleanIdentifier($this->expectAnyOfTokens(...$fieldNameTokens)->content);
+			} while ($this->acceptToken(','));
+
+			$this->expectToken(')');
+		}
+
+		$this->expectToken(TokenTypeEnum::AS);
+		$this->expectToken('(');
+		$subquery = $this->parseSelectQuery();
+		$subquery = $this->ensureSimpleOrCombinedSelectQuery($subquery);
+		$this->expectToken(')');
+
+		if ($allowRecursive && $this->acceptToken(TokenTypeEnum::CYCLE)) {
+			$restrictCycleColumnList = [];
+
+			do {
+				$restrictCycleColumnList[] = $this->cleanIdentifier(
+					$this->expectAnyOfTokens(...$fieldNameTokens)->content,
+				);
+			} while ($this->acceptToken(','));
+
+			$this->expectToken(TokenTypeEnum::RESTRICT);
+		}
+
+		return new CommonTableExpression(
+			$startPosition,
+			$this->getPreviousToken()->getEndPosition(),
+			$name,
+			$subquery,
+			$columnList,
+			$restrictCycleColumnList,
+		);
 	}
 
 	/**
@@ -390,7 +462,7 @@ class MariaDbParserState
 		$startPosition = $this->getCurrentPosition();
 
 		if ($this->acceptToken('(')) {
-			if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+			if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
 				$this->position -= 2;
 				$query = $this->parseSelectQuery();
 				$alias = $this->parseTableAlias();
@@ -858,7 +930,7 @@ class MariaDbParserState
 	{
 		$startPosition = $this->getPreviousToken()->position;
 
-		if ($this->acceptToken(TokenTypeEnum::SELECT)) {
+		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
 			$this->position--;
 			$query = $this->parseSelectQuery();
 			$this->expectToken(')');
@@ -1904,6 +1976,11 @@ class MariaDbParserState
 			? $this->tokens[max($this->position - 5, 0)]->position
 				->findSubstringToEndPosition($this->query, $token->position)
 			: substr($this->query, -50);
+	}
+
+	private function getContextPriorToPosition(Position $startPosition): string
+	{
+		return $startPosition->findSubstringEndingWithPosition($this->query, 50);
 	}
 
 	private function printToken(?Token $token): string

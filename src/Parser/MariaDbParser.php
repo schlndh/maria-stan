@@ -44,6 +44,7 @@ class MariaDbParser
 			TokenTypeEnum::ACTION,
 			TokenTypeEnum::BIT,
 			TokenTypeEnum::CURRENT,
+			TokenTypeEnum::CYCLE,
 			TokenTypeEnum::DATE,
 			TokenTypeEnum::DATETIME,
 			TokenTypeEnum::END,
@@ -83,6 +84,15 @@ class MariaDbParser
 			$this->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias(),
 			// From MariaDB 10.2.12 only disallowed for table aliases.
 			static fn (TokenTypeEnum $t) => $t !== TokenTypeEnum::WINDOW,
+		);
+	}
+
+	/** @return array<TokenTypeEnum> */
+	public function getTokenTypesWhichCanBeUsedAsUnquotedCteAlias(): array
+	{
+		return $this->tableAliasTokenTypes ??= array_filter(
+			$this->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias(),
+			static fn (TokenTypeEnum $t) => $t !== TokenTypeEnum::ROLLUP,
 		);
 	}
 

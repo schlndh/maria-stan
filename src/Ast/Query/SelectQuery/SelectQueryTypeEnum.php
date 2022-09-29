@@ -11,4 +11,7 @@ enum SelectQueryTypeEnum: string
 
 	/** @see CombinedSelectQuery */
 	case COMBINED = 'COMBINED';
+
+	/** @see WithSelectQuery */
+	case WITH = 'WITH';
 }

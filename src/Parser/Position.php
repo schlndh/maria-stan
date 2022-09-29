@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use function max;
 use function mb_substr;
+use function min;
 use function strlen;
 use function strrpos;
 use function substr;
@@ -44,6 +46,18 @@ final class Position
 	{
 		// TODO: this is not UTF-8 safe.
 		return substr($str, $this->offset, $length);
+	}
+
+	public function findSubstringEndingWithPosition(string $str, ?int $length = null): string
+	{
+		// TODO: this is not UTF-8 safe.
+		$start = $length !== null
+			? max(0, $this->offset - $length)
+			: 0;
+		$length ??= $this->offset;
+		$length = min($length, $this->offset - $start);
+
+		return substr($str, $start, $length);
 	}
 
 	public function findSubstringToEndPosition(string $str, self $endPosition, ?int $maxLength = null): string

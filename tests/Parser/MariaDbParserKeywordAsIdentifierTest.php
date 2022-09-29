@@ -9,6 +9,7 @@ use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -34,6 +35,18 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		foreach ($cases as $tokenType) {
 			yield "field alias - {$tokenType->value}" => [
 				'select' => "SELECT 1 {$tokenType->value}",
+			];
+
+			yield "CTE field alias - {$tokenType->value}" => [
+				'select' => "WITH tbl ({$tokenType->value}) AS (SELECT 1) SELECT * FROM tbl",
+			];
+
+			yield "CTE CYCLE field alias - {$tokenType->value}" => [
+				'select' => "
+					WITH RECURSIVE tbl (`{$tokenType->value}`) AS
+					(SELECT 1) CYCLE {$tokenType->value} RESTRICT
+					SELECT * FROM tbl
+				",
 			];
 		}
 	}
@@ -68,9 +81,23 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 		$this->assertNotNull($dbField);
 		$this->assertNotNull($parserResult);
-		$this->assertInstanceOf(SimpleSelectQuery::class, $parserResult);
-		$this->assertCount(1, $parserResult->select);
-		$this->assertSame($dbField->name, $this->getNameFromSelectExpr($select, $parserResult->select[0]));
+
+		if ($parserResult instanceof WithSelectQuery) {
+			$this->assertCount(1, $parserResult->commonTableExpressions);
+			$cte = $parserResult->commonTableExpressions[0];
+			$this->assertNotNull($cte->columnList);
+			$this->assertCount(1, $cte->columnList);
+			$this->assertSame($dbField->name, $cte->columnList[0]);
+
+			if ($cte->restrictCycleColumnList !== null) {
+				$this->assertCount(1, $cte->restrictCycleColumnList);
+				$this->assertSame($dbField->name, $cte->restrictCycleColumnList[0]);
+			}
+		} else {
+			$this->assertInstanceOf(SimpleSelectQuery::class, $parserResult);
+			$this->assertCount(1, $parserResult->select);
+			$this->assertSame($dbField->name, $this->getNameFromSelectExpr($select, $parserResult->select[0]));
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
@@ -130,6 +157,55 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$this->assertInstanceOf(Table::class, $from);
 		$this->assertSame($dbField->orgtable, $from->name);
 		$this->assertSame($dbField->table, $from->alias);
+	}
+
+	/** @return iterable<string, array<mixed>> name => args */
+	public function provideTestCommonTableExpressionAliasData(): iterable
+	{
+		/** @phpstan-var array<TokenTypeEnum> $cases */
+		$cases = TokenTypeEnum::cases();
+
+		foreach ($cases as $tokenType) {
+			yield "CTE alias - {$tokenType->value}" => [
+				'select' => "WITH {$tokenType->value} AS (SELECT 1) SELECT * FROM `{$tokenType->value}`;",
+			];
+		}
+	}
+
+	/** @dataProvider provideTestCommonTableExpressionAliasData */
+	public function testCommonTableExpressionAlias(string $select): void
+	{
+		$parserResult = null;
+		$dbField = null;
+		$dbException = null;
+		$parserException = null;
+		$parser = new MariaDbParser();
+
+		try {
+			$dbField = $this->getFieldFromSql($select);
+		} catch (mysqli_sql_exception $dbException) {
+		}
+
+		try {
+			$parserResult = $parser->parseSingleQuery($select);
+		} catch (ParserException $parserException) {
+		}
+
+		$this->makeSureExceptionsMatch($dbException, $parserException);
+
+		if ($dbException !== null) {
+			// Make phpunit happy.
+			$this->assertNotNull($parserException);
+
+			return;
+		}
+
+		$this->assertNotNull($dbField);
+		$this->assertNotNull($parserResult);
+		$this->assertInstanceOf(WithSelectQuery::class, $parserResult);
+		$ctes = $parserResult->commonTableExpressions;
+		$this->assertCount(1, $ctes);
+		$this->assertSame($dbField->table, $ctes[0]->name);
 	}
 
 	/** @throws mysqli_sql_exception */
