@@ -10,7 +10,7 @@ ORDER BY id DESC
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got UNION after: FROM parser_test
 ORDER BY id
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION ALL
 SELECT * FROM parser_test
 WHERE id > 1
@@ -25,7 +25,7 @@ SELECT * FROM parser_test
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got UNION after: ORDER BY id
 LIMIT 5
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION ALL
 SELECT * FROM parser_test' at line 4
 -----
@@ -36,7 +36,7 @@ WHERE id > 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got WHERE after: SELECT * FROM parser_test)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE id > 1' at line 4
 -----
 (SELECT * FROM parser_test)
@@ -46,7 +46,7 @@ GROUP BY id;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got GROUP after: SELECT * FROM parser_test)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'GROUP BY id' at line 4
 -----
 (SELECT * FROM parser_test)
@@ -56,7 +56,7 @@ HAVING id > 1;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got HAVING after: SELECT * FROM parser_test)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HAVING id > 1' at line 4
 -----
 SELECT * FROM parser_test
@@ -70,7 +70,7 @@ LIMIT 1
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got UNION after: * FROM parser_test
 LIMIT 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION ALL
 SELECT * FROM parser_test
 LIMIT 1' at line 5
@@ -85,7 +85,7 @@ MariaStan\Parser\Exception\MissingSubqueryAliasException
 Subquery doesn't have alias: (SELECT * FROM parser_test)
 UNION ALL
 (SELECT * FR
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 5
 -----
 SELECT * FROM (
@@ -99,7 +99,7 @@ Subquery doesn't have alias: (
 (SELECT * FROM parser_test)
 UNION ALL
 (SELECT *
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNION SELECT 1 t' at line 5
 -----
 SELECT * FROM ((
@@ -110,5 +110,5 @@ UNION ALL
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got IDENTIFIER after: ) UNION SELECT 1 id
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't)' at line 5

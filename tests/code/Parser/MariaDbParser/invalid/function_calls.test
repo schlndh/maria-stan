@@ -4,474 +4,474 @@ SELECT COUNT(DISTINCT *) FROM (SELECT 1) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: '*' after: SELECT COUNT(DISTINCT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '*) FROM (SELECT 1) t' at line 1
 -----
 SELECT COUNT() FROM (SELECT 1) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: ')' after: SELECT COUNT(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1) t' at line 1
 -----
 SELECT COUNT(a, b) FROM (SELECT 1 a, 2 b) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: SELECT COUNT(a
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' b) FROM (SELECT 1 a, 2 b) t' at line 1
 -----
 SELECT AVG(DISTINCT) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected at least one argument after: SELECT AVG(DISTINCT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
 -----
 SELECT MAX(DISTINCT) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected at least one argument after: SELECT MAX(DISTINCT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
 -----
 SELECT MIN(DISTINCT) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected at least one argument after: SELECT MIN(DISTINCT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
 -----
 SELECT SUM(DISTINCT) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected at least one argument after: SELECT SUM(DISTINCT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
 -----
 SELECT STD(DISTINCT id) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: DISTINCT after: SELECT STD(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT id) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT ABS(DISTINCT id) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: DISTINCT after: SELECT ABS(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT id) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS UNBOUNDED FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got FOLLOWING after: ORDER BY id ROWS UNBOUNDED
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS 1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got FOLLOWING after: ORDER BY id ROWS 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS 1+1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got '+' after: ORDER BY id ROWS 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS IF(0, 1, 2) PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got IF after: (ORDER BY id ROWS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IF(0, 1, 2) PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS -1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: (ORDER BY id ROWS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND UNBOUNDED
------
+#####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND 1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND 1
------
+#####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND 1+1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND IF(0, 1, 2) FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got IF after: ROWS BETWEEN CURRENT ROW AND
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IF(0, 1, 2) FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND -1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: ROWS BETWEEN CURRENT ROW AND
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE UNBOUNDED FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got FOLLOWING after: ORDER BY id RANGE UNBOUNDED
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE 1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got FOLLOWING after: ORDER BY id RANGE 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE 1+1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected PRECEDING, got '+' after: ORDER BY id RANGE 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE IF(0, 1, 2) PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got IF after: (ORDER BY id RANGE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IF(0, 1, 2) PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE -1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: (ORDER BY id RANGE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND UNBOUNDED
------
+#####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND 1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND 1
------
+#####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND 1+1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND IF(0, 1, 2) FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got IF after: RANGE BETWEEN CURRENT ROW AND
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IF(0, 1, 2) FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND -1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: RANGE BETWEEN CURRENT ROW AND
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT ABS(id) OVER (PARTITION BY id) FROM (SELECT 1 id, "a" name) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 ABS is not a recognized window function. Got OVER after: ABS(id)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'OVER (PARTITION BY id) FROM (SELECT 1 id, "a" name) t' at line 1
 -----
 SELECT AVG(id) OVER (PARTITION BY id ROWS ? PRECEDING) FROM (SELECT 1 id, "a" name) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '?' after: (PARTITION BY id ROWS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '? PRECEDING) FROM (SELECT 1 id, "a" name) t' at line 1
 -----
 SELECT DATE_ADD(NOW(), 5)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected INTERVAL, got INT_LITERAL after: (NOW(),
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
 -----
 SELECT DATE_SUB(NOW(), 5)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected INTERVAL, got INT_LITERAL after: (NOW(),
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
 -----
 SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR, 3)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: ), INTERVAL 1 HOUR
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 3)' at line 1
 -----
 SELECT DATE_SUB(NOW(), INTERVAL 1 HOUR, 3)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: ), INTERVAL 1 HOUR
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 3)' at line 1
 -----
 SELECT ADDDATE(NOW())
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ',', got ')' after: ADDDATE(NOW()
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
 -----
 SELECT SUBDATE(NOW())
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ',', got ')' after: SUBDATE(NOW()
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
 -----
 SELECT CAST(5, INTEGER)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected AS, got ',' after: SELECT CAST(5
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' INTEGER)' at line 1
 -----
 SELECT CAST(5 AS 5)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected cast type, got INT_LITERAL, after: SELECT CAST(5 AS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
 -----
 SELECT CAST(INTEGER AS INTEGER)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: INTEGER after: SELECT CAST(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INTEGER AS INTEGER)' at line 1
 -----
 SELECT CAST(INTEGER AS 5)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: INTEGER after: SELECT CAST(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INTEGER AS 5)' at line 1
 -----
 SELECT CAST(5 AS INTERVAL HOUR(5))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected DAY_SECOND, got IDENTIFIER after: CAST(5 AS INTERVAL
------
+#####
 4161: Unknown data type: 'INTERVAL'
 -----
 SELECT CAST(5 AS INTERVAL DAY_HOUR)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected DAY_SECOND, got DAY_HOUR after: CAST(5 AS INTERVAL
------
+#####
 4161: Unknown data type: 'INTERVAL'
 -----
 SELECT CAST(5 AS INTERVAL)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected DAY_SECOND, got ')' after: CAST(5 AS INTERVAL
------
+#####
 4161: Unknown data type: 'INTERVAL'
 -----
 SELECT CAST(5 AS ?)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected cast type, got '?', after: SELECT CAST(5 AS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?)' at line 1
 -----
 SELECT CAST(id AS DECIMAL(id)) FROM parser_test
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got IDENTIFIER after: (id AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'id)) FROM parser_test' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(?))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got '?' after: (5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(1.1e1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected literal INT/DECIMAL got '1.1e1', after: 5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1.1e1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(1) UNSIGNED)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got UNSIGNED after: AS DECIMAL(1)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNSIGNED)' at line 1
 -----
 SELECT CAST(5 AS UNSIGNED DECIMAL(1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got DECIMAL after: CAST(5 AS UNSIGNED
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DECIMAL(1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(1.1e1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected literal INT/DECIMAL got '1.1e1', after: 5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1.1e1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(+1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got '+' after: (5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(-1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got '-' after: (5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(1 + 1))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '+' after: 5 AS DECIMAL(1
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL())
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got ')' after: (5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(1,2,3))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: DECIMAL(1,2
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '3))' at line 1
 -----
 SELECT CAST(5 AS DECIMAL(NULL))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, FLOAT_LITERAL, got NULL after: (5 AS DECIMAL(
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NULL))' at line 1
 -----
 SELECT CAST(5 AS FLOAT(10, 5))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '(' after: CAST(5 AS FLOAT
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(10, 5))' at line 1
 -----
 SELECT CAST(5 AS DOUBLE(10))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '(' after: CAST(5 AS DOUBLE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '))' at line 1
 -----
 SELECT CAST(5 AS DOUBLE PRECISION)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got PRECISION after: CAST(5 AS DOUBLE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'PRECISION)' at line 1
 -----
 SELECT CAST(5 AS REAL)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected cast type, got REAL, after: SELECT CAST(5 AS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'REAL)' at line 1
 -----
 SELECT CAST(5 AS DOUBLE UNSIGNED)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got UNSIGNED after: CAST(5 AS DOUBLE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UNSIGNED)' at line 1
 -----
 SELECT CAST(5 AS NATIONAL CHAR(10))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected cast type, got IDENTIFIER, after: SELECT CAST(5 AS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NATIONAL CHAR(10))' at line 1
 -----
 SELECT CAST(5 AS CHAR(10) COLLATE utf8mb4_unicode_ci CHARACTER SET utf8mb4)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got CHARACTER after: (10) COLLATE utf8mb4_unicode_ci
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'CHARACTER SET utf8mb4)' at line 1
 -----
 SELECT CAST(5 AS INTEGER(11))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '(' after: CAST(5 AS INTEGER
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(11))' at line 1
 -----
 SELECT POSITION('a', 'b')
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected IN, got ',' after: SELECT POSITION('a'
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 'b')' at line 1
 -----
 SELECT POSITION ('a' IN 'b')
 -----
 MariaStan\Parser\Exception\ParserException
 POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''b')' at line 1
 -----
 SELECT POSITION ('a' IN (1, 2, 3))
 -----
 MariaStan\Parser\Exception\ParserException
 POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
------
+#####
 1630: FUNCTION mariastan_test.POSITION does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual

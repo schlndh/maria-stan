@@ -4,40 +4,40 @@ SELECT * FROM (((SELECT 1) b)) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got IDENTIFIER after: 1) b))
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't' at line 1
 -----
 SELECT * FROM (a, b) c
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got IDENTIFIER after: (a, b)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'c' at line 1
 -----
 SELECT * FROM (1, 2)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected IDENTIFIER, got INT_LITERAL after: SELECT * FROM (
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1, 2)' at line 1
 -----
 SELECT * FROM ((mysqli_test) a)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got IDENTIFIER after: FROM ((mysqli_test)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'a)' at line 1
 -----
 SELECT * FROM ((SELECT 1))
 -----
 MariaStan\Parser\Exception\MissingSubqueryAliasException
 Subquery doesn't have alias: (SELECT 1)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
 -----
 SELECT * FROM ((SELECT 1) a) b
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got IDENTIFIER after: SELECT 1) a)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'b' at line 1

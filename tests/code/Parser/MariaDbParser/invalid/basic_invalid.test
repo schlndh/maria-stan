@@ -4,96 +4,96 @@ SELECT *** FROM FROM
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got '*' after: SELECT *
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '** FROM FROM' at line 1
 -----
 SELECT NULL IS 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of NULL, UNKNOWN, TRUE, FALSE, got INT_LITERAL after: SELECT NULL IS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1' at line 1
 -----
 SELECT 1 IS TRUE * 20
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Only NULL, UNKNOWN, TRUE and FALSE can be right of IS. Got * after: SELECT 1 IS TRUE
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '* 20' at line 1
 -----
 SELECT 1 IS (TRUE)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of NULL, UNKNOWN, TRUE, FALSE, got '(' after: SELECT 1 IS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(TRUE)' at line 1
 -----
 SELECT NOW() + (INTERVAL 1 HOUR)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Got unexpected token INTERVAL after: () + (
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
 -----
 SELECT NOW() + INTERVAL 2 HOURS
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected time unit. Got IDENTIFIER after: ) + INTERVAL 2
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HOURS' at line 1
 -----
 SELECT NOW() * INTERVAL 2 HOUR
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Got unexpected token INTERVAL after: NOW() *
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
 -----
 SELECT 1 IN 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected '(', got INT_LITERAL after: SELECT 1 IN
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1' at line 1
 -----
 SELECT 1 IN (1, 2) + 3
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Got + after: (1, 2)
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 3' at line 1
 -----
 SELECT 1, DISTINCT 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: DISTINCT after: SELECT 1,
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT 1' at line 1
 -----
 SELECT 1, DISTINCTROW 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: DISTINCTROW after: SELECT 1,
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCTROW 1' at line 1
 -----
 SELECT 1, ALL 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: ALL after: SELECT 1,
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL 1' at line 1
 -----
 SELECT EXISTS SELECT 1
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected '(', got SELECT after: SELECT EXISTS
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SELECT 1' at line 1
 -----
 SELECT EXISTS (1)
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
 Expected SELECT, got INT_LITERAL after: SELECT EXISTS (
------
+#####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1)' at line 1

@@ -82,12 +82,8 @@ class MariaDbParserTest extends TestCase
 	}
 
 	/** @dataProvider provideTestParseInvalidData */
-	public function testParseInvalid(
-		string $name,
-		string $code,
-		string $expectedParserOutput,
-		string $expectedDbError,
-	): void {
+	public function testParseInvalid(string $name, string $code, string $expectedOutput): void
+	{
 		$parser = $this->createParser();
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		[$e, $parserOutput] = $this->getParseOutput($parser, $code);
@@ -120,8 +116,7 @@ class MariaDbParserTest extends TestCase
 			$this->fail("Expected DB to return parse error. Got: '{$dbOutput}'. This should be tested somewhere else.");
 		}
 
-		$this->assertSame($expectedDbError, $dbOutput, $name);
-		$this->assertSame($expectedParserOutput, $parserOutput, $name);
+		$this->assertSame($expectedOutput, $parserOutput . "\n#####\n" . $dbOutput, $name);
 		$this->assertInstanceOf(ParserException::class, $e);
 	}
 
@@ -186,7 +181,7 @@ class MariaDbParserTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestParseInvalidData(): iterable
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/invalid', 'test', 3);
+		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/invalid', 'test', 2);
 	}
 
 	private function dumpNodeData(mixed $data): mixed

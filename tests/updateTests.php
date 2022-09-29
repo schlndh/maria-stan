@@ -54,7 +54,7 @@ foreach (filesInDir($parserDir . '/invalid', 'test') as $fileName => $code) {
 		continue;
 	}
 
-	[$name, $tests] = $testParser->parseTest($code, 3);
+	[$name, $tests] = $testParser->parseTest($code, 2);
 	$newTests = [];
 	$parser = $codeParsingTest->createParser();
 	$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
@@ -62,7 +62,7 @@ foreach (filesInDir($parserDir . '/invalid', 'test') as $fileName => $code) {
 	foreach ($tests as [$modeLine, [$input, $expected]]) {
 		[, $parserOutput] = $codeParsingTest->getParseOutput($parser, $input);
 		[, $dbOutput] = $codeParsingTest->getDbOutput($db, $input);
-		$newTests[] = [$modeLine, [$input, $parserOutput, $dbOutput]];
+		$newTests[] = [$modeLine, [$input, $parserOutput . "\n#####\n" . $dbOutput]];
 	}
 
 	$newCode = $testParser->reconstructTest($name, $newTests);
