@@ -13,11 +13,11 @@ final class Join extends BaseNode implements TableReference
 		public readonly JoinTypeEnum $joinType,
 		public readonly TableReference $leftTable,
 		public readonly TableReference $rightTable,
-		public readonly ?Expr $onCondition,
+		public readonly Expr|UsingJoinCondition|null $joinCondition,
 	) {
 		parent::__construct(
 			$this->leftTable->getStartPosition(),
-			$this->onCondition?->getEndPosition() ?? $this->rightTable->getEndPosition(),
+			$this->joinCondition?->getEndPosition() ?? $this->rightTable->getEndPosition(),
 		);
 	}
 

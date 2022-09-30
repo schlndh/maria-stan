@@ -18,6 +18,7 @@ use MariaStan\Ast\Query\TableReference\Subquery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
+use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
@@ -308,9 +309,13 @@ final class SelectAnalyser
 				$leftTables = $this->analyseTableReference($fromClause->leftTable);
 				$rightTables = $this->analyseTableReference($fromClause->rightTable);
 
-				if ($fromClause->onCondition !== null) {
-					$this->resolveExprType($fromClause->onCondition);
-				}
+				match (true) {
+					$fromClause->joinCondition instanceof Expr\Expr
+						=> $this->resolveExprType($fromClause->joinCondition),
+					// TODO: check JOIN ... USING
+					$fromClause->joinCondition instanceof UsingJoinCondition => 1,
+					$fromClause->joinCondition === null => null,
+				};
 
 				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
 					foreach ($rightTables as $rightTable) {

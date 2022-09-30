@@ -61,6 +61,7 @@ use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
+use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -385,7 +386,7 @@ class MariaDbParserState
 
 		while (true) {
 			$joinType = null;
-			$onCondition = null;
+			$joinCondition = null;
 			$isUnclearJoin = false;
 
 			// TODO: NATURAL and STRAIGHT_JOIN
@@ -416,9 +417,8 @@ class MariaDbParserState
 			$this->checkSubqueryAlias($rightTable);
 			$tokenPositionBak = $this->position;
 
-			// TODO: USING(...)
 			if ($isUnclearJoin) {
-				$joinType = $this->acceptToken(TokenTypeEnum::ON)
+				$joinType = $this->acceptAnyOfTokenTypes(TokenTypeEnum::ON, TokenTypeEnum::USING)
 					? JoinTypeEnum::INNER_JOIN
 					: JoinTypeEnum::CROSS_JOIN;
 			}
@@ -426,14 +426,33 @@ class MariaDbParserState
 			$this->position = $tokenPositionBak;
 
 			if ($joinType !== JoinTypeEnum::CROSS_JOIN) {
-				$this->expectToken(TokenTypeEnum::ON);
-				$onCondition = $this->parseExpression();
+				$conditionType = $this->expectAnyOfTokens(TokenTypeEnum::ON, TokenTypeEnum::USING)->type;
+				$joinCondition = $conditionType === TokenTypeEnum::ON
+					? $this->parseExpression()
+					: $this->parseRestOfUsingJoinCondition();
 			}
 
-			$leftTable = new Join($joinType, $leftTable, $rightTable, $onCondition);
+			$leftTable = new Join($joinType, $leftTable, $rightTable, $joinCondition);
 		}
 
 		return $leftTable;
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfUsingJoinCondition(): UsingJoinCondition
+	{
+		$startPosition = $this->getPreviousToken()->position;
+		$this->expectToken('(');
+		$columnList = [];
+		$fieldNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+
+		do {
+			$columnList[] = $this->cleanIdentifier($this->expectAnyOfTokens(...$fieldNameTokens)->content);
+		} while ($this->acceptToken(','));
+
+		$this->expectToken(')');
+
+		return new UsingJoinCondition($startPosition, $this->getPreviousToken()->getEndPosition(), $columnList);
 	}
 
 	/** @throws ParserException */

@@ -255,6 +255,13 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 			yield "table.column - {$tokenType->value}" => [
 				'select' => "SELECT {$tableName}.{$tokenType->value} FROM {$tableName};",
 			];
+
+			yield "JOIN USING - {$tokenType->value}" => [
+				'select' => "
+					SELECT t1.`{$tokenType->value}` FROM {$tableName} t1
+					JOIN {$tableName} t2 USING ({$tokenType->value})
+				",
+			];
 		}
 	}
 

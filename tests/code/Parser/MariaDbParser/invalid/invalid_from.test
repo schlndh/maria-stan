@@ -41,3 +41,38 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got IDENTIFIER after: SELECT 1) a)
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'b' at line 1
+-----
+SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 aa) b USING bb
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got IDENTIFIER after: 2 aa) b USING
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'bb' at line 1
+-----
+SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 aa) b USING ()
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, WAIT, WINDOW, got ')' after: aa) b USING (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 aa) b USING (1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, WAIT, WINDOW, got INT_LITERAL after: aa) b USING (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1)' at line 1
+-----
+SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 aa) b USING (bb+1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: ) b USING (bb
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1)' at line 1
+-----
+SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 aa) b USING ((bb))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, WAIT, WINDOW, got '(' after: aa) b USING (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(bb))' at line 1
