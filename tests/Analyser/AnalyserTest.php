@@ -551,6 +551,18 @@ class AnalyserTest extends TestCase
 				'query' => "SELECT id aa, name FROM analyser_test UNION ALL SELECT * FROM analyser_test ORDER BY aa",
 			];
 
+			yield "{$combinatorVal} - ORDER BY bug when in WITH" => [
+				'query' => "
+					WITH tbl AS (
+						SELECT id AS aa, 0 as bb FROM analyser_test
+						{$combinatorVal} ALL
+						SELECT t.aa, t.bb FROM (SELECT 1 aa, 2 bb) t
+						ORDER BY aa, bb
+					)
+					SELECT * FROM tbl
+				",
+			];
+
 			$dataTypes = [
 				'int' => '1',
 				'string' => '"a"',

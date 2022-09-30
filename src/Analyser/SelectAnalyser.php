@@ -178,6 +178,7 @@ final class SelectAnalyser
 
 		unset($leftFields, $rightFields);
 		$this->columnResolver->registerFieldList($fields);
+		$this->columnResolver->setPreferFieldList(true);
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
