@@ -11,6 +11,7 @@ use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Subquery;
@@ -54,24 +55,86 @@ final class SelectAnalyser
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
-		switch ($this->selectAst::getSelectQueryType()) {
-			case SelectQueryTypeEnum::SIMPLE:
-				assert($this->selectAst instanceof SimpleSelectQuery);
-				$fields = $this->analyseSingleSelectQuery($this->selectAst);
-				break;
-			case SelectQueryTypeEnum::COMBINED:
-				assert($this->selectAst instanceof CombinedSelectQuery);
-				$fields = $this->analyseCombinedSelectQuery($this->selectAst);
-				break;
-			default:
-				$this->errors[] = new AnalyserError(
-					"Unhandled SELECT type {$this->selectAst::getSelectQueryType()->value}",
-				);
-				$fields = [];
-				break;
-		}
+		$fields = $this->dispatchAnalyseSelectQuery($this->selectAst);
 
 		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function dispatchAnalyseSelectQuery(SelectQuery $select): array
+	{
+		switch ($select::getSelectQueryType()) {
+			case SelectQueryTypeEnum::SIMPLE:
+				assert($select instanceof SimpleSelectQuery);
+
+				return $this->analyseSingleSelectQuery($select);
+			case SelectQueryTypeEnum::COMBINED:
+				assert($select instanceof CombinedSelectQuery);
+
+				return $this->analyseCombinedSelectQuery($select);
+			case SelectQueryTypeEnum::WITH:
+				assert($select instanceof WithSelectQuery);
+
+				return $this->analyseWithSelectQuery($select);
+			default:
+				$this->errors[] = new AnalyserError("Unhandled SELECT type {$select::getSelectQueryType()->value}");
+
+				return [];
+		}
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseWithSelectQuery(WithSelectQuery $select): array
+	{
+		if ($select->allowRecursive) {
+			$this->errors[] = new AnalyserError(
+				"WITH RECURSIVE is not currently supported. There may be false positives!",
+			);
+		}
+
+		foreach ($select->commonTableExpressions as $cte) {
+			$subqueryFields = $this->getSubqueryAnalyser($cte->subquery)->analyse()->resultFields ?? [];
+
+			if (count($subqueryFields) === 0) {
+				$this->errors[] = new AnalyserError("CTE {$cte->name} doesn't have any columns.");
+
+				continue;
+			}
+
+			if ($cte->columnList !== null) {
+				$fieldCount = count($subqueryFields);
+				$columnCount = count($cte->columnList);
+
+				if ($fieldCount !== $columnCount) {
+					$this->errors[] = new AnalyserError(
+						AnalyserErrorMessageBuilder::createDifferentNumberOfWithColumnsErrorMessage(
+							$columnCount,
+							$fieldCount,
+						),
+					);
+				}
+
+				$commonCount = min($fieldCount, $columnCount);
+
+				for ($i = 0; $i < $commonCount; $i++) {
+					$subqueryFields[$i] = $subqueryFields[$i]->getRenamed($cte->columnList[$i]);
+				}
+			}
+
+			try {
+				$this->columnResolver->registerCommonTableExpression($subqueryFields, $cte->name);
+			} catch (AnalyserException $e) {
+				$this->errors[] = new AnalyserError($e->getMessage());
+			}
+		}
+
+		return $this->dispatchAnalyseSelectQuery($select->selectQuery);
 	}
 
 	/**

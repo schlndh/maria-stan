@@ -80,6 +80,12 @@ class AnalyserErrorMessageBuilder
 		return "The used SELECT statements have a different number of columns: {$left} vs {$right}.";
 	}
 
+	public static function createDifferentNumberOfWithColumnsErrorMessage(int $columnList, int $query): string
+	{
+		return "Column list of WITH and the subquery have to have the same number of columns."
+			. " Got {$columnList} vs {$query}.";
+	}
+
 	public static function createInvalidFunctionArgumentErrorMessage(
 		string $functionName,
 		int $position,

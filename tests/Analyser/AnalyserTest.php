@@ -88,6 +88,7 @@ class AnalyserTest extends TestCase
 		yield from $this->providePlaceholderTestData();
 		yield from $this->provideFunctionCallTestData();
 		yield from $this->provideUnionTestData();
+		yield from $this->provideWithData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -580,6 +581,48 @@ class AnalyserTest extends TestCase
 		}
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideWithData(): iterable
+	{
+		yield "WITH" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT * FROM tbl",
+		];
+
+		yield "WITH - multiple CTEs" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test), tbl2 AS (SELECT 1 aaa) SELECT * FROM tbl, tbl2",
+		];
+
+		yield "WITH - multiple CTEs - reference previous CTE" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test), tbl2 AS (SELECT * FROM tbl) SELECT * FROM tbl, tbl2",
+		];
+
+		yield "WITH - explicit column list" => [
+			'query' => "WITH tbl (aa, bb) AS (SELECT id, name FROM analyser_test) SELECT * FROM tbl",
+		];
+
+		yield "WITH - alias on SELECT" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT aaa.id FROM tbl aaa",
+		];
+
+		yield "WITH - alias on SELECT - same as CTE name" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT tbl.id FROM tbl tbl",
+		];
+
+		yield "WITH - CTE name overshadows existing table" => [
+			'query' => "WITH analyser_test AS (SELECT 1) SELECT * FROM analyser_test",
+		];
+
+		yield "WITH - subquery with WITH and same CTE name" => [
+			'query' => "
+				WITH tbl AS (SELECT 1 id)
+				SELECT * FROM (
+					WITH tbl AS (SELECT 2 id)
+					SELECT * FROM tbl
+				) t, tbl
+			",
+		];
+	}
+
 	/**
 	 * @dataProvider provideTestData
 	 * @param array<scalar|null> $params
@@ -784,6 +827,12 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
+		yield 'unknown column in field list - WITH' => [
+			'query' => 'WITH tbl AS (SELECT aaa FROM analyser_test) SELECT * FROM tbl',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
 		yield 'not unique table name in top-level query' => [
 			'query' => 'SELECT * FROM analyser_test, analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
@@ -808,10 +857,34 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
+		yield 'not unique table alias in WITH' => [
+			'query' => 'WITH tbl AS (SELECT 1), tbl AS (SELECT 1) SELECT * FROM tbl',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('tbl'),
+			'DB error code' => MariaDbErrorCodes::ER_DUP_QUERY_NAME,
+		];
+
 		yield 'duplicate column name in subquery' => [
 			'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
 			'error' => AnalyserErrorMessageBuilder::createDuplicateColumnName('id'),
 			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+		];
+
+		yield 'duplicate column name in WITH' => [
+			'query' => 'WITH analyser_test AS (SELECT 1, 1) SELECT * FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createDuplicateColumnName('1'),
+			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+		];
+
+		yield 'duplicate column name in WITH - explicit column list' => [
+			'query' => 'WITH tbl (id, id) AS (SELECT 1, 2) SELECT 1',
+			'error' => AnalyserErrorMessageBuilder::createDuplicateColumnName('id'),
+			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+		];
+
+		yield 'WITH - mismatched number of columns in column list' => [
+			'query' => 'WITH tbl (id, aa) AS (SELECT 1) SELECT * FROM tbl',
+			'error' => AnalyserErrorMessageBuilder::createDifferentNumberOfWithColumnsErrorMessage(2, 1),
+			'DB error code' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
 		];
 
 		yield 'ambiguous column in field list' => [
@@ -872,6 +945,12 @@ class AnalyserTest extends TestCase
 		yield 'unknown table in JOIN' => [
 			'query' => 'SELECT * FROM analyser_test JOIN aaabbbccc',
 			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('aaabbbccc'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'subquery - cannot use alias from outer query in FROM' => [
+			'query' => 'SELECT (SELECT id FROM t) FROM analyser_test t',
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('t'),
 			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 

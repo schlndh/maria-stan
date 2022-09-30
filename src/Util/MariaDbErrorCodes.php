@@ -44,6 +44,12 @@ class MariaDbErrorCodes
 	// 'Function Name Parsing and Resolution' section in the Reference Manual
 	public const ER_FUNC_INEXISTENT_NAME_COLLISION = 1630;
 
+	// 4002		ER_WITH_COL_WRONG_LIST	WITH column list and SELECT field list have different column counts
+	public const ER_WITH_COL_WRONG_LIST = 4002;
+
+	// 4004		ER_DUP_QUERY_NAME	Duplicate query name %`-.64s in WITH clause
+	public const ER_DUP_QUERY_NAME = 4004;
+
 	// 4014	ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS Unacceptable combination of window frame bound specifications
 	public const ER_BAD_COMBINATION_OF_WINDOW_FRAME_BOUND_SPECS = 4014;
 

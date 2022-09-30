@@ -38,6 +38,9 @@ final class ColumnResolver
 	/** @var array<string, Schema\Table> name => schema */
 	private array $tableSchemas = [];
 
+	/** @var array<string, Schema\Table> CTE name => schema */
+	private array $cteSchemas = [];
+
 	/** @var array<string, array<string, QueryResultField>> subquery alias => name => field */
 	private array $subquerySchemas = [];
 
@@ -77,10 +80,32 @@ final class ColumnResolver
 			$this->tablesWithoutAliasMap[$table] = true;
 		}
 
-		$schema = $this->tableSchemas[$table] ??= $this->dbReflection->findTableSchema($table);
+		$schema = $this->tableSchemas[$table] ??= $this->findCteSchema($table)
+			?? $this->dbReflection->findTableSchema($table);
+		$this->registerColumnsForSchema($alias ?? $table, $schema->columns);
+	}
 
-		foreach ($schema->columns as $column) {
-			$this->columnSchemasByName[$column->name][] = [$alias ?? $table, $column];
+	/**
+	 * @param non-empty-array<QueryResultField> $fields
+	 * @throws AnalyserException
+	 */
+	public function registerCommonTableExpression(array $fields, string $name): void
+	{
+		if (isset($this->cteSchemas[$name])) {
+			throw new NotUniqueTableAliasException(
+				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($name),
+			);
+		}
+
+		$columns = $this->getColumnsFromFields($fields);
+		$this->cteSchemas[$name] = new Schema\Table($name, $columns);
+	}
+
+	/** @param array<Schema\Column> $columns */
+	private function registerColumnsForSchema(string $schemaName, array $columns): void
+	{
+		foreach ($columns as $column) {
+			$this->columnSchemasByName[$column->name][] = [$schemaName, $column];
 		}
 	}
 
@@ -98,7 +123,24 @@ final class ColumnResolver
 		}
 
 		$this->tableNamesInOrder[] = [null, $alias];
+		$columns = $this->getColumnsFromFields($fields);
+
+		foreach ($fields as $field) {
+			$this->subquerySchemas[$alias][$field->name] = $field;
+		}
+
+		$this->registerColumnsForSchema($alias, $columns);
+	}
+
+	/**
+	 * @param array<QueryResultField> $fields
+	 * @return array<Schema\Column>
+	 * @throws AnalyserException
+	 */
+	private function getColumnsFromFields(array $fields): array
+	{
 		$uniqueFieldNameMap = [];
+		$columns = [];
 
 		foreach ($fields as $field) {
 			if (isset($uniqueFieldNameMap[$field->name])) {
@@ -108,10 +150,10 @@ final class ColumnResolver
 			}
 
 			$uniqueFieldNameMap[$field->name] = true;
-			$this->subquerySchemas[$alias][$field->name] = $field;
-			$fieldSchema = new Schema\Column($field->name, $field->type, $field->isNullable);
-			$this->columnSchemasByName[$field->name][] = [$alias, $fieldSchema];
+			$columns[] = new Schema\Column($field->name, $field->type, $field->isNullable);
 		}
+
+		return $columns;
 	}
 
 	public function registerOuterJoinedTable(string $table): void
@@ -209,5 +251,10 @@ final class ColumnResolver
 		}
 
 		return $fields;
+	}
+
+	private function findCteSchema(string $name): ?Schema\Table
+	{
+		return $this->cteSchemas[$name] ?? $this->parent?->findCteSchema($name);
 	}
 }
