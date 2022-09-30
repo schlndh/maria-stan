@@ -423,6 +423,42 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT (SELECT name FROM analyser_test LIMIT 1) FROM analyser_test',
 		];
 
+		yield 'subquery as SELECT expression - reference previously aliased field' => [
+			'query' => 'SELECT 1 aaa, (SELECT aaa)',
+		];
+
+		yield 'subquery - previously aliased field vs column - field list' => [
+			'query' => 'SELECT "aa" id, (SELECT id) FROM analyser_test',
+		];
+
+		yield 'subquery - previously aliased field vs column - WHERE' => [
+			'query' => 'SELECT "aa" id FROM analyser_test WHERE (SELECT id) = 1',
+		];
+
+		yield 'subquery - previously aliased field vs column - GROUP BY' => [
+			'query' => 'SELECT "aa" id FROM analyser_test GROUP BY (SELECT id)',
+		];
+
+		yield 'subquery - previously aliased field vs column - HAVING' => [
+			'query' => 'SELECT "aa" id FROM analyser_test HAVING (SELECT id)',
+		];
+
+		yield 'subquery - previously aliased field vs column - ORDER BY' => [
+			'query' => 'SELECT "aa" id FROM analyser_test ORDER BY (SELECT id)',
+		];
+
+		yield 'subquery - reference parent field alias in HAVING' => [
+			'query' => 'SELECT 1 aaa HAVING (SELECT aaa) = 1',
+		];
+
+		yield 'subquery - reference parent field alias in GROUP BY' => [
+			'query' => 'SELECT 1 aaa GROUP BY (SELECT aaa)',
+		];
+
+		yield 'subquery - reference parent field alias in ORDER BY' => [
+			'query' => 'SELECT 1 aaa ORDER BY (SELECT aaa)',
+		];
+
 		yield 'subquery in FROM' => [
 			'query' => 'SELECT t.`1` FROM (SELECT 1) t',
 		];
@@ -799,6 +835,18 @@ class AnalyserTest extends TestCase
 
 		yield 'usage of previous alias in field list' => [
 			'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'subquery - forward reference to alias in field list' => [
+			'query' => 'SELECT (SELECT aaa), 1 aaa',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_REFERENCE,
+		];
+
+		yield 'subquery - reference field alias in WHERE' => [
+			'query' => 'SELECT 1 aaa WHERE (SELECT aaa) = 1',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];

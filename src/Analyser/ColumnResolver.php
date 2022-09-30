@@ -18,6 +18,8 @@ use function array_values;
 use function count;
 use function reset;
 
+// TODO: This code is completely brute-forced to try to match MariaDB's behavior. Try to find the logic behind it and
+// rewrite it to make more sense.
 final class ColumnResolver
 {
 	/**
@@ -49,7 +51,7 @@ final class ColumnResolver
 
 	/** @var array<string, QueryResultField> name => field */
 	private array $fieldList = [];
-	private bool $preferFieldList = false;
+	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
@@ -167,22 +169,31 @@ final class ColumnResolver
 		$this->fieldList = [];
 
 		foreach ($fields as $field) {
-			// TODO: how to handle duplicate names? It seems that for ORDER BY/HAVING the first column with given
-			// name has priority. However, if there is an alias then it trumps columns without alias.
-			// SELECT id, -id id, 2*id id FROM analyser_test ORDER BY id;
-			$this->fieldList[$field->name] ??= $field;
+			$this->registerField($field);
 		}
 	}
 
-	public function setPreferFieldList(bool $shouldPreferFieldList): void
+	public function registerField(QueryResultField $field): void
 	{
-		$this->preferFieldList = $shouldPreferFieldList;
+		// TODO: how to handle duplicate names? It seems that for ORDER BY/HAVING the first column with given
+		// name has priority. However, if there is an alias then it trumps columns without alias.
+		// SELECT id, -id id, 2*id id FROM analyser_test ORDER BY id;
+		$this->fieldList[$field->name] ??= $field;
+	}
+
+	public function setFieldListBehavior(ColumnResolverFieldBehaviorEnum $shouldPreferFieldList): void
+	{
+		$this->fieldListBehavior = $shouldPreferFieldList;
 	}
 
 	/** @throws AnalyserException */
 	public function resolveColumn(string $column, ?string $table): QueryResultField
 	{
-		if ($table === null && $this->preferFieldList && isset($this->fieldList[$column])) {
+		if (
+			$table === null
+			&& $this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
+			&& isset($this->fieldList[$column])
+		) {
 			return $this->fieldList[$column];
 		}
 
@@ -197,10 +208,22 @@ final class ColumnResolver
 
 		switch (count($candidateTables)) {
 			case 0:
+				$resolvedParentColumn = null;
+
+				try {
+					$resolvedParentColumn = $this->parent?->resolveColumn($column, $table);
+				} catch (AnalyserException) {
+				}
+
 				// TODO: add test to make sure that the prioritization is the same as in the database.
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
-				return $this->parent?->resolveColumn($column, $table)
-					?? ($table === null ? $this->fieldList[$column] ?? null : null)
+				return $resolvedParentColumn
+					?? ($table === null ? $this->parent?->fieldList[$column] ?? null : null)
+					?? (
+						$table === null && $this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST
+							? $this->fieldList[$column] ?? null
+							: null
+					)
 					?? throw new AnalyserException(
 						AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
 					);

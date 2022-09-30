@@ -37,6 +37,9 @@ class MariaDbErrorCodes
 	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
 	public const ER_OPERAND_COLUMNS = 1241;
 
+	// 1247	42S22	ER_ILLEGAL_REFERENCE	Reference '%s' not supported (%s)
+	public const ER_ILLEGAL_REFERENCE = 1247;
+
 	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
 	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 

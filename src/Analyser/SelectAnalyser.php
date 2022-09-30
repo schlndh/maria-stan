@@ -178,7 +178,7 @@ final class SelectAnalyser
 
 		unset($leftFields, $rightFields);
 		$this->columnResolver->registerFieldList($fields);
-		$this->columnResolver->setPreferFieldList(true);
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
@@ -211,7 +211,12 @@ final class SelectAnalyser
 			}
 		}
 
+		if ($select->where) {
+			$this->resolveExprType($select->where);
+		}
+
 		$fields = [];
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::FIELD_LIST);
 
 		foreach ($select->select as $selectExpr) {
 			switch ($selectExpr::getSelectExprType()) {
@@ -224,26 +229,29 @@ final class SelectAnalyser
 					}
 
 					$fields[] = $resolvedField;
+					$this->columnResolver->registerField($resolvedField);
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
-					$fields = array_merge($fields, $this->columnResolver->resolveAllColumns($selectExpr->tableName));
+					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName);
+
+					foreach ($allFields as $field) {
+						$this->columnResolver->registerField($field);
+					}
+
+					$fields = array_merge($fields, $allFields);
+					unset($allFields);
 					break;
 			}
 		}
 
-		if ($select->where) {
-			$this->resolveExprType($select->where);
-		}
-
-		$this->columnResolver->setPreferFieldList(false);
-		$this->columnResolver->registerFieldList($fields);
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::GROUP_BY);
 
 		foreach ($select->groupBy?->expressions ?? [] as $groupByExpr) {
 			$this->resolveExprType($groupByExpr->expr);
 		}
 
-		$this->columnResolver->setPreferFieldList(true);
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
 
 		if ($select->having) {
 			$this->resolveExprType($select->having);
