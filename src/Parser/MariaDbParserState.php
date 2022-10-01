@@ -97,6 +97,11 @@ class MariaDbParserState
 	private const SELECT_PRECEDENCE_EXCEPT = self::SELECT_PRECEDENCE_UNION;
 	private const SELECT_PRECEDENCE_INTERSECT = 2;
 
+	// JOIN has higher precedence than the comma operator
+	// https://dev.mysql.com/doc/refman/8.0/en/join.html
+	private const JOIN_PRECEDENCE_COMMA = 0;
+	private const JOIN_PRECEDENCE_EXPLICIT = 1;
+
 	private int $position = 0;
 	private int $tokenCount;
 
@@ -380,7 +385,7 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseJoins(): TableReference
+	private function parseJoins(int $precedence = self::JOIN_PRECEDENCE_COMMA): TableReference
 	{
 		$leftTable = $this->parseTableReference();
 
@@ -388,10 +393,13 @@ class MariaDbParserState
 			$joinType = null;
 			$joinCondition = null;
 			$isUnclearJoin = false;
+			$joinPrecedence = self::JOIN_PRECEDENCE_EXPLICIT;
+			$positionBak = $this->position;
 
 			// TODO: NATURAL and STRAIGHT_JOIN
 			if ($this->acceptToken(',')) {
 				$joinType = JoinTypeEnum::CROSS_JOIN;
+				$joinPrecedence = self::JOIN_PRECEDENCE_COMMA;
 			} elseif ($this->acceptToken(TokenTypeEnum::CROSS)) {
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::CROSS_JOIN;
@@ -412,8 +420,17 @@ class MariaDbParserState
 				break;
 			}
 
+			if ($joinPrecedence < $precedence) {
+				$this->position = $positionBak;
+				break;
+			}
+
 			$this->checkSubqueryAlias($leftTable);
-			$rightTable = $this->parseTableReference();
+			$rightTable = $joinPrecedence === self::JOIN_PRECEDENCE_COMMA
+				// left-associativity => +1
+				? $this->parseJoins(self::JOIN_PRECEDENCE_COMMA + 1)
+				// since there are only 2 precedence levels this is equivalent to calling parseJoins(EXPLICIT + 1)
+				: $this->parseTableReference();
 			$this->checkSubqueryAlias($rightTable);
 			$tokenPositionBak = $this->position;
 

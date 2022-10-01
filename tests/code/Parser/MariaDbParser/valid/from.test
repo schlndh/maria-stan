@@ -643,30 +643,30 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Join
 		(
-			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
-			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
 				(
-					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
-					[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
-							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+							[select] => Array
 								(
-									[select] => Array
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
 										(
-											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+											[expr] => MariaStan\Ast\Expr\LiteralInt
 												(
-													[expr] => MariaStan\Ast\Expr\LiteralInt
-														(
-															[value] => 1
-														)
-													[alias] => aa
+													[value] => 1
 												)
+											[alias] => aa
 										)
-									[isDistinct] => false
 								)
-							[alias] => a
+							[isDistinct] => false
 						)
-					[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+					[alias] => a
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
 						(
 							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
@@ -685,39 +685,39 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 							[alias] => b
 						)
-				)
-			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
-				(
-					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+					[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
 						(
-							[select] => Array
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
-									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+									[select] => Array
 										(
-											[expr] => MariaStan\Ast\Expr\LiteralInt
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
 												(
-													[value] => 1
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[alias] => aa
 												)
-											[alias] => aa
-										)
-									[1] => MariaStan\Ast\SelectExpr\RegularExpr
-										(
-											[expr] => MariaStan\Ast\Expr\LiteralInt
+											[1] => MariaStan\Ast\SelectExpr\RegularExpr
 												(
-													[value] => 2
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+													[alias] => bb
 												)
-											[alias] => bb
 										)
+									[isDistinct] => false
 								)
-							[isDistinct] => false
+							[alias] => c
 						)
-					[alias] => c
-				)
-			[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
-				(
-					[columnNames] => Array
+					[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
 						(
-							[0] => bb
+							[columnNames] => Array
+								(
+									[0] => bb
+								)
 						)
 				)
 		)
@@ -906,6 +906,156 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[0] => aa
 							[1] => bb
 						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM (SELECT 1) t1, (SELECT 2) t2 JOIN (SELECT 3) t3
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+				(
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[alias] => t1
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+							[alias] => t2
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 3
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+							[alias] => t3
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM (SELECT 1) t1 JOIN (SELECT 2) t2, (SELECT 3) t3
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Join
+				(
+					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+					[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+							[alias] => t1
+						)
+					[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+							[alias] => t2
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
+				(
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 3
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[alias] => t3
 				)
 		)
 	[isDistinct] => false
