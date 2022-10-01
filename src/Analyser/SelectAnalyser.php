@@ -41,7 +41,7 @@ final class SelectAnalyser
 {
 	/** @var array<AnalyserError> */
 	private array $errors = [];
-	private readonly ColumnResolver $columnResolver;
+	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
 
 	public function __construct(
@@ -206,7 +206,7 @@ final class SelectAnalyser
 
 		if ($fromClause !== null) {
 			try {
-				$this->analyseTableReference($fromClause);
+				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver)[1];
 			} catch (AnalyserException | DbReflectionException $e) {
 				$this->errors[] = new AnalyserError($e->getMessage());
 			}
@@ -274,28 +274,30 @@ final class SelectAnalyser
 	}
 
 	/**
-	 * @return array<string> table names in order
+	 * @return array{array<string>, ColumnResolver} [table names in order, column resolver]
 	 * @throws AnalyserException|DbReflectionException
 	 */
-	private function analyseTableReference(TableReference $fromClause): array
+	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): array
 	{
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
 				assert($fromClause instanceof Table);
+				$columnResolver = clone $columnResolver;
 
 				try {
-					$this->columnResolver->registerTable($fromClause->name, $fromClause->alias);
+					$columnResolver->registerTable($fromClause->name, $fromClause->alias);
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
-				return [$fromClause->alias ?? $fromClause->name];
+				return [[$fromClause->alias ?? $fromClause->name], $columnResolver];
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
+				$columnResolver = clone $columnResolver;
 				$subqueryResult = $this->getSubqueryAnalyser($fromClause->query)->analyse();
 
 				try {
-					$this->columnResolver->registerSubquery(
+					$columnResolver->registerSubquery(
 						$subqueryResult->resultFields ?? [],
 						$fromClause->getAliasOrThrow(),
 					);
@@ -303,34 +305,41 @@ final class SelectAnalyser
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
-				return [$fromClause->getAliasOrThrow()];
+				return [[$fromClause->getAliasOrThrow()], $columnResolver];
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
-				$leftTables = $this->analyseTableReference($fromClause->leftTable);
-				$rightTables = $this->analyseTableReference($fromClause->rightTable);
+				[$leftTables, $leftCr] = $this->analyseTableReference($fromClause->leftTable, $columnResolver);
+				[$rightTables, $rightCr] = $this->analyseTableReference($fromClause->rightTable, $columnResolver);
+				$leftCr->mergeAfterJoin($rightCr, $fromClause);
+				$columnResolver = $leftCr;
+				unset($leftCr, $rightCr);
+				$bakResolver = $this->columnResolver;
+				$this->columnResolver = $columnResolver;
 
 				match (true) {
 					$fromClause->joinCondition instanceof Expr\Expr
 						=> $this->resolveExprType($fromClause->joinCondition),
-					// TODO: check JOIN ... USING
+					/** This is checked in {@see ColumnResolver::mergeAfterJoin()} */
 					$fromClause->joinCondition instanceof UsingJoinCondition => 1,
 					$fromClause->joinCondition === null => null,
 				};
 
+				$this->columnResolver = $bakResolver;
+
 				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
 					foreach ($rightTables as $rightTable) {
-						$this->columnResolver->registerOuterJoinedTable($rightTable);
+						$columnResolver->registerOuterJoinedTable($rightTable);
 					}
 				} elseif ($fromClause->joinType === JoinTypeEnum::RIGHT_OUTER_JOIN) {
 					foreach ($leftTables as $leftTable) {
-						$this->columnResolver->registerOuterJoinedTable($leftTable);
+						$columnResolver->registerOuterJoinedTable($leftTable);
 					}
 				}
 
-				return array_merge($leftTables, $rightTables);
+				return [array_merge($leftTables, $rightTables), $columnResolver];
 		}
 
-		return [];
+		return [[], $columnResolver];
 	}
 
 	/** @throws AnalyserException */

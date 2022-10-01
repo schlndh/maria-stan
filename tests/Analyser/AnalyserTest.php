@@ -217,6 +217,14 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT * FROM {$joinTableA} CROSS JOIN {$joinTableB}",
 		];
 
+		yield 'CROSS JOIN - comma, parentheses' => [
+			'query' => "SELECT * FROM (analyser_test t1, analyser_test t2) JOIN analyser_test t3 ON t1.id = t3.id",
+		];
+
+		yield 'CROSS JOIN - explicit' => [
+			'query' => "SELECT * FROM analyser_test t1 JOIN analyser_test t2 JOIN analyser_test t3 ON t1.id = t3.id",
+		];
+
 		yield 'CROSS JOIN - explicit, listed columns' => [
 			'query' => "SELECT created_at, name FROM {$joinTableA} CROSS JOIN {$joinTableB}",
 		];
@@ -286,6 +294,81 @@ class AnalyserTest extends TestCase
 				JOIN {$joinTableB} c ON 1
 				JOIN {$joinTableB} d ON 1
 			",
+		];
+
+		yield 'multiple JOINs - resolve column non-ambiguously vs table joined later' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 1 bb) b ON aa = bb JOIN (SELECT 1 aa) c",
+		];
+
+		yield 'USING - single join' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 JOIN (SELECT 1 aa) t2 USING (aa)",
+		];
+
+		yield 'USING - single join - t.*' => [
+			'query' => "SELECT t1.*, t2.* FROM (SELECT 1 aa) t1 JOIN (SELECT 1 aa) t2 USING (aa)",
+		];
+
+		yield 'USING - single join - resolve ambiguity for coalesced column in SELECT' => [
+			'query' => "SELECT aa FROM (SELECT 1 aa) t1 JOIN (SELECT 1 aa) t2 USING (aa)",
+		];
+
+		yield 'USING - single join - tables' => [
+			'query' => "SELECT * FROM analyser_test t1 JOIN analyser_test t2 USING (id)",
+		];
+
+		yield 'USING - single join - column order' => [
+			'query' => "
+				SELECT * FROM (SELECT 1 aa, 2 bb, 3 cc, 4 dd) t1
+				JOIN (SELECT 2 bb, 1 aa, 'dd' dd, 'cc' cc) t2 USING (bb, aa)
+			",
+		];
+
+		yield 'USING - plus another JOIN with ON' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 JOIN (SELECT 1 aa) t2 USING (aa) JOIN (SELECT 2 aa) t3 ON 1",
+		];
+
+		yield 'USING - multiple tables - explicit JOIN' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 JOIN (SELECT 1 bb) t2 JOIN (SELECT 1 aa) t3 USING (aa)",
+		];
+
+		yield 'USING - multiple tables - comma with parentheses' => [
+			'query' => "SELECT * FROM ((SELECT 1 aa) t1, (SELECT 1 bb) t2) JOIN (SELECT 1 aa) t3 USING (aa)",
+		];
+
+		yield 'USING - column order' => [
+			'query' => "
+				SELECT * FROM
+				((SELECT 1 aa) t1, (SELECT 2 bb) t2, (SELECT 3 cc) t3, (SELECT 4 dd) t4)
+				JOIN
+				((SELECT 2 bb) t5, (SELECT 4 dd) t6, (SELECT 1 aa) t7, (SELECT 3 cc) t8)
+				USING (bb, aa)
+			",
+		];
+
+		yield 'USING - multiple - resolve ambiguity for coalesced column' => [
+			'query' => "
+				SELECT * FROM
+				(SELECT 3 cc, 5 ee, 2 bb) tm
+				JOIN
+				(
+				    ((SELECT 1 aa) t1, (SELECT 2 bb) t2, (SELECT 3 cc) t3, (SELECT 5 ee) t4)
+					JOIN
+					((SELECT 2 bb) t5, (SELECT 4 dd) t6, (SELECT 1 aa) t7, (SELECT 3 cc) t8)
+					USING (bb, aa)
+				) USING (bb, ee)
+			",
+		];
+
+		yield 'USING - column type - non-matching inner' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 JOIN (SELECT '1' aa) t2 USING (aa)",
+		];
+
+		yield 'USING - column type - non-matching left' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 LEFT JOIN (SELECT '2' aa) t2 USING (aa)",
+		];
+
+		yield 'USING - column type - non-matching right' => [
+			'query' => "SELECT * FROM (SELECT 1 aa) t1 RIGHT JOIN (SELECT '2' aa) t2 USING (aa)",
 		];
 	}
 
@@ -911,6 +994,18 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
+		yield 'not unique table alias - nested JOIN' => [
+			'query' => 'SELECT * FROM (analyser_test a, analyser_test b) JOIN (analyser_test a, analyser_test c)',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('a'),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'not unique table - nested JOIN' => [
+			'query' => 'SELECT * FROM (analyser_test, (SELECT 1) b) JOIN (analyser_test, (SELECT 2) c)',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
 		yield 'not unique table in subquery' => [
 			'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
 			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
@@ -1018,6 +1113,58 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = b.aaa',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa', 'b'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in JOIN ... ON - referring to table joined later' => [
+			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON b.id = c.id JOIN analyser_test c',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'c'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in JOIN ... ON - JOIN has higher precedence than comma' => [
+			'query' => 'SELECT * FROM analyser_test a, analyser_test b JOIN analyser_test c ON a.id = c.id ',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in JOIN ... USING - JOIN has higher precedence than comma' => [
+			'query' => 'SELECT * FROM (SELECT 1 aa) a, (SELECT 2 bb) b JOIN (SELECT 1 aa, 2 bb) c USING (aa)',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in JOIN ... USING - column exists only on one side - right' => [
+			'query' => 'SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (bb)',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('bb'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in JOIN ... USING - column exists only on one side - left' => [
+			'query' => 'SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (aa)',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'ambiguous column in JOIN ... USING' => [
+			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b JOIN analyser_test c USING (id)',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'ambiguous column in JOIN ... USING - multiple' => [
+			'query' => "
+				SELECT * FROM
+				(SELECT 3 cc, 2 bb, 5 ee) tm
+				JOIN
+				(
+				    ((SELECT 1 aa) t1, (SELECT 2 bb) t2, (SELECT 3 cc) t3, (SELECT 4 dd) t4)
+					JOIN
+					((SELECT 2 bb) t5, (SELECT 4 dd) t6, (SELECT 1 aa) t7, (SELECT 3 cc) t8)
+					USING (bb, aa)
+				) USING (cc)
+			",
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('cc'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in JOIN ... ON' => [
