@@ -1714,14 +1714,14 @@ class MariaDbParserState
 
 		// TODO: implement SELECT ... OFFSET ... FETCH https://mariadb.com/kb/en/select-offset-fetch/
 		$startPosition = $this->getPreviousToken()->position;
-		$count = $this->parseExpression();
+		$count = $this->parseLimitExpression();
 		$offset = null;
 
 		if ($this->acceptToken(',')) {
 			$offset = $count;
-			$count = $this->parseExpression();
+			$count = $this->parseLimitExpression();
 		} elseif ($this->acceptToken(TokenTypeEnum::OFFSET)) {
-			$offset = $this->parseExpression();
+			$offset = $this->parseLimitExpression();
 		}
 
 		return new Limit(
@@ -1730,6 +1730,21 @@ class MariaDbParserState
 			$count,
 			$offset,
 		);
+	}
+
+	private function parseLimitExpression(): Expr
+	{
+		$token = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, '?');
+
+		if ($token->type === TokenTypeEnum::LITERAL_INT) {
+			return new LiteralInt(
+				$token->position,
+				$token->getEndPosition(),
+				(int) $token->content,
+			);
+		}
+
+		return new Placeholder($token->position, $token->getEndPosition());
 	}
 
 	/** @throws ParserException */

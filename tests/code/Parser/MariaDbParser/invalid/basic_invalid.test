@@ -97,3 +97,66 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected SELECT, got INT_LITERAL after: SELECT EXISTS (
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1)' at line 1
+-----
+SELECT 1 LIMIT 1.1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got FLOAT_LITERAL after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1.1' at line 1
+-----
+SELECT 1 LIMIT 1e1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got FLOAT_LITERAL after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1e1' at line 1
+-----
+SELECT 1 LIMIT TRUE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got TRUE after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'TRUE' at line 1
+-----
+SELECT 1 LIMIT +1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got '+' after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
+-----
+SELECT 1 LIMIT -1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got '-' after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-1' at line 1
+-----
+SELECT 1 LIMIT 1+1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '+' after: SELECT 1 LIMIT 1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
+-----
+SELECT 1 LIMIT (1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got '(' after: SELECT 1 LIMIT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(1)' at line 1
+-----
+SELECT 1 LIMIT 1, +1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got '+' after: SELECT 1 LIMIT 1,
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
+-----
+SELECT 1 LIMIT 1 OFFSET +1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of INT_LITERAL, '?', got '+' after: SELECT 1 LIMIT 1 OFFSET
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
