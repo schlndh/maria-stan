@@ -1015,6 +1015,7 @@ class MariaDbParserState
 					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
 					'CAST' => $this->parseRestOfCastFunctionCall($startPosition),
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
+					'GROUP_CONCAT' => $this->parseRestOfGroupConcatFunctionCall($ident),
 					default => null,
 				};
 
@@ -1600,16 +1601,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseRestOfPositionFunctionCall(Token $functionIdent): FunctionCall\Position
 	{
-		$parenthesisStart = $this->getPreviousToken()->position->offset;
-		$functionIdentEnd = $functionIdent->getEndPosition()->offset;
-
-		// https://dev.mysql.com/doc/refman/8.0/en/function-resolution.html
-		if ($functionIdentEnd < $parenthesisStart) {
-			throw new ParserException(
-				"POSITION cannot have a space between function name and parenthesis, at: "
-					. $this->getContextPriorToTokenPosition(),
-			);
-		}
+		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
 
 		static $inPrecedence = null;
 		$inPrecedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IN);
@@ -1627,6 +1619,60 @@ class MariaDbParserState
 			$substrExpr,
 			$strExpr,
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfGroupConcatFunctionCall(Token $functionIdent): FunctionCall\GroupConcat
+	{
+		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
+		$isDistinct = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW) !== null;
+		$expressions = [];
+
+		do {
+			$expressions[] = $this->parseExpression();
+		} while ($this->acceptToken(','));
+
+		$orderBy = $this->parseOrderBy();
+		$separator = ',';
+
+		if ($this->acceptToken(TokenTypeEnum::SEPARATOR)) {
+			$separatorToken = $this->expectToken(TokenTypeEnum::LITERAL_STRING);
+			$separator = $this->cleanStringLiteral($separatorToken->content);
+		}
+
+		// TODO: FETCH ... OFFSET are not supported here, but parseLimit doesn't implement them yet anyway.
+		$limit = $this->parseLimit();
+		$this->expectToken(')');
+
+		return new FunctionCall\GroupConcat(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$expressions,
+			$orderBy,
+			$separator,
+			$limit,
+			$isDistinct,
+		);
+	}
+
+	/** @throws ParserException */
+	private function checkNoWhitespaceBeforeParenthesisForBuiltInFunction(Token $functionIdent): void
+	{
+		// https://dev.mysql.com/doc/refman/8.0/en/function-resolution.html
+		if ($this->isThereSomethingBetweenTokens($functionIdent, $this->getPreviousToken())) {
+			throw new ParserException(
+				"Built-in functions cannot have a space between function name and parenthesis, at: "
+				. $this->getContextPriorToTokenPosition(),
+			);
+		}
+	}
+
+	private function isThereSomethingBetweenTokens(Token $left, Token $right): bool
+	{
+		$rightStart = $right->position->offset;
+		$leftEnd = $left->getEndPosition()->offset;
+
+		return $leftEnd < $rightStart;
 	}
 
 	/** @throws ParserException */
@@ -1732,6 +1778,7 @@ class MariaDbParserState
 		);
 	}
 
+	/** @throws ParserException */
 	private function parseLimitExpression(): Expr
 	{
 		$token = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, '?');

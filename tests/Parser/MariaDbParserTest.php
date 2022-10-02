@@ -23,6 +23,7 @@ use function is_array;
 use function is_bool;
 use function MariaStan\canonicalize;
 use function print_r;
+use function str_repeat;
 use function str_replace;
 use function substr;
 
@@ -162,7 +163,18 @@ class MariaDbParserTest extends TestCase
 			if (count($params) === 0) {
 				$db->query($code)->close();
 			} else {
-				$db->prepare($code)->execute($params);
+				try {
+					$db->prepare($code)->execute($params);
+				} catch (mysqli_sql_exception $e) {
+					// This happens with GROUP_CONCAT(id LIMIT ?), but not with LIMIT ?. So it seems like a bug.
+					if ($e->getCode() !== MariaDbErrorCodes::ER_INVALID_VALUE_TO_LIMIT) {
+						throw $e;
+					}
+
+					$stmt = $db->prepare($code);
+					$stmt->bind_param(str_repeat('i', count($params)), ...$params);
+					$stmt->execute();
+				}
 			}
 
 			return [null, 'Query ran without exception'];

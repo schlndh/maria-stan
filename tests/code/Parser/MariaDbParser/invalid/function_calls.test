@@ -465,13 +465,118 @@ Expected IN, got ',' after: SELECT POSITION('a'
 SELECT POSITION ('a' IN 'b')
 -----
 MariaStan\Parser\Exception\ParserException
-POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT POSITION (
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''b')' at line 1
 -----
 SELECT POSITION ('a' IN (1, 2, 3))
 -----
 MariaStan\Parser\Exception\ParserException
-POSITION cannot have a space between function name and parenthesis, at: SELECT POSITION (
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT POSITION (
 #####
 1630: FUNCTION mariastan_test.POSITION does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+-----
+SELECT GROUP_CONCAT(id SEPARATOR 1) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected STRING_LITERAL, got INT_LITERAL after: SELECT GROUP_CONCAT(id SEPARATOR
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR ?) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected STRING_LITERAL, got '?' after: SELECT GROUP_CONCAT(id SEPARATOR
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR CAST(1 AS CHAR)) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected STRING_LITERAL, got IDENTIFIER after: SELECT GROUP_CONCAT(id SEPARATOR
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'CAST(1 AS CHAR)) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR CAST(1 AS CHAR)) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected STRING_LITERAL, got IDENTIFIER after: SELECT GROUP_CONCAT(id SEPARATOR
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'CAST(1 AS CHAR)) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR 'a' 'b') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got STRING_LITERAL after: GROUP_CONCAT(id SEPARATOR 'a'
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''b') FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR 'a''b' 'c') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got STRING_LITERAL after: GROUP_CONCAT(id SEPARATOR 'a''b'
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''c') FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(SEPARATOR '') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: SEPARATOR after: SELECT GROUP_CONCAT(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR '') FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id ORDER BY ASC) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ASC after: GROUP_CONCAT(id ORDER BY
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ASC) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id SEPARATOR '' ORDER BY id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ORDER after: GROUP_CONCAT(id SEPARATOR ''
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id LIMIT 5 ORDER BY id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ORDER after: GROUP_CONCAT(id LIMIT 5
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id LIMIT 5 OFFSET 10 ROWS EXAMINED 999) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ROWS after: id LIMIT 5 OFFSET 10
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ROWS EXAMINED 999) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id OFFSET 0 ROWS) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got OFFSET after: SELECT GROUP_CONCAT(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'OFFSET 0 ROWS) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT(id FETCH FIRST 3 ROWS ONLY) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got FETCH after: SELECT GROUP_CONCAT(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FETCH FIRST 3 ROWS ONLY) FROM parser_test' at line 1
+-----
+SELECT GROUP_CONCAT (id) FROM parser_test
+-----
+MariaStan\Parser\Exception\ParserException
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT GROUP_CONCAT (
+#####
+1630: FUNCTION mariastan_test.GROUP_CONCAT does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+-----
+SELECT GROUP_CONCAT(ALL id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ALL after: SELECT GROUP_CONCAT(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL id) FROM parser_test' at line 1

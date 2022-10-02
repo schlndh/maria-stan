@@ -62,6 +62,9 @@ class MariaDbErrorCodes
 	// 4079	ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION	Illegal parameter data type %s for operation '%s'
 	public const ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION = 4079;
 
+	// 4107		ER_INVALID_VALUE_TO_LIMIT	Limit only accepts integer values
+	public const ER_INVALID_VALUE_TO_LIMIT = 4107;
+
 	// 4161		ER_UNKNOWN_DATA_TYPE	Unknown data type: '%-.64s'
 	public const ER_UNKNOWN_DATA_TYPE = 4161;
 
