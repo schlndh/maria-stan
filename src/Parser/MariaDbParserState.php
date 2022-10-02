@@ -277,7 +277,11 @@ class MariaDbParserState
 				return $left;
 			}
 
-			$distinctAllToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::ALL);
+			$distinctAllToken = $this->acceptAnyOfTokenTypes(
+				TokenTypeEnum::DISTINCT,
+				TokenTypeEnum::DISTINCTROW,
+				TokenTypeEnum::ALL,
+			);
 			$isDistinct = $distinctAllToken?->type !== TokenTypeEnum::ALL;
 			// left-associative = +1
 			$right = $this->parseSelectQuery($combinatorPrecedence + 1);
@@ -1019,7 +1023,7 @@ class MariaDbParserState
 						$uppercaseFunctionName,
 						$this->parser->getFunctionsThatSupportDistinct(),
 						true,
-					) && $this->acceptToken(TokenTypeEnum::DISTINCT);
+					) && $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW);
 					$arguments = $this->parseExpressionListEndedByClosingParenthesis();
 
 					if ($isDistinct && count($arguments) === 0) {
@@ -1368,7 +1372,7 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::DISTINCT)) {
+		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW)) {
 			$arguments = $this->parseExpressionListEndedByClosingParenthesis();
 
 			if (count($arguments) === 0) {

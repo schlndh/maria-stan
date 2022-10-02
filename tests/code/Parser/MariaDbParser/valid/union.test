@@ -93,6 +93,44 @@ MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
 )
 -----
 (SELECT * FROM parser_test)
+UNION DISTINCTROW
+(SELECT * FROM parser_test)
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[isDistinct] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+				)
+			[isDistinct] => false
+		)
+	[isDistinct] => true
+)
+-----
+(SELECT * FROM parser_test)
 UNION
 (SELECT * FROM parser_test)
 -----
