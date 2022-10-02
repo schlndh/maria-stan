@@ -4221,3 +4221,307 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT JSON_ARRAYAGG(id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(?) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Placeholder
+								(
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(DISTINCT id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[isDistinct] => true
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(DISTINCTROW id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[isDistinct] => true
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(5+6) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(id LIMIT ?, ?) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[limit] => MariaStan\Ast\Limit
+								(
+									[count] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+									[offset] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(id LIMIT 1) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[limit] => MariaStan\Ast\Limit
+								(
+									[count] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(id LIMIT 1, 2) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[limit] => MariaStan\Ast\Limit
+								(
+									[count] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[offset] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(id LIMIT 1 OFFSET 2) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[limit] => MariaStan\Ast\Limit
+								(
+									[count] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[offset] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)
+-----
+SELECT JSON_ARRAYAGG(id LIMIT ? OFFSET ?) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\JsonArrayAgg
+						(
+							[expression] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[limit] => MariaStan\Ast\Limit
+								(
+									[count] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+									[offset] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)

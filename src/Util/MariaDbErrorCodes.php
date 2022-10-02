@@ -43,6 +43,9 @@ class MariaDbErrorCodes
 	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
 	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 
+	// 1582	42000	ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT	Incorrect parameter count in the call to native function '%s'
+	public const ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT = 1582;
+
 	// 1630	42000 ER_FUNC_INEXISTENT_NAME_COLLISION	FUNCTION %s does not exist. Check the
 	// 'Function Name Parsing and Resolution' section in the Reference Manual
 	public const ER_FUNC_INEXISTENT_NAME_COLLISION = 1630;

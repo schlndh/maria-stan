@@ -110,6 +110,8 @@ class MariaDbParserTest extends TestCase
 					// For some reason MariaDB returns this error instead of a parse error when encountering
 					// unsupported CAST(x AS INTERVAL ...).
 					MariaDbErrorCodes::ER_UNKNOWN_DATA_TYPE,
+					// Some of these functions have custom syntax and in those cases it can be enforced on AST level.
+					MariaDbErrorCodes::ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT,
 				],
 				true,
 			)

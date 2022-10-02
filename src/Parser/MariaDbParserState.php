@@ -1010,12 +1010,13 @@ class MariaDbParserState
 			if ($this->acceptToken('(')) {
 				$uppercaseFunctionName = strtoupper($ident->content);
 				$functionCall = match ($uppercaseFunctionName) {
-					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
-					'DATE_ADD', 'DATE_SUB' => $this->parseRestOfDateAddSubFunctionCall($ident),
 					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
 					'CAST' => $this->parseRestOfCastFunctionCall($startPosition),
-					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
+					'COUNT' => $this->parseRestOfCountFunctionCall($startPosition),
+					'DATE_ADD', 'DATE_SUB' => $this->parseRestOfDateAddSubFunctionCall($ident),
 					'GROUP_CONCAT' => $this->parseRestOfGroupConcatFunctionCall($ident),
+					'JSON_ARRAYAGG' => $this->parseRestOfJsonArrayAggFunctionCall($ident),
+					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
 					default => null,
 				};
 
@@ -1650,6 +1651,28 @@ class MariaDbParserState
 			$expressions,
 			$orderBy,
 			$separator,
+			$limit,
+			$isDistinct,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfJsonArrayAggFunctionCall(Token $functionIdent): FunctionCall\JsonArrayAgg
+	{
+		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
+		$isDistinct = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW) !== null;
+		$expression = $this->parseExpression();
+		$orderBy = $this->parseOrderBy();
+
+		// TODO: FETCH ... OFFSET are not supported here, but parseLimit doesn't implement them yet anyway.
+		$limit = $this->parseLimit();
+		$this->expectToken(')');
+
+		return new FunctionCall\JsonArrayAgg(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$expression,
+			$orderBy,
 			$limit,
 			$isDistinct,
 		);

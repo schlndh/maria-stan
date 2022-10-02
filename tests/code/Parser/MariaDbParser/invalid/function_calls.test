@@ -580,3 +580,115 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Unexpected token: ALL after: SELECT GROUP_CONCAT(
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL id) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR 1) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR 1) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR ?) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR ?) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR CAST(1 AS CHAR)) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR CAST(1 AS CHAR)) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR CAST(1 AS CHAR)) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR CAST(1 AS CHAR)) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR 'a' 'b') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR 'a' 'b') FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR 'a''b' 'c') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR 'a''b' 'c') FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(SEPARATOR '') FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: SEPARATOR after: SELECT JSON_ARRAYAGG(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR '') FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id ORDER BY ASC) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ASC after: JSON_ARRAYAGG(id ORDER BY
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ASC) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id SEPARATOR '' ORDER BY id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got SEPARATOR after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SEPARATOR '' ORDER BY id) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id LIMIT 5 ORDER BY id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ORDER after: JSON_ARRAYAGG(id LIMIT 5
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id LIMIT 5 OFFSET 10 ROWS EXAMINED 999) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ROWS after: id LIMIT 5 OFFSET 10
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ROWS EXAMINED 999) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id OFFSET 0 ROWS) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got OFFSET after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'OFFSET 0 ROWS) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id FETCH FIRST 3 ROWS ONLY) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got FETCH after: SELECT JSON_ARRAYAGG(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FETCH FIRST 3 ROWS ONLY) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG (id) FROM parser_test
+-----
+MariaStan\Parser\Exception\ParserException
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT JSON_ARRAYAGG (
+#####
+1630: FUNCTION mariastan_test.JSON_ARRAYAGG does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+-----
+SELECT JSON_ARRAYAGG(ALL id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ALL after: SELECT JSON_ARRAYAGG(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ALL id) FROM parser_test' at line 1
+-----
+SELECT JSON_ARRAYAGG(id, name) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: SELECT JSON_ARRAYAGG(id
+#####
+1582: Incorrect parameter count in the call to native function 'JSON_ARRAYAGG'

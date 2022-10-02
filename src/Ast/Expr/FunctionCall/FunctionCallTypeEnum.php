@@ -15,6 +15,9 @@ enum FunctionCallTypeEnum: string
 	/** @see GroupConcat */
 	case GROUP_CONCAT = 'GROUP_CONCAT';
 
+	/** @see JsonArrayAgg */
+	case JSON_ARRAYAGG = 'JSON_ARRAYAGG';
+
 	/** @see Position */
 	case POSITION = 'POSITION';
 
