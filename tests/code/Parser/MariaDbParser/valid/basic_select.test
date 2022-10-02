@@ -545,6 +545,32 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 )
 -----
+SELECT 1 LIMIT ?, ?
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Limit
+		(
+			[count] => MariaStan\Ast\Expr\Placeholder
+				(
+				)
+			[offset] => MariaStan\Ast\Expr\Placeholder
+				(
+				)
+		)
+	[isDistinct] => false
+)
+-----
 SELECT ?
 -----
 MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
