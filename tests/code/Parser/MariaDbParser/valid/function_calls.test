@@ -4525,3 +4525,293 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT TIMESTAMPADD(MICROSECOND, 1, NOW()), TIMESTAMPADD(SECOND, 2, NOW()),
+TIMESTAMPADD(MINUTE, 3, NOW()), TIMESTAMPADD(HOUR, 4, NOW()), TIMESTAMPADD(DAY, 5, NOW()), TIMESTAMPADD(WEEK, 6, NOW()),
+TIMESTAMPADD(MONTH, 7, NOW()), TIMESTAMPADD(QUARTER, 8, NOW()), TIMESTAMPADD(YEAR, 9, NOW())
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::MICROSECOND
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::SECOND
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::MINUTE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::HOUR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 4
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::DAY
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::WEEK
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::MONTH
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::QUARTER
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+			[8] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::YEAR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 9
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT TIMESTAMPADD    (MICROSECOND, 1, NOW()) whitespace_between_name_and_paren
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPADD
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::MICROSECOND
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+					[alias] => whitespace_between_name_and_paren
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT TIMESTAMPDIFF(MICROSECOND, NOW(), NOW())
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\TimestampAddDiff
+						(
+							[name] => TIMESTAMPDIFF
+							[timeUnit] => MariaStan\Ast\Expr\NonCompositeTimeUnitEnum::MICROSECOND
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+									[1] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => NOW
+											[arguments] => Array
+												(
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

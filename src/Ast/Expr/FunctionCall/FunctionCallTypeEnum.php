@@ -21,6 +21,9 @@ enum FunctionCallTypeEnum: string
 	/** @see Position */
 	case POSITION = 'POSITION';
 
+	/** @see TimestampAddDiff */
+	case TIMESTAMP_ADD_DIFF = 'TIMESTAMP_ADD_DIFF';
+
 	/** @see StandardFunctionCall */
 	case STANDARD = 'STANDARD';
 

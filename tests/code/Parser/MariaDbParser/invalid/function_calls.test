@@ -692,3 +692,101 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got ',' after: SELECT JSON_ARRAYAGG(id
 #####
 1582: Incorrect parameter count in the call to native function 'JSON_ARRAYAGG'
+-----
+SELECT TIMESTAMPADD(?, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, SECOND_MICROSECOND, MINUTE_MICROSECOND, MINUTE_SECOND, HOUR_MICROSECOND, HOUR_SECOND, HOUR_MINUTE, DAY_MICROSECOND, DAY_SECOND, DAY_MINUTE, DAY_HOUR, YEAR_MONTH, got '?' after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(SECOND_MICROSECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got SECOND_MICROSECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SECOND_MICROSECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(MINUTE_MICROSECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got MINUTE_MICROSECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'MINUTE_MICROSECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(MINUTE_SECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got MINUTE_SECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'MINUTE_SECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(HOUR_MICROSECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got HOUR_MICROSECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HOUR_MICROSECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(HOUR_SECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got HOUR_SECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HOUR_SECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(HOUR_MINUTE, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got HOUR_MINUTE, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HOUR_MINUTE, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(DAY_MICROSECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got DAY_MICROSECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DAY_MICROSECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(DAY_SECOND, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got DAY_SECOND, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DAY_SECOND, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(DAY_MINUTE, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got DAY_MINUTE, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DAY_MINUTE, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(DAY_HOUR, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got DAY_HOUR, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DAY_HOUR, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD(YEAR_MONTH, 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got YEAR_MONTH, after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'YEAR_MONTH, 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPADD('SECOND', 1, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, SECOND_MICROSECOND, MINUTE_MICROSECOND, MINUTE_SECOND, HOUR_MICROSECOND, HOUR_SECOND, HOUR_MINUTE, DAY_MICROSECOND, DAY_SECOND, DAY_MINUTE, DAY_HOUR, YEAR_MONTH, got STRING_LITERAL after: SELECT TIMESTAMPADD(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''SECOND', 1, NOW())' at line 1
+-----
+SELECT TIMESTAMPDIFF(YEAR_MONTH, NOW(), NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected non-composite time unit. Got YEAR_MONTH, after: SELECT TIMESTAMPDIFF(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'YEAR_MONTH, NOW(), NOW())' at line 1

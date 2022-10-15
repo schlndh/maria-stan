@@ -33,6 +33,7 @@ use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Expr\NonCompositeTimeUnitEnum;
 use MariaStan\Ast\Expr\Placeholder;
 use MariaStan\Ast\Expr\SpecialOpTypeEnum;
 use MariaStan\Ast\Expr\Subquery;
@@ -1017,6 +1018,7 @@ class MariaDbParserState
 					'GROUP_CONCAT' => $this->parseRestOfGroupConcatFunctionCall($ident),
 					'JSON_ARRAYAGG' => $this->parseRestOfJsonArrayAggFunctionCall($ident),
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
+					'TIMESTAMPADD', 'TIMESTAMPDIFF' => $this->parseRestOfTimestampAddDiffFunctionCall($ident),
 					default => null,
 				};
 
@@ -1619,6 +1621,30 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$substrExpr,
 			$strExpr,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfTimestampAddDiffFunctionCall(Token $functionIdent): FunctionCall\TimestampAddDiff
+	{
+		$timeUnit = $this->parseTimeUnit();
+		$nonCompositeTimeUnit = NonCompositeTimeUnitEnum::tryFrom($timeUnit->value)
+			?? throw new UnexpectedTokenException(
+				"Expected non-composite time unit. Got {$this->printToken($this->getPreviousToken())}, after: "
+					. $this->getContextPriorToTokenPosition($this->position - 1),
+			);
+		$this->expectToken(',');
+		$arg1 = $this->parseExpression();
+		$this->expectToken(',');
+		$arg2 = $this->parseExpression();
+		$this->expectToken(')');
+
+		return new FunctionCall\TimestampAddDiff(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$functionIdent->content,
+			$nonCompositeTimeUnit,
+			[$arg1, $arg2],
 		);
 	}
 
