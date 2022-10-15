@@ -10,4 +10,7 @@ enum QueryTypeEnum: string
 {
 	/** @see SelectQuery */
 	case SELECT = 'SELECT';
+
+	/** @see InsertQuery */
+	case INSERT = 'INSERT';
 }

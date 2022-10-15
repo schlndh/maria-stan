@@ -1,0 +1,22 @@
+INSERT
+-----
+INSERT INTO parser_test (id, name) (DEFAULT, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got '(' after: (id, name)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DEFAULT, 'aa')' at line 1
+-----
+(INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa'))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got INSERT after: (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa'))' at line 1
+-----
+INSERT INTO parser_test alias (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got IDENTIFIER after: INSERT INTO parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'alias (id, name) VALUES (DEFAULT, 'aa')' at line 1

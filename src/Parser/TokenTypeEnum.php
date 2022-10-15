@@ -297,6 +297,7 @@ enum TokenTypeEnum: string
 	case UTC_DATE = 'UTC_DATE';
 	case UTC_TIME = 'UTC_TIME';
 	case UTC_TIMESTAMP = 'UTC_TIMESTAMP';
+	case VALUE = 'VALUE';
 	case VALUES = 'VALUES';
 	case VARBINARY = 'VARBINARY';
 	case VARCHAR = 'VARCHAR';

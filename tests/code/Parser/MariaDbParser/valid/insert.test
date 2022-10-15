@@ -1,0 +1,164 @@
+INSERT
+-----
+INSERT INTO parser_test (name) VALUE ('aa'), ('bb')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => bb
+									[firstConcatPart] => bb
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT parser_test (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT parser_test VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT IGNORE INTO parser_test (name) VALUE ('aa')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[ignoreErrors] => true
+)

@@ -62,4 +62,7 @@ enum ExprTypeEnum: string
 
 	/** @see CastType\CastType */
 	case CAST_TYPE = 'CAST_TYPE';
+
+	/** @see ColumnDefault */
+	case COLUMN_DEFAULT = 'COLUMN_DEFAULT';
 }

@@ -72,6 +72,7 @@ class MariaDbParser
 			TokenTypeEnum::TIMESTAMP,
 			TokenTypeEnum::UNBOUNDED,
 			TokenTypeEnum::UNKNOWN,
+			TokenTypeEnum::VALUE,
 			TokenTypeEnum::WAIT,
 			TokenTypeEnum::WINDOW,
 		];

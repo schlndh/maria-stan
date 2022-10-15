@@ -22,6 +22,7 @@ use MariaStan\Ast\Expr\CastType\FloatCastType;
 use MariaStan\Ast\Expr\CastType\IntegerCastType;
 use MariaStan\Ast\Expr\CastType\TimeCastType;
 use MariaStan\Ast\Expr\Column;
+use MariaStan\Ast\Expr\ColumnDefault;
 use MariaStan\Ast\Expr\Exists;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
@@ -50,6 +51,8 @@ use MariaStan\Ast\Lock\SelectLockTypeEnum;
 use MariaStan\Ast\Lock\SkipLocked;
 use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
+use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
+use MariaStan\Ast\Query\InsertQuery;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
@@ -131,6 +134,9 @@ class MariaDbParserState
 			if ($this->tokens[0]->content === '(' && $query::getSelectQueryType() === SelectQueryTypeEnum::WITH) {
 				throw new ParserException('Top-level WITH query cannot be wrapped in parentheses.');
 			}
+		} elseif ($this->acceptToken(TokenTypeEnum::INSERT)) {
+			$this->position--;
+			$query = $this->parseInsertQuery();
 		}
 
 		if ($query === null) {
@@ -143,6 +149,85 @@ class MariaDbParserState
 		$this->expectToken(TokenTypeEnum::END_OF_INPUT);
 
 		return $query;
+	}
+
+	/** @throws ParserException */
+	private function parseInsertQuery(): InsertQuery
+	{
+		$startToken = $this->expectToken(TokenTypeEnum::INSERT);
+		$ingoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$this->acceptToken(TokenTypeEnum::INTO);
+		// TODO: database.table
+		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+		$columnList = null;
+		$columnListStartPosition = null;
+
+		if ($this->acceptToken('(')) {
+			$columnListStartPosition = $this->getPreviousToken()->position;
+			$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+			$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
+			$columnList = [];
+
+			do {
+				$columnStartPosition = $this->getCurrentToken()->position;
+				$ident = $this->expectAnyOfTokens(...$identTokenTypes);
+
+				if (! $this->acceptToken('.')) {
+					$columnList[] = new Column(
+						$columnStartPosition,
+						$ident->getEndPosition(),
+						$this->cleanIdentifier($ident->content),
+					);
+
+					continue;
+				}
+
+				$tableIdent = $ident;
+				$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+				$columnList[] = new Column(
+					$columnStartPosition,
+					$ident->getEndPosition(),
+					$this->cleanIdentifier($ident->content),
+					$this->cleanIdentifier($tableIdent->content),
+				);
+			} while ($this->acceptToken(','));
+
+			// prevent accidental reuse
+			unset($columnStartPosition, $ident, $tableIdent);
+			$this->expectToken(')');
+		}
+
+		// TODO: INSERT ... SET
+		// TODO: INSERT ... SELECT
+		$valuesStartPosition = $this->expectAnyOfTokens(TokenTypeEnum::VALUE, TokenTypeEnum::VALUES)->position;
+		$values = [];
+
+		do {
+			$row = [];
+			$this->expectToken('(');
+
+			do {
+				$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
+			} while ($this->acceptToken(','));
+
+			$this->expectToken(')');
+			$values[] = $row;
+		} while ($this->acceptToken(','));
+
+		$insertBody = new ValuesInsertBody(
+			$columnListStartPosition ?? $valuesStartPosition,
+			$this->getPreviousToken()->getEndPosition(),
+			$columnList,
+			$values,
+		);
+
+		return new InsertQuery(
+			$startToken->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$tableName,
+			$insertBody,
+			$ingoreErrors,
+		);
 	}
 
 	/**
@@ -1909,6 +1994,19 @@ class MariaDbParserState
 			$type,
 			$lockOption,
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseColumnDefaultExpr(): ?ColumnDefault
+	{
+		$defaultToken = $this->acceptToken(TokenTypeEnum::DEFAULT);
+
+		return $defaultToken === null
+			? null
+			: new ColumnDefault(
+				$defaultToken->position,
+				$defaultToken->getEndPosition(),
+			);
 	}
 
 	/**

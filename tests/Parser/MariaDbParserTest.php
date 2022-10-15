@@ -11,6 +11,7 @@ use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
+use mysqli_result;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 use UnitEnum;
@@ -163,7 +164,11 @@ class MariaDbParserTest extends TestCase
 
 		try {
 			if (count($params) === 0) {
-				$db->query($code)->close();
+				$result = $db->query($code);
+
+				if ($result instanceof mysqli_result) {
+					$result->close();
+				}
 			} else {
 				try {
 					$db->prepare($code)->execute($params);
