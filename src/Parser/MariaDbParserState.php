@@ -51,6 +51,7 @@ use MariaStan\Ast\Lock\SelectLockTypeEnum;
 use MariaStan\Ast\Lock\SkipLocked;
 use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
+use MariaStan\Ast\Query\InsertBody\SelectInsertBody;
 use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
 use MariaStan\Ast\Query\InsertQuery;
 use MariaStan\Ast\Query\Query;
@@ -161,65 +162,96 @@ class MariaDbParserState
 		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
 		$columnList = null;
 		$columnListStartPosition = null;
+		$selectQuery = null;
 
 		if ($this->acceptToken('(')) {
-			$columnListStartPosition = $this->getPreviousToken()->position;
-			$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
-			$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
-			$columnList = [];
+			if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::WITH, TokenTypeEnum::SELECT)) {
+				$this->position -= 2;
+				$selectQuery = $this->parseSelectQuery();
+			} else {
+				$columnListStartPosition = $this->getPreviousToken()->position;
+				$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+				$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
+				$columnList = [];
 
-			do {
-				$columnStartPosition = $this->getCurrentToken()->position;
-				$ident = $this->expectAnyOfTokens(...$identTokenTypes);
+				do {
+					$columnStartPosition = $this->getCurrentToken()->position;
+					$ident = $this->expectAnyOfTokens(...$identTokenTypes);
 
-				if (! $this->acceptToken('.')) {
+					if (! $this->acceptToken('.')) {
+						$columnList[] = new Column(
+							$columnStartPosition,
+							$ident->getEndPosition(),
+							$this->cleanIdentifier($ident->content),
+						);
+
+						continue;
+					}
+
+					$tableIdent = $ident;
+					$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
 					$columnList[] = new Column(
 						$columnStartPosition,
 						$ident->getEndPosition(),
 						$this->cleanIdentifier($ident->content),
+						$this->cleanIdentifier($tableIdent->content),
 					);
+				} while ($this->acceptToken(','));
 
-					continue;
-				}
+				// prevent accidental reuse
+				unset($columnStartPosition, $ident, $tableIdent);
+				$this->expectToken(')');
+			}
+		}
 
-				$tableIdent = $ident;
-				$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
-				$columnList[] = new Column(
-					$columnStartPosition,
-					$ident->getEndPosition(),
-					$this->cleanIdentifier($ident->content),
-					$this->cleanIdentifier($tableIdent->content),
+		if ($selectQuery === null && $this->acceptAnyOfTokenTypes('(', TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
+			// Reject '(WITH', but 'SELECT WITH' and 'WITH WITH' are not possible either.
+			if (
+				$columnList !== null
+				&& $this->getPreviousToken()->content === '('
+				&& $this->acceptToken(TokenTypeEnum::WITH)
+			) {
+				throw new UnexpectedTokenException(
+					"INSERT with column list can't have WITH SELECT in parentheses. After: "
+						. $this->getContextPriorToTokenPosition($this->position - 2),
 				);
-			} while ($this->acceptToken(','));
+			}
 
-			// prevent accidental reuse
-			unset($columnStartPosition, $ident, $tableIdent);
-			$this->expectToken(')');
+			$this->position--;
+			$selectQuery = $this->parseSelectQuery();
 		}
 
 		// TODO: INSERT ... SET
-		// TODO: INSERT ... SELECT
-		$valuesStartPosition = $this->expectAnyOfTokens(TokenTypeEnum::VALUE, TokenTypeEnum::VALUES)->position;
-		$values = [];
-
-		do {
-			$row = [];
-			$this->expectToken('(');
+		if ($selectQuery !== null) {
+			$insertBody = new SelectInsertBody(
+				$columnListStartPosition ?? $selectQuery->getStartPosition(),
+				$selectQuery->getEndPosition(),
+				$columnList,
+				$selectQuery,
+			);
+		} else {
+			$valuesStartPosition = $this->expectAnyOfTokens(TokenTypeEnum::VALUE, TokenTypeEnum::VALUES)->position;
+			$values = [];
 
 			do {
-				$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
+				$row = [];
+				$this->expectToken('(');
+
+				do {
+					$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
+				} while ($this->acceptToken(','));
+
+				$this->expectToken(')');
+				$values[] = $row;
 			} while ($this->acceptToken(','));
 
-			$this->expectToken(')');
-			$values[] = $row;
-		} while ($this->acceptToken(','));
-
-		$insertBody = new ValuesInsertBody(
-			$columnListStartPosition ?? $valuesStartPosition,
-			$this->getPreviousToken()->getEndPosition(),
-			$columnList,
-			$values,
-		);
+			$insertBody = new ValuesInsertBody(
+				$columnListStartPosition ?? $valuesStartPosition,
+				$this->getPreviousToken()->getEndPosition(),
+				$columnList,
+				$values,
+			);
+		}
 
 		return new InsertQuery(
 			$startToken->position,

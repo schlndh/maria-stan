@@ -162,6 +162,8 @@ class MariaDbParserTest extends TestCase
 			}
 		}
 
+		$db->begin_transaction();
+
 		try {
 			if (count($params) === 0) {
 				$result = $db->query($code);
@@ -180,7 +182,12 @@ class MariaDbParserTest extends TestCase
 
 					$stmt = $db->prepare($code);
 					$stmt->bind_param(str_repeat('i', count($params)), ...$params);
-					$stmt->execute();
+
+					try {
+						$stmt->execute();
+					} finally {
+						$stmt->close();
+					}
 				}
 			}
 
@@ -188,6 +195,8 @@ class MariaDbParserTest extends TestCase
 		} catch (mysqli_sql_exception $e) {
 			// TODO: Is it a good idea to put the error message there?
 			return [$e, canonicalize($e->getCode() . ": {$e->getMessage()}")];
+		} finally {
+			$db->rollback();
 		}
 	}
 

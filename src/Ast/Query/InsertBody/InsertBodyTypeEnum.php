@@ -8,6 +8,8 @@ enum InsertBodyTypeEnum: string
 {
 	/** @see ValuesInsertBody */
 	case VALUES = 'VALUES';
+
+	/** @see SelectInsertBody */
+	case SELECT = 'SELECT';
 	// TODO: INSERT ... SET
-	// TODO: INSERT ... SELECT
 }
