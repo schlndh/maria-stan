@@ -1019,6 +1019,7 @@ class MariaDbParserState
 					'JSON_ARRAYAGG' => $this->parseRestOfJsonArrayAggFunctionCall($ident),
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
 					'TIMESTAMPADD', 'TIMESTAMPDIFF' => $this->parseRestOfTimestampAddDiffFunctionCall($ident),
+					'EXTRACT' => $this->parseRestOfExtractFunctionCall($ident),
 					default => null,
 				};
 
@@ -1645,6 +1646,23 @@ class MariaDbParserState
 			$functionIdent->content,
 			$nonCompositeTimeUnit,
 			[$arg1, $arg2],
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfExtractFunctionCall(Token $functionIdent): FunctionCall\Extract
+	{
+		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
+		$timeUnit = $this->parseTimeUnit();
+		$this->expectToken(TokenTypeEnum::FROM);
+		$from = $this->parseExpression();
+		$this->expectToken(')');
+
+		return new FunctionCall\Extract(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$timeUnit,
+			$from,
 		);
 	}
 

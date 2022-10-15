@@ -24,6 +24,9 @@ enum FunctionCallTypeEnum: string
 	/** @see TimestampAddDiff */
 	case TIMESTAMP_ADD_DIFF = 'TIMESTAMP_ADD_DIFF';
 
+	/** @see Extract */
+	case EXTRACT = 'EXTRACT';
+
 	/** @see StandardFunctionCall */
 	case STANDARD = 'STANDARD';
 

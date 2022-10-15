@@ -4815,3 +4815,78 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT EXTRACT(MICROSECOND FROM NOW()), EXTRACT(HOUR FROM NOW()), EXTRACT(YEAR_MONTH FROM NOW())
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Extract
+						(
+							[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::MICROSECOND
+							[from] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NOW
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Extract
+						(
+							[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::HOUR
+							[from] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NOW
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Extract
+						(
+							[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::YEAR_MONTH
+							[from] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => NOW
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT EXTRACT(SECOND FROM ?)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Extract
+						(
+							[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::SECOND
+							[from] => MariaStan\Ast\Expr\Placeholder
+								(
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)

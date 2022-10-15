@@ -790,3 +790,31 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected non-composite time unit. Got YEAR_MONTH, after: SELECT TIMESTAMPDIFF(
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'YEAR_MONTH, NOW(), NOW())' at line 1
+-----
+SELECT EXTRACT (SECOND FROM NOW())
+-----
+MariaStan\Parser\Exception\ParserException
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT EXTRACT (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM NOW())' at line 1
+-----
+SELECT EXTRACT(? FROM NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, SECOND_MICROSECOND, MINUTE_MICROSECOND, MINUTE_SECOND, HOUR_MICROSECOND, HOUR_SECOND, HOUR_MINUTE, DAY_MICROSECOND, DAY_SECOND, DAY_MINUTE, DAY_HOUR, YEAR_MONTH, got '?' after: SELECT EXTRACT(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '? FROM NOW())' at line 1
+-----
+SELECT EXTRACT(SECOND, NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected FROM, got ',' after: SELECT EXTRACT(SECOND
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' NOW())' at line 1
+-----
+SELECT EXTRACT(1 FROM NOW())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, SECOND_MICROSECOND, MINUTE_MICROSECOND, MINUTE_SECOND, HOUR_MICROSECOND, HOUR_SECOND, HOUR_MINUTE, DAY_MICROSECOND, DAY_SECOND, DAY_MINUTE, DAY_HOUR, YEAR_MONTH, got INT_LITERAL after: SELECT EXTRACT(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1 FROM NOW())' at line 1
