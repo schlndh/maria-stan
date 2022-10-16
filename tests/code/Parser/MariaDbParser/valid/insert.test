@@ -648,3 +648,717 @@ MariaStan\Ast\Query\InsertQuery
 		)
 	[ignoreErrors] => false
 )
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = id
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUES(id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUES
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUES (id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUES
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUE(id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUE (id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUE (id) + 999
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 999
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = ABS(VALUE(id))
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ABS
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => VALUE
+											[arguments] => Array
+												(
+													[0] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+												)
+											[isDistinct] => false
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = ABS(VALUES(id))
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => sdad
+									[firstConcatPart] => sdad
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ABS
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+										(
+											[name] => VALUES
+											[arguments] => Array
+												(
+													[0] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+												)
+											[isDistinct] => false
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test (id, name)
+VALUES (1, "aa")
+ON DUPLICATE KEY UPDATE id = VALUE(id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test (id, name)
+SELECT 1, "aa"
+ON DUPLICATE KEY UPDATE id = VALUE(id)
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aa
+											[firstConcatPart] => aa
+										)
+								)
+						)
+					[isDistinct] => false
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test (id, name)
+SELECT 1, "aa"
+ON DUPLICATE KEY UPDATE id = (SELECT VALUE(id))
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aa
+											[firstConcatPart] => aa
+										)
+								)
+						)
+					[isDistinct] => false
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\Subquery
+						(
+							[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+								(
+									[select] => Array
+										(
+											[0] => MariaStan\Ast\SelectExpr\RegularExpr
+												(
+													[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+														(
+															[name] => VALUE
+															[arguments] => Array
+																(
+																	[0] => MariaStan\Ast\Expr\Column
+																		(
+																			[name] => id
+																		)
+																)
+															[isDistinct] => false
+														)
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)

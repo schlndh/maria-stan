@@ -102,6 +102,7 @@ enum TokenTypeEnum: string
 	case DOUBLE = 'DOUBLE';
 	case DROP = 'DROP';
 	case DUAL = 'DUAL';
+	case DUPLICATE = 'DUPLICATE';
 	case EACH = 'EACH';
 	case ELSE = 'ELSE';
 	case ELSEIF = 'ELSEIF';

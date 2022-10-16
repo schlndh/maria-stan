@@ -111,6 +111,7 @@ class MariaDbParserState
 
 	private int $position = 0;
 	private int $tokenCount;
+	private bool $isInOnDuplicateKeyUpdate = false;
 
 	/** @param array<Token> $tokens */
 	public function __construct(
@@ -238,11 +239,27 @@ class MariaDbParserState
 			);
 		}
 
+		$onDuplicateKeyUpdate = null;
+
+		if ($this->acceptToken(TokenTypeEnum::ON)) {
+			$this->expectToken(TokenTypeEnum::DUPLICATE);
+			$this->expectToken(TokenTypeEnum::KEY);
+			$this->expectToken(TokenTypeEnum::UPDATE);
+
+			try {
+				$this->isInOnDuplicateKeyUpdate = true;
+				$onDuplicateKeyUpdate = $this->parseListOfColumnAssignments();
+			} finally {
+				$this->isInOnDuplicateKeyUpdate = false;
+			}
+		}
+
 		return new InsertQuery(
 			$startToken->position,
 			$this->getPreviousToken()->getEndPosition(),
 			$tableName,
 			$insertBody,
+			$onDuplicateKeyUpdate,
 			$ingoreErrors,
 		);
 	}
@@ -1145,6 +1162,7 @@ class MariaDbParserState
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
 					'TIMESTAMPADD', 'TIMESTAMPDIFF' => $this->parseRestOfTimestampAddDiffFunctionCall($ident),
 					'EXTRACT' => $this->parseRestOfExtractFunctionCall($ident),
+					'VALUE' => $this->parseRestOfValueFunctionCall($ident),
 					default => null,
 				};
 
@@ -1206,6 +1224,19 @@ class MariaDbParserState
 		$functionIdent = $this->acceptAnyOfTokenTypes(...$this->parser->getExplicitTokenTypesForFunctions());
 
 		if ($functionIdent) {
+			if ($functionIdent->type === TokenTypeEnum::VALUES) {
+				if (! $this->isInOnDuplicateKeyUpdate) {
+					throw new UnexpectedTokenException(
+						"VALUES function can only be used in ON DUPLICATE KEY UPDATE, after: "
+							. $this->getContextPriorToTokenPosition($this->position - 1),
+					);
+				}
+
+				$this->expectToken('(');
+
+				return $this->parseRestOfValueFunctionCall($functionIdent);
+			}
+
 			$canBeWithoutParentheses = in_array(
 				strtoupper($functionIdent->content),
 				$this->parser->getFunctionsWhichCanBeCalledWithoutParentheses(),
@@ -1788,6 +1819,20 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$timeUnit,
 			$from,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfValueFunctionCall(Token $functionIdent): FunctionCall\StandardFunctionCall
+	{
+		$arg = $this->parseColumnIdentifier();
+		$this->expectToken(')');
+
+		return new FunctionCall\StandardFunctionCall(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$functionIdent->content,
+			[$arg],
 		);
 	}
 

@@ -47,6 +47,7 @@ class MariaDbParser
 			TokenTypeEnum::CYCLE,
 			TokenTypeEnum::DATE,
 			TokenTypeEnum::DATETIME,
+			TokenTypeEnum::DUPLICATE,
 			TokenTypeEnum::END,
 			TokenTypeEnum::ENUM,
 			TokenTypeEnum::ESCAPE,
@@ -119,6 +120,7 @@ class MariaDbParser
 			TokenTypeEnum::UTC_DATE,
 			TokenTypeEnum::UTC_TIME,
 			TokenTypeEnum::UTC_TIMESTAMP,
+			TokenTypeEnum::VALUES,
 		];
 	}
 

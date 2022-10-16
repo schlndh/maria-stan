@@ -4890,3 +4890,32 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT VALUE(id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)

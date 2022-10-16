@@ -818,3 +818,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of IDENTIFIER, SECOND_MICROSECOND, MINUTE_MICROSECOND, MINUTE_SECOND, HOUR_MICROSECOND, HOUR_SECOND, HOUR_MINUTE, DAY_MICROSECOND, DAY_SECOND, DAY_MINUTE, DAY_HOUR, YEAR_MONTH, got INT_LITERAL after: SELECT EXTRACT(
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1 FROM NOW())' at line 1
+-----
+SELECT VALUES(id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+VALUES function can only be used in ON DUPLICATE KEY UPDATE, after: SELECT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'VALUES(id) FROM parser_test' at line 1
+-----
+SELECT VALUE(id+1) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: SELECT VALUE(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1) FROM parser_test' at line 1

@@ -7,6 +7,13 @@ Expected SELECT, got DEFAULT after: id, name) (
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DEFAULT, 'aa')' at line 1
 -----
+INSERT INTO parser_test (id, name) VALUES (DEFAULT + 1, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: name) VALUES (DEFAULT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1, 'aa')' at line 1
+-----
 (INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa'))
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
@@ -71,7 +78,7 @@ INSERT INTO parser_test
 SET "aa" = name
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: INSERT INTO parser_test
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: INSERT INTO parser_test
 SET
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '"aa" = name' at line 2
@@ -80,7 +87,54 @@ INSERT INTO parser_test
 SET "aa"
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: INSERT INTO parser_test
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: INSERT INTO parser_test
 SET
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '"aa"' at line 2
+-----
+INSERT INTO parser_test
+SET id = 1, name = "Aa"
+ON DUPLICATE KEY UPDATE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got END_OF_INPUT after: "Aa"
+ON DUPLICATE KEY UPDATE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3
+-----
+INSERT INTO parser_test
+SET id = 1, name = "Aa"
+ON DUPLICATE KEY UPDATE id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of '=', :=, got END_OF_INPUT after: ON DUPLICATE KEY UPDATE id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3
+-----
+INSERT INTO parser_test
+SET id = 1, name = "Aa"
+ON DUPLICATE KEY id = id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected UPDATE, got IDENTIFIER after: = "Aa"
+ON DUPLICATE KEY
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'id = id' at line 3
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = VALUE(id + 1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: id = VALUE(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1)' at line 3
+-----
+INSERT INTO parser_test
+SET id = 1, name = "sdad"
+ON DUPLICATE KEY UPDATE id = DEFAULT + 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '+' after: KEY UPDATE id = DEFAULT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1' at line 3
