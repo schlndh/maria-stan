@@ -6,6 +6,9 @@ namespace MariaStan\Ast\Expr;
 
 enum ExprTypeEnum: string
 {
+	/** @see Assignment */
+	case ASSIGNMENT = 'ASSIGNMENT';
+
 	/** @see Column */
 	case COLUMN = 'COLUMN';
 

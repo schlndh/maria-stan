@@ -6,6 +6,7 @@ namespace MariaStan\Parser;
 
 use MariaStan\Ast\CommonTableExpression;
 use MariaStan\Ast\DirectionEnum;
+use MariaStan\Ast\Expr\Assignment;
 use MariaStan\Ast\Expr\Between;
 use MariaStan\Ast\Expr\BinaryOp;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
@@ -52,6 +53,7 @@ use MariaStan\Ast\Lock\SkipLocked;
 use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
 use MariaStan\Ast\Query\InsertBody\SelectInsertBody;
+use MariaStan\Ast\Query\InsertBody\SetInsertBody;
 use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
 use MariaStan\Ast\Query\InsertQuery;
 use MariaStan\Ast\Query\Query;
@@ -170,36 +172,12 @@ class MariaDbParserState
 				$selectQuery = $this->parseSelectQuery();
 			} else {
 				$columnListStartPosition = $this->getPreviousToken()->position;
-				$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
-				$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
 				$columnList = [];
 
 				do {
-					$columnStartPosition = $this->getCurrentToken()->position;
-					$ident = $this->expectAnyOfTokens(...$identTokenTypes);
-
-					if (! $this->acceptToken('.')) {
-						$columnList[] = new Column(
-							$columnStartPosition,
-							$ident->getEndPosition(),
-							$this->cleanIdentifier($ident->content),
-						);
-
-						continue;
-					}
-
-					$tableIdent = $ident;
-					$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
-					$columnList[] = new Column(
-						$columnStartPosition,
-						$ident->getEndPosition(),
-						$this->cleanIdentifier($ident->content),
-						$this->cleanIdentifier($tableIdent->content),
-					);
+					$columnList[] = $this->parseColumnIdentifier();
 				} while ($this->acceptToken(','));
 
-				// prevent accidental reuse
-				unset($columnStartPosition, $ident, $tableIdent);
 				$this->expectToken(')');
 			}
 		}
@@ -221,13 +199,20 @@ class MariaDbParserState
 			$selectQuery = $this->parseSelectQuery();
 		}
 
-		// TODO: INSERT ... SET
 		if ($selectQuery !== null) {
 			$insertBody = new SelectInsertBody(
 				$columnListStartPosition ?? $selectQuery->getStartPosition(),
 				$selectQuery->getEndPosition(),
 				$columnList,
 				$selectQuery,
+			);
+		} elseif ($columnList === null && $this->acceptToken(TokenTypeEnum::SET)) {
+			$setBodyStart = $this->getPreviousToken()->position;
+			$assignment = $this->parseListOfColumnAssignments();
+			$insertBody = new SetInsertBody(
+				$setBodyStart,
+				$this->getPreviousToken()->getEndPosition(),
+				$assignment,
 			);
 		} else {
 			$valuesStartPosition = $this->expectAnyOfTokens(TokenTypeEnum::VALUE, TokenTypeEnum::VALUES)->position;
@@ -260,6 +245,29 @@ class MariaDbParserState
 			$insertBody,
 			$ingoreErrors,
 		);
+	}
+
+	/**
+	 * @return non-empty-array<Assignment>
+	 * @throws ParserException
+	 */
+	private function parseListOfColumnAssignments(): array
+	{
+		$assignments = [];
+
+		do {
+			$column = $this->parseColumnIdentifier();
+			$this->expectAnyOfTokens('=', TokenTypeEnum::OP_COLON_ASSIGN);
+			$expr = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
+			$assignments[] = new Assignment(
+				$column->getStartPosition(),
+				$this->getPreviousToken()->getEndPosition(),
+				$column,
+				$expr,
+			);
+		} while ($this->acceptToken(','));
+
+		return $assignments;
 	}
 
 	/**
@@ -2039,6 +2047,34 @@ class MariaDbParserState
 				$defaultToken->position,
 				$defaultToken->getEndPosition(),
 			);
+	}
+
+	/** @throws ParserException */
+	private function parseColumnIdentifier(): Column
+	{
+		$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+		$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
+
+		$columnStartPosition = $this->getCurrentToken()->position;
+		$ident = $this->expectAnyOfTokens(...$identTokenTypes);
+
+		if (! $this->acceptToken('.')) {
+			return new Column(
+				$columnStartPosition,
+				$ident->getEndPosition(),
+				$this->cleanIdentifier($ident->content),
+			);
+		}
+
+		$tableIdent = $ident;
+		$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+
+		return new Column(
+			$columnStartPosition,
+			$ident->getEndPosition(),
+			$this->cleanIdentifier($ident->content),
+			$this->cleanIdentifier($tableIdent->content),
+		);
 	}
 
 	/**
