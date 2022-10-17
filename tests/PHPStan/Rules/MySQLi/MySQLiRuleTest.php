@@ -38,7 +38,7 @@ class MySQLiRuleTest extends MariaStanRuleTestCase
 		assert($mysqli instanceof mysqli);
 		MySQLiRuleInvalidDataTest::initData($mysqli);
 
-		$errors = $this->getAnalyserErrors([$file]);
+		$errors = $this->gatherAnalyserErrors([$file]);
 
 		return implode("\n", array_map($this->formatPHPStanError(...), $errors)) . "\n";
 	}
