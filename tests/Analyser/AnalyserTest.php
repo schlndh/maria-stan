@@ -15,6 +15,7 @@ use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\TupleType;
 use MariaStan\Util\MariaDbErrorCodes;
+use mysqli_result;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
@@ -57,7 +58,7 @@ class AnalyserTest extends TestCase
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
-				id INT NOT NULL,
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				name VARCHAR(255) NULL
 			);
 		");
@@ -89,6 +90,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideFunctionCallTestData();
 		yield from $this->provideUnionTestData();
 		yield from $this->provideWithData();
+		yield from $this->provideInsertData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -754,6 +756,44 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideInsertData(): iterable
+	{
+		yield 'INSERT ... SET, skip column with default value' => [
+			'query' => 'INSERT INTO analyser_test SET name = "abcd"',
+		];
+
+		yield 'INSERT ... VALUES, skip column with default value' => [
+			'query' => 'INSERT INTO analyser_test (name) VALUES ("abcd")',
+		];
+
+		yield 'INSERT ... SELECT, skip column with default value' => [
+			'query' => 'INSERT INTO analyser_test (name) SELECT "abcd"',
+		];
+
+		yield 'INSERT ... SET, explicitly set id' => [
+			'query' => 'INSERT INTO analyser_test SET id = 999, name = "abcd"',
+		];
+
+		yield 'INSERT ... VALUES, explicitly set id' => [
+			'query' => 'INSERT INTO analyser_test VALUES (999, "abcd")',
+		];
+
+		yield 'INSERT ... SELECT, explicitly set id' => [
+			'query' => 'INSERT INTO analyser_test SELECT 999, "abcd"',
+		];
+
+		yield 'INSERT ... SELECT ... UNION' => [
+			'query' => 'INSERT INTO analyser_test SELECT 999, "abcd" UNION SELECT 998, "aaa"',
+		];
+
+		yield 'INSERT ... SELECT ... WITH' => [
+			'query' => 'INSERT INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl',
+		];
+
+		// TODO: DEFAULT expression
+	}
+
 	/**
 	 * @dataProvider provideTestData
 	 * @param array<scalar|null> $params
@@ -783,18 +823,35 @@ class AnalyserTest extends TestCase
 			"Expected no errors. Got: "
 			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $otherErrors)),
 		);
+		$db->begin_transaction();
 
-		if (count($params) > 0) {
-			$stmt = $db->prepare($query);
-			$stmt->execute($params);
-			$stmt = $stmt->get_result();
-		} else {
-			$stmt = $db->query($query);
+		try {
+			$stmt = null;
+
+			if (count($params) > 0) {
+				$stmt = $db->prepare($query);
+				$stmt->execute($params);
+				$dbResult = $stmt->get_result();
+			} else {
+				$dbResult = $db->query($query);
+			}
+
+			if ($dbResult instanceof mysqli_result) {
+				$fields = $dbResult->fetch_fields();
+				$rows = $dbResult->fetch_all(MYSQLI_ASSOC);
+				$dbResult->close();
+			} else {
+				$fields = [];
+				$rows = [];
+			}
+
+			$stmt?->close();
+		} finally {
+			$db->rollback();
 		}
 
 		$this->assertNotNull($result->resultFields);
 		$fieldKeys = $this->getFieldKeys($result->resultFields);
-		$fields = $stmt->fetch_fields();
 		$this->assertSameSize($result->resultFields, $fields);
 		$forceNullsForColumns = [];
 		$unnecessaryNullableFields = [];
@@ -842,7 +899,7 @@ class AnalyserTest extends TestCase
 			}
 		}
 
-		foreach ($stmt->fetch_all(MYSQLI_ASSOC) as $row) {
+		foreach ($rows as $row) {
 			$this->assertSame($fieldKeys, array_keys($row));
 
 			foreach ($forceNullsForColumns as $col => $mustBeNull) {
@@ -1473,6 +1530,96 @@ class AnalyserTest extends TestCase
 				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 		}
+
+		yield "INSERT INTO missing_table" => [
+			'query' => "INSERT INTO missing_table SET col = 'value'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield "INSERT INTO ... SET missing_column" => [
+			'query' => "INSERT INTO analyser_test SET missing_column = 'value'",
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "INSERT INTO ... (missing_column) VALUES ..." => [
+			'query' => "INSERT INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)",
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "INSERT INTO ... (missing_column) SELECT ..." => [
+			'query' => "INSERT INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1",
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "INSERT INTO ... SELECT - issue in SELECT" => [
+			'query' => "INSERT INTO analyser_test SELECT * FROM missing_table",
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield "INSERT INTO ... VALUES - issue in tuple" => [
+			'query' => "INSERT INTO analyser_test (name) VALUES (1 = (1, 2))",
+			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+				new IntType(),
+				$this->createMockTuple(2),
+			),
+			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+		];
+
+		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count" => [
+			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd', 1)",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - in some tuples" => [
+			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - in multiple tuples" => [
+			'query' => "INSERT INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 1),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count + error in tuple" => [
+			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1), (111, 1 = (1, 1))",
+			'error' => [
+				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+					new IntType(),
+					$this->createMockTuple(2),
+				),
+				AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - implicit column list" => [
+			'query' => "INSERT INTO analyser_test VALUES (999, 'adasd', 1)",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) SELECT ... - mismatched column count" => [
+			'query' => "INSERT INTO analyser_test (name) SELECT 'adasd', 1",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(1, 2),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT INTO ... (columns, ...) SELECT ... - mismatched column count - implicit column list" => [
+			'query' => "INSERT INTO analyser_test SELECT 999, 'adasd', 1",
+			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
 	}
 
 	/**
@@ -1492,12 +1639,15 @@ class AnalyserTest extends TestCase
 		}
 
 		$this->assertSame($error, array_map(static fn (AnalyserError $e) => $e->message, $result->errors));
+		$db->begin_transaction();
 
 		try {
 			$db->query($query);
 			$this->fail('Expected mysqli_sql_exception.');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame($dbErrorCode, $e->getCode());
+		} finally {
+			$db->rollback();
 		}
 	}
 

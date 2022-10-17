@@ -426,4 +426,9 @@ final class ColumnResolver
 				throw new AnalyserException(AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column));
 		}
 	}
+
+	public function findTableSchema(string $tableName): ?Schema\Table
+	{
+		return $this->tableSchemas[$tableName] ?? null;
+	}
 }

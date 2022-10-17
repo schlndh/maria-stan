@@ -5,13 +5,9 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
-use MariaStan\Ast\Query\QueryTypeEnum;
-use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
-
-use function assert;
 
 final class Analyser
 {
@@ -34,16 +30,6 @@ final class Analyser
 			);
 		}
 
-		if ($ast::getQueryType() !== QueryTypeEnum::SELECT) {
-			return new AnalyserResult(
-				null,
-				[new AnalyserError("Unsupported query: {$ast::getQueryType()->value}")],
-				null,
-			);
-		}
-
-		assert($ast instanceof SelectQuery);
-
-		return (new SelectAnalyser($this->dbReflection, $ast, $query))->analyse();
+		return (new AnalyserState($this->dbReflection, $ast, $query))->analyse();
 	}
 }

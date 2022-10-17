@@ -119,6 +119,11 @@ class AnalyserErrorMessageBuilder
 		return "Invalid comparison between {$leftStr} and {$rightStr}";
 	}
 
+	public static function createMismatchedInsertColumnCountErrorMessage(int $expected, int $got): string
+	{
+		return "Insert expected {$expected} columns, but got {$got} columns.";
+	}
+
 	private static function formatDbType(DbType $type): string
 	{
 		if ($type::getTypeEnum() === DbTypeEnum::TUPLE) {

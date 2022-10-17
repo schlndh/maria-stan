@@ -7,6 +7,13 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
+use MariaStan\Ast\Query\InsertBody\InsertBodyTypeEnum;
+use MariaStan\Ast\Query\InsertBody\SelectInsertBody;
+use MariaStan\Ast\Query\InsertBody\SetInsertBody;
+use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
+use MariaStan\Ast\Query\InsertQuery;
+use MariaStan\Ast\Query\Query;
+use MariaStan\Ast\Query\QueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
@@ -24,6 +31,7 @@ use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
+use MariaStan\Parser\Position;
 use MariaStan\Schema;
 
 use function array_map;
@@ -37,7 +45,7 @@ use function min;
 use function stripos;
 use function strtoupper;
 
-final class SelectAnalyser
+final class AnalyserState
 {
 	/** @var array<AnalyserError> */
 	private array $errors = [];
@@ -46,7 +54,7 @@ final class SelectAnalyser
 
 	public function __construct(
 		private readonly MariaDbOnlineDbReflection $dbReflection,
-		private readonly SelectQuery $selectAst,
+		private readonly Query $queryAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
 	) {
@@ -56,7 +64,22 @@ final class SelectAnalyser
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
-		$fields = $this->dispatchAnalyseSelectQuery($this->selectAst);
+		switch ($this->queryAst::getQueryType()) {
+			case QueryTypeEnum::SELECT:
+				assert($this->queryAst instanceof SelectQuery);
+				$fields = $this->dispatchAnalyseSelectQuery($this->queryAst);
+				break;
+			case QueryTypeEnum::INSERT:
+				assert($this->queryAst instanceof InsertQuery);
+				$fields = $this->analyseInsertQuery($this->queryAst);
+				break;
+			default:
+				return new AnalyserResult(
+					null,
+					[new AnalyserError("Unsupported query: {$this->queryAst::getQueryType()->value}")],
+					null,
+				);
+		}
 
 		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
 	}
@@ -340,6 +363,106 @@ final class SelectAnalyser
 		}
 
 		return [[], $columnResolver];
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseInsertQuery(InsertQuery $insert): array
+	{
+		static $mockPosition = null;
+		$mockPosition ??= new Position(0, 0, 0);
+		$tableReferenceNode = new Table($mockPosition, $mockPosition, $insert->tableName);
+
+		try {
+			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver)[1];
+		} catch (AnalyserException | DbReflectionException $e) {
+			$this->errors[] = new AnalyserError($e->getMessage());
+		}
+
+		$tableSchema = $this->columnResolver->findTableSchema($insert->tableName);
+
+		switch ($insert->insertBody::getInsertBodyType()) {
+			case InsertBodyTypeEnum::SELECT:
+				assert($insert->insertBody instanceof SelectInsertBody);
+
+				foreach ($insert->insertBody->columnList ?? [] as $column) {
+					$this->resolveExprType($column);
+				}
+
+				$selectResult = $this->getSubqueryAnalyser($insert->insertBody->selectQuery)->analyse()->resultFields
+					?? [];
+
+				// if $selectResult is empty (e.g. missing table) then there should already be an error reported.
+				if ($tableSchema === null || count($selectResult) === 0) {
+					break;
+				}
+
+				$expectedCount = count($insert->insertBody->columnList ?? $tableSchema->columns);
+
+				if ($expectedCount === count($selectResult)) {
+					break;
+				}
+
+				$this->errors[] = new AnalyserError(
+					AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(
+						$expectedCount,
+						count($selectResult),
+					),
+				);
+
+				break;
+			case InsertBodyTypeEnum::SET:
+				assert($insert->insertBody instanceof SetInsertBody);
+
+				foreach ($insert->insertBody->assignments as $expr) {
+					$this->resolveExprType($expr);
+				}
+
+				break;
+			case InsertBodyTypeEnum::VALUES:
+				assert($insert->insertBody instanceof ValuesInsertBody);
+
+				foreach ($insert->insertBody->columnList ?? [] as $column) {
+					$this->resolveExprType($column);
+				}
+
+				foreach ($insert->insertBody->values as $tuple) {
+					foreach ($tuple as $expr) {
+						$this->resolveExprType($expr);
+					}
+				}
+
+				if ($tableSchema === null) {
+					break;
+				}
+
+				$expectedCount = count($insert->insertBody->columnList ?? $tableSchema->columns);
+
+				foreach ($insert->insertBody->values as $tuple) {
+					if (count($tuple) === $expectedCount) {
+						continue;
+					}
+
+					$this->errors[] = new AnalyserError(
+						AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(
+							$expectedCount,
+							count($tuple),
+						),
+					);
+
+					// Report only 1 mismatch. The mismatches are probably all going to be the same.
+					break;
+				}
+
+				break;
+		}
+
+		// TODO: check if fields without default value are missing
+		// TODO: INSERT ... ON DUPLICATE KEY
+		// TODO: INSERT ... RETURNING
+		return [];
 	}
 
 	/** @throws AnalyserException */
@@ -730,6 +853,16 @@ final class SelectAnalyser
 					$this->getNodeContent($expr),
 					new Schema\DbType\IntType(),
 					false,
+				);
+			case Expr\ExprTypeEnum::ASSIGNMENT:
+				assert($expr instanceof Expr\Assignment);
+				$this->resolveExprType($expr->target);
+				$value = $this->resolveExprType($expr->expression);
+
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					$value->type,
+					$value->isNullable,
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
