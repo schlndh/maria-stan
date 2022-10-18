@@ -52,7 +52,7 @@ use const MYSQLI_TYPE_YEAR;
 class AnalyserTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestData(): iterable
+	public function provideValidTestData(): iterable
 	{
 		$tableName = 'analyser_test';
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
@@ -80,21 +80,21 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT 1 id",
 		];
 
-		yield from $this->provideLiteralData();
-		yield from $this->provideOperatorTestData();
-		yield from $this->provideDataTypeData();
-		yield from $this->provideJoinData();
-		yield from $this->provideSubqueryTestData();
-		yield from $this->provideGroupByHavingOrderTestData();
-		yield from $this->providePlaceholderTestData();
-		yield from $this->provideFunctionCallTestData();
-		yield from $this->provideUnionTestData();
-		yield from $this->provideWithData();
-		yield from $this->provideInsertData();
+		yield from $this->provideValidLiteralTestData();
+		yield from $this->provideValidOperatorTestData();
+		yield from $this->provideValidDataTypeTestData();
+		yield from $this->provideValidJoinTestData();
+		yield from $this->provideValidSubqueryTestData();
+		yield from $this->provideValidGroupByHavingOrderTestData();
+		yield from $this->provideValidPlaceholderTestData();
+		yield from $this->provideValidFunctionCallTestData();
+		yield from $this->provideValidUnionTestData();
+		yield from $this->provideValidWithTestData();
+		yield from $this->provideValidInsertTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideLiteralData(): iterable
+	private function provideValidLiteralTestData(): iterable
 	{
 		yield 'literal - int' => [
 			'query' => "SELECT 5",
@@ -122,7 +122,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideDataTypeData(): iterable
+	private function provideValidDataTypeTestData(): iterable
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$dataTypesTable = 'analyser_test_data_types';
@@ -187,7 +187,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideJoinData(): iterable
+	private function provideValidJoinTestData(): iterable
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$joinTableA = 'analyser_test_join_a';
@@ -375,7 +375,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideOperatorTestData(): iterable
+	private function provideValidOperatorTestData(): iterable
 	{
 		$operators = ['+', '-', '*', '/', '%', 'DIV'];
 
@@ -486,7 +486,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideSubqueryTestData(): iterable
+	private function provideValidSubqueryTestData(): iterable
 	{
 		yield 'subquery as SELECT expression' => [
 			'query' => 'SELECT (SELECT 1)',
@@ -571,7 +571,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideGroupByHavingOrderTestData(): iterable
+	private function provideValidGroupByHavingOrderTestData(): iterable
 	{
 		yield 'use alias from field list in GROUP BY' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY aaa',
@@ -607,7 +607,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function providePlaceholderTestData(): iterable
+	private function provideValidPlaceholderTestData(): iterable
 	{
 		$values = [
 			'int' => 1,
@@ -630,7 +630,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideFunctionCallTestData(): iterable
+	private function provideValidFunctionCallTestData(): iterable
 	{
 		$tableName = 'analyser_test';
 
@@ -655,7 +655,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideUnionTestData(): iterable
+	private function provideValidUnionTestData(): iterable
 	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
 			$combinatorVal = $combinator->value;
@@ -715,7 +715,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideWithData(): iterable
+	private function provideValidWithTestData(): iterable
 	{
 		yield "WITH" => [
 			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT * FROM tbl",
@@ -757,7 +757,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInsertData(): iterable
+	private function provideValidInsertTestData(): iterable
 	{
 		yield 'INSERT ... SET, skip column with default value' => [
 			'query' => 'INSERT INTO analyser_test SET name = "abcd"',
@@ -795,10 +795,10 @@ class AnalyserTest extends TestCase
 	}
 
 	/**
-	 * @dataProvider provideTestData
+	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
 	 */
-	public function test(string $query, array $params = []): void
+	public function testValid(string $query, array $params = []): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
@@ -964,15 +964,9 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideInvalidData(): iterable
+	public function provideInvalidTestData(): iterable
 	{
 		// TODO: improve the error messages to match MariaDB errors more closely.
-		yield 'unknown column in field list' => [
-			'query' => 'SELECT v.id FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
 		yield 'usage of previous alias in field list' => [
 			'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
@@ -987,48 +981,6 @@ class AnalyserTest extends TestCase
 
 		yield 'subquery - reference field alias in WHERE' => [
 			'query' => 'SELECT 1 aaa WHERE (SELECT aaa) = 1',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in subquery in field list' => [
-			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in subquery in FROM' => [
-			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in subquery in EXISTS' => [
-			'query' => 'SELECT EXISTS (SELECT v.id FROM analyser_test)',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in field list - IS' => [
-			'query' => 'SELECT v.id IS NULL FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in field list - LIKE - left' => [
-			'query' => 'SELECT v.id LIKE "a" FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in field list - LIKE - right' => [
-			'query' => 'SELECT "a" LIKE v.id FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'unknown column in field list - WITH' => [
-			'query' => 'WITH tbl AS (SELECT aaa FROM analyser_test) SELECT * FROM tbl',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
@@ -1097,6 +1049,85 @@ class AnalyserTest extends TestCase
 			'query' => 'WITH tbl (id, aa) AS (SELECT 1) SELECT * FROM tbl',
 			'error' => AnalyserErrorMessageBuilder::createDifferentNumberOfWithColumnsErrorMessage(2, 1),
 			'DB error code' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
+		];
+
+		yield "LIKE - multichar ESCAPE literal" => [
+			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
+			'error' => AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage('cd'),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
+		];
+
+		yield 'mismatched arguments' => [
+			'query' => 'SELECT AVG(id, name) FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
+				'AVG',
+				2,
+				[1],
+			),
+			'DB error code' => MariaDbErrorCodes::ER_PARSE_ERROR,
+		];
+
+		yield 'bug - valid subquery should not clear errors from parent query' => [
+			'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield from $this->provideInvalidColumnTestData();
+		yield from $this->provideInvalidTupleTestData();
+		yield from $this->provideInvalidUnionTestData();
+		yield from $this->provideInvalidInsertTestData();
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidColumnTestData(): iterable
+	{
+		yield 'unknown column in field list' => [
+			'query' => 'SELECT v.id FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery in field list' => [
+			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery in FROM' => [
+			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in subquery in EXISTS' => [
+			'query' => 'SELECT EXISTS (SELECT v.id FROM analyser_test)',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in field list - IS' => [
+			'query' => 'SELECT v.id IS NULL FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in field list - LIKE - left' => [
+			'query' => 'SELECT v.id LIKE "a" FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in field list - LIKE - right' => [
+			'query' => 'SELECT "a" LIKE v.id FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in field list - WITH' => [
+			'query' => 'WITH tbl AS (SELECT aaa FROM analyser_test) SELECT * FROM tbl',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'ambiguous column in field list' => [
@@ -1265,7 +1296,11 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
+	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidTupleTestData(): iterable
+	{
 		yield 'tuple size does not match' => [
 			'query' => 'SELECT (id, name, 1) = (id, name) FROM analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
@@ -1313,7 +1348,6 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 		];
 
-		// TODO: add LIKE once it's implemented.
 		$invalidOperators = [
 			MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION => [
 				'+',
@@ -1425,12 +1459,6 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
-		yield "LIKE - multichar ESCAPE literal" => [
-			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
-			'error' => AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage('cd'),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
-		];
-
 		yield 'tuple as function argument' => [
 			'query' => 'SELECT AVG((id, name)) FROM analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createInvalidFunctionArgumentErrorMessage(
@@ -1440,23 +1468,11 @@ class AnalyserTest extends TestCase
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
+	}
 
-		yield 'mismatched arguments' => [
-			'query' => 'SELECT AVG(id, name) FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
-				'AVG',
-				2,
-				[1],
-			),
-			'DB error code' => MariaDbErrorCodes::ER_PARSE_ERROR,
-		];
-
-		yield 'bug - valid subquery should not clear errors from parent query' => [
-			'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidUnionTestData(): iterable
+	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
 			$combinatorVal = $combinator->value;
 
@@ -1530,7 +1546,11 @@ class AnalyserTest extends TestCase
 				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 		}
+	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidInsertTestData(): iterable
+	{
 		yield "INSERT INTO missing_table" => [
 			'query' => "INSERT INTO missing_table SET col = 'value'",
 			'error' => [
@@ -1624,7 +1644,7 @@ class AnalyserTest extends TestCase
 
 	/**
 	 * @param string|array<string> $error
-	 * @dataProvider provideInvalidData
+	 * @dataProvider provideInvalidTestData
 	 */
 	public function testInvalid(string $query, string|array $error, int $dbErrorCode): void
 	{
