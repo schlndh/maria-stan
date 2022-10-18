@@ -46,6 +46,9 @@ class MariaDbErrorCodes
 	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
 	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 
+	// 1364	HY000	ER_NO_DEFAULT_FOR_FIELD	Field '%s' doesn't have a default value
+	public const ER_NO_DEFAULT_FOR_FIELD = 1364;
+
 	// 1582	42000	ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT	Incorrect parameter count in the call to native function '%s'
 	public const ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT = 1582;
 

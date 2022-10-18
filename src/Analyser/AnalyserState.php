@@ -34,6 +34,8 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Position;
 use MariaStan\Schema;
 
+use function array_fill_keys;
+use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_reduce;
@@ -382,6 +384,7 @@ final class AnalyserState
 		}
 
 		$tableSchema = $this->columnResolver->findTableSchema($insert->tableName);
+		$setColumnNames = [];
 
 		switch ($insert->insertBody::getInsertBodyType()) {
 			case InsertBodyTypeEnum::SELECT:
@@ -399,7 +402,10 @@ final class AnalyserState
 					break;
 				}
 
-				$expectedCount = count($insert->insertBody->columnList ?? $tableSchema->columns);
+				$setColumnNames = $insert->insertBody->columnList !== null
+					? array_map(static fn (Expr\Column $c) => $c->name, $insert->insertBody->columnList)
+					: array_keys($tableSchema->columns);
+				$expectedCount = count($setColumnNames);
 
 				if ($expectedCount === count($selectResult)) {
 					break;
@@ -417,6 +423,7 @@ final class AnalyserState
 				assert($insert->insertBody instanceof SetInsertBody);
 
 				foreach ($insert->insertBody->assignments as $expr) {
+					$setColumnNames[] = $expr->target->name;
 					$this->resolveExprType($expr);
 				}
 
@@ -438,7 +445,10 @@ final class AnalyserState
 					break;
 				}
 
-				$expectedCount = count($insert->insertBody->columnList ?? $tableSchema->columns);
+				$setColumnNames = $insert->insertBody->columnList !== null
+					? array_map(static fn (Expr\Column $c) => $c->name, $insert->insertBody->columnList)
+					: array_keys($tableSchema->columns);
+				$expectedCount = count($setColumnNames);
 
 				foreach ($insert->insertBody->values as $tuple) {
 					if (count($tuple) === $expectedCount) {
@@ -457,6 +467,25 @@ final class AnalyserState
 				}
 
 				break;
+		}
+
+		$setColumNamesMap = array_fill_keys($setColumnNames, 1);
+
+		foreach ($tableSchema?->columns ?? [] as $name => $column) {
+			if (
+				isset($setColumNamesMap[$name])
+				|| $column->defaultValue !== null
+				|| $column->isNullable
+				|| $column->isAutoIncrement
+				// ENUMs default to the first value if NOT NULL and there is no DEFAULT value specified
+				|| $column->type::getTypeEnum() === Schema\DbType\DbTypeEnum::ENUM
+			) {
+				continue;
+			}
+
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage($name),
+			);
 		}
 
 		// TODO: check if fields without default value are missing

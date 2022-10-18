@@ -62,6 +62,19 @@ class AnalyserTest extends TestCase
 				name VARCHAR(255) NULL
 			);
 		");
+		$db->query("
+			CREATE OR REPLACE TABLE analyse_test_insert (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				val_string_null_no_default VARCHAR(255) NULL,
+				val_string_not_null_no_default VARCHAR(255) NOT NULL,
+				val_string_null_default VARCHAR(255) NULL DEFAULT 'abc',
+				val_string_not_null_default VARCHAR(255) NOT NULL DEFAULT 'def',
+				val_enum_null_no_default ENUM('a', 'b') NULL,
+				val_enum_null_default ENUM('a', 'b') NULL DEFAULT 'b',
+				val_enum_not_null_no_default ENUM('a', 'b') NOT NULL,
+				val_enum_not_null_default ENUM('a', 'b') NOT NULL DEFAULT 'b'
+			);
+		");
 		$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
 
 		yield 'SELECT *' => [
@@ -759,18 +772,6 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideValidInsertTestData(): iterable
 	{
-		yield 'INSERT ... SET, skip column with default value' => [
-			'query' => 'INSERT INTO analyser_test SET name = "abcd"',
-		];
-
-		yield 'INSERT ... VALUES, skip column with default value' => [
-			'query' => 'INSERT INTO analyser_test (name) VALUES ("abcd")',
-		];
-
-		yield 'INSERT ... SELECT, skip column with default value' => [
-			'query' => 'INSERT INTO analyser_test (name) SELECT "abcd"',
-		];
-
 		yield 'INSERT ... SET, explicitly set id' => [
 			'query' => 'INSERT INTO analyser_test SET id = 999, name = "abcd"',
 		];
@@ -789,6 +790,18 @@ class AnalyserTest extends TestCase
 
 		yield 'INSERT ... SELECT ... WITH' => [
 			'query' => 'INSERT INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl',
+		];
+
+		yield 'INSERT ... SET, skip column with default value' => [
+			'query' => 'INSERT INTO analyse_test_insert SET val_string_not_null_no_default = "aaa"',
+		];
+
+		yield 'INSERT ... VALUES, skip column with default value' => [
+			'query' => 'INSERT INTO analyse_test_insert (val_string_not_null_no_default) VALUES ("abcd")',
+		];
+
+		yield 'INSERT ... SELECT, skip column with default value' => [
+			'query' => 'INSERT INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"',
 		];
 
 		// TODO: DEFAULT expression
@@ -1639,6 +1652,30 @@ class AnalyserTest extends TestCase
 			'query' => "INSERT INTO analyser_test SELECT 999, 'adasd', 1",
 			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
 			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+		];
+
+		yield "INSERT ... VALUES - skip column without default value" => [
+			'query' => "INSERT INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
+			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+				'val_string_not_null_no_default',
+			),
+			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+		];
+
+		yield "INSERT ... SET - skip column without default value" => [
+			'query' => "INSERT INTO analyse_test_insert SET val_string_null_default = 'aaa'",
+			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+				'val_string_not_null_no_default',
+			),
+			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+		];
+
+		yield "INSERT ... SELECT - skip column without default value" => [
+			'query' => "INSERT INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'",
+			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+				'val_string_not_null_no_default',
+			),
+			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 		];
 	}
 

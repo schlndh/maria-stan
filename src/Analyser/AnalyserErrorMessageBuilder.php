@@ -124,6 +124,11 @@ class AnalyserErrorMessageBuilder
 		return "Insert expected {$expected} columns, but got {$got} columns.";
 	}
 
+	public static function createMissingValueForColumnErrorMessage(string $column): string
+	{
+		return "Column {$column} has no default value and none was provided.";
+	}
+
 	private static function formatDbType(DbType $type): string
 	{
 		if ($type::getTypeEnum() === DbTypeEnum::TUPLE) {
