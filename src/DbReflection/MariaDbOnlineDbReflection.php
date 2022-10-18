@@ -9,6 +9,8 @@ use MariaStan\DbReflection\Exception\DatabaseException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
 use MariaStan\DbReflection\Exception\UnexpectedValueException;
+use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\DbType;
@@ -28,11 +30,12 @@ use function array_map;
 use function assert;
 use function explode;
 use function preg_match;
+use function stripos;
 use function trim;
 
 class MariaDbOnlineDbReflection
 {
-	public function __construct(private readonly mysqli $mysqli)
+	public function __construct(private readonly mysqli $mysqli, private readonly MariaDbParser $parser)
 	{
 	}
 
@@ -78,15 +81,26 @@ class MariaDbOnlineDbReflection
 	{
 		assert(isset($showColumnsRow['Field'], $showColumnsRow['Type'], $showColumnsRow['Null']));
 
-		return new Column(
-			$showColumnsRow['Field'],
-			$this->parseDbType($showColumnsRow['Type']),
-			match ($showColumnsRow['Null']) {
-				'YES' => true,
-				'NO' => false,
-				default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumnsRow['Null']}"),
-			},
-		);
+		try {
+			return new Column(
+				$showColumnsRow['Field'],
+				$this->parseDbType($showColumnsRow['Type']),
+				match ($showColumnsRow['Null']) {
+					'YES' => true,
+					'NO' => false,
+					default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumnsRow['Null']}"),
+				},
+				$showColumnsRow['Default'] !== null
+					? $this->parser->parseSingleExpression($showColumnsRow['Default'])
+					: null,
+				stripos($showColumnsRow['Extra'] ?? '', 'auto_increment') !== false,
+			);
+		} catch (ParserException $e) {
+			throw new DbReflectionException(
+				"Failed to parse default value of column `{$showColumnsRow['Field']}`: {$showColumnsRow['Default']}.",
+				previous: $e,
+			);
+		}
 	}
 
 	/** @throws DbReflectionException */

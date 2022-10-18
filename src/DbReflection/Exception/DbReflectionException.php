@@ -6,6 +6,6 @@ namespace MariaStan\DbReflection\Exception;
 
 use RuntimeException;
 
-abstract class DbReflectionException extends RuntimeException
+class DbReflectionException extends RuntimeException
 {
 }

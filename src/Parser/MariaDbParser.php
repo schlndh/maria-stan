@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Parser\Exception\ParserException;
 
@@ -32,6 +33,15 @@ class MariaDbParser
 		$parserState = new MariaDbParserState($this, $sqlQuery, $tokens);
 
 		return $parserState->parseStrictSingleQuery();
+	}
+
+	/** @throws ParserException */
+	public function parseSingleExpression(string $expression): Expr
+	{
+		$tokens = $this->lexer->tokenize($expression);
+		$parserState = new MariaDbParserState($this, $expression, $tokens);
+
+		return $parserState->parseStrictSingleExpression();
 	}
 
 	/** @return array<TokenTypeEnum> */

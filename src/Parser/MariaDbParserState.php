@@ -156,6 +156,15 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
+	public function parseStrictSingleExpression(): Expr
+	{
+		$expr = $this->parseExpression();
+		$this->expectToken(TokenTypeEnum::END_OF_INPUT);
+
+		return $expr;
+	}
+
+	/** @throws ParserException */
 	private function parseInsertQuery(): InsertQuery
 	{
 		$startToken = $this->expectToken(TokenTypeEnum::INSERT);

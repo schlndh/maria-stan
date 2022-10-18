@@ -802,7 +802,7 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db);
+		$reflection = new MariaDbOnlineDbReflection($db, $parser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
@@ -1630,7 +1630,7 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db);
+		$reflection = new MariaDbOnlineDbReflection($db, $parser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 
@@ -1710,7 +1710,7 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db);
+		$reflection = new MariaDbOnlineDbReflection($db, $parser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 		$this->assertCount(

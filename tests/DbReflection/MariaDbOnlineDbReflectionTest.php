@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\DbReflection;
 
 use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\EnumType;
@@ -20,7 +21,7 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
-				id INT NULL,
+				id INT NULL PRIMARY KEY AUTO_INCREMENT,
 				name VARCHAR(255) NOT NULL,
 				val_tinyint_u TINYINT(1) UNSIGNED NOT NULL,
 				val_tinyint_s TINYINT(1) SIGNED NOT NULL,
@@ -36,18 +37,23 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 				val_date DATE NOT NULL,
 				val_time TIME NOT NULL,
 				val_datetime DATETIME NOT NULL,
-				val_timestamp TIMESTAMP NOT NULL,
+				val_timestamp TIMESTAMP NULL,
 				val_year YEAR NOT NULL,
-				val_enum ENUM('a', 'b', 'c') NOT NULL
+				val_enum ENUM('a', 'b', 'c') NOT NULL,
+				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5)
 			);
 		");
-		$reflection = new MariaDbOnlineDbReflection($db);
+
+		$parser = new MariaDbParser();
+		$reflection = new MariaDbOnlineDbReflection($db, $parser);
 		$schema = $reflection->findTableSchema($tableName);
+		// mariadb doesn't preserve the exact syntax of the default expression.
+		$valDefaultExpr = $parser->parseSingleExpression('(abs(`val_mediumint`) + 5)');
 
 		$this->assertNotNull($schema);
 		$this->assertSame($tableName, $schema->name);
 		$this->assertEquals([
-			'id' => new Column('id', new IntType(), true),
+			'id' => new Column('id', new IntType(), false, null, true),
 			'name' => new Column('name', new VarcharType(), false),
 			'val_tinyint_u' => new Column('val_tinyint_u', new IntType(), false),
 			'val_tinyint_s' => new Column('val_tinyint_s', new IntType(), false),
@@ -63,9 +69,10 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 			'val_date' => new Column('val_date', new DateTimeType(), false),
 			'val_time' => new Column('val_time', new DateTimeType(), false),
 			'val_datetime' => new Column('val_datetime', new DateTimeType(), false),
-			'val_timestamp' => new Column('val_timestamp', new DateTimeType(), false),
+			'val_timestamp' => new Column('val_timestamp', new DateTimeType(), true),
 			'val_year' => new Column('val_year', new DateTimeType(), false),
 			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
+			'val_default' => new Column('val_default', new IntType(), false, $valDefaultExpr),
 		], $schema->columns);
 	}
 }
