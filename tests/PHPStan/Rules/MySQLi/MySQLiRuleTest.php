@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
-use MariaStan\PHPStan\Rules\MariaStanRuleTestCase;
 use MariaStan\PHPStan\Rules\MySQLi\data\MySQLiRuleInvalidDataTest;
+use MariaStan\Testing\MariaStanRuleTestCase;
 use mysqli;
 use PHPStan\Rules\Rule;
 

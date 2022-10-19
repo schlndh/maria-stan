@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MariaStan\PHPStan\Rules;
+namespace MariaStan\Testing;
 
 use PHPStan\Analyser\Analyser;
 use PHPStan\Analyser\Error;
