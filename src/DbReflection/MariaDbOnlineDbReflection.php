@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\DbReflection;
 
 use MariaStan\Analyser\AnalyserErrorMessageBuilder;
+use MariaStan\Ast\Expr\Expr;
 use MariaStan\DbReflection\Exception\DatabaseException;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
@@ -21,45 +22,55 @@ use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\Table;
 use MariaStan\Util\MariaDbErrorCodes;
-use MariaStan\Util\MysqliUtil;
 use mysqli;
 use mysqli_sql_exception;
 
 use function array_combine;
 use function array_map;
 use function assert;
+use function count;
 use function explode;
+use function is_string;
 use function preg_match;
 use function stripos;
 use function trim;
 
+use const MYSQLI_ASSOC;
+
 class MariaDbOnlineDbReflection
 {
+	private readonly string $database;
+
 	public function __construct(private readonly mysqli $mysqli, private readonly MariaDbParser $parser)
 	{
+		$db = $this->mysqli->query('SELECT DATABASE()')->fetch_column();
+		assert(is_string($db));
+
+		$this->database = $db;
 	}
 
 	/** @throws DbReflectionException */
 	public function findTableSchema(string $table): Table
 	{
-		$tableEsc = MysqliUtil::quoteIdentifier($table);
-
 		try {
-			$tableCols = $this->mysqli->query("SHOW FULL COLUMNS FROM {$tableEsc}")->fetch_all(\MYSQLI_ASSOC);
-		} catch (mysqli_sql_exception $e) {
-			if ($e->getCode() === MariaDbErrorCodes::ER_NO_SUCH_TABLE) {
+			$stmt = $this->mysqli->prepare(
+				'SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
+			);
+			$stmt->execute([$this->database, $table]);
+			$tableCols = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+			if (count($tableCols) === 0) {
 				throw new TableDoesNotExistException(
 					AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage($table),
-					$e->getCode(),
-					$e,
+					MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 				);
 			}
-
+		} catch (mysqli_sql_exception $e) {
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
 		}
 
 		$columns = array_map(
-			$this->createColumnSchema(...),
+			fn (array $row) => $this->createColumnSchema($table, $row),
 			$tableCols,
 		);
 		$columns = array_combine(
@@ -77,27 +88,33 @@ class MariaDbOnlineDbReflection
 	 * @param array<string, ?string> $showColumnsRow key => value
 	 * @throws DbReflectionException
 	 */
-	private function createColumnSchema(array $showColumnsRow): Column
+	private function createColumnSchema(string $table, array $showColumnsRow): Column
 	{
-		assert(isset($showColumnsRow['Field'], $showColumnsRow['Type'], $showColumnsRow['Null']));
+		assert(isset($showColumnsRow['COLUMN_NAME'], $showColumnsRow['COLUMN_TYPE'], $showColumnsRow['IS_NULLABLE']));
 
+		return new Column(
+			$showColumnsRow['COLUMN_NAME'],
+			$this->parseDbType($showColumnsRow['COLUMN_TYPE']),
+			match ($showColumnsRow['IS_NULLABLE']) {
+				'YES' => true,
+				'NO' => false,
+				default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumnsRow['Null']}"),
+			},
+			$this->findColumnDefaultValue($table, $showColumnsRow['COLUMN_NAME'], $showColumnsRow['COLUMN_DEFAULT']),
+			stripos($showColumnsRow['EXTRA'] ?? '', 'auto_increment') !== false,
+		);
+	}
+
+	/** @throws DbReflectionException */
+	private function findColumnDefaultValue(string $table, string $field, ?string $defaultValue): ?Expr
+	{
 		try {
-			return new Column(
-				$showColumnsRow['Field'],
-				$this->parseDbType($showColumnsRow['Type']),
-				match ($showColumnsRow['Null']) {
-					'YES' => true,
-					'NO' => false,
-					default => throw new UnexpectedValueException("Expected YES/NO, got {$showColumnsRow['Null']}"),
-				},
-				$showColumnsRow['Default'] !== null
-					? $this->parser->parseSingleExpression($showColumnsRow['Default'])
-					: null,
-				stripos($showColumnsRow['Extra'] ?? '', 'auto_increment') !== false,
-			);
+			return $defaultValue !== null
+				? $this->parser->parseSingleExpression($defaultValue)
+				: null;
 		} catch (ParserException $e) {
 			throw new DbReflectionException(
-				"Failed to parse default value of column `{$showColumnsRow['Field']}`: {$showColumnsRow['Default']}.",
+				"Failed to parse default value of column `{$table}`.`{$field}`: [{$defaultValue}].",
 				previous: $e,
 			);
 		}

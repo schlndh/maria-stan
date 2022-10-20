@@ -33,6 +33,7 @@ parameters:
 		# query could return true instead of result for queries that don't product result set, but let's assume that
 		# we know what we're doing.
 		- '#bool\|mysqli_result#'
+		- '#mysqli_result\|false#'
 		# MariaDbParserOperatorTest.php tries to evaluate expression from AST. We're just hoping for the best.
 		-
 			message: '#.*operation.*results in an error#'

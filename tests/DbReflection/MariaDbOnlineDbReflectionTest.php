@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace MariaStan\DbReflection;
 
+use MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall;
+use MariaStan\Ast\Expr\LiteralInt;
+use MariaStan\Ast\Expr\LiteralNull;
+use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\DbReflection\Exception\TableDoesNotExistException;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -12,6 +17,8 @@ use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
 use PHPUnit\Framework\TestCase;
+
+use function strtoupper;
 
 class MariaDbOnlineDbReflectionTest extends TestCase
 {
@@ -49,6 +56,7 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 		$schema = $reflection->findTableSchema($tableName);
 		// mariadb doesn't preserve the exact syntax of the default expression.
 		$valDefaultExpr = $parser->parseSingleExpression('(abs(`val_mediumint`) + 5)');
+		$nullExpr = $parser->parseSingleExpression('NULL');
 
 		$this->assertNotNull($schema);
 		$this->assertSame($tableName, $schema->name);
@@ -69,10 +77,84 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 			'val_date' => new Column('val_date', new DateTimeType(), false),
 			'val_time' => new Column('val_time', new DateTimeType(), false),
 			'val_datetime' => new Column('val_datetime', new DateTimeType(), false),
-			'val_timestamp' => new Column('val_timestamp', new DateTimeType(), true),
+			'val_timestamp' => new Column('val_timestamp', new DateTimeType(), true, $nullExpr),
 			'val_year' => new Column('val_year', new DateTimeType(), false),
 			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
 			'val_default' => new Column('val_default', new IntType(), false, $valDefaultExpr),
 		], $schema->columns);
+
+		$db->query("
+			CREATE OR REPLACE TABLE db_reflection_test_default_values (
+				empty_string_default VARCHAR(255) DEFAULT '',
+				string_default VARCHAR(255) DEFAULT 'abc',
+				qmark_default VARCHAR(255) DEFAULT '?',
+				col_default VARCHAR(255) DEFAULT non_default_string,
+				string_default_col_name VARCHAR(255) DEFAULT 'non_default_string',
+				string_default_int VARCHAR(255) DEFAULT '1',
+				string_default_null VARCHAR(255) DEFAULT 'NULL',
+				null_default VARCHAR(255) DEFAULT NULL,
+				string_default_fn_call VARCHAR(255) DEFAULT 'round(rand())',
+				int_default INT DEFAULT 1,
+				int_default_string INT DEFAULT '0',
+				fn_call_default INT DEFAULT ROUND(RAND()),
+				non_default_string VARCHAR(255) NOT NULL
+			);
+		");
+
+		$schema = $reflection->findTableSchema('db_reflection_test_default_values');
+		$this->assertStringDefaultValue('', $schema->columns['empty_string_default']);
+		$this->assertStringDefaultValue('abc', $schema->columns['string_default']);
+		$this->assertStringDefaultValue('?', $schema->columns['qmark_default']);
+
+		$this->assertColumnDefaultValue('non_default_string', $schema->columns['col_default']);
+
+		$this->assertStringDefaultValue('non_default_string', $schema->columns['string_default_col_name']);
+		$this->assertStringDefaultValue('1', $schema->columns['string_default_int']);
+		$this->assertStringDefaultValue('NULL', $schema->columns['string_default_null']);
+		$this->assertInstanceOf(LiteralNull::class, $schema->columns['null_default']->defaultValue);
+		$this->assertStringDefaultValue('round(rand())', $schema->columns['string_default_fn_call']);
+
+		$this->assertIntDefaultValue(1, $schema->columns['int_default']);
+		$this->assertIntDefaultValue(0, $schema->columns['int_default_string']);
+
+		$this->assertFnCallDefaultValue('ROUND', $schema->columns['fn_call_default']);
+	}
+
+	public function testMissingTable(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$parser = new MariaDbParser();
+		$reflection = new MariaDbOnlineDbReflection($db, $parser);
+
+		$this->expectException(TableDoesNotExistException::class);
+		$reflection->findTableSchema('missing_table_123_abc');
+	}
+
+	private function assertStringDefaultValue(string $expected, Column $column): void
+	{
+		$defValueExpr = $column->defaultValue;
+		$this->assertInstanceOf(LiteralString::class, $defValueExpr);
+		$this->assertSame($expected, $defValueExpr->value);
+	}
+
+	private function assertColumnDefaultValue(string $expected, Column $column): void
+	{
+		$defValueExpr = $column->defaultValue;
+		$this->assertInstanceOf(\MariaStan\Ast\Expr\Column::class, $defValueExpr);
+		$this->assertSame($expected, $defValueExpr->name);
+	}
+
+	private function assertIntDefaultValue(int $expected, Column $column): void
+	{
+		$defValueExpr = $column->defaultValue;
+		$this->assertInstanceOf(LiteralInt::class, $defValueExpr);
+		$this->assertSame($expected, $defValueExpr->value);
+	}
+
+	private function assertFnCallDefaultValue(string $expected, Column $column): void
+	{
+		$defValueExpr = $column->defaultValue;
+		$this->assertInstanceOf(StandardFunctionCall::class, $defValueExpr);
+		$this->assertSame(strtoupper($expected), strtoupper($defValueExpr->name));
 	}
 }
