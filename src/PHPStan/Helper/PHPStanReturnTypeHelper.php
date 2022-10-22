@@ -138,7 +138,7 @@ class PHPStanReturnTypeHelper
 		return new UnionType([new IntegerType(), new FloatType(), new StringType(), new BooleanType(), new NullType()]);
 	}
 
-	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
+	/** @param ?array<array{ConstantStringType, Type}> $columns [[name, type]] */
 	public function getNumericTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {
@@ -150,7 +150,7 @@ class PHPStanReturnTypeHelper
 		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes, count($valueTypes));
 	}
 
-	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
+	/** @param ?array<array{ConstantStringType, Type}> $columns [[name, type]] */
 	public function getAssociativeTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {
@@ -165,7 +165,7 @@ class PHPStanReturnTypeHelper
 		return new ConstantArrayType($keyTypes, $valueTypes);
 	}
 
-	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */
+	/** @param ?array<array{ConstantStringType, Type}> $columns [[name, type]] */
 	public function getBothNumericAndAssociativeTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {

@@ -542,6 +542,104 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		} while (true);
 	}
 
+	public function testFetchColumn(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$result = $db->query('
+			SELECT * FROM mysqli_test
+		');
+
+		do {
+			$value = $result->fetch_column();
+
+			if (function_exists('assertType')) {
+				assertType('int|false', $value);
+			}
+
+			if ($value === false) {
+				break;
+			}
+
+			$this->assertIsInt($value);
+		} while (true);
+
+		$result = $db->query('
+			SELECT * FROM mysqli_test
+		');
+
+		do {
+			$value = $result->fetch_column(0);
+
+			if (function_exists('assertType')) {
+				assertType('int|false', $value);
+			}
+
+			if ($value === false) {
+				break;
+			}
+
+			$this->assertIsInt($value);
+		} while (true);
+
+		$result = $db->query('
+			SELECT * FROM mysqli_test
+		');
+
+		do {
+			$value = $result->fetch_column(2);
+
+			if (function_exists('assertType')) {
+				assertType('numeric-string|false', $value);
+			}
+
+			if ($value === false) {
+				break;
+			}
+
+			$this->assertIsNumeric($value);
+		} while (true);
+
+		$result = $db->query('
+			SELECT id, price FROM mysqli_test
+		');
+
+		do {
+			$dynamicColumn = $this->getZero();
+			$value = $result->fetch_column($dynamicColumn);
+
+			if (function_exists('assertType')) {
+				// numeric-string is covered by string
+				assertType('int|numeric-string|false', $value);
+				assertType('int', $dynamicColumn);
+			}
+
+			if ($value === false) {
+				break;
+			}
+
+			$this->assertIsNumeric($value);
+		} while (true);
+
+		$result = $db->query('
+			SELECT * FROM mysqli_test
+		');
+		unset($value);
+
+		try {
+			$value = $result->fetch_column(10);
+		} catch (\ValueError) {
+		}
+
+		if (function_exists('assertType')) {
+			assertType('*ERROR*', $value);
+		}
+	}
+
+	private function getZero(): int
+	{
+		return 0;
+	}
+
 	/** @param string|array<string> $allowedTypes */
 	private function assertGettype(string|array $allowedTypes, mixed $value): void
 	{

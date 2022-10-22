@@ -41,6 +41,7 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				'fetch_all',
 				'fetch_row',
 				'fetch_array',
+				'fetch_column',
 			],
 			true,
 		);
@@ -73,8 +74,27 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				$params,
 				$this->extractModeFromFirstArg($methodCall, $scope),
 			),
+			'fetch_column' => $this->phpstanMysqliHelper->fetchColumn(
+				$params,
+				$this->extractColumnFromFirstArg($methodCall, $scope),
+			),
 			default => null,
 		};
+	}
+
+	private function extractColumnFromFirstArg(MethodCall $methodCall, Scope $scope): ?int
+	{
+		if (count($methodCall->getArgs()) === 0) {
+			return 0;
+		}
+
+		$firstArgType = $scope->getType($methodCall->getArgs()[0]->value);
+
+		if ($firstArgType instanceof ConstantIntegerType) {
+			return $firstArgType->getValue();
+		}
+
+		return null;
 	}
 
 	private function extractModeFromFirstArg(MethodCall $methodCall, Scope $scope): ?int
