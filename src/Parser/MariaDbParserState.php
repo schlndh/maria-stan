@@ -144,7 +144,7 @@ class MariaDbParserState
 		}
 
 		if ($query === null) {
-			throw new UnsupportedQueryException();
+			throw new UnsupportedQueryException('Unsupported query.');
 		}
 
 		while ($this->acceptToken(';')) {

@@ -9,6 +9,8 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
 
+use function mb_substr;
+
 final class Analyser
 {
 	public function __construct(
@@ -23,9 +25,11 @@ final class Analyser
 		try {
 			$ast = $this->parser->parseSingleQuery($query);
 		} catch (ParserException $e) {
+			$queryShort = mb_substr($query, 0, 50);
+
 			return new AnalyserResult(
 				null,
-				[new AnalyserError("Couldn't parse query: {$e->getMessage()}")],
+				[new AnalyserError("Couldn't parse query: '{$queryShort}'. Error: {$e->getMessage()}")],
 				null,
 			);
 		}
