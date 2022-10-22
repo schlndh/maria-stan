@@ -147,7 +147,7 @@ class PHPStanReturnTypeHelper
 
 		$valueTypes = array_column($columns, 1);
 
-		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes);
+		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes, count($valueTypes));
 	}
 
 	/** @param array<array{ConstantStringType, Type}> $columns [[name, type]] */

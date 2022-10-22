@@ -165,6 +165,12 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertSame([0, 1, 2], array_keys($row));
 			$schemaProcessor->process($schema, $row);
+
+			// bug: make sure that the ConstantArrayType has proper nextAutoIndexes to not trigger:
+			// https://github.com/phpstan/phpstan-src/blob/9f53f4c840fe2d77438a776feaea87d2c5cf17e9/src/Type/Constant/ConstantArrayTypeBuilder.php#L146
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
 		}
 
 		$rows = $db->query('
