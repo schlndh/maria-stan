@@ -6,6 +6,7 @@ namespace MariaStan\PHPStan\Type\MySQLi\data;
 
 use MariaStan\DatabaseTestCaseHelper;
 use mysqli;
+use mysqli_result;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 use PHPUnit\Framework\TestCase;
@@ -13,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use function array_column;
 use function array_key_exists;
 use function array_keys;
+use function assert;
 use function function_exists;
 use function gettype;
 use function implode;
@@ -110,6 +112,30 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertSame(['id', 'name', 'price'], array_keys($row));
 			$schemaProcessor->process($schema, $row);
 		}
+
+		$stmt = $db->prepare('
+			SELECT * FROM mysqli_test
+		');
+		$stmt->execute();
+		$result = $stmt->get_result();
+		assert($result instanceof mysqli_result);
+		$rows = $result->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType('true', array_key_exists('id', $row));
+				assertType('true', array_key_exists('name', $row));
+				assertType('int', $row['id']);
+				assertType('string|null', $row['name']);
+				assertType('numeric-string', $row['price']);
+				assertType('*ERROR*', $row['doesnt_exist']);
+				assertType('*ERROR*', $row[0]);
+			}
+
+			$this->assertSame(['id', 'name', 'price'], array_keys($row));
+			$schemaProcessor->process($schema, $row);
+		}
 	}
 
 	public function testNum(): void
@@ -144,6 +170,30 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all();
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType('true', array_key_exists(0, $row));
+				assertType('true', array_key_exists(1, $row));
+				assertType('int', $row[0]);
+				assertType('string|null', $row[1]);
+				assertType('numeric-string', $row[2]);
+				assertType('*ERROR*', $row[10]);
+				assertType('*ERROR*', $row['id']);
+			}
+
+			$this->assertSame([0, 1, 2], array_keys($row));
+			$schemaProcessor->process($schema, $row);
+		}
+
+		$stmt = $db->prepare('
+			SELECT * FROM mysqli_test
+		');
+		$stmt->execute();
+		$result = $stmt->get_result();
+		assert($result instanceof mysqli_result);
+		$rows = $result->fetch_all();
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -213,6 +263,37 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			'2' => Expect::string(),
 			'price' => Expect::string(),
 		]);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType('true', array_key_exists('id', $row));
+				assertType('true', array_key_exists('name', $row));
+				assertType('true', array_key_exists('price', $row));
+				assertType('true', array_key_exists(0, $row));
+				assertType('true', array_key_exists(1, $row));
+				assertType('true', array_key_exists(2, $row));
+				assertType('int', $row[0]);
+				assertType('int', $row['id']);
+				assertType('string|null', $row[1]);
+				assertType('string|null', $row['name']);
+				assertType('numeric-string', $row[2]);
+				assertType('numeric-string', $row['price']);
+				assertType('*ERROR*', $row[10]);
+				assertType('*ERROR*', $row['doesnt_exist']);
+			}
+
+			$this->assertSame([0, 'id', 1, 'name', 2, 'price'], array_keys($row));
+			$schemaProcessor->process($schema, $row);
+		}
+
+		$stmt = $db->prepare('
+			SELECT * FROM mysqli_test
+		');
+		$stmt->execute();
+		$result = $stmt->get_result();
+		assert($result instanceof mysqli_result);
+		$rows = $result->fetch_all(MYSQLI_BOTH);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {

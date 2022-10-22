@@ -44,8 +44,8 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 	): ?Type {
 		$queryType = $scope->getType($methodCall->getArgs()[0]->value);
 		[$returnClass, $result] = match ($methodReflection->getName()) {
-			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->prepare($queryType)],
-			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->query($queryType)],
+			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->query($queryType)],
+			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->prepare($queryType)],
 			default => [null, null],
 		};
 

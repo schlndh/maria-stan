@@ -6,6 +6,10 @@ services:
 		tags:
 			- phpstan.broker.dynamicMethodReturnTypeExtension
 	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiStmtDynamicReturnTypeExtension
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
 		class: MariaStan\PHPStan\Type\MySQLi\MySQLiResultDynamicReturnTypeExtension
 		tags:
 			- phpstan.broker.dynamicMethodReturnTypeExtension
