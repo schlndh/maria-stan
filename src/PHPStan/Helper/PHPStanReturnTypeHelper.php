@@ -197,8 +197,9 @@ class PHPStanReturnTypeHelper
 	{
 		$alreadyUsedNames = [];
 		assert(count($keyTypes) === count($valueTypes));
+		$keyCount = count($keyTypes);
 
-		for ($i = 0; $i < count($keyTypes); $i++) {
+		for ($i = 0; $i < $keyCount; $i++) {
 			if (isset($alreadyUsedNames[$keyTypes[$i]->getValue()])) {
 				unset($keyTypes[$i], $valueTypes[$i]);
 			} else {

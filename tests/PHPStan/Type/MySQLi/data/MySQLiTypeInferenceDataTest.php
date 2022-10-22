@@ -80,8 +80,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
+				assertType("array{'id', 'name', 'price'}", array_keys($row));
 				assertType('int', $row['id']);
 				assertType('string|null', $row['name']);
 				assertType('numeric-string', $row['price']);
@@ -100,8 +99,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
+				assertType("array{'id', 'name', 'price'}", array_keys($row));
 				assertType('int', $row['id']);
 				assertType('string|null', $row['name']);
 				assertType('numeric-string', $row['price']);
@@ -124,8 +122,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
+				assertType("array{'id', 'name', 'price'}", array_keys($row));
 				assertType('int', $row['id']);
 				assertType('string|null', $row['name']);
 				assertType('numeric-string', $row['price']);
@@ -154,8 +151,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
+				assertType("array{0, 1, 2}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('string|null', $row[1]);
 				assertType('numeric-string', $row[2]);
@@ -180,8 +176,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
+				assertType("array{0, 1, 2}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('string|null', $row[1]);
 				assertType('numeric-string', $row[2]);
@@ -204,8 +199,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
+				assertType("array{0, 1, 2}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('string|null', $row[1]);
 				assertType('numeric-string', $row[2]);
@@ -233,12 +227,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
-				assertType('true', array_key_exists(2, $row));
-				assertType('true', array_key_exists(3, $row));
-				assertType('true', array_key_exists(4, $row));
-				assertType('true', array_key_exists(5, $row));
+				assertType("array{0, 1, 2, 3, 4, 5}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('string|null', $row[1]);
 				assertType('numeric-string', $row[2]);
@@ -273,12 +262,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
-				assertType('true', array_key_exists('price', $row));
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
-				assertType('true', array_key_exists(2, $row));
+				assertType("array{0, 'id', 1, 'name', 2, 'price'}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('int', $row['id']);
 				assertType('string|null', $row[1]);
@@ -304,12 +288,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
-				assertType('true', array_key_exists('price', $row));
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
-				assertType('true', array_key_exists(2, $row));
+				assertType("array{0, 'id', 1, 'name', 2, 'price'}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('int', $row['id']);
 				assertType('string|null', $row[1]);
@@ -342,14 +321,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
 				// All items are non-optional
-				assertType('true', array_key_exists('id', $row));
-				assertType('true', array_key_exists('name', $row));
-				assertType('true', array_key_exists('price', $row));
-				assertType('true', array_key_exists(0, $row));
-				assertType('true', array_key_exists(1, $row));
-				assertType('true', array_key_exists(2, $row));
-				assertType('true', array_key_exists(3, $row));
-				assertType('true', array_key_exists(4, $row));
+				assertType("array{0, 'id', 1, 'name', 2, 'price', 3, 4}", array_keys($row));
 				assertType('int', $row[0]);
 				assertType('int', $row['id']);
 				assertType('string|null', $row[1]);
