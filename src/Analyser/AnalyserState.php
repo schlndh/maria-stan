@@ -255,14 +255,17 @@ final class AnalyserState
 					}
 
 					$fields[] = $resolvedField;
-					$this->columnResolver->registerField($resolvedField);
+					$this->columnResolver->registerField(
+						$resolvedField,
+						$selectExpr->expr::getExprType() === Expr\ExprTypeEnum::COLUMN,
+					);
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
 					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName);
 
 					foreach ($allFields as $field) {
-						$this->columnResolver->registerField($field);
+						$this->columnResolver->registerField($field, true);
 					}
 
 					$fields = array_merge($fields, $allFields);

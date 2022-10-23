@@ -594,6 +594,30 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
 		];
 
+		yield 'use column in GROUP BY - resolve column ambiguity via field list' => [
+			'query' => 'SELECT t1.id, t2.name FROM analyser_test t1, analyser_test t2 GROUP BY id',
+		];
+
+		yield 'use column in GROUP BY - column in fields list vs alias in field list' => [
+			'query' => 'SELECT t1.id, 1+1 id FROM analyser_test t1, analyser_test t2 GROUP BY id',
+		];
+
+		yield 'use column in GROUP BY - resolve ambiguity by explicit table' => [
+			'query' => 'SELECT a.id, b.id FROM analyser_test a, analyser_test b GROUP BY a.id',
+		];
+
+		yield 'use column in GROUP BY - resolve ambiguity by explicit table - column alias' => [
+			'query' => 'SELECT a.id, b.name id FROM analyser_test a, analyser_test b GROUP BY a.id',
+		];
+
+		yield 'use column in GROUP BY - resolve ambiguity by explicit table - *, 1+1 id' => [
+			'query' => 'SELECT *, 1+1 id FROM analyser_test a, analyser_test b GROUP BY a.id',
+		];
+
+		yield 'use column in GROUP BY - resolve ambiguity by explicit table - a.id, b.id, 1+1 id' => [
+			'query' => 'SELECT a.id, b.id, 1+1 id FROM analyser_test a, analyser_test b GROUP BY a.id',
+		];
+
 		yield 'use alias from field list in HAVING' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING aaa > 0',
 		];
@@ -1165,6 +1189,30 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test GROUP BY v.id',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'ambiguous column in GROUP BY' => [
+			'query' => 'SELECT a.id, b.id FROM analyser_test a, analyser_test b GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'ambiguous column in GROUP BY - explicit alias' => [
+			'query' => 'SELECT a.id, b.name id FROM analyser_test a, analyser_test b GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'ambiguous column in GROUP BY - *, expression alias' => [
+			'query' => 'SELECT *, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'ambiguous column in GROUP BY - a.id, b.id, 1+1 id' => [
+			'query' => 'SELECT a.id, b.id, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'unknown column in HAVING' => [

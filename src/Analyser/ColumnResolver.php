@@ -49,7 +49,7 @@ final class ColumnResolver
 	/** @var array<string, true> table => true */
 	private array $tablesWithoutAliasMap = [];
 
-	/** @var array<string, QueryResultField> name => field */
+	/** @var array<string, array<array{QueryResultField, ?bool}>> name => [[field, is column]] */
 	private array $fieldList = [];
 
 	/** @var array<array{column: string, table: string}> */
@@ -183,16 +183,16 @@ final class ColumnResolver
 		$this->fieldList = [];
 
 		foreach ($fields as $field) {
-			$this->registerField($field);
+			$this->registerField($field, null);
 		}
 	}
 
-	public function registerField(QueryResultField $field): void
+	public function registerField(QueryResultField $field, ?bool $isColumn): void
 	{
 		// TODO: how to handle duplicate names? It seems that for ORDER BY/HAVING the first column with given
 		// name has priority. However, if there is an alias then it trumps columns without alias.
 		// SELECT id, -id id, 2*id id FROM analyser_test ORDER BY id;
-		$this->fieldList[$field->name] ??= $field;
+		$this->fieldList[$field->name][] = [$field, $isColumn];
 	}
 
 	public function setFieldListBehavior(ColumnResolverFieldBehaviorEnum $shouldPreferFieldList): void
@@ -208,7 +208,41 @@ final class ColumnResolver
 			&& $this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
 			&& isset($this->fieldList[$column])
 		) {
-			return $this->fieldList[$column];
+			return $this->fieldList[$column][0][0];
+		}
+
+		if ($table === null) {
+			$candidateFields = $this->fieldList[$column] ?? [];
+
+			if ($this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::GROUP_BY && count($candidateFields) > 0) {
+				$columnCount = 0;
+				$firstExpressionField = null;
+				$firstField = null;
+
+				foreach ($candidateFields as [$field, $isColumn]) {
+					$firstField ??= $field;
+
+					// For now we don't have to worry about it. It's only null in UNION/... which can't have GROUP BY.
+					if ($isColumn === null) {
+						continue;
+					}
+
+					if ($isColumn) {
+						$columnCount++;
+					} else {
+						$firstExpressionField ??= $field;
+					}
+				}
+
+				if ($columnCount > 1) {
+					throw new AnalyserException(
+						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
+					);
+				}
+
+				// If there are multiple expressions with the same alias the first one seems to be used.
+				return $firstExpressionField ?? $firstField;
+			}
 		}
 
 		$candidateTables = array_filter(
@@ -230,10 +264,10 @@ final class ColumnResolver
 				// TODO: add test to make sure that the prioritization is the same as in the database.
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
 				return $resolvedParentColumn
-					?? ($table === null ? $this->parent?->fieldList[$column] ?? null : null)
+					?? ($table === null ? $this->parent?->findUniqueItemInFieldList($column) : null)
 					?? (
 						$table === null && $this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST
-							? $this->fieldList[$column] ?? null
+							? $this->findUniqueItemInFieldList($column)
 							: null
 					)
 					?? throw new AnalyserException(
@@ -262,6 +296,18 @@ final class ColumnResolver
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
 
 		return new QueryResultField($column, $columnSchema->type, $columnSchema->isNullable || $isOuterTable);
+	}
+
+	private function findUniqueItemInFieldList(string $name): ?QueryResultField
+	{
+		$candidates = $this->fieldList[$name] ?? [];
+		$count = count($candidates);
+
+		if ($count === 0 || $count > 1) {
+			return null;
+		}
+
+		return $candidates[0][0];
 	}
 
 	/**
