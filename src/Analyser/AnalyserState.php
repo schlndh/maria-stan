@@ -472,6 +472,10 @@ final class AnalyserState
 				break;
 		}
 
+		foreach ($insert->onDuplicateKeyUpdate ?? [] as $assignment) {
+			$this->resolveExprType($assignment);
+		}
+
 		$setColumNamesMap = array_fill_keys($setColumnNames, 1);
 
 		foreach ($tableSchema?->columns ?? [] as $name => $column) {

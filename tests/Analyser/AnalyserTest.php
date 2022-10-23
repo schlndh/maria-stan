@@ -828,6 +828,35 @@ class AnalyserTest extends TestCase
 			'query' => 'INSERT INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"',
 		];
 
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+				ON DUPLICATE KEY UPDATE id = id
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - VALUES(col)' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+				ON DUPLICATE KEY UPDATE val_string_not_null_no_default = VALUES(val_string_not_null_no_default)
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - VALUE(col)' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+				ON DUPLICATE KEY UPDATE val_string_not_null_no_default = VALUE(val_string_not_null_no_default)
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - placeholder' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+				ON DUPLICATE KEY UPDATE val_string_not_null_no_default = ?
+			',
+			'params' => ['aaa'],
+		];
+
 		// TODO: DEFAULT expression
 	}
 
@@ -1635,6 +1664,15 @@ class AnalyserTest extends TestCase
 
 		yield "INSERT INTO ... (missing_column) SELECT ..." => [
 			'query' => "INSERT INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1",
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "INSERT INTO ... ON DUPLICATE KEY UPDATE missing_column" => [
+			'query' => "
+				INSERT INTO analyser_test (id, name) SELECT 999, 'adasd'
+				ON DUPLICATE KEY UPDATE missing_column = 1
+			",
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
