@@ -39,31 +39,6 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
 	}
 
-	public function testValid(): void
-	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$db->query('SELECT id FROM mysqli_rule_invalid');
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute();
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute(null);
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute([]);
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT ?');
-		$stmt->execute([1]);
-		$stmt->close();
-
-		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
-		$this->assertTrue(true);
-	}
-
 	public function testInvalid(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();

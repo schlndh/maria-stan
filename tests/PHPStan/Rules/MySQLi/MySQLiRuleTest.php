@@ -17,6 +17,8 @@ use function implode;
 use function MariaStan\fileNamesInDir;
 use function preg_last_error_msg;
 use function preg_replace;
+use function str_contains;
+use function trim;
 
 /** @extends MariaStanRuleTestCase<MySQLiRule> */
 class MySQLiRuleTest extends MariaStanRuleTestCase
@@ -61,6 +63,12 @@ class MySQLiRuleTest extends MariaStanRuleTestCase
 	{
 		$output = $this->getTestOutput($file);
 		$this->assertSame($expectedOutput, $output);
+
+		match (true) {
+			str_contains($file, 'Valid') => $this->assertSame('', trim($output)),
+			str_contains($file, 'Invalid') => $this->assertNotSame('', trim($output)),
+			default => null,
+		};
 	}
 
 	/** @return array<string> */
