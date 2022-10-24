@@ -1,7 +1,8 @@
-47: Unknown column 'missing'
-54: Placeholders cannot be used with query(), use prepared statements.
-63: Prepared statement needs 1 parameters, got 0.
-72: Prepared statement needs 1 parameters, got 0.
-80: Prepared statement needs 1 parameters, got 0.
-89: Prepared statement needs 0 parameters, got 3.
-95: Couldn't parse query: 'asdlajkd qeosdasd ?'. Error: Unsupported query.
+49: Unknown column 'missing'
+56: Placeholders cannot be used with query(), use prepared statements.
+65: Prepared statement needs 1 parameters, got 0.
+74: Prepared statement needs 1 parameters, got 0.
+82: Prepared statement needs 1 parameters, got 0.
+91: Prepared statement needs 0 parameters, got 3.
+97: Couldn't parse query: 'asdlajkd qeosdasd ?'. Error: Unsupported query.
+111: Prepared statement needs 2 parameters, got 3.

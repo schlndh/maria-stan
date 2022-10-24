@@ -11,6 +11,8 @@ use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
+use function rand;
+
 class MySQLiRuleInvalidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
@@ -98,6 +100,17 @@ class MySQLiRuleInvalidDataTest extends TestCase
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::ER_PARSE_ERROR, $e->getCode());
+		}
+
+		$stmt = $db->prepare('SELECT ?, ?');
+
+		try {
+			$params = rand()
+				? [1, 2, 3]
+				: ['a', 'b', 'c'];
+			$stmt->execute($params);
+			$this->fail('Exception expected');
+		} catch (ValueError) {
 		}
 	}
 }
