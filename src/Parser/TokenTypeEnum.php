@@ -284,6 +284,7 @@ enum TokenTypeEnum: string
 	case TRAILING = 'TRAILING';
 	case TRIGGER = 'TRIGGER';
 	case TRUE = 'TRUE';
+	case TRUNCATE = 'TRUNCATE';
 	case UNBOUNDED = 'UNBOUNDED';
 	case UNDO = 'UNDO';
 	case UNION = 'UNION';

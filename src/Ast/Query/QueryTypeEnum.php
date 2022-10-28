@@ -16,4 +16,7 @@ enum QueryTypeEnum: string
 
 	/** @see ReplaceQuery */
 	case REPLACE = 'REPLACE';
+
+	/** @see TruncateQuery */
+	case TRUNCATE = 'TRUNCATE';
 }

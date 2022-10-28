@@ -81,6 +81,7 @@ class MariaDbParser
 			TokenTypeEnum::TEXT,
 			TokenTypeEnum::TIME,
 			TokenTypeEnum::TIMESTAMP,
+			TokenTypeEnum::TRUNCATE,
 			TokenTypeEnum::UNBOUNDED,
 			TokenTypeEnum::UNKNOWN,
 			TokenTypeEnum::VALUE,

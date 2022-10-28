@@ -27,6 +27,7 @@ use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
+use MariaStan\Ast\Query\TruncateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
@@ -77,6 +78,11 @@ final class AnalyserState
 			case QueryTypeEnum::REPLACE:
 				assert($this->queryAst instanceof InsertQuery || $this->queryAst instanceof ReplaceQuery);
 				$fields = $this->analyseInsertOrReplaceQuery($this->queryAst);
+				break;
+			case QueryTypeEnum::TRUNCATE:
+				assert($this->queryAst instanceof TruncateQuery);
+				$this->analyseTruncateQuery($this->queryAst);
+				$fields = [];
 				break;
 			default:
 				return new AnalyserResult(
@@ -504,6 +510,16 @@ final class AnalyserState
 		// TODO: INSERT ... ON DUPLICATE KEY
 		// TODO: INSERT ... RETURNING
 		return [];
+	}
+
+	/** @throws AnalyserException */
+	private function analyseTruncateQuery(TruncateQuery $query): void
+	{
+		try {
+			$this->dbReflection->findTableSchema($query->tableName);
+		} catch (DbReflectionException $e) {
+			$this->errors[] = new AnalyserError($e->getMessage());
+		}
 	}
 
 	/** @throws AnalyserException */

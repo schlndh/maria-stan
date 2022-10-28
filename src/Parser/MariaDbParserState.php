@@ -70,6 +70,7 @@ use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
+use MariaStan\Ast\Query\TruncateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -142,6 +143,9 @@ class MariaDbParserState
 		} elseif ($this->acceptAnyOfTokenTypes(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE)) {
 			$this->position--;
 			$query = $this->parseInsertOrReplaceQuery();
+		} elseif ($this->acceptToken(TokenTypeEnum::TRUNCATE)) {
+			$this->position--;
+			$query = $this->parseTruncateQuery();
 		}
 
 		if ($query === null) {
@@ -163,6 +167,23 @@ class MariaDbParserState
 		$this->expectToken(TokenTypeEnum::END_OF_INPUT);
 
 		return $expr;
+	}
+
+	/** @throws ParserException */
+	private function parseTruncateQuery(): TruncateQuery
+	{
+		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::TRUNCATE);
+		$this->acceptToken(TokenTypeEnum::TABLE);
+		// TODO: database.table
+		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+		$wait = $this->parseWaitNoWait();
+
+		return new TruncateQuery(
+			$startToken->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$tableName,
+			$wait,
+		);
 	}
 
 	/** @throws ParserException */
@@ -2068,29 +2089,12 @@ class MariaDbParserState
 			return null;
 		}
 
-		$lockOption = null;
-		$waitToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::WAIT, TokenTypeEnum::NOWAIT, TokenTypeEnum::SKIP);
+		$lockOption = $this->parseWaitNoWait();
 
-		switch ($waitToken?->type) {
-			case TokenTypeEnum::SKIP:
-				// help phpstan
-				assert($waitToken !== null);
-				$this->expectToken(TokenTypeEnum::LOCKED);
-				$lockOption = new SkipLocked($waitToken->position, $this->getPreviousToken()->getEndPosition());
-				break;
-			case TokenTypeEnum::WAIT:
-				assert($waitToken !== null);
-				$secondsToken = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, TokenTypeEnum::LITERAL_FLOAT);
-				$lockOption = new Wait(
-					$waitToken->position,
-					$this->getPreviousToken()->getEndPosition(),
-					(float) $secondsToken->content,
-				);
-				break;
-			case TokenTypeEnum::NOWAIT:
-				assert($waitToken !== null);
-				$lockOption = new NoWait($waitToken->position, $waitToken->getEndPosition());
-				break;
+		if ($lockOption === null && $this->acceptToken(TokenTypeEnum::SKIP)) {
+			$waitToken = $this->getPreviousToken();
+			$this->expectToken(TokenTypeEnum::LOCKED);
+			$lockOption = new SkipLocked($waitToken->position, $this->getPreviousToken()->getEndPosition());
 		}
 
 		return new SelectLock(
@@ -2099,6 +2103,31 @@ class MariaDbParserState
 			$type,
 			$lockOption,
 		);
+	}
+
+	/** @throws ParserException */
+	private function parseWaitNoWait(): Wait|NoWait|null
+	{
+		$waitToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::WAIT, TokenTypeEnum::NOWAIT);
+
+		if ($waitToken === null) {
+			return null;
+		}
+
+		switch ($waitToken->type) {
+			case TokenTypeEnum::WAIT:
+				$secondsToken = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_INT, TokenTypeEnum::LITERAL_FLOAT);
+
+				return new Wait(
+					$waitToken->position,
+					$this->getPreviousToken()->getEndPosition(),
+					(float) $secondsToken->content,
+				);
+			case TokenTypeEnum::NOWAIT:
+				return new NoWait($waitToken->position, $waitToken->getEndPosition());
+			default:
+				throw new ParserException('This should not happen');
+		}
 	}
 
 	/** @throws ParserException */

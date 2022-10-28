@@ -50,7 +50,7 @@ class MariaDbParserTest extends TestCase
 			$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
 		};
 
-		foreach (['', '_join_a', '_join_b', '_join_c', '_join_d'] as $suffix) {
+		foreach (['', '_join_a', '_join_b', '_join_c', '_join_d', '_truncate'] as $suffix) {
 			$initTable($suffix);
 		}
 	}

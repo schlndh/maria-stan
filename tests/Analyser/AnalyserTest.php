@@ -75,6 +75,14 @@ class AnalyserTest extends TestCase
 				val_enum_not_null_default ENUM('a', 'b') NOT NULL DEFAULT 'b'
 			);
 		");
+
+		$db->query("
+			CREATE OR REPLACE TABLE analyser_test_truncate (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				name VARCHAR(255) NULL
+			);
+		");
+
 		$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
 
 		yield 'SELECT *' => [
@@ -104,6 +112,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideValidUnionTestData();
 		yield from $this->provideValidWithTestData();
 		yield from $this->provideValidInsertTestData();
+		yield from $this->provideValidOtherQueryTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -794,6 +803,14 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
+	private function provideValidOtherQueryTestData(): iterable
+	{
+		yield "TRUNCATE TABLE" => [
+			'query' => 'TRUNCATE TABLE analyser_test_truncate',
+		];
+	}
+
+	/** @return iterable<string, array<mixed>> */
 	private function provideValidInsertTestData(): iterable
 	{
 		foreach (['INSERT', 'REPLACE'] as $type) {
@@ -1145,6 +1162,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideInvalidTupleTestData();
 		yield from $this->provideInvalidUnionTestData();
 		yield from $this->provideInvalidInsertTestData();
+		yield from $this->provideInvalidOtherQueryTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1638,6 +1656,18 @@ class AnalyserTest extends TestCase
 				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidOtherQueryTestData(): iterable
+	{
+		yield "TRUNCATE missing_table" => [
+			'query' => "TRUNCATE missing_table",
+			'error' => [
+				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */

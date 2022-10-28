@@ -1,0 +1,54 @@
+TRUNCATE TABLE
+-----
+TRUNCATE parser_test_truncate
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+)
+-----
+TRUNCATE TABLE parser_test_truncate
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+)
+-----
+TRUNCATE TABLE `parser_test_truncate`
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+)
+-----
+TRUNCATE TABLE parser_test_truncate WAIT 5
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+	[wait] => MariaStan\Ast\Lock\Wait
+		(
+			[seconds] => 5
+		)
+)
+-----
+TRUNCATE TABLE parser_test_truncate WAIT 5.6
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+	[wait] => MariaStan\Ast\Lock\Wait
+		(
+			[seconds] => 5.6
+		)
+)
+-----
+TRUNCATE TABLE parser_test_truncate NOWAIT
+-----
+MariaStan\Ast\Query\TruncateQuery
+(
+	[tableName] => parser_test_truncate
+	[wait] => MariaStan\Ast\Lock\NoWait
+		(
+		)
+)
