@@ -19,4 +19,7 @@ enum QueryTypeEnum: string
 
 	/** @see TruncateQuery */
 	case TRUNCATE = 'TRUNCATE';
+
+	/** @see UpdateQuery */
+	case UPDATE = 'UPDATE';
 }

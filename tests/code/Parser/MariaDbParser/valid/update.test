@@ -1,0 +1,548 @@
+WITH
+-----
+UPDATE parser_test SET name = "aaa" WHERE id = 1 ORDER BY id + 1 LIMIT 5
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 5
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = "aaa" WHERE id = 1 ORDER BY id + 1
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+									[left] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+									[right] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = "aaa", id = id
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+			[1] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = "aaa" ORDER BY id ASC, name DESC
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+					[1] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::DESC
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = "aaa" WHERE id = 1 LIMIT 5
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\LiteralInt
+				(
+					[value] => 1
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 5
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = DEFAULT
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\ColumnDefault
+						(
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE IGNORE parser_test SET name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => true
+)
+-----
+UPDATE `parser_test` SET name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE `parser_test` SET parser_test.name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => parser_test
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test t SET t.name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[alias] => t
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => t
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE (SELECT * FROM parser_test) t, parser_test t2 SET t2.name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+				(
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+							[isDistinct] => false
+						)
+					[alias] => t
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[alias] => t2
+				)
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => t2
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE (SELECT * FROM parser_test) t JOIN parser_test t2 ON t.id = t2.id SET t2.name = "aa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Subquery
+				(
+					[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => parser_test
+								)
+							[isDistinct] => false
+						)
+					[alias] => t
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[alias] => t2
+				)
+			[joinCondition] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => t
+						)
+					[right] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => t2
+						)
+				)
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => t2
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aa
+							[firstConcatPart] => aa
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET name = ? WHERE id = ? ORDER BY ? LIMIT ?
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\Placeholder
+						(
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\BinaryOp
+		(
+			[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+			[left] => MariaStan\Ast\Expr\Column
+				(
+					[name] => id
+				)
+			[right] => MariaStan\Ast\Expr\Placeholder
+				(
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Placeholder
+								(
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\Placeholder
+		(
+		)
+	[ignoreErrors] => false
+)

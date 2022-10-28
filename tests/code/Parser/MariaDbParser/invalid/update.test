@@ -1,0 +1,78 @@
+UPDATE
+-----
+UPDATE TABLE parser_test SET name = "aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IDENTIFIER, got TABLE after: UPDATE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'TABLE parser_test SET name = "aa"' at line 1
+-----
+UPDATE FROM parser_test SET name = "aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IDENTIFIER, got FROM after: UPDATE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM parser_test SET name = "aa"' at line 1
+-----
+UPDATE parser_test ORDER BY id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SET, got ORDER after: UPDATE parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id' at line 1
+-----
+UPDATE parser_test LIMIT 5
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SET, got LIMIT after: UPDATE parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'LIMIT 5' at line 1
+-----
+UPDATE parser_test WHERE id = 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SET, got WHERE after: UPDATE parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE id = 1' at line 1
+-----
+UPDATE parser_test WHERE id = 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SET, got WHERE after: UPDATE parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE id = 1' at line 1
+-----
+UPDATE parser_test SET name = "aa" GROUP BY id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got GROUP after: parser_test SET name = "aa"
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'GROUP BY id' at line 1
+-----
+UPDATE parser_test SET name = "aa" HAVING id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got HAVING after: parser_test SET name = "aa"
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HAVING id' at line 1
+-----
+UPDATE parser_test SET name = "aa" NOWAIT
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got NOWAIT after: parser_test SET name = "aa"
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NOWAIT' at line 1
+-----
+UPDATE parser_test SET name = "aa" LIMIT 5, 10
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ',' after: name = "aa" LIMIT 5
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 10' at line 1
+-----
+(UPDATE parser_test SET name = "aa")
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got UPDATE after: (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UPDATE parser_test SET name = "aa")' at line 1

@@ -71,6 +71,7 @@ use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\Query\TruncateQuery;
+use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
@@ -143,6 +144,9 @@ class MariaDbParserState
 		} elseif ($this->acceptAnyOfTokenTypes(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE)) {
 			$this->position--;
 			$query = $this->parseInsertOrReplaceQuery();
+		} elseif ($this->acceptToken(TokenTypeEnum::UPDATE)) {
+			$this->position--;
+			$query = $this->parseUpdateQuery();
 		} elseif ($this->acceptToken(TokenTypeEnum::TRUNCATE)) {
 			$this->position--;
 			$query = $this->parseTruncateQuery();
@@ -183,6 +187,34 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$tableName,
 			$wait,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseUpdateQuery(): UpdateQuery
+	{
+		$startToken = $this->expectToken(TokenTypeEnum::UPDATE);
+		$ignoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$table = $this->parseJoins();
+		$this->expectToken(TokenTypeEnum::SET);
+		$assignments = $this->parseListOfColumnAssignments();
+		$where = $this->parseWhere();
+		$orderBy = $this->parseOrderBy();
+		$limit = null;
+
+		if ($this->acceptToken(TokenTypeEnum::LIMIT)) {
+			$limit = $this->parseLimitExpression();
+		}
+
+		return new UpdateQuery(
+			$startToken->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$table,
+			$assignments,
+			$where,
+			$orderBy,
+			$limit,
+			$ignoreErrors,
 		);
 	}
 
