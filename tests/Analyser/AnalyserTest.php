@@ -796,37 +796,39 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideValidInsertTestData(): iterable
 	{
-		yield 'INSERT ... SET, explicitly set id' => [
-			'query' => 'INSERT INTO analyser_test SET id = 999, name = "abcd"',
-		];
+		foreach (['INSERT', 'REPLACE'] as $type) {
+			yield "{$type} ... SET, explicitly set id" => [
+				'query' => $type . ' INTO analyser_test SET id = 999, name = "abcd"',
+			];
 
-		yield 'INSERT ... VALUES, explicitly set id' => [
-			'query' => 'INSERT INTO analyser_test VALUES (999, "abcd")',
-		];
+			yield "{$type} ... VALUES, explicitly set id" => [
+				'query' => $type . ' INTO analyser_test VALUES (999, "abcd")',
+			];
 
-		yield 'INSERT ... SELECT, explicitly set id' => [
-			'query' => 'INSERT INTO analyser_test SELECT 999, "abcd"',
-		];
+			yield "{$type} ... SELECT, explicitly set id" => [
+				'query' => $type . ' INTO analyser_test SELECT 999, "abcd"',
+			];
 
-		yield 'INSERT ... SELECT ... UNION' => [
-			'query' => 'INSERT INTO analyser_test SELECT 999, "abcd" UNION SELECT 998, "aaa"',
-		];
+			yield "{$type} ... SELECT ... UNION" => [
+				'query' => $type . ' INTO analyser_test SELECT 999, "abcd" UNION SELECT 998, "aaa"',
+			];
 
-		yield 'INSERT ... SELECT ... WITH' => [
-			'query' => 'INSERT INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl',
-		];
+			yield "{$type} ... SELECT ... WITH" => [
+				'query' => $type . ' INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl',
+			];
 
-		yield 'INSERT ... SET, skip column with default value' => [
-			'query' => 'INSERT INTO analyse_test_insert SET val_string_not_null_no_default = "aaa"',
-		];
+			yield "{$type} ... SET, skip column with default value" => [
+				'query' => $type . ' INTO analyse_test_insert SET val_string_not_null_no_default = "aaa"',
+			];
 
-		yield 'INSERT ... VALUES, skip column with default value' => [
-			'query' => 'INSERT INTO analyse_test_insert (val_string_not_null_no_default) VALUES ("abcd")',
-		];
+			yield "{$type} ... VALUES, skip column with default value" => [
+				'query' => $type . ' INTO analyse_test_insert (val_string_not_null_no_default) VALUES ("abcd")',
+			];
 
-		yield 'INSERT ... SELECT, skip column with default value' => [
-			'query' => 'INSERT INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"',
-		];
+			yield "{$type} ... SELECT, skip column with default value" => [
+				'query' => $type . ' INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"',
+			];
+		}
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE' => [
 			'query' => '
@@ -1641,32 +1643,122 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideInvalidInsertTestData(): iterable
 	{
-		yield "INSERT INTO missing_table" => [
-			'query' => "INSERT INTO missing_table SET col = 'value'",
-			'error' => [
-				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
-				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('col'),
-			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
-		];
+		foreach (['INSERT', 'REPLACE'] as $type) {
+			yield "{$type} INTO missing_table" => [
+				'query' => "{$type} INTO missing_table SET col = 'value'",
+				'error' => [
+					AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('col'),
+				],
+				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			];
 
-		yield "INSERT INTO ... SET missing_column" => [
-			'query' => "INSERT INTO analyser_test SET missing_column = 'value'",
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
+			yield "{$type} INTO ... SET missing_column" => [
+				'query' => "{$type} INTO analyser_test SET missing_column = 'value'",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
 
-		yield "INSERT INTO ... (missing_column) VALUES ..." => [
-			'query' => "INSERT INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)",
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
+			yield "{$type} INTO ... (missing_column) VALUES ..." => [
+				'query' => "{$type} INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
 
-		yield "INSERT INTO ... (missing_column) SELECT ..." => [
-			'query' => "INSERT INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1",
-			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
+			yield "{$type} INTO ... (missing_column) SELECT ..." => [
+				'query' => "{$type} INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1",
+				'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield "{$type} INTO ... SELECT - issue in SELECT" => [
+				'query' => "{$type} INTO analyser_test SELECT * FROM missing_table",
+				'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			];
+
+			yield "{$type} INTO ... VALUES - issue in tuple" => [
+				'query' => "{$type} INTO analyser_test (name) VALUES (1 = (1, 2))",
+				'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+					new IntType(),
+					$this->createMockTuple(2),
+				),
+				'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+			];
+
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count" => [
+				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd', 1)",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - in some tuples" => [
+				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - in multiple tuples" => [
+				'query' => "{$type} INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 1),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count + error in tuple" => [
+				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1),"
+					. " (111, 1 = (1, 1))",
+				'error' => [
+					AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
+						new IntType(),
+						$this->createMockTuple(2),
+					),
+					AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+				],
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - implicit column list" => [
+				'query' => "{$type} INTO analyser_test VALUES (999, 'adasd', 1)",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) SELECT ... - mismatched column count" => [
+				'query' => "{$type} INTO analyser_test (name) SELECT 'adasd', 1",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(1, 2),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... (columns, ...) SELECT ... - mismatched column count - implicit column list" => [
+				'query' => "{$type} INTO analyser_test SELECT 999, 'adasd', 1",
+				'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} ... VALUES - skip column without default value" => [
+				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
+				'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+					'val_string_not_null_no_default',
+				),
+				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+			];
+
+			yield "{$type} ... SET - skip column without default value" => [
+				'query' => "{$type} INTO analyse_test_insert SET val_string_null_default = 'aaa'",
+				'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+					'val_string_not_null_no_default',
+				),
+				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+			];
+
+			yield "{$type} ... SELECT - skip column without default value" => [
+				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'",
+				'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
+					'val_string_not_null_no_default',
+				),
+				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+			];
+		}
 
 		yield "INSERT INTO ... ON DUPLICATE KEY UPDATE missing_column" => [
 			'query' => "
@@ -1675,93 +1767,6 @@ class AnalyserTest extends TestCase
 			",
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield "INSERT INTO ... SELECT - issue in SELECT" => [
-			'query' => "INSERT INTO analyser_test SELECT * FROM missing_table",
-			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
-		];
-
-		yield "INSERT INTO ... VALUES - issue in tuple" => [
-			'query' => "INSERT INTO analyser_test (name) VALUES (1 = (1, 2))",
-			'error' => AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
-				new IntType(),
-				$this->createMockTuple(2),
-			),
-			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
-		];
-
-		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count" => [
-			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd', 1)",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - in some tuples" => [
-			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - in multiple tuples" => [
-			'query' => "INSERT INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 1),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count + error in tuple" => [
-			'query' => "INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1), (111, 1 = (1, 1))",
-			'error' => [
-				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage(
-					new IntType(),
-					$this->createMockTuple(2),
-				),
-				AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
-			],
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) VALUES ... - mismatched column count - implicit column list" => [
-			'query' => "INSERT INTO analyser_test VALUES (999, 'adasd', 1)",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) SELECT ... - mismatched column count" => [
-			'query' => "INSERT INTO analyser_test (name) SELECT 'adasd', 1",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(1, 2),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT INTO ... (columns, ...) SELECT ... - mismatched column count - implicit column list" => [
-			'query' => "INSERT INTO analyser_test SELECT 999, 'adasd', 1",
-			'error' => AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(2, 3),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
-		];
-
-		yield "INSERT ... VALUES - skip column without default value" => [
-			'query' => "INSERT INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
-			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
-				'val_string_not_null_no_default',
-			),
-			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
-		];
-
-		yield "INSERT ... SET - skip column without default value" => [
-			'query' => "INSERT INTO analyse_test_insert SET val_string_null_default = 'aaa'",
-			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
-				'val_string_not_null_no_default',
-			),
-			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
-		];
-
-		yield "INSERT ... SELECT - skip column without default value" => [
-			'query' => "INSERT INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'",
-			'error' => AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage(
-				'val_string_not_null_no_default',
-			),
-			'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 		];
 	}
 

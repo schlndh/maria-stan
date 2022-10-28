@@ -57,6 +57,7 @@ use MariaStan\Ast\Query\InsertBody\SetInsertBody;
 use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
 use MariaStan\Ast\Query\InsertQuery;
 use MariaStan\Ast\Query\Query;
+use MariaStan\Ast\Query\ReplaceQuery;
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
@@ -138,9 +139,9 @@ class MariaDbParserState
 			if ($this->tokens[0]->content === '(' && $query::getSelectQueryType() === SelectQueryTypeEnum::WITH) {
 				throw new ParserException('Top-level WITH query cannot be wrapped in parentheses.');
 			}
-		} elseif ($this->acceptToken(TokenTypeEnum::INSERT)) {
+		} elseif ($this->acceptAnyOfTokenTypes(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE)) {
 			$this->position--;
-			$query = $this->parseInsertQuery();
+			$query = $this->parseInsertOrReplaceQuery();
 		}
 
 		if ($query === null) {
@@ -165,10 +166,11 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
-	private function parseInsertQuery(): InsertQuery
+	private function parseInsertOrReplaceQuery(): InsertQuery|ReplaceQuery
 	{
-		$startToken = $this->expectToken(TokenTypeEnum::INSERT);
-		$ingoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE);
+		$ignoreErrors = $startToken->type === TokenTypeEnum::INSERT
+			&& $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
 		$this->acceptToken(TokenTypeEnum::INTO);
 		// TODO: database.table
 		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
@@ -248,6 +250,15 @@ class MariaDbParserState
 			);
 		}
 
+		if ($startToken->type === TokenTypeEnum::REPLACE) {
+			return new ReplaceQuery(
+				$startToken->position,
+				$this->getPreviousToken()->getEndPosition(),
+				$tableName,
+				$insertBody,
+			);
+		}
+
 		$onDuplicateKeyUpdate = null;
 
 		if ($this->acceptToken(TokenTypeEnum::ON)) {
@@ -269,7 +280,7 @@ class MariaDbParserState
 			$tableName,
 			$insertBody,
 			$onDuplicateKeyUpdate,
-			$ingoreErrors,
+			$ignoreErrors,
 		);
 	}
 

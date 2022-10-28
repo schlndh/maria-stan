@@ -14,6 +14,7 @@ use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
 use MariaStan\Ast\Query\InsertQuery;
 use MariaStan\Ast\Query\Query;
 use MariaStan\Ast\Query\QueryTypeEnum;
+use MariaStan\Ast\Query\ReplaceQuery;
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
@@ -72,8 +73,10 @@ final class AnalyserState
 				$fields = $this->dispatchAnalyseSelectQuery($this->queryAst);
 				break;
 			case QueryTypeEnum::INSERT:
-				assert($this->queryAst instanceof InsertQuery);
-				$fields = $this->analyseInsertQuery($this->queryAst);
+				// fallthrough intentional
+			case QueryTypeEnum::REPLACE:
+				assert($this->queryAst instanceof InsertQuery || $this->queryAst instanceof ReplaceQuery);
+				$fields = $this->analyseInsertOrReplaceQuery($this->queryAst);
 				break;
 			default:
 				return new AnalyserResult(
@@ -374,11 +377,11 @@ final class AnalyserState
 	 * @return array<QueryResultField>
 	 * @throws AnalyserException
 	 */
-	private function analyseInsertQuery(InsertQuery $insert): array
+	private function analyseInsertOrReplaceQuery(InsertQuery|ReplaceQuery $query): array
 	{
 		static $mockPosition = null;
 		$mockPosition ??= new Position(0, 0, 0);
-		$tableReferenceNode = new Table($mockPosition, $mockPosition, $insert->tableName);
+		$tableReferenceNode = new Table($mockPosition, $mockPosition, $query->tableName);
 
 		try {
 			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver)[1];
@@ -386,18 +389,18 @@ final class AnalyserState
 			$this->errors[] = new AnalyserError($e->getMessage());
 		}
 
-		$tableSchema = $this->columnResolver->findTableSchema($insert->tableName);
+		$tableSchema = $this->columnResolver->findTableSchema($query->tableName);
 		$setColumnNames = [];
 
-		switch ($insert->insertBody::getInsertBodyType()) {
+		switch ($query->insertBody::getInsertBodyType()) {
 			case InsertBodyTypeEnum::SELECT:
-				assert($insert->insertBody instanceof SelectInsertBody);
+				assert($query->insertBody instanceof SelectInsertBody);
 
-				foreach ($insert->insertBody->columnList ?? [] as $column) {
+				foreach ($query->insertBody->columnList ?? [] as $column) {
 					$this->resolveExprType($column);
 				}
 
-				$selectResult = $this->getSubqueryAnalyser($insert->insertBody->selectQuery)->analyse()->resultFields
+				$selectResult = $this->getSubqueryAnalyser($query->insertBody->selectQuery)->analyse()->resultFields
 					?? [];
 
 				// if $selectResult is empty (e.g. missing table) then there should already be an error reported.
@@ -405,8 +408,8 @@ final class AnalyserState
 					break;
 				}
 
-				$setColumnNames = $insert->insertBody->columnList !== null
-					? array_map(static fn (Expr\Column $c) => $c->name, $insert->insertBody->columnList)
+				$setColumnNames = $query->insertBody->columnList !== null
+					? array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList)
 					: array_keys($tableSchema->columns);
 				$expectedCount = count($setColumnNames);
 
@@ -423,22 +426,22 @@ final class AnalyserState
 
 				break;
 			case InsertBodyTypeEnum::SET:
-				assert($insert->insertBody instanceof SetInsertBody);
+				assert($query->insertBody instanceof SetInsertBody);
 
-				foreach ($insert->insertBody->assignments as $expr) {
+				foreach ($query->insertBody->assignments as $expr) {
 					$setColumnNames[] = $expr->target->name;
 					$this->resolveExprType($expr);
 				}
 
 				break;
 			case InsertBodyTypeEnum::VALUES:
-				assert($insert->insertBody instanceof ValuesInsertBody);
+				assert($query->insertBody instanceof ValuesInsertBody);
 
-				foreach ($insert->insertBody->columnList ?? [] as $column) {
+				foreach ($query->insertBody->columnList ?? [] as $column) {
 					$this->resolveExprType($column);
 				}
 
-				foreach ($insert->insertBody->values as $tuple) {
+				foreach ($query->insertBody->values as $tuple) {
 					foreach ($tuple as $expr) {
 						$this->resolveExprType($expr);
 					}
@@ -448,12 +451,12 @@ final class AnalyserState
 					break;
 				}
 
-				$setColumnNames = $insert->insertBody->columnList !== null
-					? array_map(static fn (Expr\Column $c) => $c->name, $insert->insertBody->columnList)
+				$setColumnNames = $query->insertBody->columnList !== null
+					? array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList)
 					: array_keys($tableSchema->columns);
 				$expectedCount = count($setColumnNames);
 
-				foreach ($insert->insertBody->values as $tuple) {
+				foreach ($query->insertBody->values as $tuple) {
 					if (count($tuple) === $expectedCount) {
 						continue;
 					}
@@ -472,8 +475,10 @@ final class AnalyserState
 				break;
 		}
 
-		foreach ($insert->onDuplicateKeyUpdate ?? [] as $assignment) {
-			$this->resolveExprType($assignment);
+		if ($query instanceof InsertQuery) {
+			foreach ($query->onDuplicateKeyUpdate ?? [] as $assignment) {
+				$this->resolveExprType($assignment);
+			}
 		}
 
 		$setColumNamesMap = array_fill_keys($setColumnNames, 1);

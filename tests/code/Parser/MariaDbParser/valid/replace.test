@@ -1,0 +1,606 @@
+REPLACE
+-----
+REPLACE INTO parser_test (name) VALUE ('aa'), ('bb')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => bb
+									[firstConcatPart] => bb
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE parser_test (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[1] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE parser_test VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+							[1] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (name)
+WITH tbl AS (SELECT "aa")
+SELECT * FROM tbl
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+				(
+					[commonTableExpressions] => Array
+						(
+							[0] => MariaStan\Ast\CommonTableExpression
+								(
+									[name] => tbl
+									[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\RegularExpr
+														(
+															[expr] => MariaStan\Ast\Expr\LiteralString
+																(
+																	[value] => aa
+																	[firstConcatPart] => aa
+																)
+														)
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+					[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+					[allowRecursive] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (name)
+(SELECT 'a')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+								)
+						)
+					[isDistinct] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (name)
+(SELECT 'a' UNION SELECT 'b')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+				(
+					[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+					[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => a
+													[firstConcatPart] => a
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\RegularExpr
+										(
+											[expr] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => b
+													[firstConcatPart] => b
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+					[isDistinct] => true
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (name)
+SELECT 'a' FOR UPDATE
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+								)
+						)
+					[isDistinct] => false
+					[lock] => MariaStan\Ast\Lock\SelectLock
+						(
+							[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (name)
+SELECT name FROM parser_test
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\Table
+						(
+							[name] => parser_test
+						)
+					[isDistinct] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+(SELECT 999, 'aaa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 999
+										)
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+								)
+						)
+					[isDistinct] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+(SELECT 999, 'aaa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 999
+										)
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+								)
+						)
+					[isDistinct] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+(WITH tbl AS (SELECT 654654, 'aaa') SELECT * FROM tbl)
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+				(
+					[commonTableExpressions] => Array
+						(
+							[0] => MariaStan\Ast\CommonTableExpression
+								(
+									[name] => tbl
+									[subquery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+										(
+											[select] => Array
+												(
+													[0] => MariaStan\Ast\SelectExpr\RegularExpr
+														(
+															[expr] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 654654
+																)
+														)
+													[1] => MariaStan\Ast\SelectExpr\RegularExpr
+														(
+															[expr] => MariaStan\Ast\Expr\LiteralString
+																(
+																	[value] => aaa
+																	[firstConcatPart] => aaa
+																)
+														)
+												)
+											[isDistinct] => false
+										)
+								)
+						)
+					[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+						(
+							[select] => Array
+								(
+									[0] => MariaStan\Ast\SelectExpr\AllColumns
+										(
+										)
+								)
+							[from] => MariaStan\Ast\Query\TableReference\Table
+								(
+									[name] => tbl
+								)
+							[isDistinct] => false
+						)
+					[allowRecursive] => false
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+SET id = DEFAULT, name = CONCAT("a", "b")
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => CONCAT
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => a
+													[firstConcatPart] => a
+												)
+											[1] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => b
+													[firstConcatPart] => b
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+SET id := DEFAULT, name := CONCAT("a", "b")
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[expression] => MariaStan\Ast\Expr\ColumnDefault
+								(
+								)
+						)
+					[1] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => CONCAT
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => a
+													[firstConcatPart] => a
+												)
+											[1] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => b
+													[firstConcatPart] => b
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test
+SET name = "name" = "a"
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\BinaryOp
+								(
+									[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+									[left] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => name
+											[firstConcatPart] => name
+										)
+									[right] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+								)
+						)
+				)
+		)
+)

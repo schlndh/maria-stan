@@ -8,9 +8,12 @@ use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 
 enum QueryTypeEnum: string
 {
+	/** @see InsertQuery */
+	case INSERT = 'INSERT';
+
 	/** @see SelectQuery */
 	case SELECT = 'SELECT';
 
-	/** @see InsertQuery */
-	case INSERT = 'INSERT';
+	/** @see ReplaceQuery */
+	case REPLACE = 'REPLACE';
 }

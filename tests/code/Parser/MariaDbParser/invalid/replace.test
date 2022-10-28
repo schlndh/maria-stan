@@ -1,0 +1,111 @@
+REPLACE
+-----
+REPLACE INTO parser_test (id, name) (DEFAULT, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got DEFAULT after: id, name) (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DEFAULT, 'aa')' at line 1
+-----
+REPLACE INTO parser_test (id, name) VALUES (DEFAULT + 1, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: name) VALUES (DEFAULT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1, 'aa')' at line 1
+-----
+(REPLACE INTO parser_test (id, name) VALUES (DEFAULT, 'aa'))
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got REPLACE after: (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'REPLACE INTO parser_test (id, name) VALUES (DEFAULT, 'aa'))' at line 1
+-----
+REPLACE INTO parser_test alias (id, name) VALUES (DEFAULT, 'aa')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got IDENTIFIER after: REPLACE INTO parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'alias (id, name) VALUES (DEFAULT, 'aa')' at line 1
+-----
+WITH tbl AS (SELECT "aa")
+REPLACE INTO parser_test (name)
+SELECT * FROM tbl
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got REPLACE after: AS (SELECT "aa")
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'REPLACE INTO parser_test (name)
+SELECT * FROM tbl' at line 2
+-----
+REPLACE INTO parser_test (name)
+(WITH tbl AS (SELECT "apparently REPLACE (WITH ... SELECT) doesn't work")
+SELECT * FROM tbl)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+INSERT with column list can't have WITH SELECT in parentheses. After: (name)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WITH tbl AS (SELECT "apparently REPLACE (WITH ... SELECT) doesn't work")
+SELE...' at line 2
+-----
+REPLACE INTO parser_test (name)
+SELECT DEFAULT
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Got DEFAULT after: (name)
+SELECT DEFAULT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 2
+-----
+REPLACE INTO parser_test
+SET name
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of '=', :=, got END_OF_INPUT after: REPLACE INTO parser_test
+SET name
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 2
+-----
+REPLACE INTO parser_test (name)
+SET name = "aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got SET after: INTO parser_test (name)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SET name = "aa"' at line 2
+-----
+REPLACE INTO parser_test
+SET "aa" = name
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: REPLACE INTO parser_test
+SET
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '"aa" = name' at line 2
+-----
+REPLACE INTO parser_test
+SET "aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got STRING_LITERAL after: REPLACE INTO parser_test
+SET
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '"aa"' at line 2
+-----
+REPLACE INTO parser_test
+SET id = 1, name = "Aa"
+ON DUPLICATE KEY UPDATE id = 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ON after: 1, name = "Aa"
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ON DUPLICATE KEY UPDATE id = 1' at line 3
+-----
+REPLACE IGNORE INTO parser_test
+SET id = 1, name = "Aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected IDENTIFIER, got IGNORE after: REPLACE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IGNORE INTO parser_test
+SET id = 1, name = "Aa"' at line 1
