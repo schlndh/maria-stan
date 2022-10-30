@@ -457,3 +457,19 @@ MariaStan\Ast\Query\DeleteQuery
 		)
 	[ignoreErrors] => false
 )
+-----
+DELETE FROM t1 USING parser_test t1
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => t1
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[alias] => t1
+		)
+	[ignoreErrors] => false
+)

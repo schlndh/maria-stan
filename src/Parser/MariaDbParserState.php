@@ -259,11 +259,15 @@ class MariaDbParserState
 			}
 
 			if (! $isMultiTableSyntax) {
-				$tableReference = new Table(
-					$tableNameToken->position,
-					$tableNameToken->getEndPosition(),
-					$tableName,
-				);
+				if (! $this->acceptToken(TokenTypeEnum::USING)) {
+					$tableReference = new Table(
+						$tableNameToken->position,
+						$tableNameToken->getEndPosition(),
+						$tableName,
+					);
+				} else {
+					$isMultiTableSyntax = true;
+				}
 			} else {
 				$this->expectToken(TokenTypeEnum::USING);
 			}
