@@ -179,7 +179,8 @@ class MariaDbParserState
 		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::TRUNCATE);
 		$this->acceptToken(TokenTypeEnum::TABLE);
 		// TODO: database.table
-		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
 		$wait = $this->parseWaitNoWait();
 
 		return new TruncateQuery(
@@ -226,7 +227,8 @@ class MariaDbParserState
 			&& $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
 		$this->acceptToken(TokenTypeEnum::INTO);
 		// TODO: database.table
-		$tableName = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
 		$columnList = null;
 		$columnListStartPosition = null;
 		$selectQuery = null;
@@ -756,7 +758,8 @@ class MariaDbParserState
 			return $result;
 		}
 
-		$table = $this->expectToken(TokenTypeEnum::IDENTIFIER);
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$table = $this->expectAnyOfTokens(...$tokenTypes);
 		$alias = $this->parseTableAlias();
 
 		return new Table(
@@ -816,8 +819,8 @@ class MariaDbParserState
 		}
 
 		$position = $this->position;
-		// TODO: in some keywords can be used as an identifier
-		$ident = $this->acceptToken(TokenTypeEnum::IDENTIFIER);
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$ident = $this->acceptAnyOfTokenTypes(...$tokenTypes);
 
 		if ($ident && $this->acceptToken('.') && $this->acceptToken('*')) {
 			$prevToken = $this->getPreviousToken();

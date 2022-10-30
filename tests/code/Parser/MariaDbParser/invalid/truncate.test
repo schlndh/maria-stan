@@ -3,7 +3,7 @@ TRUNCATE TABLE
 TRUNCATE TABLE
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected IDENTIFIER, got END_OF_INPUT after: TRUNCATE TABLE
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got END_OF_INPUT after: TRUNCATE TABLE
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
 -----

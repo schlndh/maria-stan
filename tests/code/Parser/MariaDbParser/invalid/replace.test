@@ -105,7 +105,7 @@ REPLACE IGNORE INTO parser_test
 SET id = 1, name = "Aa"
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected IDENTIFIER, got IGNORE after: REPLACE
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got IGNORE after: REPLACE
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IGNORE INTO parser_test
 SET id = 1, name = "Aa"' at line 1

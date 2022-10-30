@@ -169,6 +169,17 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 			yield "CTE alias - {$tokenType->value}" => [
 				'select' => "WITH {$tokenType->value} AS (SELECT 1) SELECT * FROM `{$tokenType->value}`;",
 			];
+
+			yield "table name - {$tokenType->value}" => [
+				'select' => "WITH `{$tokenType->value}` AS (SELECT 1) SELECT * FROM {$tokenType->value};",
+			];
+
+			yield "SELECT table.* - {$tokenType->value}" => [
+				'select' => "
+					WITH `{$tokenType->value}` AS (SELECT 1)
+					SELECT {$tokenType->value}.* FROM `{$tokenType->value}`;
+				",
+			];
 		}
 	}
 

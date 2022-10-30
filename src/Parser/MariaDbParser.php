@@ -19,6 +19,9 @@ class MariaDbParser
 	private ?array $tableAliasTokenTypes = null;
 
 	/** @var ?array<TokenTypeEnum> */
+	private ?array $cteAliasTokenTypes = null;
+
+	/** @var ?array<TokenTypeEnum> */
 	private ?array $identifierAfterDotTokenTypes = null;
 
 	public function __construct()
@@ -103,10 +106,16 @@ class MariaDbParser
 	/** @return array<TokenTypeEnum> */
 	public function getTokenTypesWhichCanBeUsedAsUnquotedCteAlias(): array
 	{
-		return $this->tableAliasTokenTypes ??= array_filter(
+		return $this->cteAliasTokenTypes ??= array_filter(
 			$this->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias(),
 			static fn (TokenTypeEnum $t) => $t !== TokenTypeEnum::ROLLUP,
 		);
+	}
+
+	/** @return array<TokenTypeEnum> */
+	public function getTokenTypesWhichCanBeUsedAsUnquotedTableName(): array
+	{
+		return $this->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
 	}
 
 	/** @return array<TokenTypeEnum> */
