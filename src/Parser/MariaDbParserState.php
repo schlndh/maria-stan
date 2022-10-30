@@ -52,6 +52,7 @@ use MariaStan\Ast\Lock\SelectLockTypeEnum;
 use MariaStan\Ast\Lock\SkipLocked;
 use MariaStan\Ast\Lock\Wait;
 use MariaStan\Ast\OrderBy;
+use MariaStan\Ast\Query\DeleteQuery;
 use MariaStan\Ast\Query\InsertBody\SelectInsertBody;
 use MariaStan\Ast\Query\InsertBody\SetInsertBody;
 use MariaStan\Ast\Query\InsertBody\ValuesInsertBody;
@@ -150,6 +151,9 @@ class MariaDbParserState
 		} elseif ($this->acceptToken(TokenTypeEnum::TRUNCATE)) {
 			$this->position--;
 			$query = $this->parseTruncateQuery();
+		} elseif ($this->acceptToken(TokenTypeEnum::DELETE)) {
+			$this->position--;
+			$query = $this->parseDeleteQuery();
 		}
 
 		if ($query === null) {
@@ -212,6 +216,91 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$table,
 			$assignments,
+			$where,
+			$orderBy,
+			$limit,
+			$ignoreErrors,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseDeleteQuery(): DeleteQuery
+	{
+		$startToken = $this->expectToken(TokenTypeEnum::DELETE);
+		$ignoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$tableNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$tablesToDelete = [];
+		$isMultiTableSyntax = false;
+		$where = null;
+		$orderBy = null;
+		$limit = null;
+		$tableReference = null;
+		$parseTableName = function () use ($tableNameTokens): array {
+			// TODO: database.table
+			$tableNameToken = $this->expectAnyOfTokens(...$tableNameTokens);
+			$tableName = $this->cleanIdentifier($tableNameToken->content);
+			$isMultiTableSyntax = false;
+
+			if ($this->acceptToken('.')) {
+				$this->expectToken('*');
+				$isMultiTableSyntax = true;
+			}
+
+			return [$tableName, $tableNameToken, $isMultiTableSyntax];
+		};
+
+		if ($this->acceptToken(TokenTypeEnum::FROM)) {
+			[$tableName, $tableNameToken, $isMultiTableSyntax] = $parseTableName();
+			$tablesToDelete[] = $tableName;
+
+			while ($this->acceptToken(',')) {
+				$isMultiTableSyntax = true;
+				$tablesToDelete[] = $parseTableName()[0];
+			}
+
+			if (! $isMultiTableSyntax) {
+				$tableReference = new Table(
+					$tableNameToken->position,
+					$tableNameToken->getEndPosition(),
+					$tableName,
+				);
+			} else {
+				$this->expectToken(TokenTypeEnum::USING);
+			}
+		} else {
+			$isMultiTableSyntax = true;
+
+			do {
+				$tablesToDelete[] = $parseTableName()[0];
+			} while ($this->acceptToken(','));
+
+			$this->expectToken(TokenTypeEnum::FROM);
+		}
+
+		if ($isMultiTableSyntax) {
+			$tableReference = $this->parseJoins();
+		}
+
+		if ($this->acceptToken(TokenTypeEnum::WHERE)) {
+			$where = $this->parseExpression();
+		}
+
+		if (! $isMultiTableSyntax) {
+			$orderBy = $this->parseOrderBy();
+
+			if ($this->acceptToken(TokenTypeEnum::LIMIT)) {
+				$limit = $this->parseLimitExpression();
+			}
+		}
+
+		// TODO: DELETE ... RETURNING
+		assert($tableReference !== null);
+
+		return new DeleteQuery(
+			$startToken->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$tablesToDelete,
+			$tableReference,
 			$where,
 			$orderBy,
 			$limit,

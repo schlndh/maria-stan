@@ -1,0 +1,92 @@
+DELETE
+-----
+DELETE parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected FROM, got END_OF_INPUT after: DELETE parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+(DELETE FROM parser_test)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got DELETE after: (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DELETE FROM parser_test)' at line 1
+-----
+DELETE FROM parser_test t1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got IDENTIFIER after: DELETE FROM parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't1' at line 1
+-----
+DELETE FROM parser_test.*
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected USING, got END_OF_INPUT after: DELETE FROM parser_test.*
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+DELETE t1, t2 FROM parser_test t1, parser_test t2 LIMIT 5
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got LIMIT after: parser_test t1, parser_test t2
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'LIMIT 5' at line 1
+-----
+DELETE t1, t2 FROM parser_test t1, parser_test t2 ORDER BY t1.id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ORDER after: parser_test t1, parser_test t2
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY t1.id' at line 1
+-----
+DELETE FROM parser_test LIMIT 1, 2
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ',' after: DELETE FROM parser_test LIMIT 1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 2' at line 1
+-----
+DELETE FROM t1.* USING parser_test t1 ORDER BY id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ORDER after: .* USING parser_test t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id' at line 1
+-----
+DELETE FROM t1.* USING parser_test t1 LIMIT 5
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got LIMIT after: .* USING parser_test t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'LIMIT 5' at line 1
+-----
+DELETE t1.* FROM parser_test t1 ORDER BY id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ORDER after: .* FROM parser_test t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ORDER BY id' at line 1
+-----
+DELETE t1.* FROM parser_test t1 LIMIT 5
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got LIMIT after: .* FROM parser_test t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'LIMIT 5' at line 1
+-----
+DELETE t1 USING parser_test t1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected FROM, got USING after: DELETE t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USING parser_test t1' at line 1
+-----
+DELETE FROM t1 FROM parser_test t1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got FROM after: DELETE FROM t1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM parser_test t1' at line 1
