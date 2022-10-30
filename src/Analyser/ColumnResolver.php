@@ -17,6 +17,7 @@ use MariaStan\Schema;
 use function array_filter;
 use function array_intersect_key;
 use function array_key_first;
+use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_values;
@@ -476,5 +477,19 @@ final class ColumnResolver
 	public function findTableSchema(string $tableName): ?Schema\Table
 	{
 		return $this->tableSchemas[$tableName] ?? null;
+	}
+
+	/** @return array<string> */
+	public function getCollidingSubqueryAndTableAliases(): array
+	{
+		return array_keys(
+			array_intersect_key(array_merge($this->tablesByAlias, $this->tableSchemas), $this->subquerySchemas),
+		);
+	}
+
+	public function hasTableForDelete(string $table): bool
+	{
+		return isset($this->tablesByAlias[$table])
+			|| (isset($this->tableSchemas[$table]) && ! in_array($table, $this->tablesByAlias, true));
 	}
 }

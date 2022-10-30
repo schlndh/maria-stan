@@ -7,6 +7,7 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
+use MariaStan\Ast\Query\DeleteQuery;
 use MariaStan\Ast\Query\InsertBody\InsertBodyTypeEnum;
 use MariaStan\Ast\Query\InsertBody\SelectInsertBody;
 use MariaStan\Ast\Query\InsertBody\SetInsertBody;
@@ -89,6 +90,10 @@ final class AnalyserState
 				assert($this->queryAst instanceof UpdateQuery);
 				$this->analyseUpdateQuery($this->queryAst);
 				$fields = [];
+				break;
+			case QueryTypeEnum::DELETE:
+				assert($this->queryAst instanceof DeleteQuery);
+				$fields = $this->analyseDeleteQuery($this->queryAst);
 				break;
 			default:
 				return new AnalyserResult(
@@ -383,6 +388,51 @@ final class AnalyserState
 		}
 
 		return [[], $columnResolver];
+	}
+
+	/**
+	 * @return array<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseDeleteQuery(DeleteQuery $query): array
+	{
+		try {
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+
+			// don't report missing tables to delete if the table reference is not parsed successfully
+			foreach ($query->tablesToDelete as $table) {
+				if ($this->columnResolver->hasTableForDelete($table)) {
+					continue;
+				}
+
+				$this->errors[] = new AnalyserError(
+					AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage($table),
+				);
+			}
+		} catch (AnalyserException | DbReflectionException $e) {
+			$this->errors[] = new AnalyserError($e->getMessage());
+		}
+
+		foreach ($this->columnResolver->getCollidingSubqueryAndTableAliases() as $alias) {
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
+			);
+		}
+
+		if ($query->where !== null) {
+			$this->resolveExprType($query->where);
+		}
+
+		foreach ($query->orderBy?->expressions ?? [] as $orderByExpr) {
+			$this->resolveExprType($orderByExpr->expr);
+		}
+
+		if ($query->limit !== null) {
+			$this->resolveExprType($query->limit);
+		}
+
+		// TODO: DELETE ... RETURNING
+		return [];
 	}
 
 	/** @throws AnalyserException */

@@ -22,6 +22,9 @@ class MariaDbErrorCodes
 	// 1066	42000	ER_NONUNIQ_TABLE	Not unique table/alias: '%s'
 	public const ER_NONUNIQ_TABLE = 1066;
 
+	// 1109	42S02	ER_UNKNOWN_TABLE	Unknown table '%s' in %s
+	public const ER_UNKNOWN_TABLE = 1109;
+
 	// 1136	21S01	ER_WRONG_VALUE_COUNT_ON_ROW	Column count doesn't match value count at row %ld
 	public const ER_WRONG_VALUE_COUNT_ON_ROW = 1136;
 

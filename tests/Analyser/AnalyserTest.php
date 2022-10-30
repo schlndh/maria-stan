@@ -114,6 +114,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideValidInsertTestData();
 		yield from $this->provideValidOtherQueryTestData();
 		yield from $this->provideValidUpdateTestData();
+		yield from $this->provideValidDeleteTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -915,6 +916,31 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideValidDeleteTestData(): iterable
+	{
+		yield 'DELETE - single table' => [
+			'query' => 'DELETE FROM analyser_test_truncate WHERE id > 5 ORDER BY id, name DESC LIMIT 5',
+		];
+
+		yield 'DELETE - placeholders' => [
+			'query' => 'DELETE t1 FROM analyser_test_truncate t1 JOIN (SELECT 1 id) t2 ON ? WHERE t1.id > ?',
+			'params' => [1, 2],
+		];
+
+		yield 'DELETE - same source and target' => [
+			'query' => 'DELETE FROM analyser_test_truncate WHERE id IN (SELECT id FROM analyser_test_truncate)',
+		];
+
+		yield 'DELETE - by alias' => [
+			'query' => 'DELETE t1 FROM analyser_test_truncate t1',
+		];
+
+		yield 'DELETE - multi-table without aliases' => [
+			'query' => 'DELETE analyser_test_truncate FROM analyser_test_truncate, analyser_test',
+		];
+	}
+
 	/**
 	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
@@ -944,6 +970,7 @@ class AnalyserTest extends TestCase
 			"Expected no errors. Got: "
 			. implode("\n", array_map(static fn (AnalyserError $e) => $e->message, $otherErrors)),
 		);
+		$this->assertSame(count($params), $result->positionalPlaceholderCount);
 		$db->begin_transaction();
 
 		try {
@@ -1200,6 +1227,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideInvalidInsertTestData();
 		yield from $this->provideInvalidOtherQueryTestData();
 		yield from $this->provideInvalidUpdateTestData();
+		yield from $this->provideInvalidDeleteTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1922,6 +1950,67 @@ class AnalyserTest extends TestCase
 		//	],
 		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		//];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidDeleteTestData(): iterable
+	{
+		yield 'DELETE - missing table' => [
+			'query' => 'DELETE FROM missing_table',
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'DELETE - wrong alias' => [
+			'query' => 'DELETE t_miss FROM analyser_test_truncate t1',
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('t_miss'),
+			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+		];
+
+		yield 'DELETE - by table name despite alias' => [
+			'query' => 'DELETE analyser_test_truncate FROM analyser_test_truncate t1',
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('analyser_test_truncate'),
+			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+		];
+
+		yield 'DELETE - error in WHERE' => [
+			'query' => 'DELETE FROM analyser_test_truncate WHERE missing_col > 1',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'DELETE - error in ORDER BY' => [
+			'query' => 'DELETE FROM analyser_test_truncate ORDER BY missing_col',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'DELETE - error in subquery' => [
+			'query' => 'DELETE t1 FROM analyser_test_truncate t1, (SELECT * FROM missing_table) t2',
+			'error' => AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		// having the same alias for table and subquery works in SELECT
+		yield 'DELETE - duplicate alias - subquery - alias' => [
+			'query' => 'DELETE t1 FROM analyser_test_truncate t1, (SELECT 1) t1',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('t1'),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'DELETE - duplicate alias - subquery - table name' => [
+			'query' => 'DELETE analyser_test_truncate FROM analyser_test_truncate, (SELECT 1) analyser_test_truncate',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test_truncate'),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'DELETE - duplicate alias - table' => [
+			'query' => 'DELETE t1 FROM analyser_test_truncate t1, analyser_test_truncate t1',
+			'error' => AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('t1'),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		// TODO: detect deleting non-tables
 	}
 
 	/**
