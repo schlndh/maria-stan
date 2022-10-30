@@ -13,3 +13,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected WHEN after: SELECT CASE 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ELSE 5 END' at line 1
+-----
+SELECT 1 NOT + 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Operator + cannot be used with NOT.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1' at line 1
+-----
+SELECT 1 NOT
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got NOT after: SELECT 1
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT INTERVAL 1 DAY
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Got unexpected token INTERVAL after: SELECT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1

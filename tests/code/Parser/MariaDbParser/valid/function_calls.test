@@ -4919,3 +4919,50 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT ROW_NUMBER() OVER (PARTITION BY 1, 2 + id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => ROW_NUMBER
+									[arguments] => Array
+										(
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+											[left] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+											[right] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)

@@ -7,6 +7,13 @@ Unexpected token: '*' after: SELECT COUNT(DISTINCT
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '*) FROM (SELECT 1) t' at line 1
 -----
+SELECT COUNT(DISTINCT) FROM (SELECT 1) t;
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected at least one argument for COUNT(DISTINCT ... Got: SELECT COUNT(DISTINCT)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1) t' at line 1
+-----
 SELECT COUNT() FROM (SELECT 1) t;
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
