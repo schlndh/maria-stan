@@ -28,6 +28,7 @@ use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\Query\TruncateQuery;
+use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
@@ -82,6 +83,11 @@ final class AnalyserState
 			case QueryTypeEnum::TRUNCATE:
 				assert($this->queryAst instanceof TruncateQuery);
 				$this->analyseTruncateQuery($this->queryAst);
+				$fields = [];
+				break;
+			case QueryTypeEnum::UPDATE:
+				assert($this->queryAst instanceof UpdateQuery);
+				$this->analyseUpdateQuery($this->queryAst);
 				$fields = [];
 				break;
 			default:
@@ -377,6 +383,32 @@ final class AnalyserState
 		}
 
 		return [[], $columnResolver];
+	}
+
+	/** @throws AnalyserException */
+	private function analyseUpdateQuery(UpdateQuery $query): void
+	{
+		try {
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+		} catch (AnalyserException | DbReflectionException $e) {
+			$this->errors[] = new AnalyserError($e->getMessage());
+		}
+
+		foreach ($query->assignments as $assignment) {
+			$this->resolveExprType($assignment);
+		}
+
+		if ($query->where !== null) {
+			$this->resolveExprType($query->where);
+		}
+
+		foreach ($query->orderBy?->expressions ?? [] as $orderByExpr) {
+			$this->resolveExprType($orderByExpr->expr);
+		}
+
+		if ($query->limit !== null) {
+			$this->resolveExprType($query->limit);
+		}
 	}
 
 	/**

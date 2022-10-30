@@ -76,3 +76,11 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected SELECT, got UPDATE after: (
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UPDATE parser_test SET name = "aa")' at line 1
+-----
+WITH tbl AS (SELECT 1 id)
+UPDATE parser_test, tbl SET parser_test.id = tbl.id
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected SELECT, got UPDATE after: (SELECT 1 id)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'UPDATE parser_test, tbl SET parser_test.id = tbl.id' at line 2

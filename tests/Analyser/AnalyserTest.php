@@ -113,6 +113,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideValidWithTestData();
 		yield from $this->provideValidInsertTestData();
 		yield from $this->provideValidOtherQueryTestData();
+		yield from $this->provideValidUpdateTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -879,6 +880,41 @@ class AnalyserTest extends TestCase
 		// TODO: DEFAULT expression
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private function provideValidUpdateTestData(): iterable
+	{
+		yield 'UPDATE - single table' => [
+			'query' => 'UPDATE analyser_test SET name = "aaa" WHERE id = 5 ORDER BY id LIMIT 5',
+		];
+
+		yield 'UPDATE - single table - table.column' => [
+			'query' => '
+				UPDATE analyser_test SET analyser_test.name = "aaa" WHERE analyser_test.id = 5
+				ORDER BY analyser_test.id LIMIT 5
+			',
+		];
+
+		yield 'UPDATE - single table - alias.column' => [
+			'query' => 'UPDATE analyser_test t SET t.name = "aaa" WHERE t.id = 5 ORDER BY t.id LIMIT 5',
+		];
+
+		yield 'UPDATE - multi-table - update both tables' => [
+			'query' => 'UPDATE analyser_test t, analyser_test t2 SET t.name = t2.name, t2.name = t.name',
+		];
+
+		yield 'UPDATE - multi-table - subquery' => [
+			'query' => 'UPDATE analyser_test t, (SELECT * FROM analyser_test) t2 SET t.name = t2.name',
+		];
+
+		yield 'UPDATE - reference previous column value' => [
+			'query' => 'UPDATE analyser_test SET name = CASE name WHEN "aa" THEN "bb" ELSE name END',
+		];
+
+		yield 'UPDATE - same source and target' => [
+			'query' => 'UPDATE analyser_test SET name = (SELECT name FROM analyser_test ORDER BY id LIMIT 1)',
+		];
+	}
+
 	/**
 	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
@@ -1163,6 +1199,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideInvalidUnionTestData();
 		yield from $this->provideInvalidInsertTestData();
 		yield from $this->provideInvalidOtherQueryTestData();
+		yield from $this->provideInvalidUpdateTestData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1798,6 +1835,93 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidUpdateTestData(): iterable
+	{
+		yield "UPDATE missing_table" => [
+			'query' => "UPDATE missing_table SET col = 'value'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield "UPDATE ... SET missing_col = ..." => [
+			'query' => "UPDATE analyser_test SET missing_col = 1",
+			'error' => [
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "UPDATE ... SET ambiguous_col" => [
+			'query' => "UPDATE analyser_test t1, analyser_test t2 SET name = 'aa'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield "UPDATE - not unique table/alias" => [
+			'query' => "UPDATE analyser_test, analyser_test SET name = 'aa'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage('analyser_test'),
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield "UPDATE - error in table reference subquery" => [
+			'query' => "UPDATE analyser_test t1, (SELECT * FROM missing_table) t2 SET t1.name = 'aa'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage('missing_table'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield "UPDATE - error in SET expression" => [
+			'query' => "UPDATE analyser_test SET name = missing_col + 5",
+			'error' => [
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "UPDATE - error in WHERE expression" => [
+			'query' => "UPDATE analyser_test SET name = 'aa' WHERE missing_col > 5",
+			'error' => [
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield "UPDATE - error in ORDER BY expression" => [
+			'query' => "UPDATE analyser_test SET name = 'aa' ORDER BY missing_col > 5",
+			'error' => [
+				AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		// TODO: detect this
+		//yield "UPDATE - trying to update subquery" => [
+		//	'query' => "UPDATE (SELECT * FROM analyser_test) t SET name = 'aa'",
+		//	'error' => [
+		//		AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+		//	],
+		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		//];
+		//
+		//yield "UPDATE - trying to update subquery - with normal table as well" => [
+		//	'query' => "UPDATE (SELECT 1 aaa) t, analyser_test SET name = 'aaa', aaa = 2",
+		//	'error' => [
+		//		AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
+		//	],
+		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		//];
 	}
 
 	/**
