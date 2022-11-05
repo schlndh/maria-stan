@@ -76,6 +76,7 @@ class MariaDbLexer
 		$nextPosition = new Position(0, 0, 0);
 
 		foreach ($matches as $m) {
+			assert(isset($m[0]));
 			$position = $nextPosition;
 			$nextPosition = $position->advance($m[0]);
 			$tokenType = null;
