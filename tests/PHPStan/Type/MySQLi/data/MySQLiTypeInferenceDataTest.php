@@ -7,8 +7,6 @@ namespace MariaStan\PHPStan\Type\MySQLi\data;
 use MariaStan\DatabaseTestCaseHelper;
 use mysqli;
 use mysqli_result;
-use Nette\Schema\Expect;
-use Nette\Schema\Processor;
 use PHPUnit\Framework\TestCase;
 
 use function array_column;
@@ -70,12 +68,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_ASSOC);
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'id' => Expect::int(),
-			'name' => Expect::anyOf(Expect::string(), Expect::null()),
-			'price' => Expect::anyOf(Expect::string(), Expect::null()),
-		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -89,7 +81,13 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame(['id', 'name', 'price'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
 		}
 
 		$rows = $db->query('
@@ -108,7 +106,13 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame(['id', 'name', 'price'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
 		}
 
 		$stmt = $db->prepare('
@@ -131,7 +135,13 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame(['id', 'name', 'price'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
 		}
 	}
 
@@ -141,12 +151,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_NUM);
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'0' => Expect::int(),
-			'1' => Expect::anyOf(Expect::string(), Expect::null()),
-			'2' => Expect::string(),
-		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -160,13 +164,15 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 1, 2], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row[0]);
 
 			// bug: make sure that the ConstantArrayType has proper nextAutoIndexes to not trigger:
 			// https://github.com/phpstan/phpstan-src/blob/9f53f4c840fe2d77438a776feaea87d2c5cf17e9/src/Type/Constant/ConstantArrayTypeBuilder.php#L146
 			if ($row[1] !== null) {
 				$this->assertIsString($row[1]);
 			}
+
+			$this->assertIsNumeric($row[2]);
 		}
 
 		$rows = $db->query('
@@ -185,7 +191,13 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 1, 2], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
 		}
 
 		$stmt = $db->prepare('
@@ -208,21 +220,18 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 1, 2], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
 		}
 
 		$rows = $db->query('
 			SELECT *, name, id, price FROM mysqli_test
 		')->fetch_all(MYSQLI_NUM);
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'0' => Expect::int(),
-			'1' => Expect::anyOf(Expect::string(), Expect::null()),
-			'2' => Expect::string(),
-			'3' => Expect::anyOf(Expect::string(), Expect::null()),
-			'4' => Expect::int(),
-			'5' => Expect::string(),
-		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -239,7 +248,20 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 1, 2, 3, 4, 5], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
+
+			if ($row[3] !== null) {
+				$this->assertIsString($row[3]);
+			}
+
+			$this->assertIsInt($row[4]);
+			$this->assertIsNumeric($row[5]);
 		}
 	}
 
@@ -249,15 +271,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$rows = $db->query('
 			SELECT * FROM mysqli_test
 		')->fetch_all(MYSQLI_BOTH);
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'0' => Expect::int(),
-			'id' => Expect::int(),
-			'1' => Expect::anyOf(Expect::string(), Expect::null()),
-			'name' => Expect::anyOf(Expect::string(), Expect::null()),
-			'2' => Expect::string(),
-			'price' => Expect::string(),
-		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -274,7 +287,20 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 'id', 1, 'name', 2, 'price'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
 		}
 
 		$stmt = $db->prepare('
@@ -300,23 +326,25 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 'id', 1, 'name', 2, 'price'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
 		}
 
 		$rows = $db->query('
 			SELECT *, name, id FROM mysqli_test
 		')->fetch_all(MYSQLI_BOTH);
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'0' => Expect::int(),
-			'id' => Expect::int(),
-			'1' => Expect::anyOf(Expect::string(), Expect::null()),
-			'name' => Expect::anyOf(Expect::string(), Expect::null()),
-			'2' => Expect::string(),
-			'price' => Expect::string(),
-			'3' => Expect::anyOf(Expect::string(), Expect::null()),
-			'4' => Expect::int(),
-		]);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -335,7 +363,26 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0, 'id', 1, 'name', 2, 'price', 3, 4], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
+
+			if ($row[3] !== null) {
+				$this->assertIsString($row[3]);
+			}
+
+			$this->assertIsInt($row[4]);
 		}
 	}
 
@@ -494,10 +541,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$result = $db->query('
 			SELECT id FROM mysqli_test
 		');
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'0' => Expect::int(),
-		]);
 
 		do {
 			$row = $result->fetch_row();
@@ -511,7 +554,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame([0], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row[0]);
 		} while (true);
 	}
 
@@ -521,10 +564,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$result = $db->query('
 			SELECT id FROM mysqli_test
 		');
-		$schemaProcessor = new Processor();
-		$schema = Expect::structure([
-			'id' => Expect::int(),
-		]);
 
 		do {
 			$row = $result->fetch_array(MYSQLI_ASSOC);
@@ -538,7 +577,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertSame(['id'], array_keys($row));
-			$schemaProcessor->process($schema, $row);
+			$this->assertIsInt($row['id']);
 		} while (true);
 	}
 
