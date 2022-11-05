@@ -1,0 +1,6 @@
+parameters:
+	maria-stan:
+		reflection:
+			file: %rootDir%/../../../tests/PHPStan/Type/MySQLi/schema.dump
+services:
+	mariaDbReflection: @mariaDbFileDbReflection

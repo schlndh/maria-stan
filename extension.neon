@@ -1,11 +1,14 @@
 parameters:
 	maria-stan:
+		# Apparetly this has to exist even if it's not used. Otherwise DI is not happy.
 		db:
 			host: 127.0.0.1
 			port: 3306
 			user: ''
 			password: ''
 			database: ''
+		reflection:
+			file:
 parametersSchema:
 	maria-stan: structure([
 		db: structure([
@@ -14,6 +17,9 @@ parametersSchema:
 			user: string()
 			password: string()
 			database: string()
+		])
+		reflection: structure([
+			file: anyOf(string(), null)
 		])
 	])
 services:
@@ -31,8 +37,22 @@ services:
 			- options(::constant(MYSQLI_OPT_INT_AND_FLOAT_NATIVE), 1)
 			- set_charset('utf8mb4')
 	- MariaStan\Parser\MariaDbParser
-	- MariaStan\DbReflection\MariaDbOnlineDbReflection(@mariaStanDb)
-	- MariaStan\Analyser\Analyser
+	- MariaStan\DbReflection\InformationSchemaParser
+	mariaDbFileDbReflection:
+		class: MariaStan\DbReflection\MariaDbFileDbReflection
+		autowired: false
+		arguments:
+			dumpFile: %maria-stan.reflection.file%
+	mariaDbOnlineDbReflection:
+		class: MariaStan\DbReflection\MariaDbOnlineDbReflection
+		autowired: false
+		arguments:
+			mysqli: @mariaStanDb
+	mariaDbReflection: @mariaDbOnlineDbReflection
+	-
+		class: MariaStan\Analyser\Analyser
+		arguments:
+			dbReflection: @mariaDbReflection
 	- MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper
 	- MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
 	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper

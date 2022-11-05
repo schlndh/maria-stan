@@ -6,6 +6,8 @@ namespace MariaStan\Util;
 
 use mysqli;
 
+use function assert;
+use function is_string;
 use function str_replace;
 
 abstract class MysqliUtil
@@ -25,5 +27,13 @@ abstract class MysqliUtil
 		}
 
 		return '"' . $db->real_escape_string((string) $value) . '"';
+	}
+
+	public static function getDatabaseName(mysqli $db): string
+	{
+		$dbName = $db->query('SELECT DATABASE()')->fetch_column();
+		assert(is_string($dbName));
+
+		return $dbName;
 	}
 }

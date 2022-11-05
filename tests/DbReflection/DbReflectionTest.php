@@ -16,18 +16,44 @@ use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
+use MariaStan\Util\MysqliUtil;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
+use function assert;
+use function fclose;
+use function fwrite;
+use function is_resource;
+use function stream_get_meta_data;
 use function strtoupper;
+use function tmpfile;
 
-class MariaDbOnlineDbReflectionTest extends TestCase
+class DbReflectionTest extends TestCase
 {
-	public function test(): void
+	/** @var resource|null */
+	private static $dumpFile = null;
+
+	public static function tearDownAfterClass(): void
 	{
-		$tableName = 'db_reflection_test';
+		parent::tearDownAfterClass();
+
+		if (! is_resource(self::$dumpFile)) {
+			return;
+		}
+
+		fclose(self::$dumpFile);
+		self::$dumpFile = null;
+	}
+
+	private static function initDb(): void
+	{
+		if (self::$dumpFile !== null) {
+			return;
+		}
+
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$db->query("
-			CREATE OR REPLACE TABLE {$tableName} (
+			CREATE OR REPLACE TABLE db_reflection_test (
 				id INT NULL PRIMARY KEY AUTO_INCREMENT,
 				name VARCHAR(255) NOT NULL,
 				val_tinyint_u TINYINT(1) UNSIGNED NOT NULL,
@@ -50,9 +76,49 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5)
 			);
 		");
+		$db->query("
+			CREATE OR REPLACE TABLE db_reflection_test_default_values (
+				empty_string_default VARCHAR(255) DEFAULT '',
+				string_default VARCHAR(255) DEFAULT 'abc',
+				qmark_default VARCHAR(255) DEFAULT '?',
+				col_default VARCHAR(255) DEFAULT non_default_string,
+				string_default_col_name VARCHAR(255) DEFAULT 'non_default_string',
+				string_default_int VARCHAR(255) DEFAULT '1',
+				string_default_null VARCHAR(255) DEFAULT 'NULL',
+				null_default VARCHAR(255) DEFAULT NULL,
+				string_default_fn_call VARCHAR(255) DEFAULT 'round(rand())',
+				int_default INT DEFAULT 1,
+				int_default_string INT DEFAULT '0',
+				fn_call_default INT DEFAULT ROUND(RAND()),
+				non_default_string VARCHAR(255) NOT NULL
+			);
+		");
 
+		self::$dumpFile = tmpfile() ?: throw new RuntimeException('tmpfile() failed!');
+		fwrite(self::$dumpFile, MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)));
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public function provideDbReflections(): iterable
+	{
+		self::initDb();
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db, $parser);
+
+		yield 'online' => [new MariaDbOnlineDbReflection($db, new InformationSchemaParser($parser))];
+
+		assert(self::$dumpFile !== null);
+		$meta_data = stream_get_meta_data(self::$dumpFile);
+		$filename = $meta_data["uri"];
+
+		yield 'file' => [new MariaDbFileDbReflection($filename, new InformationSchemaParser($parser))];
+	}
+
+	/** @dataProvider provideDbReflections */
+	public function test(DbReflection $reflection): void
+	{
+		$tableName = 'db_reflection_test';
+		$parser = new MariaDbParser();
 		$schema = $reflection->findTableSchema($tableName);
 		// mariadb doesn't preserve the exact syntax of the default expression.
 		$valDefaultExpr = $parser->parseSingleExpression('(abs(`val_mediumint`) + 5)');
@@ -82,25 +148,11 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
 			'val_default' => new Column('val_default', new IntType(), false, $valDefaultExpr),
 		], $schema->columns);
+	}
 
-		$db->query("
-			CREATE OR REPLACE TABLE db_reflection_test_default_values (
-				empty_string_default VARCHAR(255) DEFAULT '',
-				string_default VARCHAR(255) DEFAULT 'abc',
-				qmark_default VARCHAR(255) DEFAULT '?',
-				col_default VARCHAR(255) DEFAULT non_default_string,
-				string_default_col_name VARCHAR(255) DEFAULT 'non_default_string',
-				string_default_int VARCHAR(255) DEFAULT '1',
-				string_default_null VARCHAR(255) DEFAULT 'NULL',
-				null_default VARCHAR(255) DEFAULT NULL,
-				string_default_fn_call VARCHAR(255) DEFAULT 'round(rand())',
-				int_default INT DEFAULT 1,
-				int_default_string INT DEFAULT '0',
-				fn_call_default INT DEFAULT ROUND(RAND()),
-				non_default_string VARCHAR(255) NOT NULL
-			);
-		");
-
+	/** @dataProvider provideDbReflections */
+	public function testDefaultValues(DbReflection $reflection): void
+	{
 		$schema = $reflection->findTableSchema('db_reflection_test_default_values');
 		$this->assertStringDefaultValue('', $schema->columns['empty_string_default']);
 		$this->assertStringDefaultValue('abc', $schema->columns['string_default']);
@@ -120,12 +172,9 @@ class MariaDbOnlineDbReflectionTest extends TestCase
 		$this->assertFnCallDefaultValue('ROUND', $schema->columns['fn_call_default']);
 	}
 
-	public function testMissingTable(): void
+	/** @dataProvider provideDbReflections */
+	public function testMissingTable(DbReflection $reflection): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db, $parser);
-
 		$this->expectException(TableDoesNotExistException::class);
 		$reflection->findTableSchema('missing_table_123_abc');
 	}

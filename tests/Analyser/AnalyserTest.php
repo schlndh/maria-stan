@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\DbReflection\InformationSchemaParser;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DbType;
@@ -949,7 +950,8 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db, $parser);
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
@@ -2021,7 +2023,8 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db, $parser);
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 
@@ -2101,7 +2104,8 @@ class AnalyserTest extends TestCase
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
 		$parser = new MariaDbParser();
-		$reflection = new MariaDbOnlineDbReflection($db, $parser);
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
 		$analyser = new Analyser($parser, $reflection);
 		$result = $analyser->analyzeQuery($query);
 		$this->assertCount(

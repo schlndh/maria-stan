@@ -15,6 +15,15 @@ to your `phpstan.neon`:
 includes:
     - ./vendor/schlndh/maria-stan/extension.neon
 
+
+```
+
+## Configuration
+
+MariaStan needs access to the database schema. The easiest way to provide it is to let it connect directly to a database.
+You'll need to add the following configuration to your `phpstan.neon` and set proper credentials:
+
+```neon
 parameters: 
     maria-stan:
         db:
@@ -28,6 +37,38 @@ parameters:
 
 MariaStan needs access to a database to fetch the schema for query analysis. It only reads table schema and does not
 write anything. Nevertheless, **DO NOT** give it access to any database which contains any important data.
+
+Alternatively, it is also possible to use MariaStan without access to the database during analysis. In that case you'll
+need to first dump the schema using `MariaDbFileDbReflection::dumpSchema` and save it into a file. Here is an example
+script that does that:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use MariaStan\DbReflection\MariaDbFileDbReflection;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$mysqli = new mysqli('127.0.0.1', 'root', '');
+file_put_contents(__DIR__ . '/maria-stan-schema.dump', MariaDbFileDbReflection::dumpSchema($mysqli, 'database'));
+```
+
+Then add the following to your `phpstan.neon`:
+
+```neon
+parameters:
+    maria-stan:
+        reflection:
+            file: %rootDir%/../../../maria-stan-schema.dump
+services:
+    mariaDbReflection: @mariaDbFileDbReflection
+```
+
+Note that the [automatic expansion of relative paths](https://phpstan.org/config-reference#expanding-paths) only works
+with PHPStan's own configuration (i.e. it's a hardcoded list of config keys). So you'll have to provide an absolute path
+to the dump file.
 
 ## Usage
 
@@ -57,4 +98,3 @@ string from PHPStan, pass it to MariaStan for analysis and then report result ty
 - There is no support for temporary tables.
 - There is no support for multiple databases.
 - The limitations above are the main ones long term. But besides them, everything is only partially implemented.
-

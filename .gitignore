@@ -3,3 +3,4 @@
 /vendor
 .tool-versions
 .phpunit.result.cache
+**/schema.dump

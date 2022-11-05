@@ -10,8 +10,8 @@ use MariaStan\Analyser\Exception\NotUniqueTableAliasException;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
+use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Schema;
 
 use function array_filter;
@@ -58,10 +58,8 @@ final class ColumnResolver
 
 	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 
-	public function __construct(
-		private readonly MariaDbOnlineDbReflection $dbReflection,
-		private readonly ?self $parent = null,
-	) {
+	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
+	{
 	}
 
 	/** @throws DbReflectionException | AnalyserException */

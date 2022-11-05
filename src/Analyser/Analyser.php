@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
+use MariaStan\DbReflection\DbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
 
@@ -13,10 +13,8 @@ use function mb_substr;
 
 final class Analyser
 {
-	public function __construct(
-		private readonly MariaDbParser $parser,
-		private readonly MariaDbOnlineDbReflection $dbReflection,
-	) {
+	public function __construct(private readonly MariaDbParser $parser, private readonly DbReflection $dbReflection)
+	{
 	}
 
 	/** @throws AnalyserException */

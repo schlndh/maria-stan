@@ -33,8 +33,8 @@ use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
+use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\Position;
 use MariaStan\Schema;
 
@@ -59,7 +59,7 @@ final class AnalyserState
 	private int $positionalPlaceholderCount = 0;
 
 	public function __construct(
-		private readonly MariaDbOnlineDbReflection $dbReflection,
+		private readonly DbReflection $dbReflection,
 		private readonly Query $queryAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
