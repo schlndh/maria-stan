@@ -83,8 +83,7 @@ jobs:
         dependencies: ["lowest", "highest"]
         php-version:
           - "8.1"
-          # nette/schema is not marked as compatible with 8.2
-          # - "8.2"
+          - "8.2"
 
     services:
       mariadb:
