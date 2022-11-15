@@ -10,14 +10,19 @@ use mysqli_result;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 use function count;
 use function in_array;
 
+use const MYSQLI_ASSOC;
+use const MYSQLI_BOTH;
 use const MYSQLI_NUM;
 
 class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -55,13 +60,13 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 		$callerType = $scope->getType($methodCall->var);
 
 		if (! $callerType instanceof GenericObjectType) {
-			return null;
+			return $this->getFallbackReturnType($methodReflection, $methodCall, $scope);
 		}
 
 		$params = $this->phpstanHelper->tryUnpackAnalyserResultFromTypes($callerType->getTypes());
 
 		if ($params === null) {
-			return null;
+			return $this->getFallbackReturnType($methodReflection, $methodCall, $scope);
 		}
 
 		return match ($methodReflection->getName()) {
@@ -110,5 +115,41 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 		}
 
 		return null;
+	}
+
+	private function getFallbackReturnType(
+		MethodReflection $methodReflection,
+		MethodCall $methodCall,
+		Scope $scope,
+	): ?Type {
+		switch ($methodReflection->getName()) {
+			case 'fetch_array':
+				// fall-through intentional
+			case 'fetch_all':
+				$rowType = $this->getFallbackFetchResult($methodCall, $scope);
+
+				if ($rowType === null) {
+					return null;
+				}
+
+				return $methodReflection->getName() === 'fetch_array'
+					? TypeCombinator::addNull($rowType)
+					: new ArrayType(new IntegerType(), $rowType);
+		}
+
+		// fetch_column, fetch_assoc and fetch_row don't have mode so the default return type will handle them fine.
+		return null;
+	}
+
+	private function getFallbackFetchResult(MethodCall $methodCall, Scope $scope): ?Type
+	{
+		$mode = $this->extractModeFromFirstArg($methodCall, $scope);
+
+		return match ($mode) {
+			MYSQLI_ASSOC => $this->phpstanHelper->getAssociativeTypeForSingleRow(null),
+			MYSQLI_NUM => $this->phpstanHelper->getNumericTypeForSingleRow(null),
+			MYSQLI_BOTH => $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow(null),
+			default => null,
+		};
 	}
 }

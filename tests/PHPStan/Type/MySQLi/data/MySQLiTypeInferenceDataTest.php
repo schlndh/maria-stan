@@ -65,9 +65,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testAssoc(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$rows = $db->query('
-			SELECT * FROM mysqli_test
-		')->fetch_all(MYSQLI_ASSOC);
+		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_ASSOC);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -90,9 +88,24 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row['price']);
 		}
 
-		$rows = $db->query('
-			SELECT *, name, price, id FROM mysqli_test
-		')->fetch_all(MYSQLI_ASSOC);
+		$rows = $db->query('SELECT * FROM ' . $this->hideValueFromPhpstan('mysqli_test'))->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType("array<string, float|int|string|null>", $row);
+			}
+
+			$this->assertSame(['id', 'name', 'price'], array_keys($row));
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+		}
+
+		$rows = $db->query('SELECT *, name, price, id FROM mysqli_test')->fetch_all(MYSQLI_ASSOC);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -115,9 +128,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row['price']);
 		}
 
-		$stmt = $db->prepare('
-			SELECT * FROM mysqli_test
-		');
+		$stmt = $db->prepare('SELECT * FROM mysqli_test');
 		$stmt->execute();
 		$result = $stmt->get_result();
 		assert($result instanceof mysqli_result);
@@ -148,9 +159,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testNum(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$rows = $db->query('
-			SELECT * FROM mysqli_test
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_NUM);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -175,9 +184,24 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row[2]);
 		}
 
-		$rows = $db->query('
-			SELECT * FROM mysqli_test
-		')->fetch_all();
+		$rows = $db->query('SELECT * FROM ' . $this->hideValueFromPhpstan('mysqli_test'))->fetch_all(MYSQLI_NUM);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType("array<int, float|int|string|null>", $row);
+			}
+
+			$this->assertSame([0, 1, 2], array_keys($row));
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
+		}
+
+		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all();
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -200,9 +224,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row[2]);
 		}
 
-		$stmt = $db->prepare('
-			SELECT * FROM mysqli_test
-		');
+		$stmt = $db->prepare('SELECT * FROM mysqli_test');
 		$stmt->execute();
 		$result = $stmt->get_result();
 		assert($result instanceof mysqli_result);
@@ -229,9 +251,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row[2]);
 		}
 
-		$rows = $db->query('
-			SELECT *, name, id, price FROM mysqli_test
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT *, name, id, price FROM mysqli_test')->fetch_all(MYSQLI_NUM);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -268,9 +288,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testBoth(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$rows = $db->query('
-			SELECT * FROM mysqli_test
-		')->fetch_all(MYSQLI_BOTH);
+		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_BOTH);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -303,9 +321,31 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row[2]);
 		}
 
-		$stmt = $db->prepare('
-			SELECT * FROM mysqli_test
-		');
+		$rows = $db->query('SELECT * FROM ' . $this->hideValueFromPhpstan('mysqli_test'))->fetch_all(MYSQLI_BOTH);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType("array<int|string, float|int|string|null>", $row);
+			}
+
+			$this->assertSame([0, 'id', 1, 'name', 2, 'price'], array_keys($row));
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+			$this->assertIsInt($row[0]);
+
+			if ($row[1] !== null) {
+				$this->assertIsString($row[1]);
+			}
+
+			$this->assertIsNumeric($row[2]);
+		}
+
+		$stmt = $db->prepare('SELECT * FROM mysqli_test');
 		$stmt->execute();
 		$result = $stmt->get_result();
 		assert($result instanceof mysqli_result);
@@ -342,9 +382,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($row[2]);
 		}
 
-		$rows = $db->query('
-			SELECT *, name, id FROM mysqli_test
-		')->fetch_all(MYSQLI_BOTH);
+		$rows = $db->query('SELECT *, name, id FROM mysqli_test')->fetch_all(MYSQLI_BOTH);
 
 		foreach ($rows as $row) {
 			if (function_exists('assertType')) {
@@ -390,9 +428,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function checkDynamicReturnType(int $returnType): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$rows = $db->query('
-			SELECT * FROM mysqli_test
-		')->fetch_all($returnType);
+		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all($returnType);
 
 		// We don't know which is used, so it should behave similarly to BOTH
 		foreach ($rows as $row) {
@@ -413,9 +449,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			assertType('*ERROR*', $row['doesnt_exist']);
 		}
 
-		$rows = $db->query('
-			SELECT *, name, id FROM mysqli_test
-		')->fetch_all($returnType);
+		$rows = $db->query('SELECT *, name, id FROM mysqli_test')->fetch_all($returnType);
 
 		// We don't know which is used, so it should behave similarly to BOTH
 		foreach ($rows as $row) {
@@ -443,11 +477,8 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testDataTypes(): void
 	{
-		// TODO: switch to fetch_column once a type-specifying extension is made for it.
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$rows = $db->query('
-			SELECT col_int FROM mysqli_test_data_types
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT col_int FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {
@@ -458,9 +489,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertGettype('integer', $value);
 		}
 
-		$rows = $db->query('
-			SELECT col_varchar_null FROM mysqli_test_data_types
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT col_varchar_null FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {
@@ -484,9 +513,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertGettype('string', $value);
 		}
 
-		$rows = $db->query('
-			SELECT col_float FROM mysqli_test_data_types
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT col_float FROM mysqli_test_data_types ')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {
@@ -497,9 +524,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertGettype('double', $value);
 		}
 
-		$rows = $db->query('
-			SELECT col_double FROM mysqli_test_data_types
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT col_double FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {
@@ -510,9 +535,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertGettype('double', $value);
 		}
 
-		$rows = $db->query('
-			SELECT col_datetime FROM mysqli_test_data_types
-		')->fetch_all(MYSQLI_NUM);
+		$rows = $db->query('SELECT col_datetime FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {
@@ -538,9 +561,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testFetchRow(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$result = $db->query('
-			SELECT id FROM mysqli_test
-		');
+		$result = $db->query('SELECT id FROM mysqli_test');
 
 		do {
 			$row = $result->fetch_row();
@@ -561,9 +582,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testFetchArray(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$result = $db->query('
-			SELECT id FROM mysqli_test
-		');
+		$result = $db->query('SELECT id FROM mysqli_test');
 
 		do {
 			$row = $result->fetch_array(MYSQLI_ASSOC);
@@ -584,9 +603,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	public function testFetchColumn(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$result = $db->query('
-			SELECT * FROM mysqli_test
-		');
+		$result = $db->query('SELECT * FROM mysqli_test');
 
 		do {
 			$value = $result->fetch_column();
@@ -602,9 +619,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsInt($value);
 		} while (true);
 
-		$result = $db->query('
-			SELECT * FROM mysqli_test
-		');
+		$result = $db->query('SELECT * FROM mysqli_test');
 
 		do {
 			$value = $result->fetch_column(0);
@@ -620,9 +635,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsInt($value);
 		} while (true);
 
-		$result = $db->query('
-			SELECT * FROM mysqli_test
-		');
+		$result = $db->query('SELECT * FROM mysqli_test');
 
 		do {
 			$value = $result->fetch_column(2);
@@ -638,12 +651,10 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($value);
 		} while (true);
 
-		$result = $db->query('
-			SELECT id, price FROM mysqli_test
-		');
+		$result = $db->query('SELECT id, price FROM mysqli_test');
 
 		do {
-			$dynamicColumn = $this->getZero();
+			$dynamicColumn = $this->hideValueFromPhpstan(0);
 			$value = $result->fetch_column($dynamicColumn);
 
 			if (function_exists('assertType')) {
@@ -659,9 +670,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertIsNumeric($value);
 		} while (true);
 
-		$result = $db->query('
-			SELECT * FROM mysqli_test
-		');
+		$result = $db->query('SELECT * FROM mysqli_test');
 		unset($value);
 
 		try {
@@ -672,11 +681,6 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		if (function_exists('assertType')) {
 			assertType('*ERROR*', $value);
 		}
-	}
-
-	private function getZero(): int
-	{
-		return 0;
 	}
 
 	/** @param string|array<string> $allowedTypes */
@@ -690,5 +694,15 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 		$message = "Failed asserting that '{$type}' is in [" . implode(', ', $allowedTypes) . ']';
 		$this->assertTrue(in_array($type, $allowedTypes, true), $message);
+	}
+
+	/**
+	 * @template T
+	 * @param T $value
+	 * @return T
+	 */
+	private function hideValueFromPhpstan(mixed $value): mixed
+	{
+		return $value;
 	}
 }

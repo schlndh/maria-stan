@@ -11,17 +11,13 @@ use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
-use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
-use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 
 use function array_column;
 use function array_map;
@@ -114,17 +110,12 @@ final class PHPStanMySQLiHelper
 		}
 	}
 
-	private static function getScalarType(): Type
-	{
-		return new UnionType([new IntegerType(), new FloatType(), new StringType(), new BooleanType(), new NullType()]);
-	}
-
 	public function getColumnType(AnalyserResultPHPStanParams $params, ?int $column): Type
 	{
 		$columns = $this->phpstanHelper->getColumnsFromRowType($params->rowType);
 
 		if ($columns === null) {
-			return self::getScalarType();
+			return $this->phpstanHelper->getMixedType();
 		}
 
 		$types = [];

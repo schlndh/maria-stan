@@ -7,14 +7,12 @@ namespace MariaStan\PHPStan\Helper;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper;
+use MariaStan\Schema\DbType;
 use PHPStan\Type\ArrayType;
-use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -133,16 +131,16 @@ class PHPStanReturnTypeHelper
 		return $columns;
 	}
 
-	private static function getScalarType(): Type
+	public function getMixedType(): Type
 	{
-		return new UnionType([new IntegerType(), new FloatType(), new StringType(), new BooleanType(), new NullType()]);
+		return TypeCombinator::addNull($this->typeMapper->mapDbTypeToPhpstanType(new DbType\MixedType()));
 	}
 
 	/** @param ?array<array{ConstantStringType, Type}> $columns [[name, type]] */
 	public function getNumericTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {
-			return new ArrayType(new IntegerType(), self::getScalarType());
+			return new ArrayType(new IntegerType(), $this->getMixedType());
 		}
 
 		$valueTypes = array_column($columns, 1);
@@ -154,7 +152,7 @@ class PHPStanReturnTypeHelper
 	public function getAssociativeTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {
-			return new ArrayType(new StringType(), self::getScalarType());
+			return new ArrayType(new StringType(), $this->getMixedType());
 		}
 
 		[$keyTypes, $valueTypes] = $this->filterDuplicateKeys(
@@ -169,7 +167,7 @@ class PHPStanReturnTypeHelper
 	public function getBothNumericAndAssociativeTypeForSingleRow(?array $columns): Type
 	{
 		if ($columns === null) {
-			return new ArrayType(new UnionType([new StringType(), new IntegerType()]), self::getScalarType());
+			return new ArrayType(new UnionType([new StringType(), new IntegerType()]), $this->getMixedType());
 		}
 
 		$combinedValueTypes = $combinedKeyTypes = [];
