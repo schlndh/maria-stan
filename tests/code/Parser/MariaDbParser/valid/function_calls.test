@@ -4966,3 +4966,313 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT SUBSTRING("aaa", 1), SUBSTRING("bbb" FROM 2), SUBSTRING("ccc", 2, 3), SUBSTRING("ddd" FROM 2 FOR 3),
+SUBSTR("aaa", 1), SUBSTR("bbb" FROM 2), SUBSTR("ccc", 2, 3), SUBSTR("ddd" FROM 2 FOR 3)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => bbb
+											[firstConcatPart] => bbb
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => ccc
+											[firstConcatPart] => ccc
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => ddd
+											[firstConcatPart] => ddd
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[5] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => bbb
+											[firstConcatPart] => bbb
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[6] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => ccc
+											[firstConcatPart] => ccc
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[7] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => ddd
+											[firstConcatPart] => ddd
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT SUBSTRING(? FROM ? FOR ?)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+									[1] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+									[2] => MariaStan\Ast\Expr\Placeholder
+										(
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT SUBSTRING("aaa" FROM "bbb")
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+									[1] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => bbb
+											[firstConcatPart] => bbb
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT SUBSTRING((SELECT "aaa" FROM parser_test LIMIT 1 FOR UPDATE) FROM 1 FOR 2)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => SUBSTRING
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Subquery
+										(
+											[query] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+												(
+													[select] => Array
+														(
+															[0] => MariaStan\Ast\SelectExpr\RegularExpr
+																(
+																	[expr] => MariaStan\Ast\Expr\LiteralString
+																		(
+																			[value] => aaa
+																			[firstConcatPart] => aaa
+																		)
+																)
+														)
+													[from] => MariaStan\Ast\Query\TableReference\Table
+														(
+															[name] => parser_test
+														)
+													[limit] => MariaStan\Ast\Limit
+														(
+															[count] => MariaStan\Ast\Expr\LiteralInt
+																(
+																	[value] => 1
+																)
+														)
+													[isDistinct] => false
+													[lock] => MariaStan\Ast\Lock\SelectLock
+														(
+															[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
+														)
+												)
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)

@@ -839,3 +839,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '+' after: SELECT VALUE(id
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1) FROM parser_test' at line 1
+-----
+SELECT SUBSTRING("aaa" FROM 5, 6)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: SUBSTRING("aaa" FROM 5
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT SUBSTRING("aaa" FOR 6)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of ',', FROM, got FOR after: SELECT SUBSTRING("aaa"
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOR 6)' at line 1
+-----
+SELECT SUBSTRING ("aaa", 1)
+-----
+MariaStan\Parser\Exception\ParserException
+Built-in functions cannot have a space between function name and parenthesis, at: SELECT SUBSTRING (
+#####
+1630: FUNCTION mariastan_test.SUBSTRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual

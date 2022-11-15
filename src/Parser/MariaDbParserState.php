@@ -1329,6 +1329,7 @@ class MariaDbParserState
 					'GROUP_CONCAT' => $this->parseRestOfGroupConcatFunctionCall($ident),
 					'JSON_ARRAYAGG' => $this->parseRestOfJsonArrayAggFunctionCall($ident),
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
+					'SUBSTR', 'SUBSTRING' => $this->parseRestOfSubstrFunctionCall($ident),
 					'TIMESTAMPADD', 'TIMESTAMPDIFF' => $this->parseRestOfTimestampAddDiffFunctionCall($ident),
 					'EXTRACT' => $this->parseRestOfExtractFunctionCall($ident),
 					'VALUE' => $this->parseRestOfValueFunctionCall($ident),
@@ -1947,6 +1948,31 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$substrExpr,
 			$strExpr,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfSubstrFunctionCall(Token $functionIdent): FunctionCall\StandardFunctionCall
+	{
+		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
+		$str = $this->parseExpression();
+		$separator = $this->expectAnyOfTokens(',', TokenTypeEnum::FROM);
+		$pos = $this->parseExpression();
+
+		$separator2 = $this->acceptToken($separator->type === TokenTypeEnum::FROM ? TokenTypeEnum::FOR : ',');
+		$args = [$str, $pos];
+
+		if ($separator2 !== null) {
+			$args[] = $this->parseExpression();
+		}
+
+		$this->expectToken(')');
+
+		return new FunctionCall\StandardFunctionCall(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$functionIdent->content,
+			$args,
 		);
 	}
 
