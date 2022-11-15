@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
 use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\PHPStan\MySQLiWrapper;
 use mysqli;
 use PHPUnit\Framework\TestCase;
 
-use function rand;
-
-class MySQLiRuleValidDataTest extends TestCase
+class MySQLiWrapperRuleValidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
 	{
@@ -22,7 +21,7 @@ class MySQLiRuleValidDataTest extends TestCase
 
 	public static function initData(mysqli $db): void
 	{
-		$tableName = 'mysqli_rule_valid';
+		$tableName = 'mysqli_wrapper_rule_valid';
 		self::doInitDb($db, $tableName);
 	}
 
@@ -41,32 +40,18 @@ class MySQLiRuleValidDataTest extends TestCase
 	public function testValid(): void
 	{
 		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute();
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute(null);
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT 1');
-		$stmt->execute([]);
-		$stmt->close();
-
-		$stmt = $db->prepare('SELECT ?');
-		$stmt->execute([1]);
-		$stmt->close();
-
-		$params = rand()
-			? [0, 1]
-			: ['a', 'b'];
-
-		$stmt = $db->prepare('SELECT ?, ?');
-		$stmt->execute($params);
-		$stmt->close();
+		$wrapper = new MySQLiWrapper($db);
+		$wrapper->insert('mysqli_wrapper_rule_valid', ['id' => 98797]);
+		$wrapper->insert('mysqli_wrapper_rule_valid', ['id' => 98798, 'name' => 'qeasdas']);
+		$this->doInsert($wrapper, 99999, 'asdasd');
 
 		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
 		$this->assertTrue(true);
+	}
+
+	private function doInsert(MySQLiWrapper $wrapper, int $id, string $name): void
+	{
+		// Make sure the extension works even if the values are not known statically.
+		$wrapper->insert('mysqli_wrapper_rule_valid', ['id' => $id, 'name' => $name]);
 	}
 }

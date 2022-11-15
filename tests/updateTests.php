@@ -7,7 +7,9 @@ namespace MariaStan;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbLexerTest;
 use MariaStan\Parser\MariaDbParserTest;
+use MariaStan\PHPStan\Rules\MySQLi\BaseRuleTestCase;
 use MariaStan\PHPStan\Rules\MySQLi\MySQLiRuleTest;
+use MariaStan\PHPStan\Rules\MySQLi\MySQLiWrapperRuleTest;
 use PHPUnit\TextUI\XmlConfiguration\Loader;
 use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
@@ -91,13 +93,14 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	file_put_contents($fileName, $newCode);
 }
 
-$dir = __DIR__ . '/PHPStan/Rules/MySQLi/data';
-$mysqliRuleTest = new MySQLiRuleTest();
+$ruleTests = [new MySQLiRuleTest(), new MySQLiWrapperRuleTest()];
 
-foreach (fileNamesInDir($dir, 'php') as $fileName) {
-	$errors = $mysqliRuleTest->getTestOutput($fileName);
-	$errorsFileName = MySQLiRuleTest::getErrorsFileForPhpFile($fileName);
-	file_put_contents($errorsFileName, $errors);
+foreach ($ruleTests as $ruleTest) {
+	foreach ($ruleTest->getTestInputFiles() as $fileName) {
+		$errors = $ruleTest->getTestOutput($fileName);
+		$errorsFileName = BaseRuleTestCase::getErrorsFileForPhpFile($fileName);
+		file_put_contents($errorsFileName, $errors);
+	}
 }
 
 /**

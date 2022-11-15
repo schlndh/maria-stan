@@ -1,0 +1,4 @@
+48: Table 'missing_table' doesn't exist
+48: Unknown column 'aaa'
+57: Column id has no default value and none was provided.
+74: Column id has no default value and none was provided.

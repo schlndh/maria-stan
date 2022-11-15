@@ -6,3 +6,9 @@ parameters:
 			user: 'root'
 			password: 'root'
 			database: 'mariastan_test'
+
+services:
+	-
+		class: MariaStan\PHPStan\Rules\MySQLi\MySQLiWrapperRule
+		tags:
+			- phpstan.rules.rule
