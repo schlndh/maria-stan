@@ -98,3 +98,26 @@ string from PHPStan, pass it to MariaStan for analysis and then report result ty
 - There is no support for temporary tables.
 - There is no support for multiple databases.
 - The limitations above are the main ones long term. But besides them, everything is only partially implemented.
+
+## Similar projects
+
+### [staabm/phpstan-dba](https://github.com/staabm/phpstan-dba)
+
+As far as I can tell, phpstan-dba works by executing the queries to get the information about result types, errors, ...
+MariaStan on the other hand analyzes the queries statically. Benefits of phpstan-dba include:
+
+- Easy support for multiple databases. With MariaStan this is impossible (with the possible exception of MySQL).
+- More complete and reliable error checking thanks to the database doing the heavy lifting. On the other hand,
+ the database only returns one error at a time, whereas MariaStan may be able to discover multiple issues at once.
+- Query plan analysis. This seems infeasible to do statically. On the other hand, I'm not sure how useful this is in
+ practice especially if you don't want to give phpstan-dba access to production data.
+- It appears to be easier to get started with it, as it has extensions for multiple database abstractions.
+
+There are some minor downsides to phpstan-dba's approach:
+
+- There is no path to full static analysis (i.e. not requiring a running database at any point). MariaStan currently
+ also requires a running database (to get data from `information_schema`, not necessarily at analysis time). But it is
+ possible to implement `CREATE TABLE` (etc.) parsing and implement a DB reflection on top of that.
+- Because the queries are executed, it has to be careful with data/schema modification queries. I saw some conditions
+ that restrict it to `SELECT` queries in several places, as well as the use of transactions. Therefore, I'm not sure
+ how well it supports `INSERT` etc. (there are some in tests at least).
