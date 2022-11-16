@@ -18,6 +18,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
 use function array_map;
@@ -36,10 +37,16 @@ final class PHPStanMySQLiHelper
 	) {
 	}
 
-	public function prepare(Type $queryType): ?QueryPrepareCallResult
+	public function prepare(Type $queryType): QueryPrepareCallResult
 	{
 		if (! $queryType instanceof ConstantStringType) {
-			return null;
+			return new QueryPrepareCallResult(
+				[
+					"Dynamic SQL: expected query as constant string, got: "
+						. $queryType->describe(VerbosityLevel::precise()),
+				],
+				null,
+			);
 		}
 
 		try {
@@ -56,11 +63,11 @@ final class PHPStanMySQLiHelper
 		return new QueryPrepareCallResult($errors, $analyserResult);
 	}
 
-	public function query(Type $queryType): ?QueryPrepareCallResult
+	public function query(Type $queryType): QueryPrepareCallResult
 	{
 		$result = $this->prepare($queryType);
 
-		if ($result === null || ($result->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
+		if (($result->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
 			return $result;
 		}
 

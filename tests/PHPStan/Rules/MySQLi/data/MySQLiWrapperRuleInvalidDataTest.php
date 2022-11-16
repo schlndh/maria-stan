@@ -73,4 +73,25 @@ class MySQLiWrapperRuleInvalidDataTest extends TestCase
 		// Make sure the extension works even if the values are not known statically.
 		$wrapper->insert('mysqli_wrapper_rule_invalid', ['name' => $name]);
 	}
+
+	public function testDynamicSql(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$wrapper = new MySQLiWrapper($db);
+		$wrapper->insert($this->hideValueFromPhpstan('mysqli_wrapper_rule_invalid'), ['id' => 97987]);
+		$wrapper->insert('mysqli_wrapper_rule_invalid', [$this->hideValueFromPhpstan('id') => 64645]);
+
+		// Make phpunit happy.
+		$this->assertTrue(true);
+	}
+
+	/**
+	 * @template T
+	 * @param T $value
+	 * @return T
+	 */
+	private function hideValueFromPhpstan(mixed $value): mixed
+	{
+		return $value;
+	}
 }

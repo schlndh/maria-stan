@@ -1,3 +1,5 @@
+35: Dynamic SQL: expected query as constant string, got: non-falsy-string
+41: Dynamic SQL: expected query as constant string, got: non-falsy-string
 49: Unknown column 'missing'
 56: Placeholders cannot be used with query(), use prepared statements.
 65: Prepared statement needs 1 parameters, got 0.
@@ -5,4 +7,7 @@
 82: Prepared statement needs 1 parameters, got 0.
 91: Prepared statement needs 0 parameters, got 3.
 97: Couldn't parse query: 'asdlajkd qeosdasd ?'. Error: Unsupported query.
+99: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
 111: Prepared statement needs 2 parameters, got 3.
+121: Dynamic SQL: expected query as constant string, got: non-falsy-string
+124: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt

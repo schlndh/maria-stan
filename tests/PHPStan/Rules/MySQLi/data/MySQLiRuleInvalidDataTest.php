@@ -113,4 +113,40 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		} catch (ValueError) {
 		}
 	}
+
+	public function testDynamicSql(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+		$db->query('SELECT ' . $this->hideValueFromPhpstan('1'));
+
+		$stmt = $this->hideStmtFromPhpstan($db->prepare('SELECT 1'));
+		$stmt->execute();
+		$stmt->get_result();
+
+		$stmt = $this->hideValueFromPhpstan(true)
+			? $db->prepare('SELECT 1')
+			: $db->prepare('SELECT 2, 3');
+		$stmt->execute();
+		$stmt->get_result();
+
+		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
+		$this->assertTrue(true);
+	}
+
+	/**
+	 * @template T
+	 * @param T $value
+	 * @return T
+	 */
+	private function hideValueFromPhpstan(mixed $value): mixed
+	{
+		return $value;
+	}
+
+	// hideValueFromPhpstan retains the generics.
+	private function hideStmtFromPhpstan(\mysqli_stmt $stmt): \mysqli_stmt
+	{
+		return $stmt;
+	}
 }

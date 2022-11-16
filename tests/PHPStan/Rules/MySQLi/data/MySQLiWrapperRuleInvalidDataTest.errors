@@ -2,3 +2,5 @@
 48: Unknown column 'aaa'
 57: Column id has no default value and none was provided.
 74: Column id has no default value and none was provided.
+81: Dynamic SQL: expected table as constant string, got: string
+82: Dynamic SQL: expected data as constant array, got: non-empty-array<string, 64645>

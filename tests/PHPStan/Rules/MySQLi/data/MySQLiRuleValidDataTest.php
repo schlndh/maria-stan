@@ -29,12 +29,14 @@ class MySQLiRuleValidDataTest extends TestCase
 	private static function doInitDb(mysqli $db, string $tableName): void
 	{
 		// Hide $tableName from phpstan so that it doesn't analyze these queries
+		// @phpstan-ignore-next-line
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				id INT NOT NULL,
 				name VARCHAR(255) NULL
 			);
 		");
+		// @phpstan-ignore-next-line
 		$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
 	}
 

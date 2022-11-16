@@ -15,6 +15,7 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\VerbosityLevel;
 
 use function assert;
 use function count;
@@ -72,8 +73,18 @@ class MySQLiWrapperRule implements Rule
 		$tableType = $scope->getType($args[0]->value);
 		$dataType = $scope->getType($args[1]->value);
 
-		if (! $tableType instanceof ConstantStringType || ! $dataType instanceof ConstantArrayType) {
-			return [];
+		if (! $tableType instanceof ConstantStringType) {
+			return [
+				"Dynamic SQL: expected table as constant string, got: "
+					. $tableType->describe(VerbosityLevel::precise()),
+			];
+		}
+
+		if (! $dataType instanceof ConstantArrayType) {
+			return [
+				"Dynamic SQL: expected data as constant array, got: "
+				. $dataType->describe(VerbosityLevel::precise()),
+			];
 		}
 
 		$tableQuoted = MysqliUtil::quoteIdentifier($tableType->getValue());
@@ -92,6 +103,6 @@ class MySQLiWrapperRule implements Rule
 		$queryType = new ConstantStringType($sql);
 		$result = $this->phpstanMysqliHelper->prepare($queryType);
 
-		return $result?->errors ?? [];
+		return $result->errors;
 	}
 }

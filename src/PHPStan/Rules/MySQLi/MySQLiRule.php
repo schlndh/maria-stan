@@ -21,6 +21,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 
 use function array_filter;
 use function array_map;
@@ -95,13 +96,19 @@ class MySQLiRule implements Rule
 		$callerType = $scope->getType($node->var);
 
 		if (! $callerType instanceof GenericObjectType) {
-			return [];
+			return [
+				"Dynamic SQL: missing analyser result for mysqli_stmt::{$methodName}() call. Got "
+					. $callerType->describe(VerbosityLevel::precise()),
+			];
 		}
 
 		$params = $this->phpstanHelper->tryUnpackAnalyserResultFromTypes($callerType->getTypes());
 
 		if ($params === null) {
-			return [];
+			return [
+				"Dynamic SQL: unable to recover analyser result for mysqli_stmt::{$methodName}() call. Got "
+					. $callerType->describe(VerbosityLevel::precise()),
+			];
 		}
 
 		$executeParamTypes = [];

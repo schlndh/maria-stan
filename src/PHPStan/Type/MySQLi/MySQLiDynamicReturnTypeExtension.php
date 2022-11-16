@@ -14,9 +14,11 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 use function assert;
+use function count;
 use function in_array;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -58,6 +60,8 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($result?->analyserResult);
 		$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
 
-		return new GenericObjectType($returnClass, $types);
+		return count($types) === 0
+			? new ObjectType($returnClass)
+			: new GenericObjectType($returnClass, $types);
 	}
 }
