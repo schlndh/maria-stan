@@ -32,16 +32,26 @@ class PHPStanReturnTypeHelper
 	{
 	}
 
-	public function createPHPStanParamsFromAnalyserResult(?AnalyserResult $analyserResult): ?AnalyserResultPHPStanParams
+	/** @param array<AnalyserResult> $analyserResults */
+	public function createPhpstanParamsFromMultipleAnalyserResults(array $analyserResults): ?AnalyserResultPHPStanParams
 	{
-		if ($analyserResult?->resultFields === null || $analyserResult->positionalPlaceholderCount === null) {
+		if (count($analyserResults) === 0) {
 			return null;
 		}
 
-		return new AnalyserResultPHPStanParams(
-			[$this->getRowTypeFromFields($analyserResult->resultFields)],
-			[new ConstantIntegerType($analyserResult->positionalPlaceholderCount)],
-		);
+		$rowTypes = [];
+		$placeholderCounts = [];
+
+		foreach ($analyserResults as $analyserResult) {
+			if ($analyserResult->resultFields === null || $analyserResult->positionalPlaceholderCount === null) {
+				return null;
+			}
+
+			$rowTypes[] = $this->getRowTypeFromFields($analyserResult->resultFields);
+			$placeholderCounts[] = new ConstantIntegerType($analyserResult->positionalPlaceholderCount);
+		}
+
+		return new AnalyserResultPHPStanParams($rowTypes, $placeholderCounts);
 	}
 
 	/** @return array<Type> */

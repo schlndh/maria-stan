@@ -16,13 +16,10 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 
-use function array_column;
 use function assert;
 use function count;
 use function in_array;
-use function reset;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -66,26 +63,11 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 			return new ObjectType($returnClass);
 		}
 
-		$paramTypes = [];
+		$params = $this->phpstanHelper->createPhpstanParamsFromMultipleAnalyserResults($analyserResults);
+		$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
 
-		foreach ($analyserResults as $analyserResult) {
-			$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($analyserResult);
-			$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
-
-			if (count($types) !== 2) {
-				return new ObjectType($returnClass);
-			}
-
-			$paramTypes[] = $types;
-		}
-
-		if (count($paramTypes) === 1) {
-			return new GenericObjectType($returnClass, reset($paramTypes));
-		}
-
-		$rowType = TypeCombinator::union(...array_column($paramTypes, 0));
-		$placeholderCount = TypeCombinator::union(...array_column($paramTypes, 1));
-
-		return new GenericObjectType($returnClass, [$rowType, $placeholderCount]);
+		return count($types) > 0
+			? new GenericObjectType($returnClass, $types)
+			: new ObjectType($returnClass);
 	}
 }
