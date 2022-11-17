@@ -9,9 +9,11 @@ use PHPStan\Type\Constant\ConstantIntegerType;
 
 final class AnalyserResultPHPStanParams
 {
-	public function __construct(
-		public readonly ConstantArrayType $rowType,
-		public readonly ConstantIntegerType $positionalPlaceholderCount,
-	) {
+	/**
+	 * @param non-empty-array<ConstantArrayType> $rowTypes
+	 * @param non-empty-array<ConstantIntegerType> $positionalPlaceholderCounts
+	 */
+	public function __construct(public readonly array $rowTypes, public readonly array $positionalPlaceholderCounts)
+	{
 	}
 }

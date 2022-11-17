@@ -8,8 +8,11 @@ use MariaStan\Analyser\AnalyserResult;
 
 final class QueryPrepareCallResult
 {
-	/** @param array<string> $errors */
-	public function __construct(public readonly array $errors, public readonly ?AnalyserResult $analyserResult)
+	/**
+	 * @param array<string> $errors
+	 * @param array<AnalyserResult> $analyserResults
+	 */
+	public function __construct(public readonly array $errors, public readonly array $analyserResults)
 	{
 	}
 }

@@ -11,3 +11,5 @@
 111: Prepared statement needs 2 parameters, got 3.
 121: Dynamic SQL: expected query as constant string, got: non-falsy-string
 124: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
+134: Table 'missing_table' doesn't exist
+147: Prepared statement needs 1, 2 parameters, got 3.

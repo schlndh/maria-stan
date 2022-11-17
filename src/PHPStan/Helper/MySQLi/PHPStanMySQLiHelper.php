@@ -7,23 +7,29 @@ namespace MariaStan\PHPStan\Helper\MySQLi;
 use InvalidArgumentException;
 use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\AnalyserError;
+use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
+use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_unique;
+use function array_values;
 use function count;
+use function implode;
+use function ksort;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
@@ -39,100 +45,140 @@ final class PHPStanMySQLiHelper
 
 	public function prepare(Type $queryType): QueryPrepareCallResult
 	{
-		if (! $queryType instanceof ConstantStringType) {
+		$constantStrings = TypeUtils::getConstantStrings($queryType);
+
+		if (count($constantStrings) === 0) {
 			return new QueryPrepareCallResult(
 				[
 					"Dynamic SQL: expected query as constant string, got: "
-						. $queryType->describe(VerbosityLevel::precise()),
+					. $queryType->describe(VerbosityLevel::precise()),
 				],
-				null,
+				[],
 			);
 		}
 
-		try {
-			$analyserResult = $this->analyser->analyzeQuery($queryType->getValue());
-		} catch (AnalyserException $e) {
-			return new QueryPrepareCallResult(
-				[$e->getMessage()],
-				null,
-			);
+		$analyserResults = [];
+		$errors = [];
+
+		foreach ($constantStrings as $sqlType) {
+			try {
+				$analyserResults[] = $this->analyser->analyzeQuery($sqlType->getValue());
+			} catch (AnalyserException $e) {
+				$errors[] = $e->getMessage();
+			}
 		}
 
-		$errors = array_map(static fn (AnalyserError $err) => $err->message, $analyserResult->errors);
+		$errors = array_unique(
+			array_merge(
+				$errors,
+				...array_map(
+					static fn (AnalyserResult $r) => array_map(static fn (AnalyserError $e) => $e->message, $r->errors),
+					$analyserResults,
+				),
+			),
+		);
 
-		return new QueryPrepareCallResult($errors, $analyserResult);
+		return new QueryPrepareCallResult($errors, $analyserResults);
 	}
 
 	public function query(Type $queryType): QueryPrepareCallResult
 	{
 		$result = $this->prepare($queryType);
 
-		if (($result->analyserResult?->positionalPlaceholderCount ?? 0) === 0) {
-			return $result;
+		foreach ($result->analyserResults as $analyserResult) {
+			if ($analyserResult->positionalPlaceholderCount > 0) {
+				return new QueryPrepareCallResult(
+					array_merge(
+						$result->errors,
+						['Placeholders cannot be used with query(), use prepared statements.'],
+					),
+					$result->analyserResults,
+				);
+			}
 		}
 
-		return new QueryPrepareCallResult(
-			array_merge($result->errors, ['Placeholders cannot be used with query(), use prepared statements.']),
-			$result->analyserResult,
-		);
+		return $result;
 	}
 
 	/**
-	 * @param array<Type> $executeParamTypes
+	 * @param array<array<Type>> $executeParamTypes possible params
 	 * @return array<string>
 	 */
 	public function execute(AnalyserResultPHPStanParams $params, array $executeParamTypes): array
 	{
-		$executeParamCount = count($executeParamTypes);
-		$positionalParamsCount = $params->positionalPlaceholderCount->getValue();
+		$supportedPlaceholderCounts = [];
 
-		if ($executeParamCount === $positionalParamsCount) {
-			return [];
+		foreach ($params->positionalPlaceholderCounts as $count) {
+			$supportedPlaceholderCounts[$count->getValue()] = true;
 		}
 
-		return [
-			"Prepared statement needs {$positionalParamsCount} parameters, got {$executeParamCount}.",
-		];
+		ksort($supportedPlaceholderCounts);
+		$supportedPlaceholderTxt = implode(', ', array_keys($supportedPlaceholderCounts));
+		$errors = [];
+
+		foreach ($executeParamTypes as $params) {
+			$count = count($params);
+
+			if (isset($supportedPlaceholderCounts[$count])) {
+				continue;
+			}
+
+			$errors[] = "Prepared statement needs {$supportedPlaceholderTxt} parameters, got {$count}.";
+		}
+
+		return array_values(array_unique($errors));
 	}
 
 	public function getRowType(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
-		$columns = $this->phpstanHelper->getColumnsFromRowType($params->rowType);
+		$types = [];
 
-		switch ($mode) {
-			case MYSQLI_ASSOC:
-				return $this->phpstanHelper->getAssociativeTypeForSingleRow($columns);
-			case MYSQLI_NUM:
-				return $this->phpstanHelper->getNumericTypeForSingleRow($columns);
-			case MYSQLI_BOTH:
-				return $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
-			case null:
-				return TypeCombinator::union(
-					$this->phpstanHelper->getAssociativeTypeForSingleRow($columns),
-					$this->phpstanHelper->getNumericTypeForSingleRow($columns),
-					$this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns),
-				);
-			default:
-				throw new InvalidArgumentException("Unsupported mode {$mode}.");
+		foreach ($params->rowTypes as $rowType) {
+			$columns = $this->phpstanHelper->getColumnsFromRowType($rowType);
+
+			switch ($mode) {
+				case MYSQLI_ASSOC:
+					$types[] = $this->phpstanHelper->getAssociativeTypeForSingleRow($columns);
+					break;
+				case MYSQLI_NUM:
+					$types[] = $this->phpstanHelper->getNumericTypeForSingleRow($columns);
+					break;
+				case MYSQLI_BOTH:
+					$types[] = $this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns);
+					break;
+				case null:
+					$types[] = TypeCombinator::union(
+						$this->phpstanHelper->getAssociativeTypeForSingleRow($columns),
+						$this->phpstanHelper->getNumericTypeForSingleRow($columns),
+						$this->phpstanHelper->getBothNumericAndAssociativeTypeForSingleRow($columns),
+					);
+					break;
+				default:
+					throw new InvalidArgumentException("Unsupported mode {$mode}.");
+			}
 		}
+
+		return TypeCombinator::union(...$types);
 	}
 
 	public function getColumnType(AnalyserResultPHPStanParams $params, ?int $column): Type
 	{
-		$columns = $this->phpstanHelper->getColumnsFromRowType($params->rowType);
-
-		if ($columns === null) {
-			return $this->phpstanHelper->getMixedType();
-		}
-
 		$types = [];
 
-		if ($column !== null) {
-			$types[] = $column < count($columns)
-				? $columns[$column][1]
-				: new ErrorType();
-		} else {
-			$types = array_column($columns, 1);
+		foreach ($params->rowTypes as $rowType) {
+			$columns = $this->phpstanHelper->getColumnsFromRowType($rowType);
+
+			if ($columns === null) {
+				return $this->phpstanHelper->getMixedType();
+			}
+
+			if ($column !== null) {
+				$types[] = $column < count($columns)
+					? $columns[$column][1]
+					: new ErrorType();
+			} else {
+				$types = array_merge($types, array_column($columns, 1));
+			}
 		}
 
 		return TypeCombinator::union(...$types);

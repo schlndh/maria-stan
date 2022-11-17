@@ -16,10 +16,13 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
+use function array_column;
 use function assert;
 use function count;
 use function in_array;
+use function reset;
 
 class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -57,11 +60,32 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 
 		// @phpstan-ignore-next-line This is here for phpstorm
 		assert($result === null || $result instanceof QueryPrepareCallResult);
-		$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($result?->analyserResult);
-		$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
+		$analyserResults = $result?->analyserResults ?? [];
 
-		return count($types) === 0
-			? new ObjectType($returnClass)
-			: new GenericObjectType($returnClass, $types);
+		if (count($analyserResults) === 0) {
+			return new ObjectType($returnClass);
+		}
+
+		$paramTypes = [];
+
+		foreach ($analyserResults as $analyserResult) {
+			$params = $this->phpstanHelper->createPHPStanParamsFromAnalyserResult($analyserResult);
+			$types = $this->phpstanHelper->packPHPStanParamsIntoTypes($params);
+
+			if (count($types) !== 2) {
+				return new ObjectType($returnClass);
+			}
+
+			$paramTypes[] = $types;
+		}
+
+		if (count($paramTypes) === 1) {
+			return new GenericObjectType($returnClass, reset($paramTypes));
+		}
+
+		$rowType = TypeCombinator::union(...array_column($paramTypes, 0));
+		$placeholderCount = TypeCombinator::union(...array_column($paramTypes, 1));
+
+		return new GenericObjectType($returnClass, [$rowType, $placeholderCount]);
 	}
 }

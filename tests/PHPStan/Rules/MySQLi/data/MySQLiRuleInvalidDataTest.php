@@ -130,6 +130,25 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt->execute();
 		$stmt->get_result();
 
+		try {
+			$db->query(
+				'SELECT * FROM missing_table '
+					. ($this->hideValueFromPhpstan(true) ? 'WHERE 1' : ' WHERE 2'),
+			);
+			$this->fail('Exception expected');
+		} catch (mysqli_sql_exception $e) {
+			$this->assertSame(MariaDbErrorCodes::ER_NO_SUCH_TABLE, $e->getCode());
+		}
+
+		$condition = $this->hideValueFromPhpstan(true);
+		$stmt = $db->prepare($condition ? 'SELECT ?' : 'SELECT ?, ?');
+
+		try {
+			$stmt->execute($condition ? [3, 4, 5] : [1, 2]);
+			$this->fail('Exception expected');
+		} catch (ValueError) {
+		}
+
 		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
 		$this->assertTrue(true);
 	}

@@ -12,13 +12,16 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ConstantType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 
 use function array_column;
+use function array_filter;
 use function array_values;
 use function assert;
 use function count;
@@ -36,8 +39,8 @@ class PHPStanReturnTypeHelper
 		}
 
 		return new AnalyserResultPHPStanParams(
-			$this->getRowTypeFromFields($analyserResult->resultFields),
-			new ConstantIntegerType($analyserResult->positionalPlaceholderCount),
+			[$this->getRowTypeFromFields($analyserResult->resultFields)],
+			[new ConstantIntegerType($analyserResult->positionalPlaceholderCount)],
 		);
 	}
 
@@ -45,7 +48,10 @@ class PHPStanReturnTypeHelper
 	public function packPHPStanParamsIntoTypes(?AnalyserResultPHPStanParams $params): array
 	{
 		return $params !== null
-			? [$params->rowType, $params->positionalPlaceholderCount]
+			? [
+				TypeCombinator::union(...$params->rowTypes),
+				TypeCombinator::union(...$params->positionalPlaceholderCounts),
+			]
 			: [];
 	}
 
@@ -56,11 +62,15 @@ class PHPStanReturnTypeHelper
 			return null;
 		}
 
-		if (! $types[0] instanceof ConstantArrayType || ! $types[1] instanceof ConstantIntegerType) {
+		$rowTypes = TypeUtils::getConstantTypes($types[0]);
+		$rowTypes = array_filter($rowTypes, static fn (ConstantType $t) => $t instanceof ConstantArrayType);
+		$placholderCounts = TypeUtils::getConstantIntegers($types[1]);
+
+		if (count($rowTypes) === 0 || count($placholderCounts) === 0) {
 			return null;
 		}
 
-		return new AnalyserResultPHPStanParams($types[0], $types[1]);
+		return new AnalyserResultPHPStanParams($rowTypes, $placholderCounts);
 	}
 
 	/**

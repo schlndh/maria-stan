@@ -683,6 +683,47 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		}
 	}
 
+	public function testDynamicSql(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+		$rows = $db->query(
+			'SELECT * FROM mysqli_test'
+				. ($this->hideValueFromPhpstan(true) ? ' WHERE 1' : ' WHERE 2'),
+		)->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType("array{'id', 'name', 'price'}", array_keys($row));
+				assertType('int', $row['id']);
+				assertType('string|null', $row['name']);
+				assertType('numeric-string', $row['price']);
+				assertType('*ERROR*', $row['doesnt_exist']);
+				assertType('*ERROR*', $row[0]);
+			}
+
+			$this->assertSame(['id', 'name', 'price'], array_keys($row));
+			$this->assertIsInt($row['id']);
+
+			if ($row['name'] !== null) {
+				$this->assertIsString($row['name']);
+			}
+
+			$this->assertIsNumeric($row['price']);
+		}
+
+		$rows = $db->query(
+			$this->hideValueFromPhpstan(true) ? 'SELECT 1 id' : 'SELECT "aa" aa, 2 count',
+		)->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType("array{aa: string, count: int}|array{id: int}", $row);
+			}
+		}
+	}
+
 	/** @param string|array<string> $allowedTypes */
 	private function assertGettype(string|array $allowedTypes, mixed $value): void
 	{

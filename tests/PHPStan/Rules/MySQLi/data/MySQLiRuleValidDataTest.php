@@ -71,4 +71,28 @@ class MySQLiRuleValidDataTest extends TestCase
 		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
 		$this->assertTrue(true);
 	}
+
+	public function testDynamicSql(): void
+	{
+		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+
+		$db->query('SELECT ' . ($this->hideValueFromPhpstan(true) ? '1' : '2') . ' WHERE 1');
+
+		$condition = $this->hideValueFromPhpstan(true);
+		$stmt = $db->prepare($condition ? 'SELECT ?' : 'SELECT ?, ?');
+		$stmt->execute($condition ? [1] : [1, 2]);
+
+		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
+		$this->assertTrue(true);
+	}
+
+	/**
+	 * @template T
+	 * @param T $value
+	 * @return T
+	 */
+	private function hideValueFromPhpstan(mixed $value): mixed
+	{
+		return $value;
+	}
 }
