@@ -15,6 +15,7 @@ final class FunctionInfoRegistryFactory
 	public function createDefaultFunctionInfos(): array
 	{
 		return [
+			new Avg(),
 			new Now(),
 		];
 	}

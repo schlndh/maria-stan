@@ -5450,3 +5450,36 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT AVG (1 + 2)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => AVG
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\BinaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+											[left] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+											[right] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 2
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)

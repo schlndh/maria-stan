@@ -928,35 +928,21 @@ final class AnalyserState
 					}
 				}
 
-				// TODO: handle this more elegantly. For now it's just like this so that I have a function to use
-				// for tests.
-				if ($expr instanceof Expr\FunctionCall\StandardFunctionCall && $normalizedFunctionName === 'AVG') {
-					if (count($arguments) !== 1) {
-						$this->errors[] = new AnalyserError(
-							AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
-								$expr->getFunctionName(),
-								count($arguments),
-								[1],
-							),
+				$functionInfo = $this->functionInfoRegistry
+					->findFunctionInfoByFunctionName($normalizedFunctionName);
+
+				if ($functionInfo !== null) {
+					try {
+						return $functionInfo->getReturnType(
+							$expr,
+							$resolvedArguments,
+							$this->getNodeContent($expr),
 						);
+					} catch (AnalyserException $e) {
+						$this->errors[] = new AnalyserError($e->getMessage());
 					}
 				} else {
-					$functionInfo = $this->functionInfoRegistry
-						->findFunctionInfoByFunctionName($normalizedFunctionName);
-
-					if ($functionInfo !== null) {
-						try {
-							return $functionInfo->getReturnType(
-								$expr,
-								$resolvedArguments,
-								$this->getNodeContent($expr),
-							);
-						} catch (AnalyserException $e) {
-							$this->errors[] = new AnalyserError($e->getMessage());
-						}
-					} else {
-						$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
-					}
+					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
 				}
 
 				return new QueryResultField(

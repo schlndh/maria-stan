@@ -694,6 +694,13 @@ class AnalyserTest extends TestCase
 		foreach (['AVG', 'MAX', 'MIN', 'SUM'] as $fn) {
 			$selects["{$fn}"] = "SELECT {$fn}(id) FROM {$tableName}";
 			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
+			$selects["{$fn}(null)"] = "SELECT {$fn}(null)";
+			$selects["{$fn}(int)"] = "SELECT {$fn}(5+6)";
+			$selects["{$fn}(decimal)"] = "SELECT {$fn}(5.5)";
+			$selects["{$fn}(double)"] = "SELECT {$fn}(5.5e1)";
+			$selects["{$fn}(string)"] = "SELECT {$fn}('aa')";
+			$selects["{$fn}(datetime)"] = "SELECT {$fn}(NOW())";
+			$selects["{$fn}(enum)"] = "SELECT {$fn}(val_enum_null_no_default) FROM analyse_test_insert";
 		}
 
 		$nowAliases = ['NOW', 'LOCALtime', 'current_timestamp', 'localtimestamp'];
@@ -1209,16 +1216,6 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
 			'error' => AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage('cd'),
 			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
-		];
-
-		yield 'mismatched arguments' => [
-			'query' => 'SELECT AVG(id, name) FROM analyser_test',
-			'error' => AnalyserErrorMessageBuilder::createMismatchedFunctionArgumentsErrorMessage(
-				'AVG',
-				2,
-				[1],
-			),
-			'DB error code' => MariaDbErrorCodes::ER_PARSE_ERROR,
 		];
 
 		yield 'bug - valid subquery should not clear errors from parent query' => [

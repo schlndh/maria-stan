@@ -35,6 +35,13 @@ Expected at least one argument after: SELECT AVG(DISTINCT
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') FROM (SELECT 1 id) t' at line 1
 -----
+SELECT AVG(1, 2)
+-----
+MariaStan\Parser\Exception\ParserException
+Function AVG takes 1 argument, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 2)' at line 1
+-----
 SELECT MAX(DISTINCT) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
