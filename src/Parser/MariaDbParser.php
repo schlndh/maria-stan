@@ -6,6 +6,7 @@ namespace MariaStan\Parser;
 
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Query\Query;
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Parser\Exception\ParserException;
 
 use function array_filter;
@@ -24,7 +25,7 @@ class MariaDbParser
 	/** @var ?array<TokenTypeEnum> */
 	private ?array $identifierAfterDotTokenTypes = null;
 
-	public function __construct()
+	public function __construct(private readonly FunctionInfoRegistry $functionInfoRegistry)
 	{
 		$this->lexer = new MariaDbLexer();
 	}
@@ -33,7 +34,7 @@ class MariaDbParser
 	public function parseSingleQuery(string $sqlQuery): Query
 	{
 		$tokens = $this->lexer->tokenize($sqlQuery);
-		$parserState = new MariaDbParserState($this, $sqlQuery, $tokens);
+		$parserState = new MariaDbParserState($this, $this->functionInfoRegistry, $sqlQuery, $tokens);
 
 		return $parserState->parseStrictSingleQuery();
 	}
@@ -42,7 +43,7 @@ class MariaDbParser
 	public function parseSingleExpression(string $expression): Expr
 	{
 		$tokens = $this->lexer->tokenize($expression);
-		$parserState = new MariaDbParserState($this, $expression, $tokens);
+		$parserState = new MariaDbParserState($this, $this->functionInfoRegistry, $expression, $tokens);
 
 		return $parserState->parseStrictSingleExpression();
 	}
@@ -176,6 +177,7 @@ class MariaDbParser
 	/** @return array<string> uppercase names */
 	public function getWindowFunctions(): array
 	{
+		// TODO: use function registry for this once all the functions are supported.
 		return [
 			'AVG',
 			'BIT_AND',

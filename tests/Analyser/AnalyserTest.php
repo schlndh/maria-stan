@@ -7,7 +7,6 @@ namespace MariaStan\Analyser;
 use DateTimeImmutable;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\InformationSchemaParser;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
@@ -15,6 +14,7 @@ use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\TupleType;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli_result;
 use mysqli_sql_exception;
@@ -56,7 +56,7 @@ class AnalyserTest extends TestCase
 	public function provideValidTestData(): iterable
 	{
 		$tableName = 'analyser_test';
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -149,7 +149,7 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideValidDataTypeTestData(): iterable
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$dataTypesTable = 'analyser_test_data_types';
 		$db->query("
 			CREATE OR REPLACE TABLE {$dataTypesTable} (
@@ -214,7 +214,7 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private function provideValidJoinTestData(): iterable
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$joinTableA = 'analyser_test_join_a';
 		$db->query("
 			CREATE OR REPLACE TABLE {$joinTableA} (
@@ -696,6 +696,13 @@ class AnalyserTest extends TestCase
 			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
 		}
 
+		$nowAliases = ['NOW', 'LOCALtime', 'current_timestamp', 'localtimestamp'];
+
+		foreach ($nowAliases as $nowFn) {
+			$selects["{$nowFn}()"] = "SELECT {$nowFn}()";
+			$selects["{$nowFn}(precision)"] = "SELECT {$nowFn}(5)";
+		}
+
 		foreach ($selects as $label => $select) {
 			yield $label => [
 				'query' => $select,
@@ -948,11 +955,8 @@ class AnalyserTest extends TestCase
 	 */
 	public function testValid(string $query, array $params = []): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$parser = new MariaDbParser();
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-		$analyser = new Analyser($parser, $reflection);
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
 			$e->message,
@@ -2021,11 +2025,8 @@ class AnalyserTest extends TestCase
 	 */
 	public function testInvalid(string $query, string|array $error, int $dbErrorCode): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$parser = new MariaDbParser();
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-		$analyser = new Analyser($parser, $reflection);
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 
 		if (is_string($error)) {
@@ -2102,11 +2103,8 @@ class AnalyserTest extends TestCase
 	/** @dataProvider provideTestPositionPlaceholderCountData */
 	public function testPositionalPlaceholderCount(string $query, int $expectedCount): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$parser = new MariaDbParser();
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-		$analyser = new Analyser($parser, $reflection);
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 		$this->assertCount(
 			0,
@@ -2164,5 +2162,16 @@ class AnalyserTest extends TestCase
 		$types = array_fill(0, $count, $this->createMock(DbType::class));
 
 		return new TupleType($types, false);
+	}
+
+	private function createAnalyser(): Analyser
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$functionInfoRegistry = TestCaseHelper::createFunctionInfoRegistry();
+		$parser = new MariaDbParser($functionInfoRegistry);
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
+
+		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}
 }

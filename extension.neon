@@ -56,3 +56,6 @@ services:
 	- MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper
 	- MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
 	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper
+	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory
+	-
+		create: @functionInfoRegistryFactory::create()

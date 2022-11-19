@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
@@ -13,8 +14,11 @@ use function mb_substr;
 
 final class Analyser
 {
-	public function __construct(private readonly MariaDbParser $parser, private readonly DbReflection $dbReflection)
-	{
+	public function __construct(
+		private readonly MariaDbParser $parser,
+		private readonly DbReflection $dbReflection,
+		private readonly FunctionInfoRegistry $functionInfoRegistry,
+	) {
 	}
 
 	/** @throws AnalyserException */
@@ -32,6 +36,6 @@ final class Analyser
 			);
 		}
 
-		return (new AnalyserState($this->dbReflection, $ast, $query))->analyse();
+		return (new AnalyserState($this->dbReflection, $this->functionInfoRegistry, $ast, $query))->analyse();
 	}
 }

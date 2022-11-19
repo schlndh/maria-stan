@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
-use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\TestCaseHelper;
 use mysqli;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ class MySQLiRuleValidDataTest extends TestCase
 	{
 		parent::setUpBeforeClass();
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -42,7 +42,7 @@ class MySQLiRuleValidDataTest extends TestCase
 
 	public function testValid(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 
 		$stmt = $db->prepare('SELECT 1');
 		$stmt->execute();
@@ -74,7 +74,7 @@ class MySQLiRuleValidDataTest extends TestCase
 
 	public function testDynamicSql(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 
 		$db->query('SELECT ' . ($this->hideValueFromPhpstan(true) ? '1' : '2') . ' WHERE 1');
 

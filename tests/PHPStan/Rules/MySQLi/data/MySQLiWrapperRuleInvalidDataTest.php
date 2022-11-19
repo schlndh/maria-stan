@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\PHPStan\MySQLiWrapper;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_sql_exception;
@@ -17,7 +17,7 @@ class MySQLiWrapperRuleInvalidDataTest extends TestCase
 	{
 		parent::setUpBeforeClass();
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -41,7 +41,7 @@ class MySQLiWrapperRuleInvalidDataTest extends TestCase
 
 	public function test(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$wrapper = new MySQLiWrapper($db);
 
 		try {
@@ -76,7 +76,7 @@ class MySQLiWrapperRuleInvalidDataTest extends TestCase
 
 	public function testDynamicSql(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$wrapper = new MySQLiWrapper($db);
 		$wrapper->insert($this->hideValueFromPhpstan('mysqli_wrapper_rule_invalid'), ['id' => 97987]);
 		$wrapper->insert('mysqli_wrapper_rule_invalid', [$this->hideValueFromPhpstan('id') => 64645]);

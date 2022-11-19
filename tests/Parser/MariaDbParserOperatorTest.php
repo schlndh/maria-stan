@@ -19,7 +19,7 @@ use MariaStan\Ast\Expr\UnaryOp;
 use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\SelectExpr\RegularExpr;
-use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\TestCaseHelper;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -73,7 +73,7 @@ class MariaDbParserOperatorTest extends TestCase
 	public function test(string $select): void
 	{
 		$dbValue = $this->getValueFromSql($select);
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 		$selectQuery = $parser->parseSingleQuery($select);
 		$this->assertInstanceOf(SimpleSelectQuery::class, $selectQuery);
 		$this->assertCount(1, $selectQuery->select);
@@ -85,7 +85,7 @@ class MariaDbParserOperatorTest extends TestCase
 
 	private function getValueFromSql(string $select): mixed
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$stmt = $db->query($select);
 		$val = $stmt->fetch_column(0);
 		$stmt->close();

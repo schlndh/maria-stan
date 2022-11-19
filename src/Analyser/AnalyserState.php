@@ -33,6 +33,7 @@ use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\Parser\Position;
@@ -60,6 +61,7 @@ final class AnalyserState
 
 	public function __construct(
 		private readonly DbReflection $dbReflection,
+		private readonly FunctionInfoRegistry $functionInfoRegistry,
 		private readonly Query $queryAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
@@ -909,10 +911,11 @@ final class AnalyserState
 				$position = 0;
 				$arguments = $expr->getArguments();
 				$normalizedFunctionName = strtoupper($expr->getFunctionName());
+				$resolvedArguments = [];
 
 				foreach ($arguments as $arg) {
 					$position++;
-					$resolvedArg = $this->resolveExprType($arg);
+					$resolvedArguments[] = $resolvedArg = $this->resolveExprType($arg);
 
 					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
 						$this->errors[] = new AnalyserError(
@@ -938,7 +941,22 @@ final class AnalyserState
 						);
 					}
 				} else {
-					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
+					$functionInfo = $this->functionInfoRegistry
+						->findFunctionInfoByFunctionName($normalizedFunctionName);
+
+					if ($functionInfo !== null) {
+						try {
+							return $functionInfo->getReturnType(
+								$expr,
+								$resolvedArguments,
+								$this->getNodeContent($expr),
+							);
+						} catch (AnalyserException $e) {
+							$this->errors[] = new AnalyserError($e->getMessage());
+						}
+					} else {
+						$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
+					}
 				}
 
 				return new QueryResultField(
@@ -1023,6 +1041,7 @@ final class AnalyserState
 	{
 		$other = new self(
 			$this->dbReflection,
+			$this->functionInfoRegistry,
 			$subquery,
 			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
 			$this->query,

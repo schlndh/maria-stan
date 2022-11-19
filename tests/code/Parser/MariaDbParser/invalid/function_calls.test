@@ -944,3 +944,87 @@ MariaStan\Parser\Exception\ParserException
 Built-in functions cannot have a space between function name and parenthesis, at: SELECT SUBSTRING (
 #####
 1630: FUNCTION mariastan_test.SUBSTRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+-----
+SELECT NOW(5+5)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to NOW has to be literal int, got BINARY_OP.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+5)' at line 1
+-----
+SELECT CURRENT_TIMESTAMP(5+5)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to CURRENT_TIMESTAMP has to be literal int, got BINARY_OP.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+5)' at line 1
+-----
+SELECT LOCALTIME(5+5)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to LOCALTIME has to be literal int, got BINARY_OP.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+5)' at line 1
+-----
+SELECT LOCALTIMESTAMP(5+5)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to LOCALTIMESTAMP has to be literal int, got BINARY_OP.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+5)' at line 1
+-----
+SELECT NOW(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function NOW can take 0-1 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT CURRENT_TIMESTAMP(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function CURRENT_TIMESTAMP can take 0-1 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT LOCALTIME(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function LOCALTIME can take 0-1 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT LOCALTIMESTAMP(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function LOCALTIMESTAMP can take 0-1 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT NOW('a')
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to NOW has to be literal int, got LITERAL_STRING.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''a')' at line 1
+-----
+SELECT NOW(1.5)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to NOW has to be literal int, got LITERAL_FLOAT.
+#####
+1064: Only integers allowed as number here near '1.5)' at line 1
+-----
+SELECT NOW(true)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: TRUE after: SELECT NOW(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'true)' at line 1
+-----
+SELECT NOW(null)
+-----
+MariaStan\Parser\Exception\ParserException
+Precision argument to NOW has to be literal int, got LITERAL_NULL.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'null)' at line 1

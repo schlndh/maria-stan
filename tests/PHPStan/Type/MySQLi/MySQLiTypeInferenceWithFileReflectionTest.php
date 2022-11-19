@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi;
 
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\MariaDbFileDbReflection;
 use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
 use PHPStan\Testing\TypeInferenceTestCase;
 
@@ -17,7 +17,7 @@ class MySQLiTypeInferenceWithFileReflectionTest extends TypeInferenceTestCase
 	/** @return iterable<mixed> */
 	public function dataFileAsserts(): iterable
 	{
-		$mysqli = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$mysqli = TestCaseHelper::getDefaultSharedConnection();
 		MySQLiTypeInferenceDataTest::initData($mysqli);
 		file_put_contents(
 			__DIR__ . '/schema.dump',

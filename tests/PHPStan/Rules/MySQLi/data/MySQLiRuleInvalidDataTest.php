@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
-use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_sql_exception;
@@ -19,7 +19,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 	{
 		parent::setUpBeforeClass();
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -43,7 +43,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 
 	public function testInvalid(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 
 		try {
 			$db->query('SELECT missing');
@@ -116,7 +116,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 
 	public function testDynamicSql(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 
 		$db->query('SELECT ' . $this->hideValueFromPhpstan('1'));
 

@@ -8,14 +8,13 @@ use MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
-use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -51,7 +50,7 @@ class DbReflectionTest extends TestCase
 			return;
 		}
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE db_reflection_test (
 				id INT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -102,8 +101,8 @@ class DbReflectionTest extends TestCase
 	public function provideDbReflections(): iterable
 	{
 		self::initDb();
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
-		$parser = new MariaDbParser();
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$parser = TestCaseHelper::createParser();
 
 		yield 'online' => [new MariaDbOnlineDbReflection($db, new InformationSchemaParser($parser))];
 
@@ -118,7 +117,7 @@ class DbReflectionTest extends TestCase
 	public function test(DbReflection $reflection): void
 	{
 		$tableName = 'db_reflection_test';
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 		$schema = $reflection->findTableSchema($tableName);
 		// mariadb doesn't preserve the exact syntax of the default expression.
 		$valDefaultExpr = $parser->parseSingleExpression('(abs(`val_mediumint`) + 5)');

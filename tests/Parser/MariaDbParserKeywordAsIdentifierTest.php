@@ -13,8 +13,8 @@ use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExpr;
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
+use MariaStan\TestCaseHelper;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -58,7 +58,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$dbField = null;
 		$dbException = null;
 		$parserException = null;
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 
 		try {
 			$dbField = $this->getFieldFromSql($select);
@@ -104,7 +104,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	public function provideTestTableAliasData(): iterable
 	{
 		$tableName = 'parser_keyword_test';
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				id INT NULL
@@ -128,7 +128,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$dbField = null;
 		$dbException = null;
 		$parserException = null;
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 
 		try {
 			$dbField = $this->getFieldFromSql($select);
@@ -190,7 +190,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$dbField = null;
 		$dbException = null;
 		$parserException = null;
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 
 		try {
 			$dbField = $this->getFieldFromSql($select);
@@ -222,7 +222,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @throws mysqli_sql_exception */
 	private function getFieldFromSql(string $select): stdClass
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$stmt = $db->query($select);
 		$field = $stmt->fetch_field();
 		$stmt->close();
@@ -251,7 +251,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 
 		$columnSql = implode(",\n", $columns);
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
 			CREATE OR REPLACE TABLE {$tableName} (
 				{$columnSql}
@@ -283,7 +283,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$dbField = null;
 		$dbException = null;
 		$parserException = null;
-		$parser = new MariaDbParser();
+		$parser = TestCaseHelper::createParser();
 
 		try {
 			$dbField = $this->getFieldFromSql($select);

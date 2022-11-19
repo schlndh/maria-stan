@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MariaStan;
 
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory;
+use MariaStan\Parser\MariaDbParser;
 use mysqli;
 use mysqli_sql_exception;
 
@@ -11,7 +14,7 @@ use function mysqli_report;
 
 // phpcs:disable SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
 
-abstract class DatabaseTestCaseHelper
+abstract class TestCaseHelper
 {
 	/** @var array<string, mysqli> */
 	private static array $connections = [];
@@ -59,5 +62,15 @@ abstract class DatabaseTestCaseHelper
 		}
 
 		return self::$connections[$prefix] = $mysqli;
+	}
+
+	public static function createFunctionInfoRegistry(): FunctionInfoRegistry
+	{
+		return (new FunctionInfoRegistryFactory())->create();
+	}
+
+	public static function createParser(): MariaDbParser
+	{
+		return new MariaDbParser(self::createFunctionInfoRegistry());
 	}
 }

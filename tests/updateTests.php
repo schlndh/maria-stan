@@ -59,7 +59,7 @@ foreach (filesInDir($parserDir . '/invalid', 'test') as $fileName => $code) {
 	[$name, $tests] = $testParser->parseTest($code, 2);
 	$newTests = [];
 	$parser = $codeParsingTest->createParser();
-	$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+	$db = TestCaseHelper::getDefaultSharedConnection();
 
 	foreach ($tests as [$modeLine, [$input, $expected]]) {
 		[, $parserOutput] = $codeParsingTest->getParseOutput($parser, $input);

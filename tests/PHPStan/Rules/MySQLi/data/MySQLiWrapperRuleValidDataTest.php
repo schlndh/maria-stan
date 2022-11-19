@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi\data;
 
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\PHPStan\MySQLiWrapper;
+use MariaStan\TestCaseHelper;
 use mysqli;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +15,7 @@ class MySQLiWrapperRuleValidDataTest extends TestCase
 	{
 		parent::setUpBeforeClass();
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -39,7 +39,7 @@ class MySQLiWrapperRuleValidDataTest extends TestCase
 
 	public function testValid(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$wrapper = new MySQLiWrapper($db);
 		$wrapper->insert('mysqli_wrapper_rule_valid', ['id' => 98797]);
 		$wrapper->insert('mysqli_wrapper_rule_valid', ['id' => 98798, 'name' => 'qeasdas']);

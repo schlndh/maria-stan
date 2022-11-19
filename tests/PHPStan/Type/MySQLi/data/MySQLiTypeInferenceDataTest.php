@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi\data;
 
-use MariaStan\DatabaseTestCaseHelper;
+use MariaStan\TestCaseHelper;
 use mysqli;
 use mysqli_result;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +30,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	{
 		parent::setUpBeforeClass();
 
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		self::initData($db);
 	}
 
@@ -64,7 +64,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testAssoc(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_ASSOC);
 
 		foreach ($rows as $row) {
@@ -158,7 +158,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testNum(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_NUM);
 
 		foreach ($rows as $row) {
@@ -287,7 +287,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testBoth(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all(MYSQLI_BOTH);
 
 		foreach ($rows as $row) {
@@ -427,7 +427,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 	// This is not executed, it's just here as a data source for the PHPStan test.
 	public function checkDynamicReturnType(int $returnType): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('SELECT * FROM mysqli_test')->fetch_all($returnType);
 
 		// We don't know which is used, so it should behave similarly to BOTH
@@ -477,7 +477,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testDataTypes(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$rows = $db->query('SELECT col_int FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
@@ -560,7 +560,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testFetchRow(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$result = $db->query('SELECT id FROM mysqli_test');
 
 		do {
@@ -581,7 +581,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testFetchArray(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$result = $db->query('SELECT id FROM mysqli_test');
 
 		do {
@@ -602,7 +602,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testFetchColumn(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		$result = $db->query('SELECT * FROM mysqli_test');
 
 		do {
@@ -685,7 +685,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 	public function testDynamicSql(): void
 	{
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 
 		$rows = $db->query(
 			'SELECT * FROM mysqli_test'

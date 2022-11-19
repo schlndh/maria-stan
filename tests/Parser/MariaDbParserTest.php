@@ -7,8 +7,8 @@ namespace MariaStan\Parser;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\Query;
-use MariaStan\DatabaseTestCaseHelper;
 use MariaStan\Parser\Exception\ParserException;
+use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_result;
@@ -38,7 +38,7 @@ class MariaDbParserTest extends TestCase
 		parent::setUpBeforeClass();
 
 		$initTable = static function (string $suffix): void {
-			$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+			$db = TestCaseHelper::getDefaultSharedConnection();
 
 			$tableName = 'parser_test' . $suffix;
 			$db->query("
@@ -59,7 +59,7 @@ class MariaDbParserTest extends TestCase
 	public function testParseValid(string $name, string $code, string $expected): void
 	{
 		// Make sure the query doesn't throw an exception
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		[$dbException] = $this->getDbOutput($db, $code);
 
 		if ($dbException !== null) {
@@ -87,7 +87,7 @@ class MariaDbParserTest extends TestCase
 	public function testParseInvalid(string $name, string $code, string $expectedOutput): void
 	{
 		$parser = $this->createParser();
-		$db = DatabaseTestCaseHelper::getDefaultSharedConnection();
+		$db = TestCaseHelper::getDefaultSharedConnection();
 		[$e, $parserOutput] = $this->getParseOutput($parser, $code);
 		[$dbException, $dbOutput] = $this->getDbOutput($db, $code);
 
@@ -126,7 +126,7 @@ class MariaDbParserTest extends TestCase
 
 	public function createParser(): MariaDbParser
 	{
-		return new MariaDbParser();
+		return TestCaseHelper::createParser();
 	}
 
 	/**

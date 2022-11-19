@@ -80,6 +80,7 @@ use MariaStan\Ast\WhenThen;
 use MariaStan\Ast\WindowFrame;
 use MariaStan\Ast\WindowFrameBound;
 use MariaStan\Ast\WindowFrameTypeEnum;
+use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Parser\Exception\MissingSubqueryAliasException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
@@ -120,6 +121,7 @@ class MariaDbParserState
 	/** @param array<Token> $tokens */
 	public function __construct(
 		private readonly MariaDbParser $parser,
+		private readonly FunctionInfoRegistry $functionInfoRegistry,
 		private readonly string $query,
 		private readonly array $tokens,
 	) {
@@ -1321,6 +1323,7 @@ class MariaDbParserState
 		if ($ident) {
 			if ($this->acceptToken('(')) {
 				$uppercaseFunctionName = strtoupper($ident->content);
+				$functionInfo = $this->functionInfoRegistry->findFunctionInfoByFunctionName($uppercaseFunctionName);
 				$functionCall = match ($uppercaseFunctionName) {
 					'ADDDATE', 'SUBDATE' => $this->parseRestOfAddSubDateFunctionCall($ident),
 					'CAST' => $this->parseRestOfCastFunctionCall($startPosition),
@@ -1361,6 +1364,8 @@ class MariaDbParserState
 				}
 
 				if (! $this->acceptToken(TokenTypeEnum::OVER)) {
+					$functionInfo?->checkSyntaxErrors($functionCall);
+
 					return $functionCall;
 				}
 
@@ -1371,7 +1376,10 @@ class MariaDbParserState
 					);
 				}
 
-				return $this->parseRestOfWindowFunctionCall($functionCall);
+				$functionCall = $this->parseRestOfWindowFunctionCall($functionCall);
+				$functionInfo?->checkSyntaxErrors($functionCall);
+
+				return $functionCall;
 			}
 
 			if (! $this->acceptToken('.')) {
@@ -1394,6 +1402,9 @@ class MariaDbParserState
 		$functionIdent = $this->acceptAnyOfTokenTypes(...$this->parser->getExplicitTokenTypesForFunctions());
 
 		if ($functionIdent) {
+			$uppercaseFunctionName = strtoupper($functionIdent->content);
+			$functionInfo = $this->functionInfoRegistry->findFunctionInfoByFunctionName($uppercaseFunctionName);
+
 			if ($functionIdent->type === TokenTypeEnum::VALUES) {
 				if (! $this->isInOnDuplicateKeyUpdate) {
 					throw new UnexpectedTokenException(
@@ -1404,11 +1415,14 @@ class MariaDbParserState
 
 				$this->expectToken('(');
 
-				return $this->parseRestOfValueFunctionCall($functionIdent);
+				$functionCall = $this->parseRestOfValueFunctionCall($functionIdent);
+				$functionInfo?->checkSyntaxErrors($functionCall);
+
+				return $functionCall;
 			}
 
 			$canBeWithoutParentheses = in_array(
-				strtoupper($functionIdent->content),
+				$uppercaseFunctionName,
 				$this->parser->getFunctionsWhichCanBeCalledWithoutParentheses(),
 				true,
 			);
@@ -1418,12 +1432,15 @@ class MariaDbParserState
 				: [];
 
 			if ($canBeWithoutParentheses || $hasParentheses) {
-				return new FunctionCall\StandardFunctionCall(
+				$functionCall = new FunctionCall\StandardFunctionCall(
 					$startPosition,
 					$this->getPreviousToken()->getEndPosition(),
 					$functionIdent->content,
 					$arguments,
 				);
+				$functionInfo?->checkSyntaxErrors($functionCall);
+
+				return $functionCall;
 			}
 
 			throw new UnexpectedTokenException(
