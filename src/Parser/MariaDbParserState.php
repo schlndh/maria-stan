@@ -1854,7 +1854,7 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::DECIMAL)) {
+		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::DECIMAL, TokenTypeEnum::DEC)) {
 			$maxDigits = $maxDecimals = null;
 
 			if ($this->acceptToken('(')) {
@@ -1883,18 +1883,13 @@ class MariaDbParserState
 			return new FloatCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
-		$intToken = $this->acceptAnyOfTokenTypes(
-			TokenTypeEnum::INTEGER,
-			TokenTypeEnum::SIGNED,
-			TokenTypeEnum::UNSIGNED,
-		);
+		$signToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::SIGNED, TokenTypeEnum::UNSIGNED);
+		$intTokenTypes = [TokenTypeEnum::INTEGER, TokenTypeEnum::INT, TokenTypeEnum::INT4];
 
-		if ($intToken) {
-			if ($intToken->type !== TokenTypeEnum::INTEGER) {
-				$this->acceptToken(TokenTypeEnum::INTEGER);
-			}
+		$intToken = $this->acceptAnyOfTokenTypes(...$intTokenTypes);
 
-			$isSigned = $intToken->type !== TokenTypeEnum::UNSIGNED;
+		if ($intToken !== null || $signToken !== null) {
+			$isSigned = $signToken?->type !== TokenTypeEnum::UNSIGNED;
 
 			return new IntegerCastType($startPosition, $this->getPreviousToken()->getEndPosition(), $isSigned);
 		}

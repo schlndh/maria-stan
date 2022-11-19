@@ -462,6 +462,90 @@ Expected ')', got '(' after: CAST(5 AS INTEGER
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(11))' at line 1
 -----
+SELECT CAST(5 AS TINYINT)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got TINYINT, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'TINYINT)' at line 1
+-----
+SELECT CAST(5 AS BOOLEAN)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got IDENTIFIER, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'BOOLEAN)' at line 1
+-----
+SELECT CAST(5 AS SMALLINT)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got SMALLINT, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SMALLINT)' at line 1
+-----
+SELECT CAST(5 AS BIGINT)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got BIGINT, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'BIGINT)' at line 1
+-----
+SELECT CAST(5 AS NUMERIC)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got NUMERIC, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NUMERIC)' at line 1
+-----
+SELECT CAST(5 AS FIXED)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got IDENTIFIER, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FIXED)' at line 1
+-----
+SELECT CAST(5 AS NUMBER)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got IDENTIFIER, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NUMBER)' at line 1
+-----
+SELECT CAST(5 AS BIT)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got BIT, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'BIT)' at line 1
+-----
+SELECT CAST(5 AS INT1)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got INT1, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INT1)' at line 1
+-----
+SELECT CAST(5 AS INT2)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got INT2, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INT2)' at line 1
+-----
+SELECT CAST(5 AS INT3)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got INT3, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INT3)' at line 1
+-----
+SELECT CAST(5 AS INT8)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected cast type, got INT8, after: SELECT CAST(5 AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'INT8)' at line 1
+-----
 SELECT POSITION('a', 'b')
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException

@@ -3483,6 +3483,165 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 )
 -----
+SELECT CAST(5 AS INT), CAST(5 AS SIGNED INT), CAST(5 AS UNSIGNED INT)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => true
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => true
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CAST(5 AS INT4), CAST(5 AS SIGNED INT4), CAST(5 AS UNSIGNED INT4)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => true
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => true
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
+								(
+									[isSigned] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT CAST(5 AS DEC),  CAST(5 AS DEC(10)),  CAST(5 AS DEC(10, 2))
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\DecimalCastType
+								(
+									[maxDigits] => 10
+									[maxDecimals] => 0
+								)
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\DecimalCastType
+								(
+									[maxDigits] => 10
+									[maxDecimals] => 0
+								)
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Cast
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[castType] => MariaStan\Ast\Expr\CastType\DecimalCastType
+								(
+									[maxDigits] => 10
+									[maxDecimals] => 2
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
 SELECT POSITION('a' IN 'baC')
 -----
 MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
