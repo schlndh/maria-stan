@@ -7,7 +7,6 @@ namespace MariaStan\Database\FunctionInfo;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
-use MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -36,12 +35,6 @@ final class Now implements FunctionInfo
 
 	public function checkSyntaxErrors(FunctionCall $functionCall): void
 	{
-		if (! $functionCall instanceof StandardFunctionCall) {
-			throw new ParserException(
-				"Parser issue: {$functionCall->getFunctionName()} should be parsed as standard function.",
-			);
-		}
-
 		$args = $functionCall->getArguments();
 		$argCount = count($args);
 

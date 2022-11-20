@@ -6,7 +6,6 @@ namespace MariaStan\Database\FunctionInfo;
 
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
-use MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Schema\DbType\DbTypeEnum;
@@ -35,12 +34,6 @@ final class Avg implements FunctionInfo
 	{
 		if ($functionCall instanceof WindowFunctionCall) {
 			$functionCall = $functionCall->functionCall;
-		}
-
-		if (! $functionCall instanceof StandardFunctionCall) {
-			throw new ParserException(
-				"Parser issue: {$functionCall->getFunctionName()} should be parsed as standard function.",
-			);
 		}
 
 		$args = $functionCall->getArguments();
