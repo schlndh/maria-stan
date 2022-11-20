@@ -1007,6 +1007,12 @@ final class AnalyserState
 					$value->type,
 					$value->isNullable,
 				);
+			case Expr\ExprTypeEnum::CAST_TYPE:
+				return new QueryResultField(
+					$this->getNodeContent($expr),
+					new Schema\DbType\MixedType(),
+					true,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 

@@ -726,6 +726,29 @@ class AnalyserTest extends TestCase
 			$selects["DATE_FORMAT({$label}, Y-m, null)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', null)";
 			$selects["DATE_FORMAT({$label}, Y-m, en_US)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', 'en_US')";
 			$selects["DATE({$label})"] = "SELECT DATE({$value})";
+			$selects["DATE_ADD({$label}, INTERVAL)"] = "SELECT DATE_ADD({$value}, INTERVAL 1 SECOND)";
+
+			// TODO: handle this later when we have better type system.
+			if ($label !== 'datetime') {
+				$selects["DATE_SUB(NOW(), {$label})"] = "SELECT DATE_SUB(NOW(), INTERVAL {$value} SECOND)";
+			}
+
+			$castTargets = [
+				'BINARY',
+				'CHAR',
+				'DATE',
+				'DATETIME',
+				'DECIMAL',
+				'DOUBLE',
+				'FLOAT',
+				'INTEGER',
+				'TIME',
+				'INTERVAL DAY_SECOND(5)',
+			];
+
+			foreach ($castTargets as $castTarget) {
+				$selects["CAST({$label} AS {$castTarget})"] = "SELECT CAST({$value} AS {$castTarget})";
+			}
 		}
 
 		foreach ($dataTypes as $label1 => $value1) {
@@ -737,6 +760,10 @@ class AnalyserTest extends TestCase
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
 		//$selects["VALUE(col) in SELECT"] = "SELECT VALUE(id) FROM analyser_test";
+		$selects['CURDATE()'] = "SELECT CURDATE()";
+		$selects['CURDATE() + 0'] = "SELECT CURDATE() + 0";
+		$selects['CURRENT_DATE()'] = "SELECT CURRENT_DATE()";
+		$selects['CURRENT_DATE'] = "SELECT CURRENT_DATE";
 
 		foreach ($selects as $label => $select) {
 			yield $label => [

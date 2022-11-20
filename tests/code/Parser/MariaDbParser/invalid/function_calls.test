@@ -1119,3 +1119,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got '+' after: SELECT VALUE(id
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+id) FROM parser_test' at line 1
+-----
+SELECT CURDATE(5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function CURDATE takes 0 arguments, got 1.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
+-----
+SELECT CURRENT_DATE(5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function CURRENT_DATE takes 0 arguments, got 1.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1

@@ -16,8 +16,11 @@ final class FunctionInfoRegistryFactory
 	{
 		return [
 			new Avg(),
+			new Cast(),
 			new Count(),
+			new Curdate(),
 			new Date(),
+			new DateAddSub(),
 			new DateFormat(),
 			new IfFunction(),
 			new MaxMin(),

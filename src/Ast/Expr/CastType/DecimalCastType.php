@@ -19,6 +19,6 @@ final class DecimalCastType extends BaseCastType
 
 	public static function getCastType(): CastTypeEnum
 	{
-		return CastTypeEnum::DATE;
+		return CastTypeEnum::DECIMAL;
 	}
 }
