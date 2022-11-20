@@ -70,6 +70,6 @@ final class Sum implements FunctionInfo
 			default => new DecimalType(),
 		};
 
-		return new QueryResultField($nodeContent, $type, $arg->isNullable);
+		return new QueryResultField($nodeContent, $type, true);
 	}
 }

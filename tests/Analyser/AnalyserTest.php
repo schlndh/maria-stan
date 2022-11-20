@@ -702,6 +702,7 @@ class AnalyserTest extends TestCase
 
 		foreach (['AVG', 'MAX', 'MIN', 'SUM'] as $fn) {
 			$selects["{$fn}"] = "SELECT {$fn}(id) FROM {$tableName}";
+			$selects["{$fn} WHERE 0"] = "SELECT {$fn}(id) FROM {$tableName} WHERE 0";
 			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
 
 			foreach ($dataTypes as $label => $value) {
