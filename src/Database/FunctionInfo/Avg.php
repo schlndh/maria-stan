@@ -43,7 +43,13 @@ final class Avg implements FunctionInfo
 			return;
 		}
 
-		throw new ParserException("Function {$functionCall->getFunctionName()} takes 1 argument, got {$argCount}.");
+		throw new ParserException(
+			FunctionInfoHelper::createArgumentCountErrorMessageFixed(
+				$functionCall->getFunctionName(),
+				1,
+				$argCount,
+			),
+		);
 	}
 
 	/**

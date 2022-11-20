@@ -34,7 +34,12 @@ final class DateFormat implements FunctionInfo
 
 		if ($argCount < 2 || $argCount > 3) {
 			throw new ParserException(
-				"Function {$functionCall->getFunctionName()} can take 2-3 arguments, got {$argCount}.",
+				FunctionInfoHelper::createArgumentCountErrorMessageRange(
+					$functionCall->getFunctionName(),
+					2,
+					3,
+					$argCount,
+				),
 			);
 		}
 	}

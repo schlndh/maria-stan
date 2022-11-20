@@ -40,7 +40,12 @@ final class Now implements FunctionInfo
 
 		if ($argCount > 1) {
 			throw new ParserException(
-				"Function {$functionCall->getFunctionName()} can take 0-1 arguments, got {$argCount}.",
+				FunctionInfoHelper::createArgumentCountErrorMessageRange(
+					$functionCall->getFunctionName(),
+					0,
+					1,
+					$argCount,
+				),
 			);
 		}
 
