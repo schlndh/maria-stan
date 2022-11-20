@@ -1063,3 +1063,59 @@ MariaStan\Parser\Exception\ParserException
 Function DATE_FORMAT takes 2-3 arguments, got 4.
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 5)' at line 1
+-----
+SELECT DATE()
+-----
+MariaStan\Parser\Exception\ParserException
+Function DATE takes 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT DATE(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function DATE takes 1 argument, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT IF()
+-----
+MariaStan\Parser\Exception\ParserException
+Function IF takes 3 arguments, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT IF(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function IF takes 3 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT IF(5, 6, 7, 8)
+-----
+MariaStan\Parser\Exception\ParserException
+Function IF takes 3 arguments, got 4.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 8)' at line 1
+-----
+SELECT VALUE(5) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got INT_LITERAL after: SELECT VALUE(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5) FROM parser_test' at line 1
+-----
+SELECT VALUE(NULL) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got NULL after: SELECT VALUE(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NULL) FROM parser_test' at line 1
+-----
+SELECT VALUE(id+id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '+' after: SELECT VALUE(id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+id) FROM parser_test' at line 1

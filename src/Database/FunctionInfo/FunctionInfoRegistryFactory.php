@@ -17,9 +17,13 @@ final class FunctionInfoRegistryFactory
 		return [
 			new Avg(),
 			new Count(),
+			new Date(),
 			new DateFormat(),
+			new IfFunction(),
+			new MaxMin(),
 			new Now(),
 			new Sum(),
+			new Value(),
 		];
 	}
 }

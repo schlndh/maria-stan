@@ -12,6 +12,7 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
+use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\TupleType;
 use MariaStan\TestCaseHelper;
@@ -24,13 +25,13 @@ use function array_fill;
 use function array_filter;
 use function array_keys;
 use function array_map;
+use function assert;
 use function count;
 use function implode;
 use function is_string;
 use function str_starts_with;
 
 use const MYSQLI_ASSOC;
-use const MYSQLI_ENUM_FLAG;
 use const MYSQLI_NOT_NULL_FLAG;
 use const MYSQLI_TYPE_DATE;
 use const MYSQLI_TYPE_DATETIME;
@@ -724,7 +725,18 @@ class AnalyserTest extends TestCase
 			$selects["DATE_FORMAT({$label}, null)"] = "SELECT DATE_FORMAT({$value}, null)";
 			$selects["DATE_FORMAT({$label}, Y-m, null)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', null)";
 			$selects["DATE_FORMAT({$label}, Y-m, en_US)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', 'en_US')";
+			$selects["DATE({$label})"] = "SELECT DATE({$value})";
 		}
+
+		foreach ($dataTypes as $label1 => $value1) {
+			foreach ($dataTypes as $label2 => $value2) {
+				$selects["IF(1, {$label1}, {$label2})"] = "SELECT IF(1, {$value1}, {$value2})";
+				$selects["IF(null, {$label1}, {$label2})"] = "SELECT IF(null, {$value1}, {$value2})";
+			}
+		}
+
+		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
+		//$selects["VALUE(col) in SELECT"] = "SELECT VALUE(id) FROM analyser_test";
 
 		foreach ($selects as $label => $select) {
 			yield $label => [
@@ -1056,7 +1068,7 @@ class AnalyserTest extends TestCase
 			if ($analyzedField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
 				$forceNullsForColumns[$field->name] = true;
 			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::ENUM) {
-				$this->assertTrue(($field->flags & MYSQLI_ENUM_FLAG) !== 0);
+				// MYSQLI_ENUM_FLAG can get hidden by functions like MAX/MIN
 				$this->assertSame(DbTypeEnum::VARCHAR, $actualType);
 			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::DATETIME) {
 				if ($actualType === DbTypeEnum::VARCHAR) {
@@ -1103,6 +1115,24 @@ class AnalyserTest extends TestCase
 				}
 
 				$this->assertNotFalse($parsedDateTime);
+			}
+
+			$i = 0;
+
+			foreach ($row as $value) {
+				$analyzedField = $result->resultFields[$i];
+				$i++;
+
+				if ($analyzedField->type::getTypeEnum() !== DbTypeEnum::ENUM) {
+					continue;
+				}
+
+				if ($analyzedField->isNullable && $value === null) {
+					continue;
+				}
+
+				assert($analyzedField->type instanceof EnumType);
+				$this->assertContains($value, $analyzedField->type->cases);
 			}
 		}
 
