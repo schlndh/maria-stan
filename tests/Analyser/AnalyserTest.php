@@ -691,15 +691,23 @@ class AnalyserTest extends TestCase
 			'AVG DISTINCT' => "SELECT COUNT(DISTINCT id, name) FROM {$tableName}",
 		];
 
+		$dataTypes = [
+			'null' => 'null',
+			'int' => '5',
+			'decimal' => '5.5',
+			'double' => '5.5e1',
+			'string' => '"aa"',
+			'datetime' => 'NOW()',
+		];
+
 		foreach (['AVG', 'MAX', 'MIN', 'SUM'] as $fn) {
 			$selects["{$fn}"] = "SELECT {$fn}(id) FROM {$tableName}";
 			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
-			$selects["{$fn}(null)"] = "SELECT {$fn}(null)";
-			$selects["{$fn}(int)"] = "SELECT {$fn}(5+6)";
-			$selects["{$fn}(decimal)"] = "SELECT {$fn}(5.5)";
-			$selects["{$fn}(double)"] = "SELECT {$fn}(5.5e1)";
-			$selects["{$fn}(string)"] = "SELECT {$fn}('aa')";
-			$selects["{$fn}(datetime)"] = "SELECT {$fn}(NOW())";
+
+			foreach ($dataTypes as $label => $value) {
+				$selects["{$fn}({$label})"] = "SELECT {$fn}({$value})";
+			}
+
 			$selects["{$fn}(enum)"] = "SELECT {$fn}(val_enum_null_no_default) FROM analyse_test_insert";
 		}
 
@@ -708,6 +716,13 @@ class AnalyserTest extends TestCase
 		foreach ($nowAliases as $nowFn) {
 			$selects["{$nowFn}()"] = "SELECT {$nowFn}()";
 			$selects["{$nowFn}(precision)"] = "SELECT {$nowFn}(5)";
+		}
+
+		foreach ($dataTypes as $label => $value) {
+			$selects["DATE_FORMAT({$label}, Y-m)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m')";
+			$selects["DATE_FORMAT({$label}, null)"] = "SELECT DATE_FORMAT({$value}, null)";
+			$selects["DATE_FORMAT({$label}, Y-m, null)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', null)";
+			$selects["DATE_FORMAT({$label}, Y-m, en_US)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', 'en_US')";
 		}
 
 		foreach ($selects as $label => $select) {

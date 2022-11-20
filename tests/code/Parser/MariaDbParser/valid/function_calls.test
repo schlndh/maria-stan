@@ -5483,3 +5483,60 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT DATE_FORMAT('2022-12-24', '%Y-%m'), DATE_FORMAT('2022-12-24', '%Y-%m', 'en_US')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => DATE_FORMAT
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => 2022-12-24
+											[firstConcatPart] => 2022-12-24
+										)
+									[1] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => %Y-%m
+											[firstConcatPart] => %Y-%m
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => DATE_FORMAT
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => 2022-12-24
+											[firstConcatPart] => 2022-12-24
+										)
+									[1] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => %Y-%m
+											[firstConcatPart] => %Y-%m
+										)
+									[2] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => en_US
+											[firstConcatPart] => en_US
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+)

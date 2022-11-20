@@ -16,7 +16,10 @@ final class FunctionInfoRegistryFactory
 	{
 		return [
 			new Avg(),
+			new Count(),
+			new DateFormat(),
 			new Now(),
+			new Sum(),
 		];
 	}
 }

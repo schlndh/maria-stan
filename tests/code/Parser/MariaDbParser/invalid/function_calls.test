@@ -1035,3 +1035,31 @@ MariaStan\Parser\Exception\ParserException
 Precision argument to NOW has to be literal int, got LITERAL_NULL.
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'null)' at line 1
+-----
+SELECT SUM(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function SUM takes 1 argument, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT SUM()
+-----
+MariaStan\Parser\Exception\ParserException
+Function SUM takes 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT DATE_FORMAT(NOW())
+-----
+MariaStan\Parser\Exception\ParserException
+Function DATE_FORMAT can take 2-3 arguments, got 1.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT DATE_FORMAT(NOW(), '%Y-%m', 'en_US', 5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function DATE_FORMAT can take 2-3 arguments, got 4.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 5)' at line 1
