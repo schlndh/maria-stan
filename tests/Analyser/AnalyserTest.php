@@ -998,11 +998,9 @@ class AnalyserTest extends TestCase
 			'Unhandled expression type',
 		);
 		$unhandledExpressionTypeErrors = array_filter($result->errors, $isUnhanhledExpressionTypeError);
-		$isUnhandledFunctionError = static fn (AnalyserError $e) => str_starts_with($e->message, 'Unhandled function:');
-		$unhandledFunctionErrors = array_filter($result->errors, $isUnhandledFunctionError);
 		$otherErrors = array_filter(
 			$result->errors,
-			static fn (AnalyserError $e) => ! $isUnhanhledExpressionTypeError($e) && ! $isUnhandledFunctionError($e),
+			static fn (AnalyserError $e) => ! $isUnhanhledExpressionTypeError($e),
 		);
 
 		$this->assertCount(
@@ -1150,14 +1148,6 @@ class AnalyserTest extends TestCase
 				. implode(
 					",\n",
 					array_map(static fn (AnalyserError $e) => $e->message, $unhandledExpressionTypeErrors),
-				);
-		}
-
-		if (count($unhandledFunctionErrors) > 0) {
-			$incompleteTestErrors[] = "There are functions:\n"
-				. implode(
-					",\n",
-					array_map(static fn (AnalyserError $e) => $e->message, $unhandledFunctionErrors),
 				);
 		}
 
