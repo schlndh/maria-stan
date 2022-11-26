@@ -53,6 +53,19 @@ class MariaDbParserTest extends TestCase
 		foreach (['', '_join_a', '_join_b', '_join_c', '_join_d', '_truncate'] as $suffix) {
 			$initTable($suffix);
 		}
+
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->query("
+				CREATE OR REPLACE TABLE parser_test_index (
+					id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					name VARCHAR(255) NULL,
+					priority INT NOT NULL,
+					INDEX (id),
+					INDEX (name),
+					INDEX (priority, name, id)
+				);
+			");
+		$db->query("INSERT INTO parser_test_index (id, name, priority) VALUES (1, 'aa', 10), (2, NULL, 9)");
 	}
 
 	/** @dataProvider provideTestParseValidData */

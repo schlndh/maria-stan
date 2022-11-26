@@ -181,6 +181,9 @@ MariaStan\Ast\Query\ReplaceQuery
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
 									[name] => tbl
+									[indexHints] => Array
+										(
+										)
 								)
 							[isDistinct] => false
 						)
@@ -342,6 +345,9 @@ MariaStan\Ast\Query\ReplaceQuery
 					[from] => MariaStan\Ast\Query\TableReference\Table
 						(
 							[name] => parser_test
+							[indexHints] => Array
+								(
+								)
 						)
 					[isDistinct] => false
 				)
@@ -464,6 +470,9 @@ MariaStan\Ast\Query\ReplaceQuery
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
 									[name] => tbl
+									[indexHints] => Array
+										(
+										)
 								)
 							[isDistinct] => false
 						)

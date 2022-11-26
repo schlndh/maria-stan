@@ -1,0 +1,103 @@
+Function calls
+-----
+SELECT * FROM parser_test_index t1
+JOIN (parser_test_index t2
+IGNORE INDEX (id))
+IGNORE INDEX (id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got IGNORE after: INDEX (id))
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IGNORE INDEX (id)' at line 4
+-----
+SELECT * FROM parser_test_index t1
+JOIN (SELECT * FROM parser_test_index) t2
+USE INDEX(id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got USE after: * FROM parser_test_index) t2
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX(id)' at line 3
+-----
+SELECT * FROM parser_test_index t USE INDEX (t.id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got '.' after: t USE INDEX (t
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '.id)' at line 1
+-----
+SELECT * FROM parser_test_index t USE INDEX
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got END_OF_INPUT after: FROM parser_test_index t USE INDEX
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT * FROM parser_test_index FORCE INDEX ()
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got ')' after: FROM parser_test_index FORCE INDEX (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT * FROM parser_test_index IGNORE INDEX ()
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got ')' after: FROM parser_test_index IGNORE INDEX (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+DELETE FROM parser_test_index USE INDEX (id)
+WHERE 0
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got USE after: DELETE FROM parser_test_index
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id)
+WHERE 0' at line 1
+-----
+INSERT INTO parser_test_index USE INDEX (id)
+SET id = 999, name = NULL, priority = 7
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got USE after: INSERT INTO parser_test_index
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id)
+SET id = 999, name = NULL, priority = 7' at line 1
+-----
+REPLACE INTO parser_test_index USE INDEX (id)
+SET id = 999, name = NULL, priority = 7
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got USE after: REPLACE INTO parser_test_index
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id)
+SET id = 999, name = NULL, priority = 7' at line 1
+-----
+SELECT * FROM parser_test_index USE INDEX FOR ORDER (id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected BY, got '(' after: parser_test_index USE INDEX FOR ORDER
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(id)' at line 1
+-----
+SELECT * FROM parser_test_index USE INDEX FOR GROUP (id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected BY, got '(' after: parser_test_index USE INDEX FOR GROUP
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(id)' at line 1
+-----
+SELECT * FROM parser_test_index USE INDEX FOR (id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected JOIN, got '(' after: FROM parser_test_index USE INDEX FOR
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(id)' at line 1
+-----
+SELECT * FROM parser_test_index USE (id)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected INDEX, got '(' after: SELECT * FROM parser_test_index USE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(id)' at line 1

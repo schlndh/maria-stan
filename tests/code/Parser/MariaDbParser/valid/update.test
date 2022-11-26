@@ -7,6 +7,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -71,6 +74,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -131,6 +137,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -168,6 +177,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -216,6 +228,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -258,6 +273,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -282,6 +300,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -308,6 +329,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -334,6 +358,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -362,6 +389,9 @@ MariaStan\Ast\Query\UpdateQuery
 		(
 			[name] => parser_test
 			[alias] => t
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(
@@ -402,6 +432,9 @@ MariaStan\Ast\Query\UpdateQuery
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
 									[name] => parser_test
+									[indexHints] => Array
+										(
+										)
 								)
 							[isDistinct] => false
 						)
@@ -411,6 +444,9 @@ MariaStan\Ast\Query\UpdateQuery
 				(
 					[name] => parser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[assignments] => Array
@@ -452,6 +488,9 @@ MariaStan\Ast\Query\UpdateQuery
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
 									[name] => parser_test
+									[indexHints] => Array
+										(
+										)
 								)
 							[isDistinct] => false
 						)
@@ -461,6 +500,9 @@ MariaStan\Ast\Query\UpdateQuery
 				(
 					[name] => parser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 			[joinCondition] => MariaStan\Ast\Expr\BinaryOp
 				(
@@ -503,6 +545,9 @@ MariaStan\Ast\Query\UpdateQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[assignments] => Array
 		(

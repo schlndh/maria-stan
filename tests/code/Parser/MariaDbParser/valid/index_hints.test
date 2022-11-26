@@ -1,0 +1,519 @@
+Function calls
+-----
+SELECT * FROM parser_test_index USE INDEX (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX (`id`)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index IGNORE INDEX (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index FORCE INDEX (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::FORCE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX (id) USE INDEX (name)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+					[1] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => name
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index IGNORE INDEX (id) USE INDEX (name)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+					[1] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => name
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index t1
+JOIN parser_test_index t2
+IGNORE INDEX (id)
+IGNORE INDEX (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test_index
+					[alias] => t1
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test_index
+					[alias] => t2
+					[indexHints] => Array
+						(
+							[0] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+									[columnNames] => Array
+										(
+											[0] => id
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+							[1] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+									[columnNames] => Array
+										(
+											[0] => id
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index t1
+JOIN (parser_test_index t2
+IGNORE INDEX (id)
+IGNORE INDEX (id))
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test_index
+					[alias] => t1
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test_index
+					[alias] => t2
+					[indexHints] => Array
+						(
+							[0] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+									[columnNames] => Array
+										(
+											[0] => id
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+							[1] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::IGNORE
+									[columnNames] => Array
+										(
+											[0] => id
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX FOR JOIN (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX FOR ORDER BY (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::ORDER_BY
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX FOR GROUP BY (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::GROUP_BY
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index USE INDEX (priority, name, id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => priority
+									[1] => name
+									[2] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT * FROM parser_test_index t USE INDEX ()
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[alias] => t
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+UPDATE parser_test_index USE INDEX (id)
+SET id = id
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+					[expression] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+DELETE t2 FROM parser_test_index t2 USE INDEX (id)
+WHERE 0
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => t2
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[alias] => t2
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[where] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 0
+		)
+	[ignoreErrors] => false
+)

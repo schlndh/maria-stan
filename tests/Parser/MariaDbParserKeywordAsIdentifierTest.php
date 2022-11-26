@@ -19,6 +19,7 @@ use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function array_chunk;
 use function assert;
 use function implode;
 use function in_array;
@@ -240,39 +241,57 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestColumnNameData(): iterable
 	{
-		$tableName = 'parser_keyword_test_col';
-
 		/** @phpstan-var array<TokenTypeEnum> $cases */
 		$cases = TokenTypeEnum::cases();
-		$columns = [];
+		$i = 1;
 
-		foreach ($cases as $tokenType) {
-			$columns[] = "`{$tokenType->value}` TINYINT(1) NOT NULL";
-		}
+		// Too many keys specified; max 64 keys allowed
+		foreach (array_chunk($cases, 60) as $chunk) {
+			$tableName = "parser_keyword_test_col_{$i}";
+			$i++;
+			$columns = [];
+			$indices = [];
 
-		$columnSql = implode(",\n", $columns);
-		$db = TestCaseHelper::getDefaultSharedConnection();
-		$db->query("
-			CREATE OR REPLACE TABLE {$tableName} (
-				{$columnSql}
-			);
-		");
+			foreach ($chunk as $tokenType) {
+				$columns[] = "`{$tokenType->value}` TINYINT(1) NOT NULL";
+				$indices[] = "INDEX (`{$tokenType->value}`)";
+			}
 
-		foreach ($cases as $tokenType) {
-			yield "column name - {$tokenType->value}" => [
-				'select' => "SELECT {$tokenType->value} FROM {$tableName};",
-			];
+			$columnSql = implode(",\n", $columns);
+			$indexSql = implode(",\n", $indices);
+			$db = TestCaseHelper::getDefaultSharedConnection();
+			$db->query("
+				CREATE OR REPLACE TABLE {$tableName} (
+					{$columnSql},
+					{$indexSql}
+				);
+			");
 
-			yield "table.column - {$tokenType->value}" => [
-				'select' => "SELECT {$tableName}.{$tokenType->value} FROM {$tableName};",
-			];
+			foreach ($chunk as $tokenType) {
+				yield "column name - {$tokenType->value}" => [
+					'select' => "SELECT {$tokenType->value} FROM {$tableName};",
+				];
 
-			yield "JOIN USING - {$tokenType->value}" => [
-				'select' => "
-					SELECT t1.`{$tokenType->value}` FROM {$tableName} t1
-					JOIN {$tableName} t2 USING ({$tokenType->value})
-				",
-			];
+				yield "table.column - {$tokenType->value}" => [
+					'select' => "SELECT {$tableName}.{$tokenType->value} FROM {$tableName};",
+				];
+
+				yield "JOIN USING - {$tokenType->value}" => [
+					'select' => "
+						SELECT t1.`{$tokenType->value}` FROM {$tableName} t1
+						JOIN {$tableName} t2 USING ({$tokenType->value})
+					",
+				];
+
+				// USE INDEX (PRIMARY) works, but it's not the same thing.
+				if ($tokenType === TokenTypeEnum::PRIMARY) {
+					continue;
+				}
+
+				yield "index hint - {$tokenType->value}" => [
+					'select' => "SELECT `{$tokenType->value}` FROM {$tableName} USE INDEX ({$tokenType->value});",
+				];
+			}
 		}
 	}
 

@@ -65,6 +65,9 @@ use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
+use MariaStan\Ast\Query\TableReference\IndexHint;
+use MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum;
+use MariaStan\Ast\Query\TableReference\IndexHintTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
@@ -856,12 +859,14 @@ class MariaDbParserState
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$table = $this->expectAnyOfTokens(...$tokenTypes);
 		$alias = $this->parseTableAlias();
+		$indexHints = $this->parseIndexHints();
 
 		return new Table(
 			$table->position,
 			$this->getPreviousToken()->getEndPosition(),
 			$this->cleanIdentifier($table->content),
 			$alias,
+			$indexHints,
 		);
 	}
 
@@ -2376,6 +2381,66 @@ class MariaDbParserState
 			$this->cleanIdentifier($ident->content),
 			$this->cleanIdentifier($tableIdent->content),
 		);
+	}
+
+	/**
+	 * @return array<IndexHint>
+	 * @throws ParserException
+	 */
+	private function parseIndexHints(): array
+	{
+		$indexHints = [];
+
+		while ($this->acceptAnyOfTokenTypes(TokenTypeEnum::USE, TokenTypeEnum::FORCE, TokenTypeEnum::IGNORE)) {
+			$indexHintStartToken = $this->getPreviousToken();
+			$indexHintType = IndexHintTypeEnum::from($indexHintStartToken->type->value);
+			$indexHintPurpose = null;
+			$this->expectToken(TokenTypeEnum::INDEX);
+
+			if ($this->acceptToken(TokenTypeEnum::FOR)) {
+				if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::ORDER, TokenTypeEnum::GROUP)) {
+					$indexHintPurposeToken = $this->getPreviousToken();
+					$this->expectToken(TokenTypeEnum::BY);
+				} else {
+					$indexHintPurposeToken = $this->expectToken(TokenTypeEnum::JOIN);
+				}
+
+				$indexHintPurpose = match ($indexHintPurposeToken->type) {
+					TokenTypeEnum::JOIN => IndexHintPurposeEnum::JOIN,
+					TokenTypeEnum::ORDER => IndexHintPurposeEnum::ORDER_BY,
+					TokenTypeEnum::GROUP => IndexHintPurposeEnum::GROUP_BY,
+					default => throw new ParserException('This cannot happen.'),
+				};
+			}
+
+			$this->expectToken('(');
+
+			// USE INDEX () works
+			if ($indexHintType === IndexHintTypeEnum::USE && $this->acceptToken(')')) {
+				$indexHintColumns = [];
+			} else {
+				// TODO: implement USE INDEX (PRIMARY)
+				$columnIdentTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+				$indexHintColumns = [];
+
+				do {
+					$columnToken = $this->expectAnyOfTokens(...$columnIdentTokenTypes);
+					$indexHintColumns[] = $this->cleanIdentifier($columnToken->content);
+				} while ($this->acceptToken(','));
+
+				$this->expectToken(')');
+			}
+
+			$indexHints[] = new IndexHint(
+				$indexHintStartToken->position,
+				$this->getPreviousToken()->getEndPosition(),
+				$indexHintType,
+				$indexHintColumns,
+				$indexHintPurpose ?? IndexHintPurposeEnum::JOIN,
+			);
+		}
+
+		return $indexHints;
 	}
 
 	/**

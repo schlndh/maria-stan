@@ -508,6 +508,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -537,6 +540,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -2789,6 +2795,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -3855,6 +3864,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -3883,6 +3895,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -3912,6 +3927,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -3941,6 +3959,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -3986,6 +4007,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4015,6 +4039,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4044,6 +4071,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4091,6 +4121,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4137,6 +4170,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4200,6 +4236,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4238,6 +4277,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4274,6 +4316,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4314,6 +4359,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4354,6 +4402,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4392,6 +4443,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4417,6 +4471,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4441,6 +4498,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4466,6 +4526,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4491,6 +4554,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4524,6 +4590,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4558,6 +4627,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4590,6 +4662,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4626,6 +4701,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4662,6 +4740,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -4696,6 +4777,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -5090,6 +5174,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -5137,6 +5224,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -5420,6 +5510,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 													[from] => MariaStan\Ast\Query\TableReference\Table
 														(
 															[name] => parser_test
+															[indexHints] => Array
+																(
+																)
 														)
 													[limit] => MariaStan\Ast\Limit
 														(
@@ -5628,6 +5721,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )
@@ -5826,6 +5922,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 )

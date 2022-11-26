@@ -11,6 +11,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[ignoreErrors] => false
 )
@@ -26,6 +29,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[ignoreErrors] => true
 )
@@ -41,6 +47,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[where] => MariaStan\Ast\Expr\BinaryOp
 		(
@@ -68,6 +77,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[orderBy] => MariaStan\Ast\OrderBy
 		(
@@ -97,6 +109,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[limit] => MariaStan\Ast\Expr\LiteralInt
 		(
@@ -121,11 +136,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[ignoreErrors] => false
@@ -146,11 +167,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[ignoreErrors] => false
@@ -171,11 +198,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[where] => MariaStan\Ast\Expr\BinaryOp
@@ -211,11 +244,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[ignoreErrors] => false
@@ -237,11 +276,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[ignoreErrors] => false
@@ -263,11 +308,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => analyser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => analyser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 		)
 	[where] => MariaStan\Ast\Expr\BinaryOp
@@ -303,11 +354,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => parser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => parser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 			[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
 				(
@@ -336,11 +393,17 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => parser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
 					[name] => parser_test
 					[alias] => t2
+					[indexHints] => Array
+						(
+						)
 				)
 			[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
 				(
@@ -368,6 +431,9 @@ MariaStan\Ast\Query\DeleteQuery
 				(
 					[name] => parser_test
 					[alias] => t1
+					[indexHints] => Array
+						(
+						)
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Subquery
 				(
@@ -403,6 +469,9 @@ MariaStan\Ast\Query\DeleteQuery
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
 			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[where] => MariaStan\Ast\Expr\Placeholder
 		(
@@ -438,6 +507,9 @@ MariaStan\Ast\Query\DeleteQuery
 		(
 			[name] => parser_test
 			[alias] => t1
+			[indexHints] => Array
+				(
+				)
 		)
 	[ignoreErrors] => false
 )
@@ -454,6 +526,9 @@ MariaStan\Ast\Query\DeleteQuery
 		(
 			[name] => parser_test
 			[alias] => t1
+			[indexHints] => Array
+				(
+				)
 		)
 	[ignoreErrors] => false
 )
@@ -470,6 +545,9 @@ MariaStan\Ast\Query\DeleteQuery
 		(
 			[name] => parser_test
 			[alias] => t1
+			[indexHints] => Array
+				(
+				)
 		)
 	[ignoreErrors] => false
 )
