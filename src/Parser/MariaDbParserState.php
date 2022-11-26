@@ -1334,6 +1334,7 @@ class MariaDbParserState
 					'POSITION' => $this->parseRestOfPositionFunctionCall($ident),
 					'SUBSTR', 'SUBSTRING' => $this->parseRestOfSubstrFunctionCall($ident),
 					'TIMESTAMPADD', 'TIMESTAMPDIFF' => $this->parseRestOfTimestampAddDiffFunctionCall($ident),
+					'TRIM' => $this->parseRestOfTrimFunctionCall($ident),
 					'EXTRACT' => $this->parseRestOfExtractFunctionCall($ident),
 					'VALUE' => $this->parseRestOfValueFunctionCall($ident),
 					default => null,
@@ -1985,6 +1986,46 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$functionIdent->content,
 			$args,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseRestOfTrimFunctionCall(Token $functionIdent): FunctionCall\Trim
+	{
+		$trimTypeToken = $this->acceptAnyOfTokenTypes(
+			TokenTypeEnum::BOTH,
+			TokenTypeEnum::LEADING,
+			TokenTypeEnum::TRAILING,
+		);
+		$trimType = $trimTypeToken !== null
+			? FunctionCall\TrimTypeEnum::from($trimTypeToken->type->value)
+			: FunctionCall\TrimTypeEnum::BOTH;
+
+		if ($trimTypeToken !== null && $this->acceptToken(TokenTypeEnum::FROM)) {
+			$remStr = null;
+			$str = $this->parseExpression();
+		} else {
+			$remStr = $this->parseExpression();
+			$fromToken = $trimTypeToken !== null
+				? $this->expectToken(TokenTypeEnum::FROM)
+				: $this->acceptToken(TokenTypeEnum::FROM);
+
+			if ($fromToken !== null) {
+				$str = $this->parseExpression();
+			} else {
+				$str = $remStr;
+				$remStr = null;
+			}
+		}
+
+		$this->expectToken(')');
+
+		return new FunctionCall\Trim(
+			$functionIdent->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$str,
+			$remStr,
+			$trimType,
 		);
 	}
 

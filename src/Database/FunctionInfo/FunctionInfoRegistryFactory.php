@@ -26,6 +26,7 @@ final class FunctionInfoRegistryFactory
 			new MaxMin(),
 			new Now(),
 			new Sum(),
+			new Trim(),
 			new Value(),
 		];
 	}

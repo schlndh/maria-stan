@@ -755,7 +755,10 @@ class AnalyserTest extends TestCase
 			foreach ($dataTypes as $label2 => $value2) {
 				$selects["IF(1, {$label1}, {$label2})"] = "SELECT IF(1, {$value1}, {$value2})";
 				$selects["IF(null, {$label1}, {$label2})"] = "SELECT IF(null, {$value1}, {$value2})";
+				$selects["TRIM({$label1} FROM {$label2})"] = "SELECT TRIM({$value1} FROM {$value2})";
 			}
+
+			$selects["TRIM({$label1})"] = "SELECT TRIM({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.

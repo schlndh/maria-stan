@@ -5663,3 +5663,169 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[isDistinct] => false
 )
+-----
+SELECT TRIM(' aaaa '), TRIM(' ' FROM ' aa '), TRIM(BOTH 'a' FROM 'a'), TRIM(LEADING 'a' FROM 'a'),
+TRIM(TRAILING 'a' FROM 'a')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>  aaaa
+									[firstConcatPart] =>  aaaa
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::BOTH
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>  aa
+									[firstConcatPart] =>  aa
+								)
+							[remstr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>
+									[firstConcatPart] =>
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::BOTH
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[remstr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::BOTH
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[remstr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::LEADING
+						)
+				)
+			[4] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[remstr] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::TRAILING
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT TRIM(BOTH FROM ' aaaa '), TRIM(LEADING FROM ' aaaa '), TRIM(TRAILING FROM ' aaaa ')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>  aaaa
+									[firstConcatPart] =>  aaaa
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::BOTH
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>  aaaa
+									[firstConcatPart] =>  aaaa
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::LEADING
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] =>  aaaa
+									[firstConcatPart] =>  aaaa
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::TRAILING
+						)
+				)
+		)
+	[isDistinct] => false
+)
+-----
+SELECT TRIM(name FROM name) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\Trim
+						(
+							[str] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[remstr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[trimType] => MariaStan\Ast\Expr\FunctionCall\TrimTypeEnum::BOTH
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+		)
+	[isDistinct] => false
+)

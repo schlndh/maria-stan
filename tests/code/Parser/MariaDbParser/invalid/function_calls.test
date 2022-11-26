@@ -1133,3 +1133,24 @@ MariaStan\Parser\Exception\ParserException
 Function CURRENT_DATE takes 0 arguments, got 1.
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5)' at line 1
+-----
+SELECT TRIM(' ', ' aa ')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got ',' after: SELECT TRIM(' '
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' ' aa ')' at line 1
+-----
+SELECT TRIM(FROM ' aa ')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: FROM after: SELECT TRIM(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM ' aa ')' at line 1
+-----
+SELECT TRIM(BOTH ' aa ')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected FROM, got ')' after: SELECT TRIM(BOTH ' aa '
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1

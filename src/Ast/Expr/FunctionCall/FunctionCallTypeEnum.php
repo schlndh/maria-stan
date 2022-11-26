@@ -30,6 +30,9 @@ enum FunctionCallTypeEnum: string
 	/** @see StandardFunctionCall */
 	case STANDARD = 'STANDARD';
 
+	/** @see Trim */
+	case TRIM = 'TRIM';
+
 	/** @see Window */
 	case WINDOW = 'WINDOW';
 }
