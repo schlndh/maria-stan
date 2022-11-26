@@ -514,12 +514,47 @@ class MariaDbParserState
 			);
 		} else {
 			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
-			$distinctToken = $this->acceptAnyOfTokenTypes(
-				TokenTypeEnum::ALL,
-				TokenTypeEnum::DISTINCT,
-				TokenTypeEnum::DISTINCTROW,
-			);
-			$isDistinct = $distinctToken !== null && $distinctToken->type !== TokenTypeEnum::ALL;
+			$isDistinct = null;
+			$isSqlCalcFoundRows = null;
+
+			while (
+				$this->acceptAnyOfTokenTypes(
+					TokenTypeEnum::ALL,
+					TokenTypeEnum::DISTINCT,
+					TokenTypeEnum::DISTINCTROW,
+					TokenTypeEnum::SQL_CALC_FOUND_ROWS,
+				)
+			) {
+				$flagToken = $this->getPreviousToken();
+
+				switch ($flagToken->type) {
+					case TokenTypeEnum::ALL:
+						if ($isDistinct === true) {
+							throw new UnexpectedTokenException(
+								"Invalid usage of ALL and DISTINCT, after: "
+									. $this->getContextPriorToTokenPosition(),
+							);
+						}
+
+						$isDistinct = false;
+						break;
+					case TokenTypeEnum::DISTINCT:
+					case TokenTypeEnum::DISTINCTROW:
+						if ($isDistinct === false) {
+							throw new UnexpectedTokenException(
+								"Invalid usage of ALL and DISTINCT, after: "
+								. $this->getContextPriorToTokenPosition(),
+							);
+						}
+
+						$isDistinct = true;
+						break;
+					case TokenTypeEnum::SQL_CALC_FOUND_ROWS:
+						$isSqlCalcFoundRows = true;
+						break;
+				}
+			}
+
 			$selectExpressions = $this->parseSelectExpressionsList();
 			$from = $this->parseFrom();
 			$where = $this->parseWhere();
@@ -544,8 +579,9 @@ class MariaDbParserState
 				$having,
 				$orderBy,
 				$limit,
-				$isDistinct,
+				$isDistinct ?? false,
 				$lock,
+				$isSqlCalcFoundRows ?? false,
 			);
 
 			// UNION/EXCEPT/INTERCEPT can't follow SELECT with ORDER/LIMIT/lock unless it's wrapped in parentheses.

@@ -1,0 +1,109 @@
+SELECT flags
+-----
+SELECT SQL_CALC_FOUND_ROWS 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => true
+)
+-----
+SELECT DISTINCT SQL_CALC_FOUND_ROWS 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+	[isSqlCalcFoundRows] => true
+)
+-----
+SELECT SQL_CALC_FOUND_ROWS DISTINCT 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+	[isSqlCalcFoundRows] => true
+)
+-----
+SELECT DISTINCT DISTINCT 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT DISTINCT DISTINCTROW 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => true
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT SQL_CALC_FOUND_ROWS SQL_CALC_FOUND_ROWS 1
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\LiteralInt
+						(
+							[value] => 1
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => true
+)

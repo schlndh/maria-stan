@@ -29,6 +29,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b
@@ -60,6 +61,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a CROSS JOIN parser_test_join_b
@@ -91,6 +93,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1
@@ -126,6 +129,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a INNER JOIN parser_test_join_b ON 1
@@ -161,6 +165,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a LEFT JOIN parser_test_join_b ON 1
@@ -196,6 +201,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a LEFT OUTER JOIN parser_test_join_b ON 1
@@ -231,6 +237,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a RIGHT JOIN parser_test_join_b ON 1
@@ -266,6 +273,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a RIGHT OUTER JOIN parser_test_join_b ON 1
@@ -301,6 +309,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a, parser_test_join_b, parser_test_join_c
@@ -343,6 +352,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b JOIN parser_test_join_c
@@ -385,6 +395,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_join_a JOIN parser_test_join_b ON 1 JOIN parser_test_join_c ON 2
@@ -435,6 +446,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (parser_test_join_a, parser_test_join_b)
@@ -466,6 +478,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (
@@ -536,6 +549,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (SELECT 1) t
@@ -563,10 +577,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (SELECT * FROM (SELECT 1) t) t
@@ -604,14 +620,17 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => t
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test JOIN (SELECT 1 id) AS t ON t.id = parser_test.id
@@ -650,6 +669,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => t
 				)
@@ -669,6 +689,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (((SELECT 1) t))
@@ -696,10 +717,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (((SELECT 1)) t)
@@ -727,10 +750,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (SELECT 1 aa) a, (SELECT 2 bb) b JOIN (SELECT 1 aa, 2 bb) c USING (bb)
@@ -762,6 +787,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => a
 				)
@@ -784,6 +810,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => b
 						)
@@ -811,6 +838,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => c
 						)
@@ -824,6 +852,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM ((SELECT 1 aa) a, (SELECT 2 bb) b) JOIN (SELECT 1 aa, 2 bb) c USING (aa)
@@ -858,6 +887,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => a
 						)
@@ -877,6 +907,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => b
 						)
@@ -905,6 +936,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => c
 				)
@@ -917,6 +949,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM ((SELECT 1 aa) a, (SELECT 2 bb) b) JOIN (SELECT 1 aa, 2 bb) c USING (aa, bb)
@@ -951,6 +984,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => a
 						)
@@ -970,6 +1004,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => b
 						)
@@ -998,6 +1033,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => c
 				)
@@ -1011,6 +1047,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (SELECT 1) t1, (SELECT 2) t2 JOIN (SELECT 3) t3
@@ -1041,6 +1078,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => t1
 				)
@@ -1062,6 +1100,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => t2
 						)
@@ -1080,12 +1119,14 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => t3
 						)
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM (SELECT 1) t1 JOIN (SELECT 2) t2, (SELECT 3) t3
@@ -1119,6 +1160,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => t1
 						)
@@ -1137,6 +1179,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 							[alias] => t2
 						)
@@ -1156,9 +1199,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => t3
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )

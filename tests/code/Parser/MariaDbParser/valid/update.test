@@ -437,6 +437,7 @@ MariaStan\Ast\Query\UpdateQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => t
 				)
@@ -493,6 +494,7 @@ MariaStan\Ast\Query\UpdateQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[alias] => t
 				)

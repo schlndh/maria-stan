@@ -27,6 +27,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT COALESCE(NULL, NULL, 5)
@@ -58,6 +59,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT nOw()
@@ -79,6 +81,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CURRENT_DATE, CURRENT_ROLE, CURRENT_TIME, CURRENT_TIMESTAMP, CURRENT_USER, LOCALTIME, LOCALTIMESTAMP, UTC_DATE,
@@ -200,6 +203,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CURRENT_DATE(), CURRENT_ROLE(), CURRENT_TIME(), CURRENT_TIMESTAMP(), CURRENT_USER(), LOCALTIME(),
@@ -321,6 +325,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CURRENT_TIME(1), CURRENT_TIMESTAMP(2), LOCALTIME(1), LOCALTIMESTAMP(2), UTC_TIME(1), UTC_TIMESTAMP(2), NOW(5)
@@ -436,6 +441,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT COUNT(*), COUNT(id), COUNT(DISTINCT id), COUNT(DISTINCT id, name) FROM parser_test
@@ -513,6 +519,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT COUNT(DISTINCTROW id) FROM parser_test
@@ -545,6 +552,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -695,10 +703,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -789,10 +799,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -1334,10 +1346,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -1734,10 +1748,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -2560,10 +2576,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id FROM (SELECT 1 id) t
@@ -2597,6 +2615,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
 		)
@@ -2633,6 +2652,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -2800,6 +2820,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR), dAtE_SuB(NOW(), INTERVAL 1 HOUR),
@@ -2913,6 +2934,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT ADDDATE(NOW(), 5), SUBDATE(NOW(), 5)
@@ -2969,6 +2991,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 as BINARY), CAST(5 AS CHAR), CAST(5 AS DATE), CAST(5 AS DATETIME), CAST(5 AS DECIMAL)
@@ -3046,6 +3069,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS DECIMAL(5)), CAST(5 AS DECIMAL(10, 5)), CAST(5 AS DOUBLE), CAST(5 AS FLOAT), CAST(5 AS INTEGER)
@@ -3126,6 +3150,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS SIGNED), CAST(5 AS SIGNED INTEGER), CAST(5 AS UNSIGNED), CAST(5 AS UNSIGNED INTEGER), CAST(5 AS TIME),
@@ -3220,6 +3245,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS DECIMAL(1.1))
@@ -3245,6 +3271,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(? AS INTEGER)
@@ -3268,6 +3295,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS CHAR(10))
@@ -3292,6 +3320,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS CHAR(10) CHARACTER SET utf8mb4)
@@ -3317,6 +3346,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS CHAR(10) COLLATE utf8mb4_unicode_ci)
@@ -3342,6 +3372,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS CHAR(10) COLLATE `utf8mb4_unicode_ci`)
@@ -3367,6 +3398,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS BINARY(10))
@@ -3391,6 +3423,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS DATETIME(3))
@@ -3415,6 +3448,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS TIME(3))
@@ -3439,6 +3473,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS BINARY(1.1)), CAST(5 AS CHAR(1.1)), CAST(5 AS DATETIME(1.1)), CAST(5 AS TIME(1.1))
@@ -3505,6 +3540,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS INT), CAST(5 AS SIGNED INT), CAST(5 AS UNSIGNED INT)
@@ -3557,6 +3593,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS INT4), CAST(5 AS SIGNED INT4), CAST(5 AS UNSIGNED INT4)
@@ -3609,6 +3646,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CAST(5 AS DEC),  CAST(5 AS DEC(10)),  CAST(5 AS DEC(10, 2))
@@ -3664,6 +3702,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT POSITION('a' IN 'baC')
@@ -3690,6 +3729,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT POSITION('a' IN ('abc'))
@@ -3716,6 +3756,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT POSITION('a' IN NOW())
@@ -3745,6 +3786,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT POSITION(('a' IN (1, 2, 3)) IN 5)
@@ -3791,6 +3833,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT POSITION('1' IN 1 IN (1,2,3))
@@ -3837,6 +3880,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id) FROM parser_test
@@ -3869,6 +3913,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(?) FROM parser_test
@@ -3900,6 +3945,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(DISTINCT id) FROM parser_test
@@ -3932,6 +3978,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(DISTINCTROW id) FROM parser_test
@@ -3964,6 +4011,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id, name, 5+6) FROM parser_test
@@ -4012,6 +4060,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id SEPARATOR ' ') FROM parser_test
@@ -4044,6 +4093,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id SEPARATOR 'a''b') FROM parser_test
@@ -4076,6 +4126,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id, name ORDER BY 2 DESC) FROM parser_test
@@ -4126,6 +4177,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id, name ORDER BY ? DESC) FROM parser_test
@@ -4175,6 +4227,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id, name ORDER BY id DESC, 5+6 ASC) FROM parser_test
@@ -4241,6 +4294,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id LIMIT ?, ?) FROM parser_test
@@ -4282,6 +4336,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id LIMIT 1) FROM parser_test
@@ -4321,6 +4376,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id LIMIT 1, 2) FROM parser_test
@@ -4364,6 +4420,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id LIMIT 1 OFFSET 2) FROM parser_test
@@ -4407,6 +4464,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT GROUP_CONCAT(id LIMIT ? OFFSET ?) FROM parser_test
@@ -4448,6 +4506,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id) FROM parser_test
@@ -4476,6 +4535,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(?) FROM parser_test
@@ -4503,6 +4563,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(DISTINCT id) FROM parser_test
@@ -4531,6 +4592,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(DISTINCTROW id) FROM parser_test
@@ -4559,6 +4621,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(5+6) FROM parser_test
@@ -4595,6 +4658,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id LIMIT ?, ?) FROM parser_test
@@ -4632,6 +4696,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id LIMIT 1) FROM parser_test
@@ -4667,6 +4732,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id LIMIT 1, 2) FROM parser_test
@@ -4706,6 +4772,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id LIMIT 1 OFFSET 2) FROM parser_test
@@ -4745,6 +4812,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT JSON_ARRAYAGG(id LIMIT ? OFFSET ?) FROM parser_test
@@ -4782,6 +4850,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TIMESTAMPADD(MICROSECOND, 1, NOW()), TIMESTAMPADD(SECOND, 2, NOW()),
@@ -5001,6 +5070,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TIMESTAMPADD    (MICROSECOND, 1, NOW()) whitespace_between_name_and_paren
@@ -5035,6 +5105,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TIMESTAMPDIFF(MICROSECOND, NOW(), NOW())
@@ -5072,6 +5143,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT EXTRACT(MICROSECOND FROM NOW()), EXTRACT(HOUR FROM NOW()), EXTRACT(YEAR_MONTH FROM NOW())
@@ -5127,6 +5199,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT EXTRACT(SECOND FROM ?)
@@ -5147,6 +5220,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT VALUE(id) FROM parser_test
@@ -5179,6 +5253,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT ROW_NUMBER() OVER (PARTITION BY 1, 2 + id) FROM parser_test
@@ -5229,6 +5304,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT SUBSTRING("aaa", 1), SUBSTRING("bbb" FROM 2), SUBSTRING("ccc", 2, 3), SUBSTRING("ddd" FROM 2 FOR 3),
@@ -5416,6 +5492,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT SUBSTRING(? FROM ? FOR ?)
@@ -5446,6 +5523,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT SUBSTRING("aaa" FROM "bbb")
@@ -5477,6 +5555,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT SUBSTRING((SELECT "aaa" FROM parser_test LIMIT 1 FOR UPDATE) FROM 1 FOR 2)
@@ -5526,6 +5605,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 														(
 															[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
 														)
+													[isSqlCalcFoundRows] => false
 												)
 										)
 									[1] => MariaStan\Ast\Expr\LiteralInt
@@ -5542,6 +5622,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT AVG (1 + 2)
@@ -5575,6 +5656,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT DATE_FORMAT('2022-12-24', '%Y-%m'), DATE_FORMAT('2022-12-24', '%Y-%m', 'en_US')
@@ -5632,6 +5714,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT DATE(NOW())
@@ -5661,6 +5744,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT IF(5, 6, 7)
@@ -5694,6 +5778,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT VALUE(id) FROM parser_test
@@ -5726,6 +5811,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT CURDATE(), CURRENT_DATE()
@@ -5758,6 +5844,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TRIM(' aaaa '), TRIM(' ' FROM ' aa '), TRIM(BOTH 'a' FROM 'a'), TRIM(LEADING 'a' FROM 'a'),
@@ -5849,6 +5936,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TRIM(BOTH FROM ' aaaa '), TRIM(LEADING FROM ' aaaa '), TRIM(TRAILING FROM ' aaaa ')
@@ -5895,6 +5983,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT TRIM(name FROM name) FROM parser_test
@@ -5927,4 +6016,5 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )

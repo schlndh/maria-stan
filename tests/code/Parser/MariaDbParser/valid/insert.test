@@ -200,6 +200,7 @@ MariaStan\Ast\Query\InsertQuery
 														)
 												)
 											[isDistinct] => false
+											[isSqlCalcFoundRows] => false
 										)
 								)
 						)
@@ -219,6 +220,7 @@ MariaStan\Ast\Query\InsertQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[allowRecursive] => false
 				)
@@ -255,6 +257,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[ignoreErrors] => false
@@ -292,6 +295,7 @@ MariaStan\Ast\Query\InsertQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
@@ -307,6 +311,7 @@ MariaStan\Ast\Query\InsertQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[isDistinct] => true
 				)
@@ -347,6 +352,7 @@ MariaStan\Ast\Query\InsertQuery
 						(
 							[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
 						)
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[ignoreErrors] => false
@@ -387,6 +393,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[ignoreErrors] => false
@@ -421,6 +428,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[ignoreErrors] => false
@@ -455,6 +463,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[ignoreErrors] => false
@@ -496,6 +505,7 @@ MariaStan\Ast\Query\InsertQuery
 														)
 												)
 											[isDistinct] => false
+											[isSqlCalcFoundRows] => false
 										)
 								)
 						)
@@ -515,6 +525,7 @@ MariaStan\Ast\Query\InsertQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[allowRecursive] => false
 				)
@@ -1264,6 +1275,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[onDuplicateKeyUpdate] => Array
@@ -1332,6 +1344,7 @@ MariaStan\Ast\Query\InsertQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 	[onDuplicateKeyUpdate] => Array
@@ -1365,6 +1378,7 @@ MariaStan\Ast\Query\InsertQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 						)
 				)

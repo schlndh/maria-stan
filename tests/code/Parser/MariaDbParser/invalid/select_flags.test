@@ -1,0 +1,8 @@
+SELECT flags
+-----
+SELECT DISTINCT ALL 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Invalid usage of ALL and DISTINCT, after: SELECT DISTINCT ALL
+#####
+1221: Incorrect usage of ALL and DISTINCT

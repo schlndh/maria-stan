@@ -38,6 +38,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT
@@ -121,6 +122,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT NULL, null, nUll
@@ -149,6 +151,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT "aaa", "aa" "bb", "cc""dd", "ee\"ff", 'aaa', 'aa' 'bb', 'cc''dd', 'ee\'ff'
@@ -223,6 +226,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT "\'\"\n\t\\\%\_\a\r", '\'\"\n\t\\\%\_\a\r', "\\\\\a"
@@ -261,6 +265,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT NULL
@@ -277,4 +282,5 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )

@@ -28,6 +28,7 @@ final class SimpleSelectQuery extends BaseSelectQuery
 		public readonly ?Limit $limit = null,
 		public readonly bool $isDistinct = false,
 		public readonly ?SelectLock $lock = null,
+		public readonly bool $isSqlCalcFoundRows = false,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}

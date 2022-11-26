@@ -27,6 +27,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX (`id`)
@@ -56,6 +57,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index IGNORE INDEX (id)
@@ -85,6 +87,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index FORCE INDEX (id)
@@ -114,6 +117,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX (id) USE INDEX (name)
@@ -152,6 +156,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index IGNORE INDEX (id) USE INDEX (name)
@@ -190,6 +195,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index t1
@@ -244,6 +250,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index t1
@@ -298,6 +305,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX FOR JOIN (id)
@@ -327,6 +335,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX FOR ORDER BY (id)
@@ -356,6 +365,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX FOR GROUP BY (id)
@@ -385,6 +395,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index USE INDEX (priority, name, id)
@@ -416,6 +427,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT * FROM parser_test_index t USE INDEX ()
@@ -445,6 +457,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 UPDATE parser_test_index USE INDEX (id)

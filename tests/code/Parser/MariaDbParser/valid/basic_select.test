@@ -18,6 +18,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id, `aa bb`, `cc``dd` FROM (SELECT 1 id, "aa bb", "cc`dd") `sub query`
@@ -80,10 +81,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => sub query
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT `sub query`.id, `sub query`.`aa bb` FROM (SELECT 1 id, "aa bb") `sub query`
@@ -133,10 +136,12 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 			[alias] => sub query
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 WHERE 1 + 1
@@ -166,6 +171,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 FROM parser_test WHERE 1
@@ -194,6 +200,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[value] => 1
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 GROUP BY 1 + 1
@@ -234,6 +241,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[isWithRollup] => false
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id FROM parser_test GROUP BY name DESC
@@ -273,6 +281,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[isWithRollup] => false
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id FROM parser_test WHERE id > 5 GROUP BY name WITH ROLLUP
@@ -324,6 +333,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[isWithRollup] => true
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 HAVING 1
@@ -345,6 +355,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[value] => 1
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id FROM parser_test GROUP BY id HAVING id > 1
@@ -396,6 +407,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 ORDER BY 1 + 1 DESC
@@ -435,6 +447,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT id FROM parser_test ORDER BY id ASC, name DESC
@@ -481,6 +494,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 LIMIT 5
@@ -505,6 +519,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 LIMIT 5, 10
@@ -533,6 +548,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 LIMIT 5 OFFSET 1
@@ -561,6 +577,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT 1 LIMIT ?, ?
@@ -587,6 +604,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT ?
@@ -603,6 +621,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 (SELECT 1)
@@ -620,6 +639,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 ((SELECT 1));
@@ -637,6 +657,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT DISTINCT 1
@@ -654,6 +675,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => true
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT DISTINCTROW 1
@@ -671,6 +693,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => true
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT ALL 1
@@ -688,6 +711,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT EXISTS (SELECT 1)
@@ -713,11 +737,13 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 						)
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )
 -----
 SELECT EXISTS ((SELECT 1, 2))
@@ -750,9 +776,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 										)
 									[isDistinct] => false
+									[isSqlCalcFoundRows] => false
 								)
 						)
 				)
 		)
 	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
 )

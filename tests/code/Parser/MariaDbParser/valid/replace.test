@@ -167,6 +167,7 @@ MariaStan\Ast\Query\ReplaceQuery
 														)
 												)
 											[isDistinct] => false
+											[isSqlCalcFoundRows] => false
 										)
 								)
 						)
@@ -186,6 +187,7 @@ MariaStan\Ast\Query\ReplaceQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[allowRecursive] => false
 				)
@@ -221,6 +223,7 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 )
@@ -257,6 +260,7 @@ MariaStan\Ast\Query\ReplaceQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[right] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
@@ -272,6 +276,7 @@ MariaStan\Ast\Query\ReplaceQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[isDistinct] => true
 				)
@@ -311,6 +316,7 @@ MariaStan\Ast\Query\ReplaceQuery
 						(
 							[type] => MariaStan\Ast\Lock\SelectLockTypeEnum::UPDATE
 						)
+					[isSqlCalcFoundRows] => false
 				)
 		)
 )
@@ -350,6 +356,7 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 )
@@ -383,6 +390,7 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 )
@@ -416,6 +424,7 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
 				)
 		)
 )
@@ -456,6 +465,7 @@ MariaStan\Ast\Query\ReplaceQuery
 														)
 												)
 											[isDistinct] => false
+											[isSqlCalcFoundRows] => false
 										)
 								)
 						)
@@ -475,6 +485,7 @@ MariaStan\Ast\Query\ReplaceQuery
 										)
 								)
 							[isDistinct] => false
+							[isSqlCalcFoundRows] => false
 						)
 					[allowRecursive] => false
 				)
