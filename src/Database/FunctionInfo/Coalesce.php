@@ -9,13 +9,14 @@ use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
 
 use function count;
+use function strtoupper;
 
-final class IfFunction implements FunctionInfo
+final class Coalesce implements FunctionInfo
 {
 	/** @inheritDoc */
 	public function getSupportedFunctionNames(): array
 	{
-		return ['IF'];
+		return ['COALESCE', 'IFNULL', 'NVL'];
 	}
 
 	public function getFunctionType(): FunctionTypeEnum
@@ -28,11 +29,25 @@ final class IfFunction implements FunctionInfo
 		$args = $functionCall->getArguments();
 		$argCount = count($args);
 
-		if ($argCount !== 3) {
+		if (strtoupper($functionCall->getFunctionName()) === 'COALESCE') {
+			if ($argCount > 0) {
+				return;
+			}
+
+			throw new ParserException(
+				FunctionInfoHelper::createArgumentCountErrorMessageMin(
+					$functionCall->getFunctionName(),
+					1,
+					$argCount,
+				),
+			);
+		}
+
+		if ($argCount !== 2) {
 			throw new ParserException(
 				FunctionInfoHelper::createArgumentCountErrorMessageFixed(
 					$functionCall->getFunctionName(),
-					3,
+					2,
 					$argCount,
 				),
 			);
@@ -48,11 +63,18 @@ final class IfFunction implements FunctionInfo
 		array $argumentTypes,
 		string $nodeContent,
 	): QueryResultField {
-		$then = $argumentTypes[1];
-		$else = $argumentTypes[2];
-		$isNullable = $then->isNullable || $else->isNullable;
-		$type = FunctionInfoHelper::castToCommonType($then->type, $else->type);
+		$leftType = $argumentTypes[0]->type;
+		$isNullable = $argumentTypes[0]->isNullable;
+		$i = 1;
+		$argCount = count($argumentTypes);
 
-		return new QueryResultField($nodeContent, $type, $isNullable);
+		while ($i < $argCount) {
+			$rightType = $argumentTypes[$i]->type;
+			$isNullable = $isNullable && $argumentTypes[$i]->isNullable;
+			$i++;
+			$leftType = FunctionInfoHelper::castToCommonType($leftType, $rightType);
+		}
+
+		return new QueryResultField($nodeContent, $leftType, $isNullable);
 	}
 }

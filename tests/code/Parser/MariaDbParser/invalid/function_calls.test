@@ -1154,3 +1154,45 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected FROM, got ')' after: SELECT TRIM(BOTH ' aa '
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT COALESCE()
+-----
+MariaStan\Parser\Exception\ParserException
+Function COALESCE takes at least 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT IFNULL(5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function IFNULL takes 2 arguments, got 1.
+#####
+1582: Incorrect parameter count in the call to native function 'IFNULL'
+-----
+SELECT NVL(5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function NVL takes 2 arguments, got 1.
+#####
+1582: Incorrect parameter count in the call to native function 'NVL'
+-----
+SELECT IFNULL(1, 2, 3)
+-----
+MariaStan\Parser\Exception\ParserException
+Function IFNULL takes 2 arguments, got 3.
+#####
+1582: Incorrect parameter count in the call to native function 'IFNULL'
+-----
+SELECT NVL(1, 2, 3)
+-----
+MariaStan\Parser\Exception\ParserException
+Function NVL takes 2 arguments, got 3.
+#####
+1582: Incorrect parameter count in the call to native function 'NVL'
+-----
+SELECT FOUND_ROWS(5)
+-----
+MariaStan\Parser\Exception\ParserException
+Function FOUND_ROWS takes 0 arguments, got 1.
+#####
+1582: Incorrect parameter count in the call to native function 'FOUND_ROWS'

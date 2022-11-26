@@ -33,6 +33,7 @@ use function str_starts_with;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_NOT_NULL_FLAG;
+use const MYSQLI_TYPE_BLOB;
 use const MYSQLI_TYPE_DATE;
 use const MYSQLI_TYPE_DATETIME;
 use const MYSQLI_TYPE_DECIMAL;
@@ -701,7 +702,7 @@ class AnalyserTest extends TestCase
 			'datetime' => 'NOW()',
 		];
 
-		foreach (['AVG', 'MAX', 'MIN', 'SUM'] as $fn) {
+		foreach (['AVG', 'MAX', 'MIN', 'SUM', 'GROUP_CONCAT'] as $fn) {
 			$selects["{$fn}"] = "SELECT {$fn}(id) FROM {$tableName}";
 			$selects["{$fn} WHERE 0"] = "SELECT {$fn}(id) FROM {$tableName} WHERE 0";
 			$selects["{$fn} DISTINCT"] = "SELECT {$fn}(DISTINCT id) FROM {$tableName}";
@@ -756,9 +757,15 @@ class AnalyserTest extends TestCase
 				$selects["IF(1, {$label1}, {$label2})"] = "SELECT IF(1, {$value1}, {$value2})";
 				$selects["IF(null, {$label1}, {$label2})"] = "SELECT IF(null, {$value1}, {$value2})";
 				$selects["TRIM({$label1} FROM {$label2})"] = "SELECT TRIM({$value1} FROM {$value2})";
+				$selects["IFNULL({$label1}, {$label2})"] = "SELECT IFNULL({$value1}, {$value2})";
+				$selects["NVL({$label1}, {$label2})"] = "SELECT NVL({$value1}, {$value2})";
+				$selects["COALESCE({$label1}, {$label2})"] = "SELECT COALESCE({$value1}, {$value2})";
+				$selects["COALESCE(NULL, {$label1}, {$label2})"] = "SELECT COALESCE(NULL, {$value1}, {$value2})";
+				$selects["COALESCE({$label1}, {$label2}, int)"] = "SELECT COALESCE(NULL, {$value1}, {$value2}, 9)";
 			}
 
 			$selects["TRIM({$label1})"] = "SELECT TRIM({$value1})";
+			$selects["COALESCE({$label1})"] = "SELECT COALESCE({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
@@ -767,6 +774,7 @@ class AnalyserTest extends TestCase
 		$selects['CURDATE() + 0'] = "SELECT CURDATE() + 0";
 		$selects['CURRENT_DATE()'] = "SELECT CURRENT_DATE()";
 		$selects['CURRENT_DATE'] = "SELECT CURRENT_DATE";
+		$selects['FOUND_ROWS()'] = "SELECT FOUND_ROWS()";
 
 		foreach ($selects as $label => $select) {
 			yield $label => [
@@ -2214,6 +2222,7 @@ class AnalyserTest extends TestCase
 				=> DbTypeEnum::DATETIME,
 			MYSQLI_TYPE_VAR_STRING, MYSQLI_TYPE_STRING => DbTypeEnum::VARCHAR,
 			MYSQLI_TYPE_NULL => DbTypeEnum::NULL,
+			MYSQLI_TYPE_BLOB => DbTypeEnum::VARCHAR,
 			// TODO: MYSQLI_TYPE_ENUM, MYSQLI_TYPE_BIT, MYSQLI_TYPE_INTERVAL, MYSQLI_TYPE_SET,
 			// MYSQLI_TYPE_GEOMETRY, MYSQLI_TYPE_JSON, blob/binary types
 			default => throw new \RuntimeException("Unhandled type {$type}"),

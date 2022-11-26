@@ -7,15 +7,16 @@ namespace MariaStan\Database\FunctionInfo;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Schema\DbType\IntType;
 
 use function count;
 
-final class IfFunction implements FunctionInfo
+final class FoundRows implements FunctionInfo
 {
 	/** @inheritDoc */
 	public function getSupportedFunctionNames(): array
 	{
-		return ['IF'];
+		return ['FOUND_ROWS'];
 	}
 
 	public function getFunctionType(): FunctionTypeEnum
@@ -28,15 +29,17 @@ final class IfFunction implements FunctionInfo
 		$args = $functionCall->getArguments();
 		$argCount = count($args);
 
-		if ($argCount !== 3) {
-			throw new ParserException(
-				FunctionInfoHelper::createArgumentCountErrorMessageFixed(
-					$functionCall->getFunctionName(),
-					3,
-					$argCount,
-				),
-			);
+		if ($argCount === 0) {
+			return;
 		}
+
+		throw new ParserException(
+			FunctionInfoHelper::createArgumentCountErrorMessageFixed(
+				$functionCall->getFunctionName(),
+				0,
+				$argCount,
+			),
+		);
 	}
 
 	/**
@@ -48,11 +51,6 @@ final class IfFunction implements FunctionInfo
 		array $argumentTypes,
 		string $nodeContent,
 	): QueryResultField {
-		$then = $argumentTypes[1];
-		$else = $argumentTypes[2];
-		$isNullable = $then->isNullable || $else->isNullable;
-		$type = FunctionInfoHelper::castToCommonType($then->type, $else->type);
-
-		return new QueryResultField($nodeContent, $type, $isNullable);
+		return new QueryResultField($nodeContent, new IntType(), false);
 	}
 }
