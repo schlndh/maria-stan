@@ -814,11 +814,12 @@ class AnalyserTest extends TestCase
 			];
 
 			$dataTypes = [
-				'int' => '1',
-				'string' => '"a"',
-				'decimal' => '1.2',
-				'float' => '1.2e3',
-				'null' => 'NULL',
+				'null' => 'null',
+				'int' => '5',
+				'decimal' => '5.5',
+				'double' => '5.5e1',
+				'string' => '"aa"',
+				'datetime' => 'NOW()',
 			];
 
 			foreach ($dataTypes as $leftLabel => $leftValue) {

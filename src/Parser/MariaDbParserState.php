@@ -466,7 +466,6 @@ class MariaDbParserState
 	 */
 	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery
 	{
-		// TODO: https://mariadb.com/kb/en/common-table-expressions/
 		// TODO: INTO OUTFILE/DUMPFILE/variable
 		if ($this->acceptToken('(')) {
 			$startPosition = $this->getPreviousToken()->position;

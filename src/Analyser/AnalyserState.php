@@ -33,6 +33,7 @@ use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
+use MariaStan\Database\FunctionInfo\FunctionInfoHelper;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
@@ -590,7 +591,6 @@ final class AnalyserState
 			);
 		}
 
-		// TODO: check if fields without default value are missing
 		// TODO: INSERT ... ON DUPLICATE KEY
 		// TODO: INSERT ... RETURNING
 		return [];
@@ -1112,20 +1112,6 @@ final class AnalyserState
 
 	private function getCombinedType(Schema\DbType\DbType $left, Schema\DbType\DbType $right): Schema\DbType\DbType
 	{
-		$typesInvolved = [
-			$left::getTypeEnum()->value => $left,
-			$right::getTypeEnum()->value => $right,
-		];
-		// TODO: handle remaining types.
-		$combinedType = $typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->name]
-			?? $typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->name]
-			?? $typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->name]
-			?? $left;
-
-		if ($combinedType::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
-			$combinedType = $right;
-		}
-
-		return $combinedType;
+		return FunctionInfoHelper::castToCommonType($left, $right);
 	}
 }
