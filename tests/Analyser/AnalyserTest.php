@@ -762,10 +762,15 @@ class AnalyserTest extends TestCase
 				$selects["COALESCE({$label1}, {$label2})"] = "SELECT COALESCE({$value1}, {$value2})";
 				$selects["COALESCE(NULL, {$label1}, {$label2})"] = "SELECT COALESCE(NULL, {$value1}, {$value2})";
 				$selects["COALESCE({$label1}, {$label2}, int)"] = "SELECT COALESCE(NULL, {$value1}, {$value2}, 9)";
+				$selects["ROUND({$label1}, {$label2})"] = "SELECT ROUND({$value1}, {$value2})";
 			}
 
 			$selects["TRIM({$label1})"] = "SELECT TRIM({$value1})";
 			$selects["COALESCE({$label1})"] = "SELECT COALESCE({$value1})";
+			$selects["ROUND({$label1})"] = "SELECT ROUND({$value1})";
+			$selects["FLOOR({$label1})"] = "SELECT FLOOR({$value1})";
+			$selects["CEIL({$label1})"] = "SELECT CEIL({$value1})";
+			$selects["CEILING({$label1})"] = "SELECT CEILING({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.

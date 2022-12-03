@@ -17,6 +17,7 @@ final class FunctionInfoRegistryFactory
 		return [
 			new Avg(),
 			new Cast(),
+			new CeilFloor(),
 			new Coalesce(),
 			new Count(),
 			new Curdate(),
@@ -28,6 +29,7 @@ final class FunctionInfoRegistryFactory
 			new GroupConcat(),
 			new MaxMin(),
 			new Now(),
+			new Round(),
 			new Sum(),
 			new Trim(),
 			new Value(),

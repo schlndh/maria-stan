@@ -1196,3 +1196,31 @@ MariaStan\Parser\Exception\ParserException
 Function FOUND_ROWS takes 0 arguments, got 1.
 #####
 1582: Incorrect parameter count in the call to native function 'FOUND_ROWS'
+-----
+SELECT ROUND()
+-----
+MariaStan\Parser\Exception\ParserException
+Function ROUND takes 1-2 arguments, got 0.
+#####
+1582: Incorrect parameter count in the call to native function 'ROUND'
+-----
+SELECT ROUND(5, 6, 7)
+-----
+MariaStan\Parser\Exception\ParserException
+Function ROUND takes 1-2 arguments, got 3.
+#####
+1582: Incorrect parameter count in the call to native function 'ROUND'
+-----
+SELECT FLOOR()
+-----
+MariaStan\Parser\Exception\ParserException
+Function FLOOR takes 1 argument, got 0.
+#####
+1582: Incorrect parameter count in the call to native function 'FLOOR'
+-----
+SELECT CEIL()
+-----
+MariaStan\Parser\Exception\ParserException
+Function CEIL takes 1 argument, got 0.
+#####
+1582: Incorrect parameter count in the call to native function 'CEIL'
