@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
 
@@ -43,16 +43,13 @@ final class IfFunction implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$then = $argumentTypes[1];
 		$else = $argumentTypes[2];
 		$isNullable = $then->isNullable || $else->isNullable;
 		$type = FunctionInfoHelper::castToCommonType($then->type, $else->type);
 
-		return new QueryResultField($nodeContent, $type, $isNullable);
+		return new ExprTypeResult($type, $isNullable);
 	}
 }

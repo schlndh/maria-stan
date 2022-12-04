@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\CastType\CastTypeEnum;
 use MariaStan\Ast\Expr\FunctionCall\Cast as CastFunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
@@ -39,16 +39,13 @@ final class Cast implements FunctionInfo
 	}
 
 	/** @inheritDoc */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		assert($functionCall instanceof CastFunctionCall);
 		$exprType = $argumentTypes[0];
 
 		if ($exprType->type::getTypeEnum() === DbTypeEnum::NULL) {
-			return new QueryResultField($nodeContent, $exprType->type, true);
+			return new ExprTypeResult($exprType->type, true);
 		}
 
 		$isNullable = $exprType->isNullable;
@@ -85,6 +82,6 @@ final class Cast implements FunctionInfo
 				break;
 		}
 
-		return new QueryResultField($nodeContent, $type, $isNullable);
+		return new ExprTypeResult($type, $isNullable);
 	}
 }

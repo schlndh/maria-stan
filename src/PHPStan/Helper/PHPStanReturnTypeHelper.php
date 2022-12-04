@@ -105,9 +105,9 @@ class PHPStanReturnTypeHelper
 
 		foreach ($resultFields as $field) {
 			$keys[] = new ConstantIntegerType($i);
-			$type = $this->typeMapper->mapDbTypeToPhpstanType($field->type);
+			$type = $this->typeMapper->mapDbTypeToPhpstanType($field->exprType->type);
 
-			if ($field->isNullable) {
+			if ($field->exprType->isNullable) {
 				$type = TypeCombinator::addNull($type);
 			}
 

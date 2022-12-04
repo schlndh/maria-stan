@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Schema\DbType\DbTypeEnum;
@@ -48,11 +48,8 @@ final class CeilFloor implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$value = $argumentTypes[0];
 
 		$type = match ($value->type::getTypeEnum()) {
@@ -61,6 +58,6 @@ final class CeilFloor implements FunctionInfo
 			default => $value->type,
 		};
 
-		return new QueryResultField($nodeContent, $type, $value->isNullable);
+		return new ExprTypeResult($type, $value->isNullable);
 	}
 }

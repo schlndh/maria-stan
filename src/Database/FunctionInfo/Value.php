@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
@@ -54,15 +54,12 @@ final class Value implements FunctionInfo
 	}
 
 	/** @inheritDoc */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$col = $argumentTypes[0];
 		// VALUE(...) can be used in SELECT as well, in which case it always returns null.
 		$isNullable = $col->isNullable || strtoupper($functionCall->getFunctionName()) === 'VALUE';
 
-		return new QueryResultField($nodeContent, $col->type, $isNullable);
+		return new ExprTypeResult($col->type, $isNullable);
 	}
 }

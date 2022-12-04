@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Database\FunctionInfo;
 
 use MariaStan\Analyser\Exception\AnalyserException;
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
 
@@ -20,12 +20,8 @@ interface FunctionInfo
 	public function checkSyntaxErrors(FunctionCall $functionCall): void;
 
 	/**
-	 * @param array<QueryResultField> $argumentTypes
+	 * @param array<ExprTypeResult> $argumentTypes
 	 * @throws AnalyserException
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField;
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult;
 }

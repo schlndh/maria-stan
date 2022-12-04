@@ -21,6 +21,7 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_values;
+use function assert;
 use function count;
 use function in_array;
 use function reset;
@@ -165,7 +166,11 @@ final class ColumnResolver
 			}
 
 			$uniqueFieldNameMap[$field->name] = true;
-			$columns[$field->name] = new Schema\Column($field->name, $field->type, $field->isNullable);
+			$columns[$field->name] = new Schema\Column(
+				$field->name,
+				$field->exprType->type,
+				$field->exprType->isNullable,
+			);
 		}
 
 		return $columns;
@@ -200,14 +205,14 @@ final class ColumnResolver
 	}
 
 	/** @throws AnalyserException */
-	public function resolveColumn(string $column, ?string $table): QueryResultField
+	public function resolveColumn(string $column, ?string $table): ExprTypeResult
 	{
 		if (
 			$table === null
 			&& $this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
 			&& isset($this->fieldList[$column])
 		) {
-			return $this->fieldList[$column][0][0];
+			return $this->fieldList[$column][0][0]->exprType;
 		}
 
 		if ($table === null) {
@@ -218,7 +223,9 @@ final class ColumnResolver
 				$firstExpressionField = null;
 				$firstField = null;
 
+				/** @var ?bool $isColumn */
 				foreach ($candidateFields as [$field, $isColumn]) {
+					assert($field instanceof QueryResultField);
 					$firstField ??= $field;
 
 					// For now we don't have to worry about it. It's only null in UNION/... which can't have GROUP BY.
@@ -240,7 +247,7 @@ final class ColumnResolver
 				}
 
 				// If there are multiple expressions with the same alias the first one seems to be used.
-				return $firstExpressionField ?? $firstField;
+				return ($firstExpressionField ?? $firstField)->exprType;
 			}
 		}
 
@@ -263,10 +270,10 @@ final class ColumnResolver
 				// TODO: add test to make sure that the prioritization is the same as in the database.
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
 				return $resolvedParentColumn
-					?? ($table === null ? $this->parent?->findUniqueItemInFieldList($column) : null)
+					?? ($table === null ? $this->parent?->findUniqueItemInFieldList($column)?->exprType : null)
 					?? (
 						$table === null && $this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST
-							? $this->findUniqueItemInFieldList($column)
+							? $this->findUniqueItemInFieldList($column)?->exprType
 							: null
 					)
 					?? throw new AnalyserException(
@@ -280,7 +287,11 @@ final class ColumnResolver
 					$columnSchema = $this->tableSchemas[$tableName]->columns[$column];
 				} elseif (isset($this->subquerySchemas[$alias])) {
 					$columnField = $this->subquerySchemas[$alias][$column];
-					$columnSchema = new Schema\Column($columnField->name, $columnField->type, $columnField->isNullable);
+					$columnSchema = new Schema\Column(
+						$columnField->name,
+						$columnField->exprType->type,
+						$columnField->exprType->isNullable,
+					);
 				} else {
 					throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
 				}
@@ -294,7 +305,7 @@ final class ColumnResolver
 
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
 
-		return new QueryResultField($column, $columnSchema->type, $columnSchema->isNullable || $isOuterTable);
+		return new ExprTypeResult($columnSchema->type, $columnSchema->isNullable || $isOuterTable);
 	}
 
 	private function findUniqueItemInFieldList(string $name): ?QueryResultField
@@ -326,8 +337,10 @@ final class ColumnResolver
 				foreach ($tableSchema->columns ?? [] as $column) {
 					$fields[] = new QueryResultField(
 						$column->name,
-						$column->type,
-						$column->isNullable || $isOuterTable,
+						new ExprTypeResult(
+							$column->type,
+							$column->isNullable || $isOuterTable,
+						),
 					);
 				}
 			} elseif (isset($this->subquerySchemas[$table])) {
@@ -351,8 +364,10 @@ final class ColumnResolver
 
 					$fields[] = new QueryResultField(
 						$columnSchema->name,
-						$columnSchema->type,
-						$columnSchema->isNullable || $isOuterTable,
+						new ExprTypeResult(
+							$columnSchema->type,
+							$columnSchema->isNullable || $isOuterTable,
+						),
 					);
 				} elseif (isset($this->subquerySchemas[$table])) {
 					$f = $this->subquerySchemas[$table][$column] ?? null;

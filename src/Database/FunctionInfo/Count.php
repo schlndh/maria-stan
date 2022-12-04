@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Schema\DbType\IntType;
 
@@ -31,11 +31,8 @@ final class Count implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
-		return new QueryResultField($nodeContent, new IntType(), false);
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
+		return new ExprTypeResult(new IntType(), false);
 	}
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Schema\DbType\VarcharType;
 
@@ -31,17 +31,14 @@ final class Trim implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$isNullable = false;
 
 		foreach ($argumentTypes as $argumentType) {
 			$isNullable = $isNullable || $argumentType->isNullable;
 		}
 
-		return new QueryResultField($nodeContent, new VarcharType(), $isNullable);
+		return new ExprTypeResult(new VarcharType(), $isNullable);
 	}
 }

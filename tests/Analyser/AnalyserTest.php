@@ -1093,12 +1093,13 @@ class AnalyserTest extends TestCase
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
 			$analyzedField = $result->resultFields[$i];
+			$analyzedExprType = $analyzedField->exprType;
 			$this->assertSame($analyzedField->name, $field->name);
 			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
 
-			if ($analyzedField->isNullable && ! $isFieldNullable) {
+			if ($analyzedExprType->isNullable && ! $isFieldNullable) {
 				$unnecessaryNullableFields[] = $analyzedField->name;
-			} elseif (! $analyzedField->isNullable && $isFieldNullable) {
+			} elseif (! $analyzedExprType->isNullable && $isFieldNullable) {
 				$forceNullsForColumns[$field->name] = false;
 			}
 
@@ -1107,24 +1108,24 @@ class AnalyserTest extends TestCase
 			// It seems that in some cases the type returned by the database does not propagate NULL in all cases.
 			// E.g. 1 + NULL is double for some reason. Let's allow the analyser to get away with null, but force
 			// check that the returned values are all null.
-			if ($analyzedField->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
+			if ($analyzedExprType->type::getTypeEnum() === DbTypeEnum::NULL && $field->type !== MYSQLI_TYPE_NULL) {
 				$forceNullsForColumns[$field->name] = true;
-			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::ENUM) {
+			} elseif ($analyzedExprType->type::getTypeEnum() === DbTypeEnum::ENUM) {
 				// MYSQLI_ENUM_FLAG can get hidden by functions like MAX/MIN
 				$this->assertSame(DbTypeEnum::VARCHAR, $actualType);
-			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::DATETIME) {
+			} elseif ($analyzedExprType->type::getTypeEnum() === DbTypeEnum::DATETIME) {
 				if ($actualType === DbTypeEnum::VARCHAR) {
 					$datetimeFields[] = $i;
 				} else {
-					$this->assertSame($actualType, $analyzedField->type::getTypeEnum());
+					$this->assertSame($actualType, $analyzedExprType->type::getTypeEnum());
 				}
-			} elseif ($analyzedField->type::getTypeEnum() === DbTypeEnum::MIXED) {
+			} elseif ($analyzedExprType->type::getTypeEnum() === DbTypeEnum::MIXED) {
 				$mixedFieldErrors[] = "DB type for {$analyzedField->name} should be {$actualType->value} got MIXED.";
 			} else {
 				$this->assertSame(
-					$analyzedField->type::getTypeEnum(),
+					$analyzedExprType->type::getTypeEnum(),
 					$actualType,
-					"The test says {$analyzedField->name} should be {$analyzedField->type::getTypeEnum()->name} "
+					"The test says {$analyzedField->name} should be {$analyzedExprType->type::getTypeEnum()->name} "
 					. "but got {$actualType->name} from the database.",
 				);
 			}
@@ -1163,18 +1164,19 @@ class AnalyserTest extends TestCase
 
 			foreach ($row as $value) {
 				$analyzedField = $result->resultFields[$i];
+				$analyzedExprType = $analyzedField->exprType;
 				$i++;
 
-				if ($analyzedField->type::getTypeEnum() !== DbTypeEnum::ENUM) {
+				if ($analyzedExprType->type::getTypeEnum() !== DbTypeEnum::ENUM) {
 					continue;
 				}
 
-				if ($analyzedField->isNullable && $value === null) {
+				if ($analyzedExprType->isNullable && $value === null) {
 					continue;
 				}
 
-				assert($analyzedField->type instanceof EnumType);
-				$this->assertContains($value, $analyzedField->type->cases);
+				assert($analyzedExprType->type instanceof EnumType);
+				$this->assertContains($value, $analyzedExprType->type->cases);
 			}
 		}
 

@@ -221,8 +221,11 @@ final class AnalyserState
 		for (; $i < $commonCount; $i++) {
 			$lf = $leftFields[$i];
 			$rf = $rightFields[$i];
-			$combinedType = $this->getCombinedType($lf->type, $rf->type);
-			$fields[] = new QueryResultField($lf->name, $combinedType, $lf->isNullable || $rf->isNullable);
+			$combinedType = $this->getCombinedType($lf->exprType->type, $rf->exprType->type);
+			$fields[] = new QueryResultField(
+				$lf->name,
+				new ExprTypeResult($combinedType, $lf->exprType->isNullable || $rf->exprType->isNullable),
+			);
 		}
 
 		unset($leftFields, $rightFields);
@@ -271,12 +274,11 @@ final class AnalyserState
 			switch ($selectExpr::getSelectExprType()) {
 				case SelectExprTypeEnum::REGULAR_EXPR:
 					assert($selectExpr instanceof RegularExpr);
-					$resolvedField = $this->resolveExprType($selectExpr->expr);
-
-					if ($selectExpr->alias !== null && $selectExpr->alias !== $resolvedField->name) {
-						$resolvedField = $resolvedField->getRenamed($selectExpr->alias);
-					}
-
+					$resolvedExpr = $this->resolveExprType($selectExpr->expr);
+					$resolvedField = new QueryResultField(
+						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($selectExpr->expr),
+						$resolvedExpr,
+					);
 					$fields[] = $resolvedField;
 					$this->columnResolver->registerField(
 						$resolvedField,
@@ -607,7 +609,7 @@ final class AnalyserState
 	}
 
 	/** @throws AnalyserException */
-	private function resolveExprType(Expr\Expr $expr): QueryResultField
+	private function resolveExprType(Expr\Expr $expr): ExprTypeResult
 	{
 		// TODO: handle all expression types
 		switch ($expr::getExprType()) {
@@ -620,35 +622,33 @@ final class AnalyserState
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
-				return new QueryResultField($expr->name, new Schema\DbType\MixedType(), true);
+				return new ExprTypeResult(new Schema\DbType\MixedType(), true);
 			case Expr\ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof Expr\LiteralInt);
 
-				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\IntType(), false);
+				return new ExprTypeResult(new Schema\DbType\IntType(), false);
 			case Expr\ExprTypeEnum::LITERAL_FLOAT:
 				assert($expr instanceof Expr\LiteralFloat);
 				$content = $this->getNodeContent($expr);
 				$isExponentNotation = stripos($content, 'e') !== false;
 
-				return new QueryResultField(
-					$content,
+				return new ExprTypeResult(
 					$isExponentNotation
 						? new Schema\DbType\FloatType()
 						: new Schema\DbType\DecimalType(),
 					false,
 				);
 			case Expr\ExprTypeEnum::LITERAL_NULL:
-				return new QueryResultField('NULL', new Schema\DbType\NullType(), true);
+				return new ExprTypeResult(new Schema\DbType\NullType(), true);
 			case Expr\ExprTypeEnum::LITERAL_STRING:
 				assert($expr instanceof Expr\LiteralString);
 
-				return new QueryResultField($expr->firstConcatPart, new Schema\DbType\VarcharType(), false);
+				return new ExprTypeResult(new Schema\DbType\VarcharType(), false);
 			case Expr\ExprTypeEnum::INTERVAL:
 				assert($expr instanceof Expr\Interval);
 				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\DateTimeType(),
 					$timeQuantityResult->isNullable,
 				);
@@ -667,15 +667,7 @@ final class AnalyserState
 					default => new Schema\DbType\IntType(),
 				};
 
-				return new QueryResultField(
-					// It seems that MariaDB generally omits the +.
-					// TODO: investigate it more and fix stuff like "SELECT +(SELECT 1)"
-					$expr->operation !== Expr\UnaryOpTypeEnum::PLUS
-						? $this->getNodeContent($expr)
-						: $resolvedInnerExpr->name,
-					$type,
-					$resolvedInnerExpr->isNullable,
-				);
+				return new ExprTypeResult($type, $resolvedInnerExpr->isNullable);
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
 				$leftResult = $this->resolveExprType($expr->left);
@@ -689,8 +681,7 @@ final class AnalyserState
 					$intervalExpr = $expr->right;
 					$intervalResult = $this->resolveExprType($intervalExpr);
 
-					return new QueryResultField(
-						$this->getNodeContent($expr),
+					return new ExprTypeResult(
 						new Schema\DbType\DateTimeType(),
 						$leftResult->isNullable
 							|| $intervalResult->isNullable
@@ -759,8 +750,7 @@ final class AnalyserState
 				// TODO: Analyze the rest of the operators
 				$type ??= new Schema\DbType\FloatType();
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					$type,
 					$leftResult->isNullable
 						|| $rightResult->isNullable
@@ -777,8 +767,7 @@ final class AnalyserState
 				$result = $subqueryAnalyser->analyse();
 
 				if ($result->resultFields === null) {
-					return new QueryResultField(
-						$this->getNodeContent($expr),
+					return new ExprTypeResult(
 						new Schema\DbType\MixedType(),
 						// TODO: Change it to false if we can statically determine that the query will always return
 						// a result: e.g. SELECT 1
@@ -787,29 +776,27 @@ final class AnalyserState
 				}
 
 				if (count($result->resultFields) === 1) {
-					return new QueryResultField(
-						$this->getNodeContent($expr),
-						$result->resultFields[0]->type,
+					return new ExprTypeResult(
+						$result->resultFields[0]->exprType->type,
 						// TODO: Change it to false if we can statically determine that the query will always return
 						// a result: e.g. SELECT 1
 						true,
 					);
 				}
 
-				$innerTypes = array_map(static fn (QueryResultField $f) => $f->type, $result->resultFields);
+				$innerTypes = array_map(static fn (QueryResultField $f) => $f->exprType->type, $result->resultFields);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\TupleType($innerTypes, true),
-					$this->isAnyFieldNullable($result->resultFields),
+					// Tuple cannot be null, only its elements can be null.
+					false,
 				);
 			case Expr\ExprTypeEnum::IS:
 				assert($expr instanceof Expr\Is);
 				// Make sure there are no errors on the left of IS.
 				$this->resolveExprType($expr->expression);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					false,
 				);
@@ -817,12 +804,11 @@ final class AnalyserState
 				assert($expr instanceof Expr\Between);
 				$isNullable = array_reduce(
 					array_map($this->resolveExprType(...), [$expr->expression, $expr->min, $expr->max]),
-					static fn (bool $isNullable, QueryResultField $f) => $isNullable || $f->isNullable,
+					static fn (bool $isNullable, ExprTypeResult $f) => $isNullable || $f->isNullable,
 					false,
 				);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					$isNullable,
 				);
@@ -830,16 +816,15 @@ final class AnalyserState
 				$this->positionalPlaceholderCount++;
 
 				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
-				return new QueryResultField($this->getNodeContent($expr), new Schema\DbType\VarcharType(), true);
+				return new ExprTypeResult(new Schema\DbType\VarcharType(), true);
 			case Expr\ExprTypeEnum::TUPLE:
 				assert($expr instanceof Expr\Tuple);
 				$innerFields = array_map($this->resolveExprType(...), $expr->expressions);
-				$innerTypes = array_map(static fn (QueryResultField $f) => $f->type, $innerFields);
+				$innerTypes = array_map(static fn (ExprTypeResult $f) => $f->type, $innerFields);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\TupleType($innerTypes, false),
-					$this->isAnyFieldNullable($innerFields),
+					$this->isAnyExprNullable($innerFields),
 				);
 			case Expr\ExprTypeEnum::IN:
 				assert($expr instanceof Expr\In);
@@ -858,8 +843,7 @@ final class AnalyserState
 					}
 				}
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					$leftResult->isNullable || $rightResult->isNullable,
 				);
@@ -901,8 +885,7 @@ final class AnalyserState
 					);
 				}
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					$expressionResult->isNullable || $patternResult->isNullable,
 				);
@@ -933,11 +916,7 @@ final class AnalyserState
 
 				if ($functionInfo !== null) {
 					try {
-						return $functionInfo->getReturnType(
-							$expr,
-							$resolvedArguments,
-							$this->getNodeContent($expr),
-						);
+						return $functionInfo->getReturnType($expr, $resolvedArguments);
 					} catch (AnalyserException $e) {
 						$this->errors[] = new AnalyserError($e->getMessage());
 					}
@@ -945,8 +924,7 @@ final class AnalyserState
 					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
 				}
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\MixedType(),
 					true,
 				);
@@ -983,17 +961,12 @@ final class AnalyserState
 						: $this->getCombinedType($type, $subresult->type);
 				}
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
-					$type,
-					$isNullable,
-				);
+				return new ExprTypeResult($type, $isNullable);
 			case Expr\ExprTypeEnum::EXISTS:
 				assert($expr instanceof Expr\Exists);
 				$this->getSubqueryAnalyser($expr->subquery)->analyse();
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					false,
 				);
@@ -1002,25 +975,47 @@ final class AnalyserState
 				$this->resolveExprType($expr->target);
 				$value = $this->resolveExprType($expr->expression);
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
-					$value->type,
-					$value->isNullable,
-				);
+				return new ExprTypeResult($value->type, $value->isNullable);
 			case Expr\ExprTypeEnum::CAST_TYPE:
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\MixedType(),
 					true,
 				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 
-				return new QueryResultField(
-					$this->getNodeContent($expr),
+				return new ExprTypeResult(
 					new Schema\DbType\MixedType(),
 					true,
 				);
+		}
+	}
+
+	private function getDefaultFieldNameForExpr(Expr\Expr $expr): string
+	{
+		switch ($expr::getExprType()) {
+			case Expr\ExprTypeEnum::COLUMN:
+				assert($expr instanceof Expr\Column);
+
+				return $expr->name;
+			case Expr\ExprTypeEnum::LITERAL_NULL:
+				return 'NULL';
+			case Expr\ExprTypeEnum::LITERAL_STRING:
+				assert($expr instanceof Expr\LiteralString);
+
+				return $expr->firstConcatPart;
+			case Expr\ExprTypeEnum::UNARY_OP:
+				assert($expr instanceof Expr\UnaryOp);
+
+				if ($expr->operation !== Expr\UnaryOpTypeEnum::PLUS) {
+					return $this->getNodeContent($expr);
+				}
+
+				// It seems that MariaDB generally omits the +.
+				// TODO: investigate it more and fix stuff like "SELECT +(SELECT 1)"
+				return $this->getDefaultFieldNameForExpr($expr->expression);
+			default:
+				return $this->getNodeContent($expr);
 		}
 	}
 
@@ -1104,10 +1099,10 @@ final class AnalyserState
 		);
 	}
 
-	/** @param array<QueryResultField> $fields */
-	private function isAnyFieldNullable(array $fields): bool
+	/** @param array<ExprTypeResult> $fields */
+	private function isAnyExprNullable(array $fields): bool
 	{
-		return array_reduce($fields, static fn (bool $carry, QueryResultField $f) => $carry || $f->isNullable, false);
+		return array_reduce($fields, static fn (bool $carry, ExprTypeResult $f) => $carry || $f->isNullable, false);
 	}
 
 	private function getCombinedType(Schema\DbType\DbType $left, Schema\DbType\DbType $right): Schema\DbType\DbType

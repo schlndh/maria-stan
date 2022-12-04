@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall;
 use MariaStan\Parser\Exception\ParserException;
@@ -52,14 +52,11 @@ final class MaxMin implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$arg = reset($argumentTypes);
-		assert($arg instanceof QueryResultField);
+		assert($arg instanceof ExprTypeResult);
 
-		return new QueryResultField($nodeContent, $arg->type, true);
+		return new ExprTypeResult($arg->type, true);
 	}
 }

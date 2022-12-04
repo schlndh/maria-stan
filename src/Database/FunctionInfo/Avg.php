@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
-use MariaStan\Analyser\QueryResultField;
+use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall;
 use MariaStan\Parser\Exception\ParserException;
@@ -56,13 +56,10 @@ final class Avg implements FunctionInfo
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(
-		FunctionCall $functionCall,
-		array $argumentTypes,
-		string $nodeContent,
-	): QueryResultField {
+	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	{
 		$arg = reset($argumentTypes);
-		assert($arg instanceof QueryResultField);
+		assert($arg instanceof ExprTypeResult);
 
 		$type = match ($arg->type::getTypeEnum()) {
 			DbTypeEnum::NULL => new NullType(),
@@ -70,6 +67,6 @@ final class Avg implements FunctionInfo
 			default => new DecimalType(),
 		};
 
-		return new QueryResultField($nodeContent, $type, true);
+		return new ExprTypeResult($type, true);
 	}
 }
