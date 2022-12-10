@@ -140,6 +140,14 @@ final class ColumnResolver
 				);
 			}
 
+			$field = new QueryResultField(
+				$field->name,
+				new ExprTypeResult(
+					$field->exprType->type,
+					$field->exprType->isNullable,
+					new SubqueryColumnInfo($field->name, $alias),
+				),
+			);
 			$uniqueFieldNameMap[$field->name] = true;
 			$columnNames[] = $field->name;
 			$this->subquerySchemas[$alias][$field->name] = $field;
@@ -257,6 +265,7 @@ final class ColumnResolver
 				? static fn (array $t) => $t['column'] === $column
 				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table,
 		);
+		$columnInfo = null;
 
 		switch (count($candidateTables)) {
 			case 0:
@@ -285,6 +294,9 @@ final class ColumnResolver
 
 				if (isset($this->tableSchemas[$tableName])) {
 					$columnSchema = $this->tableSchemas[$tableName]->columns[$column];
+					$columnInfo = isset($this->cteSchemas[$tableName])
+						? new SubqueryColumnInfo($column, $alias)
+						: new TableColumnInfo($column, $tableName, $alias);
 				} elseif (isset($this->subquerySchemas[$alias])) {
 					$columnField = $this->subquerySchemas[$alias][$column];
 					$columnSchema = new Schema\Column(
@@ -292,6 +304,7 @@ final class ColumnResolver
 						$columnField->exprType->type,
 						$columnField->exprType->isNullable,
 					);
+					$columnInfo = new SubqueryColumnInfo($column, $alias);
 				} else {
 					throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
 				}
@@ -305,7 +318,7 @@ final class ColumnResolver
 
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
 
-		return new ExprTypeResult($columnSchema->type, $columnSchema->isNullable || $isOuterTable);
+		return new ExprTypeResult($columnSchema->type, $columnSchema->isNullable || $isOuterTable, $columnInfo);
 	}
 
 	private function findUniqueItemInFieldList(string $name): ?QueryResultField
@@ -340,6 +353,9 @@ final class ColumnResolver
 						new ExprTypeResult(
 							$column->type,
 							$column->isNullable || $isOuterTable,
+							isset($this->cteSchemas[$normalizedTableName])
+								? new SubqueryColumnInfo($column->name, $table)
+								: new TableColumnInfo($column->name, $normalizedTableName, $table),
 						),
 					);
 				}
@@ -367,6 +383,9 @@ final class ColumnResolver
 						new ExprTypeResult(
 							$columnSchema->type,
 							$columnSchema->isNullable || $isOuterTable,
+							isset($this->cteSchemas[$normalizedTableName])
+								? new SubqueryColumnInfo($columnSchema->name, $table)
+								: new TableColumnInfo($columnSchema->name, $normalizedTableName, $table),
 						),
 					);
 				} elseif (isset($this->subquerySchemas[$table])) {

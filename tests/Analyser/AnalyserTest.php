@@ -899,6 +899,14 @@ class AnalyserTest extends TestCase
 			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT tbl.id FROM tbl tbl",
 		];
 
+		yield "WITH - alias on SELECT - multiple" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT * FROM tbl aaa, tbl bbb",
+		];
+
+		yield "WITH - alias on SELECT - multiple - * from one" => [
+			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT bbb.* FROM tbl aaa, tbl bbb",
+		];
+
 		yield "WITH - CTE name overshadows existing table" => [
 			'query' => "WITH analyser_test AS (SELECT 1) SELECT * FROM analyser_test",
 		];
@@ -1151,6 +1159,32 @@ class AnalyserTest extends TestCase
 					"The test says {$analyzedField->name} should be {$analyzedExprType->type::getTypeEnum()->name} "
 					. "but got {$actualType->name} from the database.",
 				);
+			}
+
+			if ($field->table === '') {
+				$this->assertNull($analyzedExprType->column);
+			} else {
+				$this->assertNotNull($analyzedExprType->column);
+				$column = $analyzedExprType->column;
+
+				if ($field->orgtable === '') {
+					$this->assertInstanceOf(SubqueryColumnInfo::class, $analyzedExprType->column);
+				}
+
+				if ($column instanceof TableColumnInfo) {
+					$this->assertSame($field->orgtable, $column->tableName);
+					$this->assertSame($field->table, $column->tableAlias);
+					$this->assertSame($field->orgname, $column->name);
+				} elseif ($column instanceof SubqueryColumnInfo) {
+					if ($field->orgtable !== '') {
+						$this->assertSame($field->orgtable, $column->subqueryAlias);
+					}
+
+					$this->assertSame($field->table, $column->subqueryAlias);
+					$this->assertSame($field->name, $column->name);
+				} else {
+					$this->fail('Unhanled column info type.');
+				}
 			}
 		}
 

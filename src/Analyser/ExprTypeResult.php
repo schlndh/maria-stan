@@ -8,8 +8,10 @@ use MariaStan\Schema\DbType\DbType;
 
 final class ExprTypeResult
 {
-	// TODO: add source: column vs dynamic
-	public function __construct(public readonly DbType $type, public readonly bool $isNullable)
-	{
+	public function __construct(
+		public readonly DbType $type,
+		public readonly bool $isNullable,
+		public readonly TableColumnInfo|SubqueryColumnInfo|null $column = null,
+	) {
 	}
 }
