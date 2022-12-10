@@ -510,6 +510,29 @@ class AnalyserTest extends TestCase
 				'query' => "SELECT {$expr}",
 			];
 		}
+
+		$unaryPlusData = [
+			'1',
+			'(1)',
+			'(1+1)',
+			'(+1)',
+			'+1',
+			'+(-1)',
+			'-+1',
+			'(SELECT 1)',
+			'id',
+			'NOW()',
+			'"aa"',
+			'NULL',
+			'1.1',
+			'1e1',
+		];
+
+		foreach ($unaryPlusData as $value) {
+			yield "unary plus prefix of {$value}" => [
+				'query' => "SELECT +{$value} FROM analyser_test",
+			];
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */

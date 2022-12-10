@@ -274,9 +274,10 @@ final class AnalyserState
 			switch ($selectExpr::getSelectExprType()) {
 				case SelectExprTypeEnum::REGULAR_EXPR:
 					assert($selectExpr instanceof RegularExpr);
-					$resolvedExpr = $this->resolveExprType($selectExpr->expr);
+					$expr = $this->removeUnaryPlusPrefix($selectExpr->expr);
+					$resolvedExpr = $this->resolveExprType($expr);
 					$resolvedField = new QueryResultField(
-						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($selectExpr->expr),
+						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($expr),
 						$resolvedExpr,
 					);
 					$fields[] = $resolvedField;
@@ -1004,19 +1005,40 @@ final class AnalyserState
 				assert($expr instanceof Expr\LiteralString);
 
 				return $expr->firstConcatPart;
-			case Expr\ExprTypeEnum::UNARY_OP:
-				assert($expr instanceof Expr\UnaryOp);
-
-				if ($expr->operation !== Expr\UnaryOpTypeEnum::PLUS) {
-					return $this->getNodeContent($expr);
-				}
-
-				// It seems that MariaDB generally omits the +.
-				// TODO: investigate it more and fix stuff like "SELECT +(SELECT 1)"
-				return $this->getDefaultFieldNameForExpr($expr->expression);
 			default:
 				return $this->getNodeContent($expr);
 		}
+	}
+
+	private function removeUnaryPlusPrefix(Expr\Expr $expr): Expr\Expr
+	{
+		// MariaDB seems to handle things like +column differently.
+		$startExpr = $expr;
+
+		while ($expr::getExprType() === Expr\ExprTypeEnum::UNARY_OP) {
+			assert($expr instanceof Expr\UnaryOp);
+
+			if ($expr->operation !== Expr\UnaryOpTypeEnum::PLUS) {
+				break;
+			}
+
+			$expr = $expr->expression;
+		}
+
+		if ($startExpr === $expr) {
+			return $startExpr;
+		}
+
+		switch ($expr::getExprType()) {
+			case Expr\ExprTypeEnum::COLUMN:
+			case Expr\ExprTypeEnum::LITERAL_FLOAT:
+			case Expr\ExprTypeEnum::LITERAL_NULL:
+			case Expr\ExprTypeEnum::LITERAL_INT:
+			case Expr\ExprTypeEnum::LITERAL_STRING:
+				return $expr;
+		}
+
+		return $startExpr;
 	}
 
 	private function getNodeContent(Node $node): string
