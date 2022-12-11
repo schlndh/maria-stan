@@ -667,6 +667,22 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT name FROM analyser_test HAVING name',
 		];
 
+		yield 'use columns from field list in HAVING - original name of aliased column' => [
+			'query' => 'SELECT name aaa FROM analyser_test HAVING name',
+		];
+
+		yield 'use columns from field list in HAVING - table.column' => [
+			'query' => 'SELECT name aaa FROM analyser_test HAVING analyser_test.name',
+		];
+
+		yield 'use columns from field list in HAVING - table_alias.column' => [
+			'query' => 'SELECT name aaa FROM analyser_test t HAVING t.name',
+		];
+
+		yield 'use columns from field list in HAVING - original name of aliased column in outer subquery' => [
+			'query' => 'SELECT name aaa, (SELECT 1 HAVING name) FROM analyser_test',
+		];
+
 		yield 'use columns from GROUP BY in HAVING' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY name HAVING name',
 		];
@@ -675,8 +691,24 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING COUNT(name)',
 		];
 
+		yield 'use any column in HAVING as part of an aggregate in a subquery' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING (SELECT COUNT(name))',
+		];
+
+		yield 'use outer subquery column in HAVING' => [
+			'query' => 'SELECT id, (SELECT 1 HAVING id > 1) FROM analyser_test',
+		];
+
 		yield 'use alias from field list in ORDER BY' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test ORDER BY aaa',
+		];
+
+		yield 'ORDER BY - field alias vs column' => [
+			'query' => 'SELECT id, 1 id FROM analyser_test ORDER BY id DESC',
+		];
+
+		yield 'ORDER BY - field alias vs column - swapped order' => [
+			'query' => 'SELECT 1 id, id FROM analyser_test ORDER BY id DESC',
 		];
 	}
 
@@ -1167,23 +1199,17 @@ class AnalyserTest extends TestCase
 				$this->assertNotNull($analyzedExprType->column);
 				$column = $analyzedExprType->column;
 
+				$this->assertSame($field->table, $column->tableAlias);
+				$this->assertSame($field->orgname, $column->name);
+
 				if ($field->orgtable === '') {
-					$this->assertInstanceOf(SubqueryColumnInfo::class, $analyzedExprType->column);
-				}
-
-				if ($column instanceof TableColumnInfo) {
+					$this->assertSame(ColumnInfoTableTypeEnum::SUBQUERY, $column->tableType);
+				} elseif (
+					$field->orgtable !== $field->table
+					// For CTE we have the original name in tableName even if it's later aliased in FROM.
+					|| $column->tableType !== ColumnInfoTableTypeEnum::SUBQUERY
+				) {
 					$this->assertSame($field->orgtable, $column->tableName);
-					$this->assertSame($field->table, $column->tableAlias);
-					$this->assertSame($field->orgname, $column->name);
-				} elseif ($column instanceof SubqueryColumnInfo) {
-					if ($field->orgtable !== '') {
-						$this->assertSame($field->orgtable, $column->subqueryAlias);
-					}
-
-					$this->assertSame($field->table, $column->subqueryAlias);
-					$this->assertSame($field->name, $column->name);
-				} else {
-					$this->fail('Unhanled column info type.');
 				}
 			}
 		}
@@ -1483,12 +1509,29 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		// TODO: implement this
-		//yield 'unknown column in HAVING - not in field list nor in GROUP BY nor aggregate' => [
-		//	'query' => 'SELECT 1 FROM analyser_test GROUP BY id HAVING name',
-		//	'error' => 'Unknown column name',
-		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		//];
+		yield 'unknown column in HAVING - not in field list nor in GROUP BY nor aggregate' => [
+			'query' => 'SELECT 1 FROM analyser_test GROUP BY id HAVING name',
+			'error' => AnalyserErrorMessageBuilder::createInvalidHavingColumn('name'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in HAVING - aggregate in subquery, followed by unaggregated use' => [
+			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING (SELECT COUNT(name)) AND name',
+			'error' => AnalyserErrorMessageBuilder::createInvalidHavingColumn('name'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in HAVING - aggregate in SELECT, unaggregated use in HAVING' => [
+			'query' => 'SELECT COUNT(name) FROM analyser_test HAVING name',
+			'error' => AnalyserErrorMessageBuilder::createInvalidHavingColumn('name'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in HAVING - non-aggregate function' => [
+			'query' => 'SELECT id FROM analyser_test HAVING CAST(name AS INT)',
+			'error' => AnalyserErrorMessageBuilder::createInvalidHavingColumn('name'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
 
 		yield 'unknown column in ORDER BY' => [
 			'query' => 'SELECT * FROM analyser_test ORDER BY v.id',

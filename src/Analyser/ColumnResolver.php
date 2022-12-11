@@ -57,7 +57,11 @@ final class ColumnResolver
 	/** @var array<array{column: string, table: string}> */
 	private array $allColumns = [];
 
+	/** @var array<string, array<string, bool>> table/subquery alias => column name => true */
+	private array $groupByColumns = [];
+
 	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
+	private int $aggregateFunctionDepth = 0;
 
 	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
 	{
@@ -145,7 +149,7 @@ final class ColumnResolver
 				new ExprTypeResult(
 					$field->exprType->type,
 					$field->exprType->isNullable,
-					new SubqueryColumnInfo($field->name, $alias),
+					new ColumnInfo($field->name, $alias, $alias, ColumnInfoTableTypeEnum::SUBQUERY),
 				),
 			);
 			$uniqueFieldNameMap[$field->name] = true;
@@ -207,6 +211,11 @@ final class ColumnResolver
 		$this->fieldList[$field->name][] = [$field, $isColumn];
 	}
 
+	public function registerGroupByColumn(ColumnInfo $column): void
+	{
+		$this->groupByColumns[$column->tableAlias][$column->name] = true;
+	}
+
 	public function setFieldListBehavior(ColumnResolverFieldBehaviorEnum $shouldPreferFieldList): void
 	{
 		$this->fieldListBehavior = $shouldPreferFieldList;
@@ -217,7 +226,11 @@ final class ColumnResolver
 	{
 		if (
 			$table === null
-			&& $this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
+			&& in_array(
+				$this->fieldListBehavior,
+				[ColumnResolverFieldBehaviorEnum::HAVING, ColumnResolverFieldBehaviorEnum::ORDER_BY],
+				true,
+			)
 			&& isset($this->fieldList[$column])
 		) {
 			return $this->fieldList[$column][0][0]->exprType;
@@ -265,15 +278,22 @@ final class ColumnResolver
 				? static fn (array $t) => $t['column'] === $column
 				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table,
 		);
-		$columnInfo = null;
 
 		switch (count($candidateTables)) {
 			case 0:
 				$resolvedParentColumn = null;
 
+				if ($this->aggregateFunctionDepth > 0) {
+					$this->parent?->enterAggregateFunction();
+				}
+
 				try {
 					$resolvedParentColumn = $this->parent?->resolveColumn($column, $table);
 				} catch (AnalyserException) {
+				}
+
+				if ($this->aggregateFunctionDepth > 0) {
+					$this->parent?->exitAggregateFunction();
 				}
 
 				// TODO: add test to make sure that the prioritization is the same as in the database.
@@ -294,9 +314,14 @@ final class ColumnResolver
 
 				if (isset($this->tableSchemas[$tableName])) {
 					$columnSchema = $this->tableSchemas[$tableName]->columns[$column];
-					$columnInfo = isset($this->cteSchemas[$tableName])
-						? new SubqueryColumnInfo($column, $alias)
-						: new TableColumnInfo($column, $tableName, $alias);
+					$columnInfo = new ColumnInfo(
+						$column,
+						$tableName,
+						$alias,
+						isset($this->cteSchemas[$tableName])
+							? ColumnInfoTableTypeEnum::SUBQUERY
+							: ColumnInfoTableTypeEnum::TABLE,
+					);
 				} elseif (isset($this->subquerySchemas[$alias])) {
 					$columnField = $this->subquerySchemas[$alias][$column];
 					$columnSchema = new Schema\Column(
@@ -304,7 +329,7 @@ final class ColumnResolver
 						$columnField->exprType->type,
 						$columnField->exprType->isNullable,
 					);
-					$columnInfo = new SubqueryColumnInfo($column, $alias);
+					$columnInfo = new ColumnInfo($column, $tableName, $alias, ColumnInfoTableTypeEnum::SUBQUERY);
 				} else {
 					throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
 				}
@@ -314,6 +339,38 @@ final class ColumnResolver
 				throw new AnalyserException(
 					AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
 				);
+		}
+
+		if (
+			$this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
+			&& $this->aggregateFunctionDepth === 0
+			&& ! isset($this->groupByColumns[$columnInfo->tableAlias][$columnInfo->name])
+		) {
+			$isColumnUsedInFieldList = false;
+
+			foreach ($this->fieldList as $fields) {
+				foreach ($fields as [$field]) {
+					assert($field instanceof QueryResultField);
+					$fieldColumn = $field->exprType->column;
+
+					if (
+						$fieldColumn === null
+						|| $fieldColumn->name !== $columnInfo->name
+						|| $fieldColumn->tableAlias !== $columnInfo->tableAlias
+					) {
+						continue;
+					}
+
+					$isColumnUsedInFieldList = true;
+					break 2;
+				}
+			}
+
+			if (! $isColumnUsedInFieldList) {
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createInvalidHavingColumn($columnInfo->name),
+				);
+			}
 		}
 
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
@@ -353,9 +410,14 @@ final class ColumnResolver
 						new ExprTypeResult(
 							$column->type,
 							$column->isNullable || $isOuterTable,
-							isset($this->cteSchemas[$normalizedTableName])
-								? new SubqueryColumnInfo($column->name, $table)
-								: new TableColumnInfo($column->name, $normalizedTableName, $table),
+							new ColumnInfo(
+								$column->name,
+								$normalizedTableName,
+								$table,
+								isset($this->cteSchemas[$normalizedTableName])
+									? ColumnInfoTableTypeEnum::SUBQUERY
+									: ColumnInfoTableTypeEnum::TABLE,
+							),
 						),
 					);
 				}
@@ -383,9 +445,14 @@ final class ColumnResolver
 						new ExprTypeResult(
 							$columnSchema->type,
 							$columnSchema->isNullable || $isOuterTable,
-							isset($this->cteSchemas[$normalizedTableName])
-								? new SubqueryColumnInfo($columnSchema->name, $table)
-								: new TableColumnInfo($columnSchema->name, $normalizedTableName, $table),
+							new ColumnInfo(
+								$columnSchema->name,
+								$normalizedTableName,
+								$table,
+								isset($this->cteSchemas[$normalizedTableName])
+									? ColumnInfoTableTypeEnum::SUBQUERY
+									: ColumnInfoTableTypeEnum::TABLE,
+							),
 						),
 					);
 				} elseif (isset($this->subquerySchemas[$table])) {
@@ -523,5 +590,20 @@ final class ColumnResolver
 	{
 		return isset($this->tablesByAlias[$table])
 			|| (isset($this->tableSchemas[$table]) && ! in_array($table, $this->tablesByAlias, true));
+	}
+
+	public function enterAggregateFunction(): void
+	{
+		$this->aggregateFunctionDepth++;
+	}
+
+	/** @throws AnalyserException */
+	public function exitAggregateFunction(): void
+	{
+		if ($this->aggregateFunctionDepth === 0) {
+			throw new AnalyserException('Invalid state: exiting aggregate function without entering it.');
+		}
+
+		$this->aggregateFunctionDepth--;
 	}
 }

@@ -35,6 +35,7 @@ use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
 use MariaStan\Database\FunctionInfo\FunctionInfoHelper;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
+use MariaStan\Database\FunctionInfo\FunctionTypeEnum;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\Parser\Position;
@@ -230,7 +231,7 @@ final class AnalyserState
 
 		unset($leftFields, $rightFields);
 		$this->columnResolver->registerFieldList($fields);
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::ORDER_BY);
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
@@ -303,14 +304,21 @@ final class AnalyserState
 		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::GROUP_BY);
 
 		foreach ($select->groupBy?->expressions ?? [] as $groupByExpr) {
-			$this->resolveExprType($groupByExpr->expr);
-		}
+			$exprType = $this->resolveExprType($groupByExpr->expr);
 
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
+			if ($exprType->column === null) {
+				continue;
+			}
+
+			$this->columnResolver->registerGroupByColumn($exprType->column);
+		}
 
 		if ($select->having) {
+			$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
 			$this->resolveExprType($select->having);
 		}
+
+		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::ORDER_BY);
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
@@ -896,6 +904,23 @@ final class AnalyserState
 				$arguments = $expr->getArguments();
 				$normalizedFunctionName = strtoupper($expr->getFunctionName());
 				$resolvedArguments = [];
+				$functionInfo = $this->functionInfoRegistry
+					->findFunctionInfoByFunctionName($normalizedFunctionName);
+
+				if ($functionInfo === null) {
+					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
+				}
+
+				$functionType = $functionInfo?->getFunctionType();
+				$isAggregateFunction = $functionType === FunctionTypeEnum::AGGREGATE
+					|| (
+						$functionType === FunctionTypeEnum::AGGREGATE_OR_WINDOW
+						&& $expr::getFunctionCallType() !== Expr\FunctionCall\FunctionCallTypeEnum::WINDOW
+					);
+
+				if ($isAggregateFunction) {
+					$this->columnResolver->enterAggregateFunction();
+				}
 
 				foreach ($arguments as $arg) {
 					$position++;
@@ -912,8 +937,9 @@ final class AnalyserState
 					}
 				}
 
-				$functionInfo = $this->functionInfoRegistry
-					->findFunctionInfoByFunctionName($normalizedFunctionName);
+				if ($isAggregateFunction) {
+					$this->columnResolver->exitAggregateFunction();
+				}
 
 				if ($functionInfo !== null) {
 					try {
@@ -921,8 +947,6 @@ final class AnalyserState
 					} catch (AnalyserException $e) {
 						$this->errors[] = new AnalyserError($e->getMessage());
 					}
-				} else {
-					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
 				}
 
 				return new ExprTypeResult(

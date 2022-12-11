@@ -129,6 +129,12 @@ class AnalyserErrorMessageBuilder
 		return "Column {$column} has no default value and none was provided.";
 	}
 
+	public static function createInvalidHavingColumn(string $column): string
+	{
+		return "Column {$column} cannot be used in HAVING clause. Only columns that are part of the GROUP BY clause,"
+			. " columns used in aggregate functions, columns from the SELECT list and outer subqueries can be used.";
+	}
+
 	private static function formatDbType(DbType $type): string
 	{
 		if ($type::getTypeEnum() === DbTypeEnum::TUPLE) {

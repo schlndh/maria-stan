@@ -11,7 +11,7 @@ final class ExprTypeResult
 	public function __construct(
 		public readonly DbType $type,
 		public readonly bool $isNullable,
-		public readonly TableColumnInfo|SubqueryColumnInfo|null $column = null,
+		public readonly ?ColumnInfo $column = null,
 	) {
 	}
 }
