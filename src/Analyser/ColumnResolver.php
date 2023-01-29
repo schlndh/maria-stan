@@ -63,6 +63,9 @@ final class ColumnResolver
 	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private int $aggregateFunctionDepth = 0;
 
+	/** @var array<string, array<string, array<AnalyserColumnKnowledge>>>> table alias => column name => knowledge */
+	private array $knowledgeBase = [];
+
 	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
 	{
 	}
@@ -222,8 +225,11 @@ final class ColumnResolver
 	}
 
 	/** @throws AnalyserException */
-	public function resolveColumn(string $column, ?string $table): ExprTypeResult
-	{
+	public function resolveColumn(
+		string $column,
+		?string $table,
+		?AnalyserConditionTypeEnum $condition = null,
+	): ExprTypeResult {
 		if (
 			$table === null
 			&& in_array(
@@ -374,8 +380,20 @@ final class ColumnResolver
 		}
 
 		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
+		$knowledgeBase = [];
+		$isNullable = $columnSchema->isNullable || $isOuterTable;
 
-		return new ExprTypeResult($columnSchema->type, $columnSchema->isNullable || $isOuterTable, $columnInfo);
+		if (
+			$condition === AnalyserConditionTypeEnum::NULL
+			&& $columnSchema->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::NULL
+		) {
+			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, true);
+		} elseif ($condition !== null && $isNullable) {
+			// All TRUTHY, FALSY and NOT_NULL require the column to be non-nullable.
+			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, false);
+		}
+
+		return new ExprTypeResult($columnSchema->type, $isNullable, $columnInfo, $knowledgeBase);
 	}
 
 	private function findUniqueItemInFieldList(string $name): ?QueryResultField
@@ -402,14 +420,32 @@ final class ColumnResolver
 			$isOuterTable = $this->outerJoinedTableMap[$table] ?? false;
 			$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
 			$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
+			$knowledge = $this->knowledgeBase[$table] ?? null;
 
 			if ($tableSchema !== null) {
 				foreach ($tableSchema->columns ?? [] as $column) {
+					$nullability = null;
+
+					foreach ($knowledge[$column->name] ?? [] as $columnKnowledge) {
+						$nullability ??= $columnKnowledge->nullability;
+					}
+
+					$type = $column->type;
+					$isNullable = $column->isNullable || $isOuterTable;
+
+					if ($nullability === true) {
+						$type = new Schema\DbType\NullType();
+						$isNullable = true;
+					} elseif ($nullability === false) {
+						// TODO: what if $type is NullType?
+						$isNullable = false;
+					}
+
 					$fields[] = new QueryResultField(
 						$column->name,
 						new ExprTypeResult(
-							$column->type,
-							$column->isNullable || $isOuterTable,
+							$type,
+							$isNullable,
 							new ColumnInfo(
 								$column->name,
 								$normalizedTableName,
@@ -440,11 +476,28 @@ final class ColumnResolver
 						continue;
 					}
 
+					$nullability = null;
+
+					foreach ($this->knowledgeBase[$table][$columnSchema->name] ?? [] as $columnKnowledge) {
+						$nullability ??= $columnKnowledge->nullability;
+					}
+
+					$type = $columnSchema->type;
+					$isNullable = $columnSchema->isNullable || $isOuterTable;
+
+					if ($nullability === true) {
+						$type = new Schema\DbType\NullType();
+						$isNullable = true;
+					} elseif ($nullability === false) {
+						// TODO: what if $type is NullType?
+						$isNullable = false;
+					}
+
 					$fields[] = new QueryResultField(
 						$columnSchema->name,
 						new ExprTypeResult(
-							$columnSchema->type,
-							$columnSchema->isNullable || $isOuterTable,
+							$type,
+							$isNullable,
 							new ColumnInfo(
 								$columnSchema->name,
 								$normalizedTableName,
@@ -605,5 +658,13 @@ final class ColumnResolver
 		}
 
 		$this->aggregateFunctionDepth--;
+	}
+
+	/** @param array<AnalyserColumnKnowledge> $knowledgeBase */
+	public function addKnowledge(array $knowledgeBase): void
+	{
+		foreach ($knowledgeBase as $knowledge) {
+			$this->knowledgeBase[$knowledge->columnInfo->tableAlias][$knowledge->columnInfo->name][] = $knowledge;
+		}
 	}
 }

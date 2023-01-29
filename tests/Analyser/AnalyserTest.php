@@ -22,6 +22,7 @@ use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
 
 use function array_fill;
+use function array_fill_keys;
 use function array_filter;
 use function array_keys;
 use function array_map;
@@ -33,6 +34,7 @@ use function str_starts_with;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_NOT_NULL_FLAG;
+use const MYSQLI_NUM;
 use const MYSQLI_TYPE_BLOB;
 use const MYSQLI_TYPE_DATE;
 use const MYSQLI_TYPE_DATETIME;
@@ -1259,6 +1261,125 @@ class AnalyserTest extends TestCase
 
 		if (count($incompleteTestErrors) > 0) {
 			$this->markTestIncomplete(implode("\n-----------\n", $incompleteTestErrors));
+		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public function provideValidNullabilityTestData(): iterable
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->query("
+			CREATE OR REPLACE TABLE analyser_test_nullability (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				col_vchar VARCHAR(255) NULL
+			);
+		");
+		$db->query('
+			INSERT INTO analyser_test_nullability (col_vchar)
+			VALUES (NULL), ("aa")
+		');
+
+		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
+		// column are NULL, then the analyser must infer it as NULL type.
+		yield 'no WHERE' => [
+			'query' => 'SELECT * FROM analyser_test_nullability',
+		];
+
+		yield 'useless WHERE 1' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1',
+		];
+
+		yield 'useless WHERE id' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE id',
+		];
+
+		foreach (['col_vchar IS NOT NULL', 'col_vchar IS NULL', 'NOT col_vchar'] as $op) {
+			yield "SELECT t.* WHERE {$op}" => [
+				'query' => "SELECT t.* FROM analyser_test_nullability t WHERE {$op}",
+			];
+
+			yield "SELECT * WHERE {$op}" => [
+				'query' => "SELECT * FROM analyser_test_nullability WHERE {$op}",
+			];
+		}
+	}
+
+	/**
+	 * @dataProvider provideValidNullabilityTestData
+	 * @param array<scalar|null> $params
+	 */
+	public function testValidNullability(string $query, array $params = []): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
+		$result = $analyser->analyzeQuery($query);
+
+		$this->assertSame(count($params), $result->positionalPlaceholderCount);
+		$db->begin_transaction();
+
+		try {
+			$stmt = null;
+
+			if (count($params) > 0) {
+				$stmt = $db->prepare($query);
+				$stmt->execute($params);
+				$dbResult = $stmt->get_result();
+			} else {
+				$dbResult = $db->query($query);
+			}
+
+			$this->assertInstanceOf(mysqli_result::class, $dbResult);
+			$fields = $dbResult->fetch_fields();
+			$rows = $dbResult->fetch_all(MYSQLI_NUM);
+			$dbResult->close();
+			$stmt?->close();
+		} finally {
+			$db->rollback();
+		}
+
+		$this->assertNotNull($result->resultFields);
+		$this->assertSameSize($result->resultFields, $fields);
+		$rowCount = count($rows);
+		$this->assertGreaterThanOrEqual(1, $rowCount, 'The query did not return any results.');
+		$nullCountsByColumn = array_fill_keys(array_keys($rows[0]), 0);
+
+		foreach ($rows as $row) {
+			foreach ($row as $col => $value) {
+				if ($value !== null) {
+					continue;
+				}
+
+				$nullCountsByColumn[$col]++;
+			}
+		}
+
+		$idx = 0;
+
+		foreach ($result->resultFields as $field) {
+			$nullCount = $nullCountsByColumn[$idx];
+
+			if ($field->exprType->type::getTypeEnum() === DbTypeEnum::NULL) {
+				$this->assertSame(
+					$rowCount,
+					$nullCount,
+					'The field was detected as NULL, but there is non-NULL value.',
+				);
+			} elseif ($field->exprType->isNullable) {
+				$this->assertGreaterThanOrEqual(
+					1,
+					$nullCount,
+					'There are no NULLs in the field, but the analyser thinks it is nullable.',
+				);
+				$this->assertLessThan(
+					$rowCount,
+					$nullCount,
+					'All the values are NULL. The analyser should infer NULL type.',
+				);
+			} else {
+				$this->assertSame(0, $nullCount, 'There are NULLs in a field that is supposed to be non-nullable.');
+			}
+
+			$idx++;
 		}
 	}
 

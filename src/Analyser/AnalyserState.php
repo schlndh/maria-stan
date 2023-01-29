@@ -265,7 +265,8 @@ final class AnalyserState
 		}
 
 		if ($select->where) {
-			$this->resolveExprType($select->where);
+			$whereResult = $this->resolveExprType($select->where, AnalyserConditionTypeEnum::TRUTHY);
+			$this->columnResolver->addKnowledge($whereResult->knowledgeBase);
 		}
 
 		$fields = [];
@@ -618,7 +619,7 @@ final class AnalyserState
 	}
 
 	/** @throws AnalyserException */
-	private function resolveExprType(Expr\Expr $expr): ExprTypeResult
+	private function resolveExprType(Expr\Expr $expr, ?AnalyserConditionTypeEnum $condition = null): ExprTypeResult
 	{
 		// TODO: handle all expression types
 		switch ($expr::getExprType()) {
@@ -626,7 +627,7 @@ final class AnalyserState
 				assert($expr instanceof Expr\Column);
 
 				try {
-					return $this->columnResolver->resolveColumn($expr->name, $expr->tableName);
+					return $this->columnResolver->resolveColumn($expr->name, $expr->tableName, $condition);
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
@@ -663,7 +664,13 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
-				$resolvedInnerExpr = $this->resolveExprType($expr->expression);
+				$innerCondition = $condition;
+
+				if ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::LOGIC_NOT) {
+					$innerCondition = $innerCondition->negate();
+				}
+
+				$resolvedInnerExpr = $this->resolveExprType($expr->expression, $innerCondition);
 
 				$type = match ($expr->operation) {
 					Expr\UnaryOpTypeEnum::PLUS => $resolvedInnerExpr->type,
@@ -676,7 +683,12 @@ final class AnalyserState
 					default => new Schema\DbType\IntType(),
 				};
 
-				return new ExprTypeResult($type, $resolvedInnerExpr->isNullable);
+				return new ExprTypeResult(
+					$type,
+					$resolvedInnerExpr->isNullable,
+					null,
+					$resolvedInnerExpr->knowledgeBase,
+				);
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
 				$leftResult = $this->resolveExprType($expr->left);
@@ -802,12 +814,30 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::IS:
 				assert($expr instanceof Expr\Is);
+
+				if ($condition === null) {
+					$innerCondition = null;
+				} else {
+					$innerCondition = match ($expr->test) {
+						true => AnalyserConditionTypeEnum::TRUTHY,
+						false => AnalyserConditionTypeEnum::FALSY,
+						null => AnalyserConditionTypeEnum::NULL,
+					};
+
+					// TODO: NULL/NOT_NULL $condition should report as always/never being satisfied.
+					if ($condition === AnalyserConditionTypeEnum::FALSY) {
+						$innerCondition = $innerCondition->negate();
+					}
+				}
+
 				// Make sure there are no errors on the left of IS.
-				$this->resolveExprType($expr->expression);
+				$exprResult = $this->resolveExprType($expr->expression, $innerCondition);
 
 				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					false,
+					null,
+					$exprResult->knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::BETWEEN:
 				assert($expr instanceof Expr\Between);
