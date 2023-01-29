@@ -319,7 +319,6 @@ final class ColumnResolver
 				$tableName = $this->tablesByAlias[$alias] ?? $alias;
 
 				if (isset($this->tableSchemas[$tableName])) {
-					$columnSchema = $this->tableSchemas[$tableName]->columns[$column];
 					$columnInfo = new ColumnInfo(
 						$column,
 						$tableName,
@@ -329,12 +328,6 @@ final class ColumnResolver
 							: ColumnInfoTableTypeEnum::TABLE,
 					);
 				} elseif (isset($this->subquerySchemas[$alias])) {
-					$columnField = $this->subquerySchemas[$alias][$column];
-					$columnSchema = new Schema\Column(
-						$columnField->name,
-						$columnField->exprType->type,
-						$columnField->exprType->isNullable,
-					);
 					$columnInfo = new ColumnInfo($column, $tableName, $alias, ColumnInfoTableTypeEnum::SUBQUERY);
 				} else {
 					throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
@@ -379,21 +372,23 @@ final class ColumnResolver
 			}
 		}
 
-		$isOuterTable = $this->outerJoinedTableMap[$alias] ?? false;
+		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
+			?? throw new AnalyserException("Unknown column {$columnInfo->tableAlias}.{$columnInfo->name}");
 		$knowledgeBase = [];
-		$isNullable = $columnSchema->isNullable || $isOuterTable;
 
 		if (
 			$condition === AnalyserConditionTypeEnum::NULL
-			&& $columnSchema->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::NULL
+			&& $exprType->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::NULL
 		) {
 			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, true);
-		} elseif ($condition !== null && $isNullable) {
+		} elseif ($condition !== null && $exprType->isNullable) {
 			// All TRUTHY, FALSY and NOT_NULL require the column to be non-nullable.
 			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, false);
 		}
 
-		return new ExprTypeResult($columnSchema->type, $isNullable, $columnInfo, $knowledgeBase);
+		return count($knowledgeBase) === 0
+			? $exprType
+			: new ExprTypeResult($exprType->type, $exprType->isNullable, $exprType->column, $knowledgeBase);
 	}
 
 	private function findUniqueItemInFieldList(string $name): ?QueryResultField
@@ -417,113 +412,95 @@ final class ColumnResolver
 		$fields = [];
 
 		if ($table !== null) {
-			$isOuterTable = $this->outerJoinedTableMap[$table] ?? false;
 			$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
 			$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
-			$knowledge = $this->knowledgeBase[$table] ?? null;
 
 			if ($tableSchema !== null) {
-				foreach ($tableSchema->columns ?? [] as $column) {
-					$nullability = null;
-
-					foreach ($knowledge[$column->name] ?? [] as $columnKnowledge) {
-						$nullability ??= $columnKnowledge->nullability;
-					}
-
-					$type = $column->type;
-					$isNullable = $column->isNullable || $isOuterTable;
-
-					if ($nullability === true) {
-						$type = new Schema\DbType\NullType();
-						$isNullable = true;
-					} elseif ($nullability === false) {
-						// TODO: what if $type is NullType?
-						$isNullable = false;
-					}
-
-					$fields[] = new QueryResultField(
-						$column->name,
-						new ExprTypeResult(
-							$type,
-							$isNullable,
-							new ColumnInfo(
-								$column->name,
-								$normalizedTableName,
-								$table,
-								isset($this->cteSchemas[$normalizedTableName])
-									? ColumnInfoTableTypeEnum::SUBQUERY
-									: ColumnInfoTableTypeEnum::TABLE,
-							),
-						),
-					);
-				}
+				$columnNames = array_keys($tableSchema->columns);
 			} elseif (isset($this->subquerySchemas[$table])) {
-				$fields = array_merge($fields, array_values($this->subquerySchemas[$table]));
+				$columnNames = array_keys($this->subquerySchemas[$table]);
 			} else {
 				// TODO: error if schema is not found
+				return [];
+			}
+
+			foreach ($columnNames as $column) {
+				$exprType = $this->findColumnExprType($table, $column);
+
+				// This would have already been reported previously, so let's ignore it.
+				if ($exprType === null) {
+					continue;
+				}
+
+				$fields[] = new QueryResultField($column, $exprType);
 			}
 		} else {
 			foreach ($this->allColumns as ['column' => $column, 'table' => $table]) {
-				$isOuterTable = $this->outerJoinedTableMap[$table] ?? false;
-				$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
-				$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
+				$exprType = $this->findColumnExprType($table, $column);
 
-				if ($tableSchema !== null) {
-					$columnSchema = $tableSchema->columns[$column] ?? null;
-
-					// This would have already been reported previously, so let's ignore it.
-					if ($columnSchema === null) {
-						continue;
-					}
-
-					$nullability = null;
-
-					foreach ($this->knowledgeBase[$table][$columnSchema->name] ?? [] as $columnKnowledge) {
-						$nullability ??= $columnKnowledge->nullability;
-					}
-
-					$type = $columnSchema->type;
-					$isNullable = $columnSchema->isNullable || $isOuterTable;
-
-					if ($nullability === true) {
-						$type = new Schema\DbType\NullType();
-						$isNullable = true;
-					} elseif ($nullability === false) {
-						// TODO: what if $type is NullType?
-						$isNullable = false;
-					}
-
-					$fields[] = new QueryResultField(
-						$columnSchema->name,
-						new ExprTypeResult(
-							$type,
-							$isNullable,
-							new ColumnInfo(
-								$columnSchema->name,
-								$normalizedTableName,
-								$table,
-								isset($this->cteSchemas[$normalizedTableName])
-									? ColumnInfoTableTypeEnum::SUBQUERY
-									: ColumnInfoTableTypeEnum::TABLE,
-							),
-						),
-					);
-				} elseif (isset($this->subquerySchemas[$table])) {
-					$f = $this->subquerySchemas[$table][$column] ?? null;
-
-					// This would have already been reported previously, so let's ignore it.
-					if ($f === null) {
-						continue;
-					}
-
-					$fields[] = $f;
-				} else {
-					// TODO: error if schema is not found
+				// This would have already been reported previously, so let's ignore it.
+				if ($exprType === null) {
+					continue;
 				}
+
+				$fields[] = new QueryResultField($column, $exprType);
 			}
 		}
 
 		return $fields;
+	}
+
+	private function findColumnExprType(string $table, string $column): ?ExprTypeResult
+	{
+		$isOuterTable = $this->outerJoinedTableMap[$table] ?? false;
+		$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
+		$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
+
+		if ($tableSchema !== null) {
+			$columnSchema = $tableSchema->columns[$column] ?? null;
+
+			if ($columnSchema === null) {
+				return null;
+			}
+
+			$nullability = null;
+
+			foreach ($this->knowledgeBase[$table][$columnSchema->name] ?? [] as $columnKnowledge) {
+				$nullability ??= $columnKnowledge->nullability;
+			}
+
+			$type = $columnSchema->type;
+			$isNullable = $columnSchema->isNullable || $isOuterTable;
+
+			if ($nullability === true) {
+				$type = new Schema\DbType\NullType();
+				$isNullable = true;
+			} elseif ($nullability === false) {
+				// TODO: what if $type is NullType?
+				$isNullable = false;
+			}
+
+			return new ExprTypeResult(
+				$type,
+				$isNullable,
+				new ColumnInfo(
+					$columnSchema->name,
+					$normalizedTableName,
+					$table,
+					isset($this->cteSchemas[$normalizedTableName])
+						? ColumnInfoTableTypeEnum::SUBQUERY
+						: ColumnInfoTableTypeEnum::TABLE,
+				),
+			);
+		}
+
+		if (isset($this->subquerySchemas[$table])) {
+			$f = $this->subquerySchemas[$table][$column] ?? null;
+
+			return $f?->exprType;
+		}
+
+		return null;
 	}
 
 	private function findCteSchema(string $name): ?Schema\Table
@@ -609,7 +586,7 @@ final class ColumnResolver
 	}
 
 	/** @throws AnalyserException */
-	public function resolveUsingColumn(string $column): void
+	private function resolveUsingColumn(string $column): void
 	{
 		$candidateTables = array_filter(
 			$this->allColumns,

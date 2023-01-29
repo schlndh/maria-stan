@@ -1276,7 +1276,7 @@ class AnalyserTest extends TestCase
 		");
 		$db->query('
 			INSERT INTO analyser_test_nullability (col_vchar)
-			VALUES (NULL), ("aa")
+			VALUES (NULL), ("aa"), ("1")
 		');
 
 		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
@@ -1293,7 +1293,7 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test_nullability WHERE id',
 		];
 
-		foreach (['col_vchar IS NOT NULL', 'col_vchar IS NULL', 'NOT col_vchar'] as $op) {
+		foreach (['col_vchar IS NOT NULL', 'col_vchar IS NULL', 'NOT col_vchar', 'col_vchar'] as $op) {
 			yield "SELECT t.* WHERE {$op}" => [
 				'query' => "SELECT t.* FROM analyser_test_nullability t WHERE {$op}",
 			];
@@ -1301,7 +1301,23 @@ class AnalyserTest extends TestCase
 			yield "SELECT * WHERE {$op}" => [
 				'query' => "SELECT * FROM analyser_test_nullability WHERE {$op}",
 			];
+
+			yield "SELECT col_vchar WHERE {$op}" => [
+				'query' => "SELECT col_vchar FROM analyser_test_nullability WHERE {$op}",
+			];
+
+			yield "SELECT * FROM (SELECT col_vchar WHERE {$op})" => [
+				'query' => "SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability WHERE {$op}) t",
+			];
 		}
+
+		yield 'always true: WHERE NOT (0 AND col_vchar)' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE NOT (0 AND col_vchar)',
+		];
+
+		yield 'always true: WHERE 1 OR col_vchar' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1 OR col_vchar',
+		];
 	}
 
 	/**
