@@ -405,49 +405,22 @@ class AnalyserTest extends TestCase
 	private function provideValidOperatorTestData(): iterable
 	{
 		$operators = ['+', '-', '*', '/', '%', 'DIV'];
+		$values = ['1', '1.1', '1e1', '"a"', 'NULL'];
 
 		foreach ($operators as $op) {
-			foreach (['1', '1.0', '"a"'] as $other) {
-				$expr = "NULL {$op} {$other}";
+			foreach ($values as $left) {
+				foreach ($values as $right) {
+					$expr = "{$left} {$op} {$right}";
 
-				yield "operator {$expr}" => [
-					'query' => "SELECT {$expr}",
-				];
+					yield "operator {$expr}" => [
+						'query' => "SELECT {$expr}",
+					];
+				}
 			}
 		}
 
-		foreach (['+', '-', '*', '/', '%', 'DIV'] as $op) {
-			$expr = "1 {$op} 2";
-
-			yield "operator {$expr}" => [
-				'query' => "SELECT {$expr}",
-			];
-
-			$expr = "1 {$op} 2.0";
-
-			yield "operator {$expr}" => [
-				'query' => "SELECT {$expr}",
-			];
-
-			foreach (['1', '1.0'] as $other) {
-				$expr = "'a' {$op} {$other}";
-
-				yield "operator {$expr}" => [
-					'query' => "SELECT {$expr}",
-				];
-			}
-
-			$expr = "'a' {$op} 'b'";
-
-			yield "operator {$expr}" => [
-				'query' => "SELECT {$expr}",
-			];
-		}
-
-		$caseValues = ['1', '1.1', '1.1e1', '"a"', 'NULL'];
-
-		foreach ($caseValues as $value1) {
-			foreach ($caseValues as $value2) {
+		foreach ($values as $value1) {
+			foreach ($values as $value2) {
 				if ($value1 === $value2) {
 					continue;
 				}

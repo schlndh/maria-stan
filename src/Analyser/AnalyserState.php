@@ -742,14 +742,14 @@ final class AnalyserState
 					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
 						? new Schema\DbType\IntType()
 						: new Schema\DbType\FloatType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
-					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-						? new Schema\DbType\IntType()
-						: new Schema\DbType\DecimalType();
 				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->value])) {
 					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
 						? new Schema\DbType\IntType()
 						: new Schema\DbType\FloatType();
+				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
+					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+						? new Schema\DbType\IntType()
+						: new Schema\DbType\DecimalType();
 				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
 					$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
 						? new Schema\DbType\DecimalType()
