@@ -160,3 +160,10 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of INT_LITERAL, '?', got '+' after: SELECT 1 LIMIT 1 OFFSET
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1' at line 1
+-----
+SELECT 1 WHERE 1AND 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got INT_LITERAL after: SELECT 1 WHERE 1AND
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '1' at line 1

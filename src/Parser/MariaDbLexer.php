@@ -34,27 +34,24 @@ class MariaDbLexer
 		$re = <<<'XX'
 			~(?J)(?n)   # allow duplicate named groups, no auto capture
 			(?<whitespace>  [ \t\r\n]+  )|
+			(?<literal_bin> ([bB] ' [0-1]+ ') )|
+			(?<literal_hex> ([xX] ' [0-9a-fA-F]+ ') )|
 			( (?<string_single>  '  )  (?<rest>  ( \\. | '' | [^'\\] )*  '  )?  )|
 			( (?<string_double>  "  )  (?<rest>  ( \\. | "" | [^"\\] )*  "  )?  )|
 			( (?<c_comment>  /\*  )   (?<rest>  .*?\*/  )?  )|
 			( (?<line_comment>  (\#|--[ ])  )   (?<rest>  [^\r\n]* ( [\r\n] | $ )  )?  )|
 			# All 2B UTF-8 characters except NUL (\x60 is `)
 			( (?<quoted_identifier> ` ) (?<rest>  ( `` | [\x01-\x5F\x61-\x{FFFF}] )*  `  )?  )|
-			(?<literal_bin>
-				([bB] ' [0-1]+ ')|
-				(0b[01]+)
-			)|
-			(?<literal_hex>
-				([xX] ' [0-9a-fA-F]+ ')|
-				(0x [0-9a-fA-F]+)
-			)|
-			(?<literal_float>
-				((?&lnum) | (?&dnum)) [eE][+-]? (?&lnum)|
-				(?<dnum>   (?&lnum)? \. (?&lnum) | (?&lnum) \. (?&lnum)?  )
-			)|
-			(?<literal_int> (?<lnum>  [0-9]+(_[0-9]+)*  ) )|
+			(?<literal_float> ((?&lnum) | (?&dnum)) [eE][+-]? (?&lnum) )|
+			# "SELECT 0b01X" = "SELECT 0b01 X"
+			(?<literal_bin> (0b[01]+) )|
 			# Identifier names may begin with a numeral, but can't only contain numerals unless quoted.
+			(?<identifier> (0x [0-9a-fA-F]+ [g-zG-Z$_\x80-\x{FFFF}]) [0-9a-zA-Z$_\x80-\x{FFFF}]*)|
+			(?<literal_hex> (0x [0-9a-fA-F]+) )|
 			(?<identifier> [0-9a-zA-Z$_\x80-\x{FFFF}]*[a-zA-Z$_\x80-\x{FFFF}][0-9a-zA-Z$_\x80-\x{FFFF}]*  )|
+			# "SELECT 0x01X" != "SELECT 0x01 X" so it needs to be after identifier
+			(?<literal_float> (?<dnum>   (?&lnum)? \. (?&lnum) | (?&lnum) \. (?&lnum)?  ) )|
+			(?<literal_int> (?<lnum>  [0-9]+(_[0-9]+)*  ) )|
 			(?<op_colon_assign> := )|
 			(?<op_shift_left> << )|
 			(?<op_shift_right> >> )|
