@@ -667,7 +667,12 @@ final class AnalyserState
 				$innerCondition = $condition;
 
 				if ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::LOGIC_NOT) {
-					$innerCondition = $innerCondition->negate();
+					$innerCondition = match ($innerCondition) {
+						AnalyserConditionTypeEnum::TRUTHY => AnalyserConditionTypeEnum::FALSY,
+						AnalyserConditionTypeEnum::FALSY => AnalyserConditionTypeEnum::TRUTHY,
+						// NULL(NOT(a)) <=> NULL(a), NOT_NULL(NOT(a)) <=> NOT_NULL(a)
+						default => $innerCondition,
+					};
 				}
 
 				$resolvedInnerExpr = $this->resolveExprType($expr->expression, $innerCondition);
@@ -814,6 +819,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::IS:
 				assert($expr instanceof Expr\Is);
+				$fixedKnowledgeBase = null;
 
 				if ($condition === null) {
 					$innerCondition = null;
@@ -824,9 +830,19 @@ final class AnalyserState
 						null => AnalyserConditionTypeEnum::NULL,
 					};
 
-					// TODO: NULL/NOT_NULL $condition should report as always/never being satisfied.
 					if ($condition === AnalyserConditionTypeEnum::FALSY) {
-						$innerCondition = $innerCondition->negate();
+						$innerCondition = match ($innerCondition) {
+							// $innerCondition cannot be NOT_NULL at ths point, so we don't have to test it.
+							AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NOT_NULL,
+							// "NOT(x IS TRUE)" can mean "x IS TRUE" or "x IS NULL", similarly for "NOT(x IS FALSE)"
+							default => null,
+						};
+					} elseif ($condition !== AnalyserConditionTypeEnum::TRUTHY) {
+						// TODO: report error: NULL/NOT_NULL $condition is never/always satisfied.
+						$fixedKnowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase(
+							$condition === AnalyserConditionTypeEnum::NOT_NULL,
+						);
+						$innerCondition = null;
 					}
 				}
 
@@ -837,7 +853,7 @@ final class AnalyserState
 					new Schema\DbType\IntType(),
 					false,
 					null,
-					$exprResult->knowledgeBase,
+					$fixedKnowledgeBase ?? $exprResult->knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::BETWEEN:
 				assert($expr instanceof Expr\Between);

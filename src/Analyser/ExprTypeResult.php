@@ -8,12 +8,11 @@ use MariaStan\Schema\DbType\DbType;
 
 final class ExprTypeResult
 {
-	/** @param array<AnalyserColumnKnowledge> $knowledgeBase */
 	public function __construct(
 		public readonly DbType $type,
 		public readonly bool $isNullable,
 		public readonly ?ColumnInfo $column = null,
-		public readonly array $knowledgeBase = [],
+		public readonly ?AnalyserKnowledgeBase $knowledgeBase = null,
 	) {
 	}
 }

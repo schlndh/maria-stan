@@ -20,7 +20,6 @@ use function array_key_first;
 use function array_keys;
 use function array_map;
 use function array_merge;
-use function array_values;
 use function assert;
 use function count;
 use function in_array;
@@ -62,9 +61,7 @@ final class ColumnResolver
 
 	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private int $aggregateFunctionDepth = 0;
-
-	/** @var array<string, array<string, array<AnalyserColumnKnowledge>>>> table alias => column name => knowledge */
-	private array $knowledgeBase = [];
+	private ?AnalyserKnowledgeBase $knowledgeBase = null;
 
 	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
 	{
@@ -374,19 +371,26 @@ final class ColumnResolver
 
 		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
 			?? throw new AnalyserException("Unknown column {$columnInfo->tableAlias}.{$columnInfo->name}");
-		$knowledgeBase = [];
+		$knowledgeBase = null;
 
-		if (
-			$condition === AnalyserConditionTypeEnum::NULL
-			&& $exprType->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::NULL
-		) {
-			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, true);
-		} elseif ($condition !== null && $exprType->isNullable) {
-			// All TRUTHY, FALSY and NOT_NULL require the column to be non-nullable.
-			$knowledgeBase[] = new AnalyserColumnKnowledge($columnInfo, false);
+		if ($condition === AnalyserConditionTypeEnum::NULL || $condition === AnalyserConditionTypeEnum::NOT_NULL) {
+			 $isNullCondition = $condition === AnalyserConditionTypeEnum::NULL;
+
+			if ($exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
+				$knowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase($isNullCondition);
+			} elseif (! $exprType->isNullable) {
+				$knowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase(! $isNullCondition);
+			} else {
+				$knowledgeBase = AnalyserKnowledgeBase::createForSingleColumn($columnInfo, $isNullCondition);
+			}
+		} elseif ($condition !== null) {
+			// Both TRUTHY and FALSY require the column to be non-nullable.
+			$knowledgeBase = $exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL
+				? AnalyserKnowledgeBase::createFixedKnowledgeBase(false)
+				: AnalyserKnowledgeBase::createForSingleColumn($columnInfo, false);
 		}
 
-		return count($knowledgeBase) === 0
+		return $knowledgeBase === null
 			? $exprType
 			: new ExprTypeResult($exprType->type, $exprType->isNullable, $exprType->column, $knowledgeBase);
 	}
@@ -463,12 +467,7 @@ final class ColumnResolver
 				return null;
 			}
 
-			$nullability = null;
-
-			foreach ($this->knowledgeBase[$table][$columnSchema->name] ?? [] as $columnKnowledge) {
-				$nullability ??= $columnKnowledge->nullability;
-			}
-
+			$nullability = $this->knowledgeBase->columnNullability[$table][$columnSchema->name] ?? null;
 			$type = $columnSchema->type;
 			$isNullable = $columnSchema->isNullable || $isOuterTable;
 
@@ -637,11 +636,18 @@ final class ColumnResolver
 		$this->aggregateFunctionDepth--;
 	}
 
-	/** @param array<AnalyserColumnKnowledge> $knowledgeBase */
-	public function addKnowledge(array $knowledgeBase): void
+	public function addKnowledge(?AnalyserKnowledgeBase $knowledgeBase): void
 	{
-		foreach ($knowledgeBase as $knowledge) {
-			$this->knowledgeBase[$knowledge->columnInfo->tableAlias][$knowledge->columnInfo->name][] = $knowledge;
+		if ($knowledgeBase === null) {
+			return;
 		}
+
+		if ($this->knowledgeBase === null) {
+			$this->knowledgeBase = $knowledgeBase;
+
+			return;
+		}
+
+		$this->knowledgeBase = $this->knowledgeBase->and($knowledgeBase);
 	}
 }

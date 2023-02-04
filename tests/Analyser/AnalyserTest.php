@@ -1289,11 +1289,22 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1',
 		];
 
-		yield 'useless WHERE id' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE id',
+		yield 'useless WHERE id IS NOT NULL' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE id IS NOT NULL',
 		];
 
-		foreach (['col_vchar IS NOT NULL', 'col_vchar IS NULL', 'NOT col_vchar', 'col_vchar'] as $op) {
+		$operations = [
+			'col_vchar IS NOT NULL',
+			'col_vchar IS NULL',
+			'NOT col_vchar',
+			'col_vchar',
+			'col_vchar IS NOT TRUE',
+			'col_vchar IS NOT FALSE',
+			'(! col_vchar) IS NULL',
+			'(! col_vchar) IS NOT NULL',
+		];
+
+		foreach ($operations as $op) {
 			yield "SELECT t.* WHERE {$op}" => [
 				'query' => "SELECT t.* FROM analyser_test_nullability t WHERE {$op}",
 			];
