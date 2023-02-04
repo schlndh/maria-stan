@@ -1271,13 +1271,25 @@ class AnalyserTest extends TestCase
 		$db->query("
 			CREATE OR REPLACE TABLE analyser_test_nullability (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				col_vchar VARCHAR(255) NULL
+				col_vchar VARCHAR(255) NULL,
+				col_int INT NULL
 			);
 		");
-		$db->query('
-			INSERT INTO analyser_test_nullability (col_vchar)
-			VALUES (NULL), ("aa"), ("1")
-		');
+		$charValues = ['NULL', '"aa"', '"1"'];
+		$intValues = ['NULL', 1];
+		$valuePairs = [];
+
+		foreach ($charValues as $c) {
+			foreach ($intValues as $i) {
+				$valuePairs[] = "({$c}, {$i})";
+			}
+		}
+
+		$valuesSql = implode(', ', $valuePairs);
+		$db->query("
+			INSERT INTO analyser_test_nullability (col_vchar, col_int)
+			VALUES {$valuesSql}
+		");
 
 		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
 		// column are NULL, then the analyser must infer it as NULL type.
@@ -1302,6 +1314,12 @@ class AnalyserTest extends TestCase
 			'col_vchar IS NOT FALSE',
 			'(! col_vchar) IS NULL',
 			'(! col_vchar) IS NOT NULL',
+			'NULL IS NOT NULL OR col_vchar IS NOT NULL',
+			'! (NULL IS NULL AND col_vchar IS NULL)',
+			'col_vchar IS NULL AND col_int IS NOT NULL',
+			'col_vchar IS NULL OR col_int IS NOT NULL',
+			'NOT (col_vchar IS NULL OR col_int IS NOT NULL)',
+			'NOT (col_vchar IS NULL AND col_int IS NOT NULL)',
 		];
 
 		foreach ($operations as $op) {
@@ -1328,6 +1346,14 @@ class AnalyserTest extends TestCase
 
 		yield 'always true: WHERE 1 OR col_vchar' => [
 			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1 OR col_vchar',
+		];
+
+		yield 'useless part of condition: AND' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE id IS NOT NULL AND col_vchar IS NOT NULL',
+		];
+
+		yield 'useless part of condition: NOT AND' => [
+			'query' => 'SELECT * FROM analyser_test_nullability WHERE NOT (id IS NOT NULL AND col_vchar IS NOT NULL)',
 		];
 	}
 

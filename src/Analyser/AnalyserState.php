@@ -649,7 +649,15 @@ final class AnalyserState
 					false,
 				);
 			case Expr\ExprTypeEnum::LITERAL_NULL:
-				return new ExprTypeResult(new Schema\DbType\NullType(), true);
+				// TODO: Report always/never satisfied condition.
+				$knowledgeBase = match ($condition) {
+					AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixedKnowledgeBase(true),
+					AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY,
+					AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixedKnowledgeBase(false),
+					null => null,
+				};
+
+				return new ExprTypeResult(new Schema\DbType\NullType(), true, null, $knowledgeBase);
 			case Expr\ExprTypeEnum::LITERAL_STRING:
 				assert($expr instanceof Expr\LiteralString);
 
@@ -696,7 +704,22 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
-				$leftResult = $this->resolveExprType($expr->left);
+				$innerCondition = null;
+
+				if (
+					(
+						$condition === AnalyserConditionTypeEnum::TRUTHY
+						|| $condition === AnalyserConditionTypeEnum::FALSY
+					)
+					&& (
+						$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND
+						|| $expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
+					)
+				) {
+					$innerCondition = $condition;
+				}
+
+				$leftResult = $this->resolveExprType($expr->left, $innerCondition);
 
 				if (
 					(
@@ -715,7 +738,7 @@ final class AnalyserState
 					);
 				}
 
-				$rightResult = $this->resolveExprType($expr->right);
+				$rightResult = $this->resolveExprType($expr->right, $innerCondition);
 				$lt = $leftResult->type::getTypeEnum();
 				$rt = $rightResult->type::getTypeEnum();
 				$typesInvolved = [
@@ -775,6 +798,33 @@ final class AnalyserState
 
 				// TODO: Analyze the rest of the operators
 				$type ??= new Schema\DbType\FloatType();
+				$knowledgeBase = null;
+
+				if ($leftResult->knowledgeBase !== null && $rightResult->knowledgeBase !== null) {
+					if (
+						(
+							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND
+							&& $condition === AnalyserConditionTypeEnum::TRUTHY
+						)
+						|| (
+							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
+							&& $condition === AnalyserConditionTypeEnum::FALSY
+						)
+					) {
+						$knowledgeBase = $leftResult->knowledgeBase->and($rightResult->knowledgeBase);
+					} elseif (
+						(
+							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND
+							&& $condition === AnalyserConditionTypeEnum::FALSY
+						)
+						|| (
+							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
+							&& $condition === AnalyserConditionTypeEnum::TRUTHY
+						)
+					) {
+						$knowledgeBase = $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
+					}
+				}
 
 				return new ExprTypeResult(
 					$type,
@@ -786,6 +836,8 @@ final class AnalyserState
 							Expr\BinaryOpTypeEnum::INT_DIVISION,
 							Expr\BinaryOpTypeEnum::MODULO,
 						], true),
+					null,
+					$knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
