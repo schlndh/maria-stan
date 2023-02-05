@@ -20,9 +20,14 @@ final class AnalyserKnowledgeBase
 		return new self([$columnInfo->tableAlias => [$columnInfo->name => $nullability]], null);
 	}
 
-	public static function createFixedKnowledgeBase(bool $truthiness): self
+	public static function createFixed(bool $truthiness): self
 	{
 		return new self([], $truthiness);
+	}
+
+	public static function createEmpty(): self
+	{
+		return new self([], null);
 	}
 
 	public function and(AnalyserKnowledgeBase $other): self
@@ -41,7 +46,7 @@ final class AnalyserKnowledgeBase
 				$thisNullability = $this->columnNullability[$tableAlias][$column] ?? null;
 
 				if ($thisNullability !== null && $thisNullability !== $otherNullability) {
-					return self::createFixedKnowledgeBase(false);
+					return self::createFixed(false);
 				}
 
 				$mergedColumnNullability[$tableAlias][$column] = $otherNullability;

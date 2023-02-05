@@ -377,16 +377,16 @@ final class ColumnResolver
 			 $isNullCondition = $condition === AnalyserConditionTypeEnum::NULL;
 
 			if ($exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
-				$knowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase($isNullCondition);
+				$knowledgeBase = AnalyserKnowledgeBase::createFixed($isNullCondition);
 			} elseif (! $exprType->isNullable) {
-				$knowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase(! $isNullCondition);
+				$knowledgeBase = AnalyserKnowledgeBase::createFixed(! $isNullCondition);
 			} else {
 				$knowledgeBase = AnalyserKnowledgeBase::createForSingleColumn($columnInfo, $isNullCondition);
 			}
 		} elseif ($condition !== null) {
 			// Both TRUTHY and FALSY require the column to be non-nullable.
 			$knowledgeBase = $exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL
-				? AnalyserKnowledgeBase::createFixedKnowledgeBase(false)
+				? AnalyserKnowledgeBase::createFixed(false)
 				: AnalyserKnowledgeBase::createForSingleColumn($columnInfo, false);
 		}
 

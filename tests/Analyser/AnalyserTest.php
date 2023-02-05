@@ -1303,6 +1303,24 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE id IS NOT NULL',
 		];
 
+		yield 'nullability narrowing works with SELECT *' => [
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT t.*' => [
+			'query' => 'SELECT t.* FROM analyser_test_nullability_1 t WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT col_vchar' => [
+			'query' => 'SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT * FROM (SELECT col_vchar)' => [
+			'query' => '
+				SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL) t
+			',
+		];
+
 		$operations = [
 			'col_vchar IS NOT NULL',
 			'col_vchar IS NULL',
@@ -1314,23 +1332,22 @@ class AnalyserTest extends TestCase
 			'(! col_vchar) IS NOT NULL',
 			'NULL IS NOT NULL OR col_vchar IS NOT NULL',
 			'! (NULL IS NULL AND col_vchar IS NULL)',
+			'col_vchar = "aa"',
+			'col_vchar != ""',
+			'col_vchar > ""',
+			'col_vchar >= ""',
+			'col_vchar < "zz"',
+			'col_vchar <= "zz"',
+			// TODO: implement this
+			//'col_vchar BETWEEN "" AND "zz"',
+			//'col_vchar NOT BETWEEN "zz" AND "zzz"',
+			//'col_vchar IN ("aa")',
+			//'col_vchar NOT IN ("aa")',
 		];
 
 		foreach ($operations as $op) {
-			yield "SELECT t.* WHERE {$op}" => [
-				'query' => "SELECT t.* FROM analyser_test_nullability_1 t WHERE {$op}",
-			];
-
 			yield "SELECT * WHERE {$op}" => [
 				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$op}",
-			];
-
-			yield "SELECT col_vchar WHERE {$op}" => [
-				'query' => "SELECT col_vchar FROM analyser_test_nullability_1 WHERE {$op}",
-			];
-
-			yield "SELECT * FROM (SELECT col_vchar WHERE {$op})" => [
-				'query' => "SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability_1 WHERE {$op}) t",
 			];
 		}
 
@@ -1339,12 +1356,37 @@ class AnalyserTest extends TestCase
 			'col_vchar IS NULL OR col_int IS NOT NULL',
 			'NOT (col_vchar IS NULL OR col_int IS NOT NULL)',
 			'NOT (col_vchar IS NULL AND col_int IS NOT NULL)',
+			'col_vchar <=> col_int',
+			'col_int = 1',
 		];
 
 		foreach ($operations as $op) {
 			yield "t1 CROSS JOIN t2 WHERE {$op}" => [
 				'query' => "
 					SELECT * FROM analyser_test_nullability_1 t1, analyser_test_nullability_2 t2
+					WHERE {$op}
+				",
+			];
+		}
+
+		$operations = [
+			't1.col_vchar = t2.col_vchar',
+			't1.col_vchar != t2.col_vchar',
+			't1.col_vchar > t2.col_vchar',
+			't1.col_vchar >= t2.col_vchar',
+			't1.col_vchar < t2.col_vchar',
+			't1.col_vchar <= t2.col_vchar',
+			// TODO: implement this
+			//'t1.col_vchar BETWEEN t2.col_vchar AND t2.col_vchar',
+			//'t1.col_vchar NOT BETWEEN t2.col_vchar AND t2.col_vchar',
+			//'t1.col_vchar IN (t2.col_vchar)',
+			//'t1.col_vchar NOT IN (t2.col_vchar)',
+		];
+
+		foreach ($operations as $op) {
+			yield "t1 CROSS JOIN t1 WHERE {$op}" => [
+				'query' => "
+					SELECT * FROM analyser_test_nullability_1 t1, analyser_test_nullability_1 t2
 					WHERE {$op}
 				",
 			];

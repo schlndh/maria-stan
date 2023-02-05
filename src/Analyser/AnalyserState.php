@@ -636,7 +636,12 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::LITERAL_INT:
 				assert($expr instanceof Expr\LiteralInt);
 
-				return new ExprTypeResult(new Schema\DbType\IntType(), false);
+				return new ExprTypeResult(
+					new Schema\DbType\IntType(),
+					false,
+					null,
+					$this->createKnowledgeBaseForLiteralExpression($expr, $condition),
+				);
 			case Expr\ExprTypeEnum::LITERAL_FLOAT:
 				assert($expr instanceof Expr\LiteralFloat);
 				$content = $this->getNodeContent($expr);
@@ -647,21 +652,25 @@ final class AnalyserState
 						? new Schema\DbType\FloatType()
 						: new Schema\DbType\DecimalType(),
 					false,
+					null,
+					$this->createKnowledgeBaseForLiteralExpression($expr, $condition),
 				);
 			case Expr\ExprTypeEnum::LITERAL_NULL:
-				// TODO: Report always/never satisfied condition.
-				$knowledgeBase = match ($condition) {
-					AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixedKnowledgeBase(true),
-					AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY,
-					AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixedKnowledgeBase(false),
-					null => null,
-				};
-
-				return new ExprTypeResult(new Schema\DbType\NullType(), true, null, $knowledgeBase);
+				return new ExprTypeResult(
+					new Schema\DbType\NullType(),
+					true,
+					null,
+					$this->createKnowledgeBaseForLiteralExpression($expr, $condition),
+				);
 			case Expr\ExprTypeEnum::LITERAL_STRING:
 				assert($expr instanceof Expr\LiteralString);
 
-				return new ExprTypeResult(new Schema\DbType\VarcharType(), false);
+				return new ExprTypeResult(
+					new Schema\DbType\VarcharType(),
+					false,
+					null,
+					$this->createKnowledgeBaseForLiteralExpression($expr, $condition),
+				);
 			case Expr\ExprTypeEnum::INTERVAL:
 				assert($expr instanceof Expr\Interval);
 				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity);
@@ -705,6 +714,16 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
 				$innerCondition = null;
+				// NULL = don't combine, true = AND, false = OR.
+				$kbCombinineWithAnd = null;
+				$nullUnsafeComparisonOperators = [
+					Expr\BinaryOpTypeEnum::EQUAL,
+					Expr\BinaryOpTypeEnum::NOT_EQUAL,
+					Expr\BinaryOpTypeEnum::LOWER,
+					Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
+					Expr\BinaryOpTypeEnum::GREATER,
+					Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
+				];
 
 				if (
 					(
@@ -717,6 +736,18 @@ final class AnalyserState
 					)
 				) {
 					$innerCondition = $condition;
+					$kbCombinineWithAnd = $expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND;
+
+					if ($condition === AnalyserConditionTypeEnum::FALSY) {
+						$kbCombinineWithAnd = ! $kbCombinineWithAnd;
+					}
+				} elseif (in_array($expr->operation, $nullUnsafeComparisonOperators, true)) {
+					$innerCondition = match ($condition) {
+						AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
+						// For now, we can only determine that none of the operands can be NULL.
+						default => AnalyserConditionTypeEnum::NOT_NULL,
+					};
+					$kbCombinineWithAnd = $innerCondition === AnalyserConditionTypeEnum::NOT_NULL;
 				}
 
 				$leftResult = $this->resolveExprType($expr->left, $innerCondition);
@@ -800,30 +831,14 @@ final class AnalyserState
 				$type ??= new Schema\DbType\FloatType();
 				$knowledgeBase = null;
 
-				if ($leftResult->knowledgeBase !== null && $rightResult->knowledgeBase !== null) {
-					if (
-						(
-							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND
-							&& $condition === AnalyserConditionTypeEnum::TRUTHY
-						)
-						|| (
-							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
-							&& $condition === AnalyserConditionTypeEnum::FALSY
-						)
-					) {
-						$knowledgeBase = $leftResult->knowledgeBase->and($rightResult->knowledgeBase);
-					} elseif (
-						(
-							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND
-							&& $condition === AnalyserConditionTypeEnum::FALSY
-						)
-						|| (
-							$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
-							&& $condition === AnalyserConditionTypeEnum::TRUTHY
-						)
-					) {
-						$knowledgeBase = $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
-					}
+				if (
+					$leftResult->knowledgeBase !== null
+					&& $rightResult->knowledgeBase !== null
+					&& $kbCombinineWithAnd !== null
+				) {
+					$knowledgeBase = $kbCombinineWithAnd
+						? $leftResult->knowledgeBase->and($rightResult->knowledgeBase)
+						: $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
 				}
 
 				return new ExprTypeResult(
@@ -891,7 +906,7 @@ final class AnalyserState
 						};
 					} elseif ($condition !== AnalyserConditionTypeEnum::TRUTHY) {
 						// TODO: report error: NULL/NOT_NULL $condition is never/always satisfied.
-						$fixedKnowledgeBase = AnalyserKnowledgeBase::createFixedKnowledgeBase(
+						$fixedKnowledgeBase = AnalyserKnowledgeBase::createFixed(
 							$condition === AnalyserConditionTypeEnum::NOT_NULL,
 						);
 						$innerCondition = null;
@@ -1252,5 +1267,28 @@ final class AnalyserState
 	private function getCombinedType(Schema\DbType\DbType $left, Schema\DbType\DbType $right): Schema\DbType\DbType
 	{
 		return FunctionInfoHelper::castToCommonType($left, $right);
+	}
+
+	private function createKnowledgeBaseForLiteralExpression(
+		Expr\Expr $expr,
+		?AnalyserConditionTypeEnum $condition,
+	): ?AnalyserKnowledgeBase {
+		// TODO: Report always/never satisfied condition.
+		if ($expr::getExprType() === Expr\ExprTypeEnum::LITERAL_NULL) {
+			return match ($condition) {
+				AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixed(true),
+				AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY,
+				AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixed(false),
+				null => null,
+			};
+		}
+
+		return match ($condition) {
+			AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixed(false),
+			AnalyserConditionTypeEnum::NOT_NULL => AnalyserKnowledgeBase::createFixed(true),
+			AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::FALSY
+				=> AnalyserKnowledgeBase::createEmpty(),
+			null => null,
+		};
 	}
 }
