@@ -1341,8 +1341,16 @@ class AnalyserTest extends TestCase
 			// TODO: implement this
 			//'col_vchar BETWEEN "" AND "zz"',
 			//'col_vchar NOT BETWEEN "zz" AND "zzz"',
-			//'col_vchar IN ("aa")',
-			//'col_vchar NOT IN ("aa")',
+			'col_vchar IN ("aa")',
+			'col_vchar IN ("aa", NULL)',
+			'col_vchar IN (SELECT col_vchar FROM analyser_test_nullability_1)',
+			'(col_vchar IN ("aa")) IS NULL',
+			'(col_vchar IN ("aa")) IS NOT NULL',
+			'(col_vchar IN ("aa", NULL)) IS NULL',
+			'(col_vchar IN ("aa", NULL)) IS NOT NULL',
+			'col_vchar NOT IN ("aa")',
+			'(col_vchar NOT IN ("aa", NULL)) IS NULL',
+			'col_vchar NOT IN (SELECT col_vchar FROM analyser_test_nullability_1 WHERE id = 2)',
 		];
 
 		foreach ($operations as $op) {
@@ -1380,7 +1388,9 @@ class AnalyserTest extends TestCase
 			//'t1.col_vchar BETWEEN t2.col_vchar AND t2.col_vchar',
 			//'t1.col_vchar NOT BETWEEN t2.col_vchar AND t2.col_vchar',
 			//'t1.col_vchar IN (t2.col_vchar)',
+			//'t1.col_vchar IN (t2.col_vchar, NULL)',
 			//'t1.col_vchar NOT IN (t2.col_vchar)',
+			'(t1.col_vchar NOT IN (t2.col_vchar, NULL)) IS NULL',
 		];
 
 		foreach ($operations as $op) {
@@ -1486,21 +1496,28 @@ class AnalyserTest extends TestCase
 				$this->assertSame(
 					$rowCount,
 					$nullCount,
-					'The field was detected as NULL, but there is non-NULL value.',
+					$this->getFieldNameForErrorMessage($field) . ' was detected as NULL, but there is non-NULL value.',
 				);
 			} elseif ($field->exprType->isNullable) {
 				$this->assertGreaterThanOrEqual(
 					1,
 					$nullCount,
-					'There are no NULLs in the field, but the analyser thinks it is nullable.',
+					"There are no NULLs in " . $this->getFieldNameForErrorMessage($field)
+						. " but the analyser thinks it is nullable.",
 				);
 				$this->assertLessThan(
 					$rowCount,
 					$nullCount,
-					'All the values are NULL. The analyser should infer NULL type.',
+					'All the values in ' . $this->getFieldNameForErrorMessage($field)
+						. ' are NULL. The analyser should infer NULL type.',
 				);
 			} else {
-				$this->assertSame(0, $nullCount, 'There are NULLs in a field that is supposed to be non-nullable.');
+				$this->assertSame(
+					0,
+					$nullCount,
+					'There are NULLs in ' . $this->getFieldNameForErrorMessage($field)
+						. ', but it is supposed to be non-nullable.',
+				);
 			}
 
 			$idx++;
@@ -2571,5 +2588,16 @@ class AnalyserTest extends TestCase
 		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
 
 		return new Analyser($parser, $reflection, $functionInfoRegistry);
+	}
+
+	private function getFieldNameForErrorMessage(QueryResultField $field): string
+	{
+		$name = $field->name;
+
+		if ($field->exprType->column !== null) {
+			$name .= " ({$field->exprType->column->tableAlias}.{$field->exprType->column->name})";
+		}
+
+		return $name;
 	}
 }

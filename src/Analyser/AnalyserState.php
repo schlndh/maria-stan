@@ -873,6 +873,7 @@ final class AnalyserState
 						$result->resultFields[0]->exprType->type,
 						// TODO: Change it to false if we can statically determine that the query will always return
 						// a result: e.g. SELECT 1
+						// TODO: Fix this for "x IN (SELECT ...)".
 						true,
 					);
 				}
@@ -950,7 +951,13 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::IN:
 				assert($expr instanceof Expr\In);
-				$leftResult = $this->resolveExprType($expr->left);
+				$innerCondition = match ($condition) {
+					AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::FALSY,
+					AnalyserConditionTypeEnum::NOT_NULL => AnalyserConditionTypeEnum::NOT_NULL,
+					AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
+					null => null,
+				};
+				$leftResult = $this->resolveExprType($expr->left, $innerCondition);
 				$rightResult = $this->resolveExprType($expr->right);
 				$rightType = $rightResult->type;
 
@@ -965,9 +972,17 @@ final class AnalyserState
 					}
 				}
 
+				$knowledgeBase = null;
+
+				if ($innerCondition === AnalyserConditionTypeEnum::NOT_NULL || ! $rightResult->isNullable) {
+					$knowledgeBase = $leftResult->knowledgeBase;
+				}
+
 				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					$leftResult->isNullable || $rightResult->isNullable,
+					null,
+					$knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::LIKE:
 				assert($expr instanceof Expr\Like);
