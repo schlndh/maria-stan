@@ -1268,41 +1268,39 @@ class AnalyserTest extends TestCase
 	public function provideValidNullabilityTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$db->query("
-			CREATE OR REPLACE TABLE analyser_test_nullability (
+		$db->query('
+			CREATE OR REPLACE TABLE analyser_test_nullability_1 (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				col_vchar VARCHAR(255) NULL,
+				col_vchar VARCHAR(255) NULL
+			);
+		');
+		$db->query('
+			INSERT INTO analyser_test_nullability_1 (col_vchar)
+			VALUES (NULL), ("aa"), ("1")
+		');
+		$db->query('
+			CREATE OR REPLACE TABLE analyser_test_nullability_2 (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				col_int INT NULL
 			);
-		");
-		$charValues = ['NULL', '"aa"', '"1"'];
-		$intValues = ['NULL', 1];
-		$valuePairs = [];
-
-		foreach ($charValues as $c) {
-			foreach ($intValues as $i) {
-				$valuePairs[] = "({$c}, {$i})";
-			}
-		}
-
-		$valuesSql = implode(', ', $valuePairs);
-		$db->query("
-			INSERT INTO analyser_test_nullability (col_vchar, col_int)
-			VALUES {$valuesSql}
-		");
+		');
+		$db->query('
+			INSERT INTO analyser_test_nullability_2 (col_int)
+			VALUES (NULL), (0), (1)
+		');
 
 		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
 		// column are NULL, then the analyser must infer it as NULL type.
 		yield 'no WHERE' => [
-			'query' => 'SELECT * FROM analyser_test_nullability',
+			'query' => 'SELECT * FROM analyser_test_nullability_1',
 		];
 
 		yield 'useless WHERE 1' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE 1',
 		];
 
 		yield 'useless WHERE id IS NOT NULL' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE id IS NOT NULL',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE id IS NOT NULL',
 		];
 
 		$operations = [
@@ -1316,6 +1314,27 @@ class AnalyserTest extends TestCase
 			'(! col_vchar) IS NOT NULL',
 			'NULL IS NOT NULL OR col_vchar IS NOT NULL',
 			'! (NULL IS NULL AND col_vchar IS NULL)',
+		];
+
+		foreach ($operations as $op) {
+			yield "SELECT t.* WHERE {$op}" => [
+				'query' => "SELECT t.* FROM analyser_test_nullability_1 t WHERE {$op}",
+			];
+
+			yield "SELECT * WHERE {$op}" => [
+				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$op}",
+			];
+
+			yield "SELECT col_vchar WHERE {$op}" => [
+				'query' => "SELECT col_vchar FROM analyser_test_nullability_1 WHERE {$op}",
+			];
+
+			yield "SELECT * FROM (SELECT col_vchar WHERE {$op})" => [
+				'query' => "SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability_1 WHERE {$op}) t",
+			];
+		}
+
+		$operations = [
 			'col_vchar IS NULL AND col_int IS NOT NULL',
 			'col_vchar IS NULL OR col_int IS NOT NULL',
 			'NOT (col_vchar IS NULL OR col_int IS NOT NULL)',
@@ -1323,37 +1342,47 @@ class AnalyserTest extends TestCase
 		];
 
 		foreach ($operations as $op) {
-			yield "SELECT t.* WHERE {$op}" => [
-				'query' => "SELECT t.* FROM analyser_test_nullability t WHERE {$op}",
-			];
-
-			yield "SELECT * WHERE {$op}" => [
-				'query' => "SELECT * FROM analyser_test_nullability WHERE {$op}",
-			];
-
-			yield "SELECT col_vchar WHERE {$op}" => [
-				'query' => "SELECT col_vchar FROM analyser_test_nullability WHERE {$op}",
-			];
-
-			yield "SELECT * FROM (SELECT col_vchar WHERE {$op})" => [
-				'query' => "SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability WHERE {$op}) t",
+			yield "t1 CROSS JOIN t2 WHERE {$op}" => [
+				'query' => "
+					SELECT * FROM analyser_test_nullability_1 t1, analyser_test_nullability_2 t2
+					WHERE {$op}
+				",
 			];
 		}
 
+		yield 'CROSS JOIN same table, one col is NOT NULL' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1, analyser_test_nullability_1 t2
+				WHERE t1.col_vchar IS NOT NULL
+			',
+		];
+
+		yield 'CROSS JOIN subquery with alias = table name, one col is NOT NULL' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				CROSS JOIN (SELECT "a" col_vchar UNION SELECT NULL) analyser_test_nullability_1
+				WHERE analyser_test_nullability_1.col_vchar IS NOT NULL
+			',
+		];
+
+		yield 'col from parent of subquery is NOT NULL' => [
+			'query' => 'SELECT *, (SELECT 1 WHERE col_vchar IS NOT NULL) FROM analyser_test_nullability_1',
+		];
+
 		yield 'always true: WHERE NOT (0 AND col_vchar)' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE NOT (0 AND col_vchar)',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE NOT (0 AND col_vchar)',
 		];
 
 		yield 'always true: WHERE 1 OR col_vchar' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE 1 OR col_vchar',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE 1 OR col_vchar',
 		];
 
 		yield 'useless part of condition: AND' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE id IS NOT NULL AND col_vchar IS NOT NULL',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE id IS NOT NULL AND col_vchar IS NOT NULL',
 		];
 
 		yield 'useless part of condition: NOT AND' => [
-			'query' => 'SELECT * FROM analyser_test_nullability WHERE NOT (id IS NOT NULL AND col_vchar IS NOT NULL)',
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE NOT (id IS NOT NULL AND col_vchar IS NOT NULL)',
 		];
 	}
 
