@@ -981,23 +981,60 @@ final class AnalyserState
 				return new ExprTypeResult(new Schema\DbType\VarcharType(), true);
 			case Expr\ExprTypeEnum::TUPLE:
 				assert($expr instanceof Expr\Tuple);
-				$innerFields = array_map($this->resolveExprType(...), $expr->expressions);
+				$innerCondition = match ($condition) {
+					null => null,
+					AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
+					default => AnalyserConditionTypeEnum::NOT_NULL,
+				};
+				$kbCombinineWithAnd = $innerCondition === AnalyserConditionTypeEnum::NOT_NULL;
+				$innerFields = array_map(
+					fn (Expr\Expr $e) => $this->resolveExprType($e, $innerCondition),
+					$expr->expressions,
+				);
 				$innerTypes = array_map(static fn (ExprTypeResult $f) => $f->type, $innerFields);
+				$knowledgeBase = false;
+
+				foreach ($innerFields as $field) {
+					if ($knowledgeBase === false) {
+						$knowledgeBase = $field->knowledgeBase;
+
+						continue;
+					}
+
+					if ($field->knowledgeBase === null) {
+						$knowledgeBase = null;
+
+						break;
+					}
+
+					assert($knowledgeBase instanceof AnalyserKnowledgeBase);
+					$knowledgeBase = $kbCombinineWithAnd
+						? $knowledgeBase->and($field->knowledgeBase)
+						: $knowledgeBase->or($field->knowledgeBase);
+				}
 
 				return new ExprTypeResult(
 					new Schema\DbType\TupleType($innerTypes, false),
 					$this->isAnyExprNullable($innerFields),
+					null,
+					$knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::IN:
 				assert($expr instanceof Expr\In);
-				$innerCondition = match ($condition) {
-					AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::FALSY,
-					AnalyserConditionTypeEnum::NOT_NULL => AnalyserConditionTypeEnum::NOT_NULL,
-					AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
-					null => null,
+				[$innerConditionLeft, $innerConditionRight] = match ($condition) {
+					AnalyserConditionTypeEnum::FALSY => [
+						AnalyserConditionTypeEnum::NOT_NULL,
+						AnalyserConditionTypeEnum::NOT_NULL,
+					],
+					AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::NOT_NULL => [
+						AnalyserConditionTypeEnum::NOT_NULL,
+						null,
+					],
+					AnalyserConditionTypeEnum::NULL => [AnalyserConditionTypeEnum::NULL, null],
+					null => [null, null],
 				};
-				$leftResult = $this->resolveExprType($expr->left, $innerCondition);
-				$rightResult = $this->resolveExprType($expr->right);
+				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft);
+				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight);
 				$rightType = $rightResult->type;
 
 				// $rightType may not be a tuple if it's a subquery (e.g. "1 IN (SELECT 1)")
@@ -1013,8 +1050,16 @@ final class AnalyserState
 
 				$knowledgeBase = null;
 
-				if ($innerCondition === AnalyserConditionTypeEnum::NOT_NULL || ! $rightResult->isNullable) {
+				if ($innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL || ! $rightResult->isNullable) {
 					$knowledgeBase = $leftResult->knowledgeBase;
+				}
+
+				if (
+					$condition === AnalyserConditionTypeEnum::FALSY
+					&& $leftResult->knowledgeBase !== null
+					&& $rightResult->knowledgeBase !== null
+				) {
+					$knowledgeBase = $leftResult->knowledgeBase->and($rightResult->knowledgeBase);
 				}
 
 				return new ExprTypeResult(

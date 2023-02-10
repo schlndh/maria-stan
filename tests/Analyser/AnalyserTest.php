@@ -1404,6 +1404,7 @@ class AnalyserTest extends TestCase
 			'NOT (col_vchar IS NULL AND col_int IS NOT NULL)',
 			'col_vchar <=> col_int',
 			'col_int = 1',
+			't1.col_vchar IN (t2.col_int, 1)',
 		];
 
 		foreach ($divOperators as $op) {
@@ -1435,9 +1436,9 @@ class AnalyserTest extends TestCase
 			// TODO: implement this
 			//'t1.col_vchar BETWEEN t2.col_vchar AND t2.col_vchar',
 			//'t1.col_vchar NOT BETWEEN t2.col_vchar AND t2.col_vchar',
-			//'t1.col_vchar IN (t2.col_vchar)',
-			//'t1.col_vchar IN (t2.col_vchar, NULL)',
-			//'t1.col_vchar NOT IN (t2.col_vchar)',
+			't1.col_vchar IN (t2.col_vchar, NULL, 1)',
+			't1.col_vchar IN (t2.col_vchar, 1)',
+			't1.col_vchar NOT IN (t2.col_vchar, 1)',
 			'(t1.col_vchar NOT IN (t2.col_vchar, NULL)) IS NULL',
 		];
 
