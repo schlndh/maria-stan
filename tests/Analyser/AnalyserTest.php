@@ -1277,7 +1277,7 @@ class AnalyserTest extends TestCase
 		');
 		$db->query('
 			INSERT INTO analyser_test_nullability_1 (col_vchar)
-			VALUES (NULL), ("aa"), ("1")
+			VALUES (NULL), ("aa"), ("1"), ("2023-02-10 13:19:25")
 		');
 		$db->query('
 			CREATE OR REPLACE TABLE analyser_test_nullability_2 (
@@ -1379,6 +1379,18 @@ class AnalyserTest extends TestCase
 			$operations[] = "! ({$value} AND col_vchar IS NOT NULL)";
 		}
 
+		$intervalValues = ['1', 'NULL', '0.0', '"aa"', '"2023-02-10"'];
+
+		foreach ($intervalValues as $value) {
+			$operations[] = "(col_vchar + INTERVAL {$value} DAY) IS NULL";
+
+			if ($value === 'NULL') {
+				continue;
+			}
+
+			$operations[] = "(col_vchar + INTERVAL {$value} DAY) IS NOT NULL";
+		}
+
 		foreach ($operations as $op) {
 			yield "SELECT * WHERE {$op}" => [
 				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$op}",
@@ -1398,6 +1410,10 @@ class AnalyserTest extends TestCase
 			$operations[] = "(t1.col_vchar {$op} 0) IS NOT NULL OR col_int IS NULL";
 			$operations[] = "! ((t1.col_vchar {$op} 0) IS NULL AND col_int IS NULL)";
 			$operations[] = "(1 {$op} t1.col_vchar) IS NULL";
+		}
+
+		foreach ($arithmeticOperators as $op) {
+			$operations[] = "t1.col_vchar {$op} (t2.col_int + 1)";
 		}
 
 		foreach ($operations as $op) {

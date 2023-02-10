@@ -675,12 +675,18 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::INTERVAL:
 				assert($expr instanceof Expr\Interval);
-				// TODO: handle $condition
-				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity);
+				$innerCondition = match ($condition) {
+					null => null,
+					AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
+					default => AnalyserConditionTypeEnum::NOT_NULL,
+				};
+				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity, $innerCondition);
 
 				return new ExprTypeResult(
 					new Schema\DbType\DateTimeType(),
 					$timeQuantityResult->isNullable,
+					null,
+					$timeQuantityResult->knowledgeBase,
 				);
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
@@ -777,6 +783,8 @@ final class AnalyserState
 				}
 
 				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft);
+				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight);
+				$type = null;
 
 				if (
 					(
@@ -784,73 +792,87 @@ final class AnalyserState
 						|| $expr->operation === Expr\BinaryOpTypeEnum::MINUS
 					) && $expr->right::getExprType() === Expr\ExprTypeEnum::INTERVAL
 				) {
-					$intervalExpr = $expr->right;
-					$intervalResult = $this->resolveExprType($intervalExpr);
+					$type = new Schema\DbType\DateTimeType();
+					$isNullable = $leftResult->isNullable
+						|| $rightResult->isNullable
+						|| $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME;
 
-					return new ExprTypeResult(
-						new Schema\DbType\DateTimeType(),
-						$leftResult->isNullable
-							|| $intervalResult->isNullable
-							|| $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME,
-					);
-				}
-
-				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight);
-				$lt = $leftResult->type::getTypeEnum();
-				$rt = $rightResult->type::getTypeEnum();
-				$typesInvolved = [
-					$lt->value => 1,
-					$rt->value => 1,
-				];
-
-				if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
-					if (
-						! in_array(
-							$expr->operation,
-							[
-								Expr\BinaryOpTypeEnum::EQUAL,
-								Expr\BinaryOpTypeEnum::NOT_EQUAL,
-								Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL,
-								Expr\BinaryOpTypeEnum::GREATER,
-								Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
-								Expr\BinaryOpTypeEnum::LOWER,
-								Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
-							],
-							true,
-						)
-					) {
-						$this->errors[] = new AnalyserError(
-							AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
-								$expr->operation,
-								$lt,
-								$rt,
-							),
-						);
-						$type = new Schema\DbType\MixedType();
-					} else {
-						$this->checkSameTypeShape($leftResult->type, $rightResult->type);
-						$type = new Schema\DbType\IntType();
+					if ($kbCombinineWithAnd !== null) {
+						if (
+							$condition === AnalyserConditionTypeEnum::NULL
+							&& $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME
+							// if it is "+ INTERVAL NULL" then it will always be NULL.
+							&& $rightResult->knowledgeBase?->truthiness !== true
+						) {
+							// "a + INTERVAL b" can be null is also null if "a" is not valid date,
+							$kbCombinineWithAnd = null;
+						}
 					}
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
-					$type = new Schema\DbType\NullType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::MIXED->value])) {
-					$type = new Schema\DbType\MixedType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->value])) {
-					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-						? new Schema\DbType\IntType()
-						: new Schema\DbType\FloatType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->value])) {
-					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-						? new Schema\DbType\IntType()
-						: new Schema\DbType\FloatType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
-					$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-						? new Schema\DbType\IntType()
-						: new Schema\DbType\DecimalType();
-				} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
-					$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
-						? new Schema\DbType\DecimalType()
-						: new Schema\DbType\IntType();
+				} else {
+					$lt = $leftResult->type::getTypeEnum();
+					$rt = $rightResult->type::getTypeEnum();
+					$typesInvolved = [
+						$lt->value => 1,
+						$rt->value => 1,
+					];
+
+					if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
+						if (
+							! in_array(
+								$expr->operation,
+								[
+									Expr\BinaryOpTypeEnum::EQUAL,
+									Expr\BinaryOpTypeEnum::NOT_EQUAL,
+									Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL,
+									Expr\BinaryOpTypeEnum::GREATER,
+									Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
+									Expr\BinaryOpTypeEnum::LOWER,
+									Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
+								],
+								true,
+							)
+						) {
+							$this->errors[] = new AnalyserError(
+								AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
+									$expr->operation,
+									$lt,
+									$rt,
+								),
+							);
+							$type = new Schema\DbType\MixedType();
+						} else {
+							$this->checkSameTypeShape($leftResult->type, $rightResult->type);
+							$type = new Schema\DbType\IntType();
+						}
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
+						$type = new Schema\DbType\NullType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::MIXED->value])) {
+						$type = new Schema\DbType\MixedType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->value])) {
+						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+							? new Schema\DbType\IntType()
+							: new Schema\DbType\FloatType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->value])) {
+						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+							? new Schema\DbType\IntType()
+							: new Schema\DbType\FloatType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
+						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
+							? new Schema\DbType\IntType()
+							: new Schema\DbType\DecimalType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
+						$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
+							? new Schema\DbType\DecimalType()
+							: new Schema\DbType\IntType();
+					}
+
+					$isNullable = $leftResult->isNullable || $rightResult->isNullable
+						// It can be division by 0 in which case MariaDB returns null.
+						|| in_array($expr->operation, [
+							Expr\BinaryOpTypeEnum::DIVISION,
+							Expr\BinaryOpTypeEnum::INT_DIVISION,
+							Expr\BinaryOpTypeEnum::MODULO,
+						], true);
 				}
 
 				// TODO: Analyze the rest of the operators
@@ -867,19 +889,7 @@ final class AnalyserState
 						: $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
 				}
 
-				return new ExprTypeResult(
-					$type,
-					$leftResult->isNullable
-						|| $rightResult->isNullable
-						// It can be division by 0 in which case MariaDB returns null.
-						|| in_array($expr->operation, [
-							Expr\BinaryOpTypeEnum::DIVISION,
-							Expr\BinaryOpTypeEnum::INT_DIVISION,
-							Expr\BinaryOpTypeEnum::MODULO,
-						], true),
-					null,
-					$knowledgeBase,
-				);
+				return new ExprTypeResult($type, $isNullable, null, $knowledgeBase);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
 				// TODO: handle $condition
