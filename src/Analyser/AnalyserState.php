@@ -656,6 +656,8 @@ final class AnalyserState
 					$this->createKnowledgeBaseForLiteralExpression($expr, $condition),
 				);
 			case Expr\ExprTypeEnum::LITERAL_NULL:
+				assert($expr instanceof Expr\LiteralNull);
+
 				return new ExprTypeResult(
 					new Schema\DbType\NullType(),
 					true,
@@ -673,6 +675,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::INTERVAL:
 				assert($expr instanceof Expr\Interval);
+				// TODO: handle $condition
 				$timeQuantityResult = $this->resolveExprType($expr->timeQuantity);
 
 				return new ExprTypeResult(
@@ -683,6 +686,7 @@ final class AnalyserState
 				assert($expr instanceof Expr\UnaryOp);
 				$innerCondition = $condition;
 
+				// TODO: handle $condition for +, -, ~, BINARY
 				if ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::LOGIC_NOT) {
 					$innerCondition = match ($innerCondition) {
 						AnalyserConditionTypeEnum::TRUTHY => AnalyserConditionTypeEnum::FALSY,
@@ -713,7 +717,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
-				$innerCondition = null;
+				$innerConditionLeft = $innerConditionRight = null;
 				// NULL = don't combine, true = AND, false = OR.
 				$kbCombinineWithAnd = null;
 				$nullUnsafeComparisonOperators = [
@@ -724,7 +728,18 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::GREATER,
 					Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
 				];
+				$nullUnsafeArithmeticOperators = [
+					Expr\BinaryOpTypeEnum::PLUS,
+					Expr\BinaryOpTypeEnum::MINUS,
+					Expr\BinaryOpTypeEnum::MULTIPLICATION,
+				];
+				$divOperators = [
+					Expr\BinaryOpTypeEnum::DIVISION,
+					Expr\BinaryOpTypeEnum::INT_DIVISION,
+					Expr\BinaryOpTypeEnum::MODULO,
+				];
 
+				// TODO: handle $condition for XOR, <=>, REGEXP, |, &, <<, >>, ^
 				if (
 					(
 						$condition === AnalyserConditionTypeEnum::TRUTHY
@@ -735,22 +750,33 @@ final class AnalyserState
 						|| $expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR
 					)
 				) {
-					$innerCondition = $condition;
+					$innerConditionLeft = $innerConditionRight = $condition;
 					$kbCombinineWithAnd = $expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND;
 
 					if ($condition === AnalyserConditionTypeEnum::FALSY) {
 						$kbCombinineWithAnd = ! $kbCombinineWithAnd;
 					}
-				} elseif (in_array($expr->operation, $nullUnsafeComparisonOperators, true)) {
-					$innerCondition = match ($condition) {
+				} elseif (
+					in_array($expr->operation, $nullUnsafeComparisonOperators, true)
+					|| in_array($expr->operation, $nullUnsafeArithmeticOperators, true)
+				) {
+					$innerConditionLeft = $innerConditionRight = match ($condition) {
 						AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
 						// For now, we can only determine that none of the operands can be NULL.
 						default => AnalyserConditionTypeEnum::NOT_NULL,
 					};
-					$kbCombinineWithAnd = $innerCondition === AnalyserConditionTypeEnum::NOT_NULL;
+					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL;
+				} elseif (in_array($expr->operation, $divOperators, true)) {
+					[$innerConditionLeft, $innerConditionRight] = match ($condition) {
+						// We'd have to consider both FALSY and NULL for right side.
+						AnalyserConditionTypeEnum::NULL => [null, null],
+						// For now, we can only determine that none of the operands can be NULL.
+						default => [AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY],
+					};
+					$kbCombinineWithAnd = true;
 				}
 
-				$leftResult = $this->resolveExprType($expr->left, $innerCondition);
+				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft);
 
 				if (
 					(
@@ -769,7 +795,7 @@ final class AnalyserState
 					);
 				}
 
-				$rightResult = $this->resolveExprType($expr->right, $innerCondition);
+				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight);
 				$lt = $leftResult->type::getTypeEnum();
 				$rt = $rightResult->type::getTypeEnum();
 				$typesInvolved = [
@@ -856,6 +882,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
+				// TODO: handle $condition
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
 
@@ -925,6 +952,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::BETWEEN:
 				assert($expr instanceof Expr\Between);
+				// TODO: handle $condition
 				$isNullable = array_reduce(
 					array_map($this->resolveExprType(...), [$expr->expression, $expr->min, $expr->max]),
 					static fn (bool $isNullable, ExprTypeResult $f) => $isNullable || $f->isNullable,
@@ -936,6 +964,7 @@ final class AnalyserState
 					$isNullable,
 				);
 			case Expr\ExprTypeEnum::PLACEHOLDER:
+				// TODO: handle $condition
 				$this->positionalPlaceholderCount++;
 
 				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
@@ -986,6 +1015,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::LIKE:
 				assert($expr instanceof Expr\Like);
+				// TODO: handle $condition
 				$expressionResult = $this->resolveExprType($expr->expression);
 				$patternResult = $this->resolveExprType($expr->pattern);
 				// TODO: check for valid escape char expressions.
@@ -1028,6 +1058,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::FUNCTION_CALL:
 				assert($expr instanceof Expr\FunctionCall\FunctionCall);
+				// TODO: handle $condition
 				$position = 0;
 				$arguments = $expr->getArguments();
 				$normalizedFunctionName = strtoupper($expr->getFunctionName());
@@ -1084,6 +1115,7 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::CASE_OP:
 				assert($expr instanceof Expr\CaseOp);
 
+				// TODO: handle $condition
 				if ($expr->compareValue) {
 					$field = $this->resolveExprType($expr->compareValue);
 					$this->checkNotTuple($field->type);
@@ -1117,6 +1149,7 @@ final class AnalyserState
 				return new ExprTypeResult($type, $isNullable);
 			case Expr\ExprTypeEnum::EXISTS:
 				assert($expr instanceof Expr\Exists);
+				// TODO: handle $condition
 				$this->getSubqueryAnalyser($expr->subquery)->analyse();
 
 				return new ExprTypeResult(
@@ -1125,6 +1158,7 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::ASSIGNMENT:
 				assert($expr instanceof Expr\Assignment);
+				// TODO: handle $condition
 				$this->resolveExprType($expr->target);
 				$value = $this->resolveExprType($expr->expression);
 
@@ -1284,25 +1318,21 @@ final class AnalyserState
 		return FunctionInfoHelper::castToCommonType($left, $right);
 	}
 
+	/**
+	 * @template T of scalar|null
+	 * @param Expr\LiteralExpr<T> $expr
+	 */
 	private function createKnowledgeBaseForLiteralExpression(
-		Expr\Expr $expr,
+		Expr\LiteralExpr $expr,
 		?AnalyserConditionTypeEnum $condition,
 	): ?AnalyserKnowledgeBase {
-		// TODO: Report always/never satisfied condition.
-		if ($expr::getExprType() === Expr\ExprTypeEnum::LITERAL_NULL) {
-			return match ($condition) {
-				AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixed(true),
-				AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY,
-				AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixed(false),
-				null => null,
-			};
-		}
+		$value = $expr->getLiteralValue();
 
 		return match ($condition) {
-			AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixed(false),
-			AnalyserConditionTypeEnum::NOT_NULL => AnalyserKnowledgeBase::createFixed(true),
-			AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::FALSY
-				=> AnalyserKnowledgeBase::createEmpty(),
+			AnalyserConditionTypeEnum::NULL => AnalyserKnowledgeBase::createFixed($value === null),
+			AnalyserConditionTypeEnum::NOT_NULL => AnalyserKnowledgeBase::createFixed($value !== null),
+			AnalyserConditionTypeEnum::TRUTHY => AnalyserKnowledgeBase::createFixed(((float) $value) !== 0.0),
+			AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixed(((float) $value) === 0.0),
 			null => null,
 		};
 	}

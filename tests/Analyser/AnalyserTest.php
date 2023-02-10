@@ -29,6 +29,7 @@ use function array_map;
 use function assert;
 use function count;
 use function implode;
+use function in_array;
 use function is_string;
 use function str_starts_with;
 
@@ -1353,6 +1354,31 @@ class AnalyserTest extends TestCase
 			'col_vchar NOT IN (SELECT col_vchar FROM analyser_test_nullability_1 WHERE id = 2)',
 		];
 
+		$arithmeticOperators = ['+', '-', '*', '/', 'DIV', '%'];
+		$divOperators = ['/', 'DIV', '%'];
+
+		foreach ($arithmeticOperators as $op) {
+			$operations[] = "(col_vchar {$op} 1) IS NOT NULL";
+
+			if (in_array($op, $divOperators, true)) {
+				continue;
+			}
+
+			$operations[] = "(col_vchar {$op} 1) IS NULL";
+		}
+
+		$falseValues = ['0', '0.0', '0.0e1', '""', '"a"', '"0.0"', '"0.0e1"'];
+
+		foreach ($falseValues as $value) {
+			$operations[] = "{$value} OR col_vchar IS NOT NULL";
+		}
+
+		$trueValues = ['1', '0.1', '0.1e1', '"1"', '"0.1"', '"0.1e1"'];
+
+		foreach ($trueValues as $value) {
+			$operations[] = "! ({$value} AND col_vchar IS NOT NULL)";
+		}
+
 		foreach ($operations as $op) {
 			yield "SELECT * WHERE {$op}" => [
 				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$op}",
@@ -1367,6 +1393,12 @@ class AnalyserTest extends TestCase
 			'col_vchar <=> col_int',
 			'col_int = 1',
 		];
+
+		foreach ($divOperators as $op) {
+			$operations[] = "(t1.col_vchar {$op} 0) IS NOT NULL OR col_int IS NULL";
+			$operations[] = "! ((t1.col_vchar {$op} 0) IS NULL AND col_int IS NULL)";
+			$operations[] = "(1 {$op} t1.col_vchar) IS NULL";
+		}
 
 		foreach ($operations as $op) {
 			yield "t1 CROSS JOIN t2 WHERE {$op}" => [

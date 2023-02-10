@@ -7,7 +7,8 @@ namespace MariaStan\Ast\Expr;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Parser\Position;
 
-final class LiteralNull extends BaseNode implements Expr
+/** @implements LiteralExpr<null> */
+final class LiteralNull extends BaseNode implements LiteralExpr
 {
 	public function __construct(Position $startPosition, Position $endPosition)
 	{
@@ -17,5 +18,10 @@ final class LiteralNull extends BaseNode implements Expr
 	public static function getExprType(): ExprTypeEnum
 	{
 		return ExprTypeEnum::LITERAL_NULL;
+	}
+
+	public function getLiteralValue(): mixed
+	{
+		return null;
 	}
 }

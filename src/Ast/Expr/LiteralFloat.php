@@ -7,7 +7,8 @@ namespace MariaStan\Ast\Expr;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Parser\Position;
 
-final class LiteralFloat extends BaseNode implements Expr
+/** @implements LiteralExpr<float> */
+final class LiteralFloat extends BaseNode implements LiteralExpr
 {
 	public function __construct(Position $startPosition, Position $endPosition, public readonly float $value)
 	{
@@ -17,5 +18,10 @@ final class LiteralFloat extends BaseNode implements Expr
 	public static function getExprType(): ExprTypeEnum
 	{
 		return ExprTypeEnum::LITERAL_FLOAT;
+	}
+
+	public function getLiteralValue(): mixed
+	{
+		return $this->value;
 	}
 }
