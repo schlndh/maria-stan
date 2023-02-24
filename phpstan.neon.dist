@@ -41,3 +41,7 @@ parameters:
 		-
 			message: '# cast #'
 			path: tests/Parser/MariaDbParserOperatorTest.php
+		-
+			# https://github.com/phpstan/phpstan/issues/8956
+			message: '#Strict comparison using === between array and MariaStan\\Parser\\TokenTypeEnum::PRIMARY will always evaluate to false.#'
+			path: tests/Parser/MariaDbParserKeywordAsIdentifierTest.php

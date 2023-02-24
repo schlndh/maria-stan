@@ -36,7 +36,6 @@ final class Count extends BaseFunctionCall
 	/** @param non-empty-array<Expr> $arguments */
 	public static function createCountDistinct(Position $startPosition, Position $endPosition, array $arguments): self
 	{
-		// @phpstan-ignore-next-line
 		if (count($arguments) === 0) {
 			throw new InvalidArgumentException('COUNT(DISTINCT ...) has to have at least one argument.');
 		}
