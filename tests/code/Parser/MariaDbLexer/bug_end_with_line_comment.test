@@ -7,3 +7,15 @@ END_OF_INPUT: []
 -- comment
 -----
 END_OF_INPUT: []
+-----
+SELECT 1 --
+-----
+SELECT: [SELECT]
+INT_LITERAL: [1]
+END_OF_INPUT: []
+-----
+SELECT 1 #
+-----
+SELECT: [SELECT]
+INT_LITERAL: [1]
+END_OF_INPUT: []
