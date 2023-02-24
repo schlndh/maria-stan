@@ -22,12 +22,6 @@ parameters:
 		-
 			message: '#.*throws checked exception.*#'
 			path: tests/
-		-
-			message: '#Calling PHPStan\\Analyser\\Analyser::analyse\(\) is not covered by backward compatibility promise.*#'
-			path: src/Testing/MariaStanRuleTestCase.php
-		-
-			message: '#Calling PHPStan\\Analyser\\AnalyserResult::.*\(\) is not covered by backward compatibility promise.*#'
-			path: src/Testing/MariaStanRuleTestCase.php
 		# Annoying unions:
 		# mysqli methods can't return false: we have exceptions enabled.
 		- '#mysqli_stmt\|false#'

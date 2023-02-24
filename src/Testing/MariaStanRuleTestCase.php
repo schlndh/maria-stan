@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\Testing;
 
-use PHPStan\Analyser\Analyser;
 use PHPStan\Analyser\Error;
 use PHPStan\Testing\RuleTestCase;
-
-use function assert;
-use function method_exists;
 
 /**
  * @template TRule of \PHPStan\Rules\Rule
@@ -17,33 +13,6 @@ use function method_exists;
  */
 abstract class MariaStanRuleTestCase extends RuleTestCase
 {
-	/**
-	 * @param array<string> $files
-	 * @return array<Error>
-	 */
-	public function gatherAnalyserErrors(array $files): array
-	{
-		if (method_exists(RuleTestCase::class, 'gatherAnalyserErrors')) {
-			return parent::gatherAnalyserErrors($files);
-		}
-
-		// Fallback for phpstan < 1.8.10
-		/** Copied from {@see RuleTestCase} */
-		$files = \array_map([$this->getFileHelper(), 'normalizePath'], $files);
-		$selfReflection = new \ReflectionClass($this);
-		$getAnalyser = $selfReflection->getMethod('getAnalyser');
-
-		$analyser = $getAnalyser->invoke($this);
-		assert($analyser instanceof Analyser);
-		$analyserResult = $analyser->analyse($files, null, null, true);
-
-		if (\count($analyserResult->getInternalErrors()) > 0) {
-			$this->fail(\implode("\n", $analyserResult->getInternalErrors()));
-		}
-
-		return $analyserResult->getUnorderedErrors();
-	}
-
 	public function formatPHPStanError(Error $error): string
 	{
 		/** Copied from {@see RuleTestCase} */
