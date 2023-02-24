@@ -18,7 +18,6 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
@@ -45,7 +44,7 @@ final class PHPStanMySQLiHelper
 
 	public function prepare(Type $queryType): QueryPrepareCallResult
 	{
-		$constantStrings = TypeUtils::getConstantStrings($queryType);
+		$constantStrings = $queryType->getConstantStrings();
 
 		if (count($constantStrings) === 0) {
 			return new QueryPrepareCallResult(

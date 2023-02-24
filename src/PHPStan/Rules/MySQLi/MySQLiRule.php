@@ -14,17 +14,16 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Type\Constant\ConstantArrayType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\NullType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
+use function array_map;
 use function array_merge;
 use function assert;
 use function count;
+use function reset;
 
 /** @implements Rule<MethodCall> */
 class MySQLiRule implements Rule
@@ -49,21 +48,23 @@ class MySQLiRule implements Rule
 			$methodName = $node->name->name;
 		} else {
 			$methodNameType = $scope->getType($node->name);
+			$methodNameConstantStrings = $methodNameType->getConstantStrings();
 
-			if (! $methodNameType instanceof ConstantStringType) {
+			if (count($methodNameConstantStrings) !== 1) {
 				return [];
 			}
 
-			$methodName = $methodNameType->getValue();
+			$methodName = reset($methodNameConstantStrings)->getValue();
 		}
 
 		$objectType = $scope->getType($node->var);
+		$objectClassNames = $objectType->getObjectClassNames();
 
-		if (! $objectType instanceof ObjectType) {
+		if (count($objectClassNames) !== 1) {
 			return [];
 		}
 
-		return match ($objectType->getClassName()) {
+		return match (reset($objectClassNames)) {
 			mysqli::class => $this->handleMysqliCall($methodName, $node, $scope),
 			mysqli_stmt::class => $this->handleMysqliStmtCall($methodName, $node, $scope),
 			default => [],
@@ -125,7 +126,7 @@ class MySQLiRule implements Rule
 	/** @return array<array<Type>> [possible combinations of params] */
 	private function getExecuteParamTypesFromType(Type $type): array
 	{
-		if ($type instanceof NullType) {
+		if ($type->isNull()->yes()) {
 			return [[]];
 		}
 
@@ -139,10 +140,6 @@ class MySQLiRule implements Rule
 			return $subParams;
 		}
 
-		if ($type instanceof ConstantArrayType) {
-			return [$type->getValueTypes()];
-		}
-
-		return [];
+		return array_map(static fn (ConstantArrayType $t) => $t->getValueTypes(), $type->getConstantArrays());
 	}
 }

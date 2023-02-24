@@ -1,5 +1,6 @@
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
+	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
 	phpVersion: 80100
 	level: 9
@@ -45,3 +46,7 @@ parameters:
 			# https://github.com/phpstan/phpstan/issues/8956
 			message: '#Strict comparison using === between array and MariaStan\\Parser\\TokenTypeEnum::PRIMARY will always evaluate to false.#'
 			path: tests/Parser/MariaDbParserKeywordAsIdentifierTest.php
+		-
+			# I'm explicitly creating GenericObjectType to append additional information to mysqli_stmt/mysqli_result.
+			message: '#Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error-prone and deprecated.#'
+			path: src/PHPStan

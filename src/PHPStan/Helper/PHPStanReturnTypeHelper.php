@@ -12,7 +12,6 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\ConstantType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
@@ -21,10 +20,10 @@ use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 
 use function array_column;
-use function array_filter;
 use function array_values;
 use function assert;
 use function count;
+use function reset;
 
 class PHPStanReturnTypeHelper
 {
@@ -72,8 +71,7 @@ class PHPStanReturnTypeHelper
 			return null;
 		}
 
-		$rowTypes = TypeUtils::getConstantTypes($types[0]);
-		$rowTypes = array_filter($rowTypes, static fn (ConstantType $t) => $t instanceof ConstantArrayType);
+		$rowTypes = $types[0]->getConstantArrays();
 		$placholderCounts = TypeUtils::getConstantIntegers($types[1]);
 
 		if (count($rowTypes) === 0 || count($placholderCounts) === 0) {
@@ -125,23 +123,28 @@ class PHPStanReturnTypeHelper
 	}
 
 	/** @return ?array<array{ConstantStringType, Type}> [[name, type]] */
-	public function getColumnsFromRowType(Type $rowType): ?array
+	public function getColumnsFromRowType(ConstantArrayType $rowType): ?array
 	{
-		if (! $rowType instanceof ConstantArrayType) {
-			return null;
-		}
-
 		/** @var array<array{ConstantStringType, Type}> $columns [[name type, value type]]*/
 		$columns = [];
 
 		foreach ($rowType->getValueTypes() as $rowValueType) {
-			if (! $rowValueType instanceof ConstantArrayType || count($rowValueType->getValueTypes()) !== 2) {
+			$rowValueTypeConstantArray = $rowValueType->getConstantArrays();
+			$rowValueType = reset($rowValueTypeConstantArray);
+
+			if ($rowValueType === false) {
+				return null;
+			}
+
+			if (count($rowValueType->getValueTypes()) !== 2) {
 				return null;
 			}
 
 			[$name, $type] = $rowValueType->getValueTypes();
+			$nameConstantStrings = $name->getConstantStrings();
+			$name = reset($nameConstantStrings);
 
-			if (! $name instanceof ConstantStringType) {
+			if ($name === false) {
 				return null;
 			}
 
