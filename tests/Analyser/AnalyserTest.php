@@ -607,6 +607,14 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
 		];
 
+		yield 'use column in GROUP BY - same alias in fields list vs 2 tables' => [
+			'query' => 'SELECT 1 id FROM analyser_test t1, analyser_test t2 GROUP BY id',
+		];
+
+		yield 'use column in GROUP BY - 2x table column' => [
+			'query' => 'SELECT id, id id FROM analyser_test GROUP BY id',
+		];
+
 		yield 'use column in GROUP BY - resolve column ambiguity via field list' => [
 			'query' => 'SELECT t1.id, t2.name FROM analyser_test t1, analyser_test t2 GROUP BY id',
 		];

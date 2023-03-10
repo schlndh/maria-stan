@@ -243,9 +243,9 @@ final class ColumnResolver
 			$candidateFields = $this->fieldList[$column] ?? [];
 
 			if ($this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::GROUP_BY && count($candidateFields) > 0) {
-				$columnCount = 0;
 				$firstExpressionField = null;
 				$firstField = null;
+				$columnMap = [];
 
 				/** @var ?bool $isColumn */
 				foreach ($candidateFields as [$field, $isColumn]) {
@@ -258,13 +258,20 @@ final class ColumnResolver
 					}
 
 					if ($isColumn) {
-						$columnCount++;
+						assert($field->exprType->column !== null);
+						$columnMap[$field->exprType->column->tableAlias][$field->exprType->column->name] = true;
 					} else {
 						$firstExpressionField ??= $field;
 					}
 				}
 
-				if ($columnCount > 1) {
+				$uniqueColumnCount = 0;
+
+				foreach ($columnMap as $columns) {
+					$uniqueColumnCount += count($columns);
+				}
+
+				if ($uniqueColumnCount > 1) {
 					throw new AnalyserException(
 						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
 					);
