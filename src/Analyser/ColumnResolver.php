@@ -7,6 +7,11 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\Exception\DuplicateFieldNameException;
 use MariaStan\Analyser\Exception\NotUniqueTableAliasException;
+use MariaStan\Analyser\FullyQualifiedColumn\FieldListFullyQualifiedColumn;
+use MariaStan\Analyser\FullyQualifiedColumn\FullyQualifiedColumn;
+use MariaStan\Analyser\FullyQualifiedColumn\FullyQualifiedColumnTypeEnum;
+use MariaStan\Analyser\FullyQualifiedColumn\ParentFullyQualifiedColumn;
+use MariaStan\Analyser\FullyQualifiedColumn\TableFullyQualifiedColumn;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
@@ -227,6 +232,102 @@ final class ColumnResolver
 		?string $table,
 		?AnalyserConditionTypeEnum $condition = null,
 	): ExprTypeResult {
+		$resolvedColumn = $this->resolveColumnName($column, $table);
+
+		return $this->getTypeForFullyQualifiedColumn($resolvedColumn, $condition);
+	}
+
+	/** @throws AnalyserException */
+	private function getTypeForFullyQualifiedColumn(
+		FullyQualifiedColumn $column,
+		?AnalyserConditionTypeEnum $condition = null,
+	): ExprTypeResult {
+		switch ($column::getColumnType()) {
+			case FullyQualifiedColumnTypeEnum::FIELD_LIST:
+				assert($column instanceof FieldListFullyQualifiedColumn);
+
+				return $column->field->exprType;
+			case FullyQualifiedColumnTypeEnum::PARENT:
+				assert($column instanceof ParentFullyQualifiedColumn);
+				assert($this->parent !== null);
+
+				if ($this->aggregateFunctionDepth > 0) {
+					$this->parent->enterAggregateFunction();
+				}
+
+				try {
+					return $this->parent->getTypeForFullyQualifiedColumn($column->parentColumn, $condition);
+				} finally {
+					if ($this->aggregateFunctionDepth > 0) {
+						$this->parent->exitAggregateFunction();
+					}
+				}
+		}
+
+		assert($column instanceof TableFullyQualifiedColumn);
+		$columnInfo = $column->columnInfo;
+
+		if (
+			$this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
+			&& $this->aggregateFunctionDepth === 0
+			&& ! isset($this->groupByColumns[$columnInfo->tableAlias][$columnInfo->name])
+		) {
+			$isColumnUsedInFieldList = false;
+
+			foreach ($this->fieldList as $fields) {
+				foreach ($fields as [$field]) {
+					assert($field instanceof QueryResultField);
+					$fieldColumn = $field->exprType->column;
+
+					if (
+						$fieldColumn === null
+						|| $fieldColumn->name !== $columnInfo->name
+						|| $fieldColumn->tableAlias !== $columnInfo->tableAlias
+					) {
+						continue;
+					}
+
+					$isColumnUsedInFieldList = true;
+					break 2;
+				}
+			}
+
+			if (! $isColumnUsedInFieldList) {
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createInvalidHavingColumn($columnInfo->name),
+				);
+			}
+		}
+
+		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
+			?? throw new AnalyserException("Unknown column {$columnInfo->tableAlias}.{$columnInfo->name}");
+		$knowledgeBase = null;
+
+		if ($condition === AnalyserConditionTypeEnum::NULL || $condition === AnalyserConditionTypeEnum::NOT_NULL) {
+			$isNullCondition = $condition === AnalyserConditionTypeEnum::NULL;
+
+			if ($exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
+				$knowledgeBase = AnalyserKnowledgeBase::createFixed($isNullCondition);
+			} elseif (! $exprType->isNullable) {
+				$knowledgeBase = AnalyserKnowledgeBase::createFixed(! $isNullCondition);
+			} else {
+				$knowledgeBase = AnalyserKnowledgeBase::createForSingleColumn($columnInfo, $isNullCondition);
+			}
+		} elseif ($condition !== null) {
+			// Both TRUTHY and FALSY require the column to be non-nullable.
+			$knowledgeBase = $exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL
+				? AnalyserKnowledgeBase::createFixed(false)
+				: AnalyserKnowledgeBase::createForSingleColumn($columnInfo, false);
+		}
+
+		return $knowledgeBase === null
+			? $exprType
+			: new ExprTypeResult($exprType->type, $exprType->isNullable, $exprType->column, $knowledgeBase);
+	}
+
+	/** @throws AnalyserException */
+	private function resolveColumnName(string $column, ?string $table): FullyQualifiedColumn
+	{
 		if (
 			$table === null
 			&& in_array(
@@ -236,8 +337,15 @@ final class ColumnResolver
 			)
 			&& isset($this->fieldList[$column])
 		) {
-			return $this->fieldList[$column][0][0]->exprType;
+			return new FieldListFullyQualifiedColumn($this->fieldList[$column][0][0]);
 		}
+
+		$candidateTables = array_filter(
+			$this->allColumns,
+			$table === null
+				? static fn (array $t) => $t['column'] === $column
+				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table,
+		);
 
 		if ($table === null) {
 			$candidateFields = $this->fieldList[$column] ?? [];
@@ -277,17 +385,16 @@ final class ColumnResolver
 					);
 				}
 
+				if (count($candidateTables) === 1) {
+					return new TableFullyQualifiedColumn(
+						$this->getColumnInfo(reset($candidateTables)['table'], $column),
+					);
+				}
+
 				// If there are multiple expressions with the same alias the first one seems to be used.
-				return ($firstExpressionField ?? $firstField)->exprType;
+				return new FieldListFullyQualifiedColumn($firstExpressionField ?? $firstField);
 			}
 		}
-
-		$candidateTables = array_filter(
-			$this->allColumns,
-			$table === null
-				? static fn (array $t) => $t['column'] === $column
-				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table,
-		);
 
 		switch (count($candidateTables)) {
 			case 0:
@@ -298,7 +405,7 @@ final class ColumnResolver
 				}
 
 				try {
-					$resolvedParentColumn = $this->parent?->resolveColumn($column, $table);
+					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table);
 				} catch (AnalyserException) {
 				}
 
@@ -308,98 +415,61 @@ final class ColumnResolver
 
 				// TODO: add test to make sure that the prioritization is the same as in the database.
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
-				return $resolvedParentColumn
-					?? ($table === null ? $this->parent?->findUniqueItemInFieldList($column)?->exprType : null)
-					?? (
-						$table === null && $this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST
-							? $this->findUniqueItemInFieldList($column)?->exprType
-							: null
-					)
-					?? throw new AnalyserException(
-						AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
-					);
-			case 1:
-				$alias = reset($candidateTables)['table'];
-				$tableName = $this->tablesByAlias[$alias] ?? $alias;
-
-				if (isset($this->tableSchemas[$tableName])) {
-					$columnInfo = new ColumnInfo(
-						$column,
-						$tableName,
-						$alias,
-						isset($this->cteSchemas[$tableName])
-							? ColumnInfoTableTypeEnum::SUBQUERY
-							: ColumnInfoTableTypeEnum::TABLE,
-					);
-				} elseif (isset($this->subquerySchemas[$alias])) {
-					$columnInfo = new ColumnInfo($column, $tableName, $alias, ColumnInfoTableTypeEnum::SUBQUERY);
-				} else {
-					throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
+				if ($resolvedParentColumn !== null) {
+					return new ParentFullyQualifiedColumn($resolvedParentColumn);
 				}
 
-				break;
+				if ($table === null) {
+					$parentField = $this->parent?->findUniqueItemInFieldList($column);
+
+					if ($parentField !== null) {
+						return new FieldListFullyQualifiedColumn($parentField);
+					}
+
+					if ($this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST) {
+						$field = $this->findUniqueItemInFieldList($column);
+
+						if ($field !== null) {
+							return new FieldListFullyQualifiedColumn($field);
+						}
+					}
+				}
+
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
+				);
+			case 1:
+				return new TableFullyQualifiedColumn(
+					$this->getColumnInfo(reset($candidateTables)['table'], $column),
+				);
 			default:
 				throw new AnalyserException(
 					AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
 				);
 		}
+	}
 
-		if (
-			$this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
-			&& $this->aggregateFunctionDepth === 0
-			&& ! isset($this->groupByColumns[$columnInfo->tableAlias][$columnInfo->name])
-		) {
-			$isColumnUsedInFieldList = false;
+	/** @throws AnalyserException */
+	private function getColumnInfo(string $table, string $column): ColumnInfo
+	{
+		$tableName = $this->tablesByAlias[$table] ?? $table;
 
-			foreach ($this->fieldList as $fields) {
-				foreach ($fields as [$field]) {
-					assert($field instanceof QueryResultField);
-					$fieldColumn = $field->exprType->column;
-
-					if (
-						$fieldColumn === null
-						|| $fieldColumn->name !== $columnInfo->name
-						|| $fieldColumn->tableAlias !== $columnInfo->tableAlias
-					) {
-						continue;
-					}
-
-					$isColumnUsedInFieldList = true;
-					break 2;
-				}
-			}
-
-			if (! $isColumnUsedInFieldList) {
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createInvalidHavingColumn($columnInfo->name),
-				);
-			}
+		if (isset($this->tableSchemas[$tableName])) {
+			return new ColumnInfo(
+				$column,
+				$tableName,
+				$table,
+				isset($this->cteSchemas[$tableName])
+					? ColumnInfoTableTypeEnum::SUBQUERY
+					: ColumnInfoTableTypeEnum::TABLE,
+			);
 		}
 
-		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
-			?? throw new AnalyserException("Unknown column {$columnInfo->tableAlias}.{$columnInfo->name}");
-		$knowledgeBase = null;
-
-		if ($condition === AnalyserConditionTypeEnum::NULL || $condition === AnalyserConditionTypeEnum::NOT_NULL) {
-			 $isNullCondition = $condition === AnalyserConditionTypeEnum::NULL;
-
-			if ($exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL) {
-				$knowledgeBase = AnalyserKnowledgeBase::createFixed($isNullCondition);
-			} elseif (! $exprType->isNullable) {
-				$knowledgeBase = AnalyserKnowledgeBase::createFixed(! $isNullCondition);
-			} else {
-				$knowledgeBase = AnalyserKnowledgeBase::createForSingleColumn($columnInfo, $isNullCondition);
-			}
-		} elseif ($condition !== null) {
-			// Both TRUTHY and FALSY require the column to be non-nullable.
-			$knowledgeBase = $exprType->type::getTypeEnum() === Schema\DbType\DbTypeEnum::NULL
-				? AnalyserKnowledgeBase::createFixed(false)
-				: AnalyserKnowledgeBase::createForSingleColumn($columnInfo, false);
+		if (isset($this->subquerySchemas[$table])) {
+			return new ColumnInfo($column, $tableName, $table, ColumnInfoTableTypeEnum::SUBQUERY);
 		}
 
-		return $knowledgeBase === null
-			? $exprType
-			: new ExprTypeResult($exprType->type, $exprType->isNullable, $exprType->column, $knowledgeBase);
+		throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
 	}
 
 	private function findUniqueItemInFieldList(string $name): ?QueryResultField
