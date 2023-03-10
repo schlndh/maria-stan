@@ -354,6 +354,12 @@ final class ColumnResolver
 				$firstExpressionField = null;
 				$firstField = null;
 				$columnMap = [];
+				$isAmbiguousWarning = false;
+				$candidateTable = null;
+
+				if (count($candidateTables) === 1) {
+					$candidateTable = reset($candidateTables)['table'];
+				}
 
 				/** @var ?bool $isColumn */
 				foreach ($candidateFields as [$field, $isColumn]) {
@@ -368,8 +374,22 @@ final class ColumnResolver
 					if ($isColumn) {
 						assert($field->exprType->column !== null);
 						$columnMap[$field->exprType->column->tableAlias][$field->exprType->column->name] = true;
+
+						if (
+							$candidateTable !== null
+							&& (
+								$field->exprType->column->tableAlias !== $candidateTable
+								|| $field->exprType->column->name !== $column
+							)
+						) {
+							$isAmbiguousWarning = true;
+						}
 					} else {
 						$firstExpressionField ??= $field;
+
+						if ($candidateTable !== null) {
+							$isAmbiguousWarning = true;
+						}
 					}
 				}
 
@@ -379,15 +399,19 @@ final class ColumnResolver
 					$uniqueColumnCount += count($columns);
 				}
 
-				if ($uniqueColumnCount > 1) {
+				if ($uniqueColumnCount > 1 || $isAmbiguousWarning) {
 					throw new AnalyserException(
-						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
+						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage(
+							$column,
+							$table,
+							$isAmbiguousWarning,
+						),
 					);
 				}
 
-				if (count($candidateTables) === 1) {
+				if ($candidateTable !== null) {
 					return new TableFullyQualifiedColumn(
-						$this->getColumnInfo(reset($candidateTables)['table'], $column),
+						$this->getColumnInfo($candidateTable, $column),
 					);
 				}
 

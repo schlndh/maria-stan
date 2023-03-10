@@ -33,11 +33,14 @@ class AnalyserErrorMessageBuilder
 		return "Table '{$table}' doesn't exist";
 	}
 
-	public static function createAmbiguousColumnErrorMessage(string $column, ?string $table = null): string
-	{
+	public static function createAmbiguousColumnErrorMessage(
+		string $column,
+		?string $table = null,
+		bool $isWarning = false,
+	): string {
 		$column = self::formatColumnName($column, $table);
 
-		return "Ambiguous column '{$column}'";
+		return ($isWarning ? 'Warning: ' : '') . "Ambiguous column '{$column}'";
 	}
 
 	public static function createDuplicateColumnName(string $column): string

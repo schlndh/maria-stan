@@ -57,6 +57,16 @@ use const MYSQLI_TYPE_YEAR;
 
 class AnalyserTest extends TestCase
 {
+	private const IGNORED_WARNINGS = [
+		MariaDbErrorCodes::ER_TRUNCATED_WRONG_VALUE,
+		MariaDbErrorCodes::ER_WARN_DATA_OUT_OF_RANGE,
+		MariaDbErrorCodes::ER_DIVISION_BY_ZER,
+		// I have a few test-cases with explicit null, which I could detect, but in general I don't
+		// want to bother.
+		MariaDbErrorCodes::ER_UNKNOWN_LOCALE,
+		MariaDbErrorCodes::ER_BAD_DATA,
+	];
+
 	/** @return iterable<string, array<mixed>> */
 	public function provideValidTestData(): iterable
 	{
@@ -603,16 +613,23 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY aaa',
 		];
 
-		yield 'use column in GROUP BY - same alias in field list' => [
-			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
-		];
-
+		// field list wins, non-ambiguous
 		yield 'use column in GROUP BY - same alias in fields list vs 2 tables' => [
 			'query' => 'SELECT 1 id FROM analyser_test t1, analyser_test t2 GROUP BY id',
 		];
 
+		// It doesn't matter so it's not ambiguous
 		yield 'use column in GROUP BY - 2x table column' => [
 			'query' => 'SELECT id, id id FROM analyser_test GROUP BY id',
+		];
+
+		// TODO: Fix this
+		//yield 'use column in GROUP BY - non-ambiguous +id in field list' => [
+		//	'query' => 'SELECT +id id FROM analyser_test GROUP BY id',
+		//];
+
+		yield 'use column in GROUP BY - non-ambiguous collision with parent field list' => [
+			'query' => 'SELECT 1 id, (SELECT 5 FROM analyser_test GROUP BY id LIMIT 1)',
 		];
 
 		yield 'use column in GROUP BY - resolve column ambiguity via field list' => [
@@ -1114,6 +1131,8 @@ class AnalyserTest extends TestCase
 				$dbResult = $db->query($query);
 			}
 
+			$warningArr = $this->getRelevantWarnings($db);
+
 			if ($dbResult instanceof mysqli_result) {
 				$fields = $dbResult->fetch_fields();
 				$rows = $dbResult->fetch_all(MYSQLI_ASSOC);
@@ -1126,6 +1145,10 @@ class AnalyserTest extends TestCase
 			$stmt?->close();
 		} finally {
 			$db->rollback();
+		}
+
+		if (count($warningArr) > 0) {
+			$this->fail("Warnings: " . implode("\n", $warningArr));
 		}
 
 		$this->assertNotNull($result->resultFields);
@@ -1519,6 +1542,8 @@ class AnalyserTest extends TestCase
 				$dbResult = $db->query($query);
 			}
 
+			$warningArr = $this->getRelevantWarnings($db);
+
 			$this->assertInstanceOf(mysqli_result::class, $dbResult);
 			$fields = $dbResult->fetch_fields();
 			$rows = $dbResult->fetch_all(MYSQLI_NUM);
@@ -1526,6 +1551,10 @@ class AnalyserTest extends TestCase
 			$stmt?->close();
 		} finally {
 			$db->rollback();
+		}
+
+		if (count($warningArr) > 0) {
+			$this->fail("Warnings: " . implode("\n", $warningArr));
 		}
 
 		$this->assertNotNull($result->resultFields);
@@ -1786,6 +1815,28 @@ class AnalyserTest extends TestCase
 		yield 'ambiguous column in GROUP BY - a.id, b.id, 1+1 id' => [
 			'query' => 'SELECT a.id, b.id, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id',
 			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		// table wins, ambiguous
+		yield 'Warning: ambiguous column in GROUP BY - same alias in field list vs 1 table and *' => [
+			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id', null, true),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		// table wins, ambiguous
+		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table' => [
+			'query' => 'SELECT 1 id FROM analyser_test t1 GROUP BY id',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id', null, true),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		// table wins, ambiguous
+		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list (another column) vs 1 table' => [
+			// col_enum happens to have the same value everywhere so it showcases how it works.
+			'query' => 'SELECT col_enum col_int FROM analyser_test_data_types t1 GROUP BY col_int',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('col_int', null, true),
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
@@ -2509,7 +2560,13 @@ class AnalyserTest extends TestCase
 
 		try {
 			$db->query($query);
-			$this->fail('Expected mysqli_sql_exception.');
+			$warning = $db->get_warnings();
+
+			if ($warning === false) {
+				$this->fail('Expected mysqli_sql_exception.');
+			}
+
+			$this->assertSame($dbErrorCode, $warning->errno);
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame($dbErrorCode, $e->getCode());
 		} finally {
@@ -2656,5 +2713,26 @@ class AnalyserTest extends TestCase
 		}
 
 		return $name;
+	}
+
+	/** @return array<string> */
+	private function getRelevantWarnings(\mysqli $db): array
+	{
+		$warningArr = [];
+		$warning = $db->get_warnings();
+
+		if ($warning === false) {
+			return $warningArr;
+		}
+
+		do {
+			if (in_array($warning->errno, self::IGNORED_WARNINGS, true)) {
+				continue;
+			}
+
+			$warningArr[] = "{$warning->errno}: {$warning->message}";
+		} while ($warning->next());
+
+		return $warningArr;
 	}
 }

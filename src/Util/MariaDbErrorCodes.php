@@ -49,8 +49,17 @@ class MariaDbErrorCodes
 	// 1250	42000	ER_TABLENAME_NOT_ALLOWED_HERE	Table '%s' from one of the SELECTs cannot be used in %s
 	public const ER_TABLENAME_NOT_ALLOWED_HERE = 1250;
 
+	// 1264	22003	ER_WARN_DATA_OUT_OF_RANGE	Out of range value for column '%s' at row %ld
+	public const ER_WARN_DATA_OUT_OF_RANGE = 1264;
+
+	// 1292	22007	ER_TRUNCATED_WRONG_VALUE	Truncated incorrect %s value: '%s'
+	public const ER_TRUNCATED_WRONG_VALUE = 1292;
+
 	// 1364	HY000	ER_NO_DEFAULT_FOR_FIELD	Field '%s' doesn't have a default value
 	public const ER_NO_DEFAULT_FOR_FIELD = 1364;
+
+	// 1365	22012	ER_DIVISION_BY_ZER	Division by 0
+	public const ER_DIVISION_BY_ZER = 1365;
 
 	// 1582	42000	ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT	Incorrect parameter count in the call to native function '%s'
 	public const ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT = 1582;
@@ -58,6 +67,12 @@ class MariaDbErrorCodes
 	// 1630	42000 ER_FUNC_INEXISTENT_NAME_COLLISION	FUNCTION %s does not exist. Check the
 	// 'Function Name Parsing and Resolution' section in the Reference Manual
 	public const ER_FUNC_INEXISTENT_NAME_COLLISION = 1630;
+
+	// 1649	HY000	ER_UNKNOWN_LOCALE	Unknown locale: '%s'
+	public const ER_UNKNOWN_LOCALE = 1649;
+
+	// 1918		ER_BAD_DATA 22007	Encountered illegal value '%-.128s' when converting to %-.32s
+	public const ER_BAD_DATA = 1918;
 
 	// 4002		ER_WITH_COL_WRONG_LIST	WITH column list and SELECT field list have different column counts
 	public const ER_WITH_COL_WRONG_LIST = 4002;
