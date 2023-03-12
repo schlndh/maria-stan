@@ -1840,6 +1840,13 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
+		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table - in function call' => [
+			'query' => 'SELECT col_enum col_int FROM analyser_test_data_types t1 GROUP BY ROUND(col_int)',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('col_int', null, true),
+			// MariaDB 10.6 doesn't report a warning here, but IMO it is still ambiguous.
+			'DB error code' => null,
+		];
+
 		yield 'unknown column in HAVING' => [
 			'query' => 'SELECT * FROM analyser_test HAVING v.id',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id', 'v'),
@@ -2545,7 +2552,7 @@ class AnalyserTest extends TestCase
 	 * @param string|array<string> $error
 	 * @dataProvider provideInvalidTestData
 	 */
-	public function testInvalid(string $query, string|array $error, int $dbErrorCode): void
+	public function testInvalid(string $query, string|array $error, ?int $dbErrorCode): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$analyser = $this->createAnalyser();
@@ -2562,12 +2569,19 @@ class AnalyserTest extends TestCase
 			$db->query($query);
 			$warning = $db->get_warnings();
 
+			if ($dbErrorCode === null) {
+				$this->assertFalse($warning);
+
+				return;
+			}
+
 			if ($warning === false) {
 				$this->fail('Expected mysqli_sql_exception.');
 			}
 
 			$this->assertSame($dbErrorCode, $warning->errno);
 		} catch (mysqli_sql_exception $e) {
+			$this->assertNotNull($dbErrorCode, 'No DB error was expected');
 			$this->assertSame($dbErrorCode, $e->getCode());
 		} finally {
 			$db->rollback();
