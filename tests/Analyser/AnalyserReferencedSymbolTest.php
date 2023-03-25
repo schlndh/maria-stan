@@ -132,6 +132,31 @@ class AnalyserReferencedSymbolTest extends TestCase
 			],
 		];
 
+		yield 'reference field from parent query - HAVING (SELECT WHERE)' => [
+			'query' => 'SELECT "aa" id FROM analyser_referenced_symbol_test HAVING (SELECT 1 WHERE id = "aa") = 1',
+			'expected symbols' => [
+				$table,
+				new TableColumn($table, 'id'),
+			],
+		];
+
+		yield 'reference field from parent query - HAVING (SELECT GROUP BY)' => [
+			'query' => '
+				SELECT "aa" id
+				FROM analyser_referenced_symbol_test
+				HAVING (SELECT 1 FROM (SELECT 1 x UNION SELECT 2) t GROUP BY x = id) = 1
+			',
+			'expected symbols' => [
+				$table,
+				new TableColumn($table, 'id'),
+			],
+		];
+
+		yield 'reference field from parent query - HAVING (SELECT HAVING)' => [
+			'query' => 'SELECT "aa" id FROM analyser_referenced_symbol_test HAVING (SELECT 1 HAVING id = "aa") = 1',
+			'expected symbols' => [$table],
+		];
+
 		yield 'SELECT * FROM (SELECT * FROM analyser_referenced_symbol_test) t' => [
 			'query' => 'SELECT * FROM (SELECT * FROM analyser_referenced_symbol_test) t',
 			'expected symbols' => [
