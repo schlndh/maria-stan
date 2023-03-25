@@ -369,7 +369,7 @@ final class AnalyserState
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
 						$this->referencedTables[$fromClause->name] ??= new ReferencedSymbol\Table($fromClause->name);
 					}
-				} catch (AnalyserException $e) {
+				} catch (AnalyserException | DbReflectionException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
 
@@ -437,6 +437,16 @@ final class AnalyserState
 			// don't report missing tables to delete if the table reference is not parsed successfully
 			foreach ($query->tablesToDelete as $table) {
 				if ($this->columnResolver->hasTableForDelete($table)) {
+					continue;
+				}
+
+				// Don't report that table doesn't exist twice in simple "DELETE FROM missing_table".
+				if (
+					$query->table instanceof Table
+					&& $query->table->alias === null
+					&& count($query->tablesToDelete) === 1
+					&& $query->table->name === $table
+				) {
 					continue;
 				}
 

@@ -142,13 +142,29 @@ class AnalyserReferencedSymbolTest extends TestCase
 			],
 		];
 
-		yield 'detect valid symbols even if invalid symbols are references' => [
+		yield 'detect valid table references even if invalid tables are referenced' => [
 			'query' => 'SELECT * FROM analyser_referenced_symbol_test, missing_table',
 			'expected symbols' => [
 				$table,
-				// TODO: fix this
-				//new TableColumn($table, 'id'),
-				//new TableColumn($table, 'name'),
+				new TableColumn($table, 'id'),
+				new TableColumn($table, 'name'),
+			],
+		];
+
+		yield 'detect valid table references even if invalid tables are referenced - flipped' => [
+			'query' => 'SELECT * FROM missing_table, analyser_referenced_symbol_test',
+			'expected symbols' => [
+				$table,
+				new TableColumn($table, 'id'),
+				new TableColumn($table, 'name'),
+			],
+		];
+
+		yield 'detect valid column references even if invalid columns are referenced' => [
+			'query' => 'SELECT aaa, name FROM analyser_referenced_symbol_test',
+			'expected symbols' => [
+				$table,
+				new TableColumn($table, 'name'),
 			],
 		];
 	}
