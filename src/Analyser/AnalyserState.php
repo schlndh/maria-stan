@@ -69,6 +69,8 @@ final class AnalyserState
 	/** @var array<string, array<string, ReferencedSymbol\TableColumn>> table name => column name => column */
 	private array $referencedTableColumns = [];
 
+	private ColumnResolverFieldBehaviorEnum $fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
+
 	public function __construct(
 		private readonly DbReflection $dbReflection,
 		private readonly FunctionInfoRegistry $functionInfoRegistry,
@@ -246,7 +248,7 @@ final class AnalyserState
 
 		unset($leftFields, $rightFields);
 		$this->columnResolver->registerFieldList($fields);
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::ORDER_BY);
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
@@ -285,7 +287,7 @@ final class AnalyserState
 		}
 
 		$fields = [];
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::FIELD_LIST);
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 
 		foreach ($select->select as $selectExpr) {
 			switch ($selectExpr::getSelectExprType()) {
@@ -318,7 +320,7 @@ final class AnalyserState
 			}
 		}
 
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::GROUP_BY);
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::GROUP_BY;
 
 		foreach ($select->groupBy?->expressions ?? [] as $groupByExpr) {
 			$exprType = $this->resolveExprType($groupByExpr->expr);
@@ -331,11 +333,11 @@ final class AnalyserState
 		}
 
 		if ($select->having) {
-			$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::HAVING);
+			$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::HAVING;
 			$this->resolveExprType($select->having);
 		}
 
-		$this->columnResolver->setFieldListBehavior(ColumnResolverFieldBehaviorEnum::ORDER_BY);
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
 
 		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
@@ -657,7 +659,12 @@ final class AnalyserState
 				assert($expr instanceof Expr\Column);
 
 				try {
-					$resolvedColumn = $this->columnResolver->resolveColumn($expr->name, $expr->tableName, $condition);
+					$resolvedColumn = $this->columnResolver->resolveColumn(
+						$expr->name,
+						$expr->tableName,
+						$this->fieldBehavior,
+						$condition,
+					);
 
 					foreach ($resolvedColumn->warnings as $warning) {
 						$this->errors[] = new AnalyserError($warning);

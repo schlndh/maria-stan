@@ -67,7 +67,6 @@ final class ColumnResolver
 	/** @var array<string, ColumnInfoTableTypeEnum> table name/CTE alias => type */
 	private array $tableTypeByName = [];
 
-	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private int $aggregateFunctionDepth = 0;
 	private ?AnalyserKnowledgeBase $knowledgeBase = null;
 
@@ -242,11 +241,6 @@ final class ColumnResolver
 		$this->groupByColumns[$column->tableAlias][$column->name] = true;
 	}
 
-	public function setFieldListBehavior(ColumnResolverFieldBehaviorEnum $shouldPreferFieldList): void
-	{
-		$this->fieldListBehavior = $shouldPreferFieldList;
-	}
-
 	/**
 	 * @return ResultWithWarnings<ExprTypeResult>
 	 * @throws AnalyserException
@@ -254,12 +248,13 @@ final class ColumnResolver
 	public function resolveColumn(
 		string $column,
 		?string $table,
+		ColumnResolverFieldBehaviorEnum $fieldBehavior,
 		?AnalyserConditionTypeEnum $condition = null,
 	): ResultWithWarnings {
-		$resolvedColumn = $this->resolveColumnName($column, $table);
+		$resolvedColumn = $this->resolveColumnName($column, $table, $fieldBehavior);
 
 		return new ResultWithWarnings(
-			$this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $condition),
+			$this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $fieldBehavior, $condition),
 			$resolvedColumn->warnings,
 		);
 	}
@@ -267,6 +262,7 @@ final class ColumnResolver
 	/** @throws AnalyserException */
 	private function getTypeForFullyQualifiedColumn(
 		FullyQualifiedColumn $column,
+		ColumnResolverFieldBehaviorEnum $fieldBehavior,
 		?AnalyserConditionTypeEnum $condition = null,
 	): ExprTypeResult {
 		switch ($column::getColumnType()) {
@@ -283,7 +279,11 @@ final class ColumnResolver
 				}
 
 				try {
-					return $this->parent->getTypeForFullyQualifiedColumn($column->parentColumn, $condition);
+					return $this->parent->getTypeForFullyQualifiedColumn(
+						$column->parentColumn,
+						$fieldBehavior,
+						$condition,
+					);
 				} finally {
 					if ($this->aggregateFunctionDepth > 0) {
 						$this->parent->exitAggregateFunction();
@@ -295,7 +295,7 @@ final class ColumnResolver
 		$columnInfo = $column->columnInfo;
 
 		if (
-			$this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::HAVING
+			$fieldBehavior === ColumnResolverFieldBehaviorEnum::HAVING
 			&& $this->aggregateFunctionDepth === 0
 			&& ! isset($this->groupByColumns[$columnInfo->tableAlias][$columnInfo->name])
 		) {
@@ -356,12 +356,15 @@ final class ColumnResolver
 	 * @return ResultWithWarnings<FullyQualifiedColumn>
 	 * @throws AnalyserException
 	 */
-	private function resolveColumnName(string $column, ?string $table): ResultWithWarnings
-	{
+	private function resolveColumnName(
+		string $column,
+		?string $table,
+		ColumnResolverFieldBehaviorEnum $fieldBehavior,
+	): ResultWithWarnings {
 		if (
 			$table === null
 			&& in_array(
-				$this->fieldListBehavior,
+				$fieldBehavior,
 				[ColumnResolverFieldBehaviorEnum::HAVING, ColumnResolverFieldBehaviorEnum::ORDER_BY],
 				true,
 			)
@@ -380,7 +383,7 @@ final class ColumnResolver
 		if ($table === null) {
 			$candidateFields = $this->fieldList[$column] ?? [];
 
-			if ($this->fieldListBehavior === ColumnResolverFieldBehaviorEnum::GROUP_BY && count($candidateFields) > 0) {
+			if ($fieldBehavior === ColumnResolverFieldBehaviorEnum::GROUP_BY && count($candidateFields) > 0) {
 				$firstExpressionField = null;
 				$firstField = null;
 				$columnMap = [];
@@ -475,7 +478,7 @@ final class ColumnResolver
 				}
 
 				try {
-					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table);
+					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table, $fieldBehavior);
 				} catch (AnalyserException) {
 				}
 
@@ -499,7 +502,7 @@ final class ColumnResolver
 						return new ResultWithWarnings(new FieldListFullyQualifiedColumn($parentField), []);
 					}
 
-					if ($this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST) {
+					if ($fieldBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST) {
 						$field = $this->findUniqueItemInFieldList($column);
 
 						if ($field !== null) {

@@ -6,7 +6,7 @@ namespace MariaStan\Analyser;
 
 enum ColumnResolverFieldBehaviorEnum: string
 {
-	// SELECT ...
+	// SELECT ..., also used for WHERE
 	case FIELD_LIST = 'FIELD_LIST';
 	case GROUP_BY = 'GROUP_BY';
 	case HAVING = 'HAVING';

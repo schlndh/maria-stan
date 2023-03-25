@@ -128,8 +128,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test HAVING (SELECT id) = 1',
 			'expected symbols' => [
 				$table,
-				// TODO: fix this
-				//new TableColumn($table, 'id'),
+				new TableColumn($table, 'id'),
 			],
 		];
 
