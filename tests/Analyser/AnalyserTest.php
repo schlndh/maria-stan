@@ -556,10 +556,6 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT "aa" id FROM analyser_test WHERE (SELECT id) = 1',
 		];
 
-		yield 'subquery - previously aliased field vs column - GROUP BY' => [
-			'query' => 'SELECT "aa" id FROM analyser_test GROUP BY (SELECT id)',
-		];
-
 		yield 'subquery - previously aliased field vs column - HAVING' => [
 			'query' => 'SELECT "aa" id FROM analyser_test HAVING (SELECT id)',
 		];
@@ -1843,6 +1839,13 @@ class AnalyserTest extends TestCase
 		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table - in function call' => [
 			'query' => 'SELECT col_enum col_int FROM analyser_test_data_types t1 GROUP BY ROUND(col_int)',
 			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('col_int', null, true),
+			// MariaDB 10.6 doesn't report a warning here, but IMO it is still ambiguous.
+			'DB error code' => null,
+		];
+
+		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table - subquery' => [
+			'query' => 'SELECT "aa" id FROM analyser_test GROUP BY (SELECT id)',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id', null, true),
 			// MariaDB 10.6 doesn't report a warning here, but IMO it is still ambiguous.
 			'DB error code' => null,
 		];

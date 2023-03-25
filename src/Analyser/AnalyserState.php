@@ -648,9 +648,14 @@ final class AnalyserState
 
 				try {
 					$resolvedColumn = $this->columnResolver->resolveColumn($expr->name, $expr->tableName, $condition);
-					$this->recordColumnReference($resolvedColumn->column);
 
-					return $resolvedColumn;
+					foreach ($resolvedColumn->warnings as $warning) {
+						$this->errors[] = new AnalyserError($warning);
+					}
+
+					$this->recordColumnReference($resolvedColumn->result->column);
+
+					return $resolvedColumn->result;
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}

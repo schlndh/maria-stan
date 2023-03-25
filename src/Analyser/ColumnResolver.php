@@ -247,15 +247,21 @@ final class ColumnResolver
 		$this->fieldListBehavior = $shouldPreferFieldList;
 	}
 
-	/** @throws AnalyserException */
+	/**
+	 * @return ResultWithWarnings<ExprTypeResult>
+	 * @throws AnalyserException
+	 */
 	public function resolveColumn(
 		string $column,
 		?string $table,
 		?AnalyserConditionTypeEnum $condition = null,
-	): ExprTypeResult {
+	): ResultWithWarnings {
 		$resolvedColumn = $this->resolveColumnName($column, $table);
 
-		return $this->getTypeForFullyQualifiedColumn($resolvedColumn, $condition);
+		return new ResultWithWarnings(
+			$this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $condition),
+			$resolvedColumn->warnings,
+		);
 	}
 
 	/** @throws AnalyserException */
@@ -346,8 +352,11 @@ final class ColumnResolver
 			: new ExprTypeResult($exprType->type, $exprType->isNullable, $exprType->column, $knowledgeBase);
 	}
 
-	/** @throws AnalyserException */
-	private function resolveColumnName(string $column, ?string $table): FullyQualifiedColumn
+	/**
+	 * @return ResultWithWarnings<FullyQualifiedColumn>
+	 * @throws AnalyserException
+	 */
+	private function resolveColumnName(string $column, ?string $table): ResultWithWarnings
 	{
 		if (
 			$table === null
@@ -358,7 +367,7 @@ final class ColumnResolver
 			)
 			&& isset($this->fieldList[$column])
 		) {
-			return new FieldListFullyQualifiedColumn($this->fieldList[$column][0][0]);
+			return new ResultWithWarnings(new FieldListFullyQualifiedColumn($this->fieldList[$column][0][0]), []);
 		}
 
 		$candidateTables = array_filter(
@@ -420,7 +429,7 @@ final class ColumnResolver
 					$uniqueColumnCount += count($columns);
 				}
 
-				if ($uniqueColumnCount > 1 || $isAmbiguousWarning) {
+				if ($uniqueColumnCount > 1) {
 					throw new AnalyserException(
 						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage(
 							$column,
@@ -430,14 +439,30 @@ final class ColumnResolver
 					);
 				}
 
+				$warnings = [];
+
+				if ($isAmbiguousWarning) {
+					$warnings[] = AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage(
+						$column,
+						$table,
+						$isAmbiguousWarning,
+					);
+				}
+
 				if ($candidateTable !== null) {
-					return new TableFullyQualifiedColumn(
-						$this->getColumnInfo($candidateTable, $column),
+					return new ResultWithWarnings(
+						new TableFullyQualifiedColumn(
+							$this->getColumnInfo($candidateTable, $column),
+						),
+						$warnings,
 					);
 				}
 
 				// If there are multiple expressions with the same alias the first one seems to be used.
-				return new FieldListFullyQualifiedColumn($firstExpressionField ?? $firstField);
+				return new ResultWithWarnings(
+					new FieldListFullyQualifiedColumn($firstExpressionField ?? $firstField),
+					$warnings,
+				);
 			}
 		}
 
@@ -461,21 +486,24 @@ final class ColumnResolver
 				// TODO: add test to make sure that the prioritization is the same as in the database.
 				// E.g. SELECT *, (SELECT id*2 id GROUP BY id%2) FROM analyser_test;
 				if ($resolvedParentColumn !== null) {
-					return new ParentFullyQualifiedColumn($resolvedParentColumn);
+					return new ResultWithWarnings(
+						new ParentFullyQualifiedColumn($resolvedParentColumn->result),
+						$resolvedParentColumn->warnings,
+					);
 				}
 
 				if ($table === null) {
 					$parentField = $this->parent?->findUniqueItemInFieldList($column);
 
 					if ($parentField !== null) {
-						return new FieldListFullyQualifiedColumn($parentField);
+						return new ResultWithWarnings(new FieldListFullyQualifiedColumn($parentField), []);
 					}
 
 					if ($this->fieldListBehavior !== ColumnResolverFieldBehaviorEnum::FIELD_LIST) {
 						$field = $this->findUniqueItemInFieldList($column);
 
 						if ($field !== null) {
-							return new FieldListFullyQualifiedColumn($field);
+							return new ResultWithWarnings(new FieldListFullyQualifiedColumn($field), []);
 						}
 					}
 				}
@@ -484,8 +512,9 @@ final class ColumnResolver
 					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
 				);
 			case 1:
-				return new TableFullyQualifiedColumn(
-					$this->getColumnInfo(reset($candidateTables)['table'], $column),
+				return new ResultWithWarnings(
+					new TableFullyQualifiedColumn($this->getColumnInfo(reset($candidateTables)['table'], $column)),
+					[],
 				);
 			default:
 				throw new AnalyserException(

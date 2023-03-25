@@ -103,12 +103,11 @@ class AnalyserReferencedSymbolTest extends TestCase
 			],
 		];
 
-		yield 'reference column from field list - GROUP BY' => [
+		yield 'reference column from table - GROUP BY - ambiguous' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test GROUP BY id = 1',
 			'expected symbols' => [
 				$table,
-				// TODO: fix this
-				//new TableColumn($table, 'id'),
+				new TableColumn($table, 'id'),
 			],
 		];
 
@@ -116,8 +115,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test GROUP BY (SELECT id) = 1',
 			'expected symbols' => [
 				$table,
-				// TODO: fix this
-				//new TableColumn($table, 'id'),
+				new TableColumn($table, 'id'),
 			],
 		];
 
