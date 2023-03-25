@@ -33,6 +33,7 @@ final class Analyser
 				null,
 				[new AnalyserError("Couldn't parse query: '{$queryShort}'. Error: {$e->getMessage()}")],
 				null,
+				null,
 			);
 		}
 

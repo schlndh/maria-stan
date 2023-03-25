@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Analyser\Exception\ShouldNotHappenException;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\DeleteQuery;
@@ -46,6 +47,7 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_reduce;
+use function array_values;
 use function assert;
 use function count;
 use function in_array;
@@ -60,6 +62,12 @@ final class AnalyserState
 	private array $errors = [];
 	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
+
+	/** @var array<string, ReferencedSymbol\Table> name => table */
+	private array $referencedTables = [];
+
+	/** @var array<string, array<string, ReferencedSymbol\TableColumn>> table name => column name => column */
+	private array $referencedTableColumns = [];
 
 	public function __construct(
 		private readonly DbReflection $dbReflection,
@@ -104,10 +112,17 @@ final class AnalyserState
 					null,
 					[new AnalyserError("Unsupported query: {$this->queryAst::getQueryType()->value}")],
 					null,
+					null,
 				);
 		}
 
-		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount);
+		$referencedSymbols = array_values($this->referencedTables);
+
+		foreach ($this->referencedTableColumns as $columns) {
+			$referencedSymbols = array_merge($referencedSymbols, $columns);
+		}
+
+		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount, $referencedSymbols);
 	}
 
 	/**
@@ -294,6 +309,7 @@ final class AnalyserState
 
 					foreach ($allFields as $field) {
 						$this->columnResolver->registerField($field, true);
+						$this->recordColumnReference($field->exprType->column);
 					}
 
 					$fields = array_merge($fields, $allFields);
@@ -348,7 +364,11 @@ final class AnalyserState
 				$columnResolver = clone $columnResolver;
 
 				try {
-					$columnResolver->registerTable($fromClause->name, $fromClause->alias);
+					$tableType = $columnResolver->registerTable($fromClause->name, $fromClause->alias);
+
+					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
+						$this->referencedTables[$fromClause->name] ??= new ReferencedSymbol\Table($fromClause->name);
+					}
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
@@ -627,7 +647,10 @@ final class AnalyserState
 				assert($expr instanceof Expr\Column);
 
 				try {
-					return $this->columnResolver->resolveColumn($expr->name, $expr->tableName, $condition);
+					$resolvedColumn = $this->columnResolver->resolveColumn($expr->name, $expr->tableName, $condition);
+					$this->recordColumnReference($resolvedColumn->column);
+
+					return $resolvedColumn;
 				} catch (AnalyserException $e) {
 					$this->errors[] = new AnalyserError($e->getMessage());
 				}
@@ -1300,6 +1323,8 @@ final class AnalyserState
 		// phpcs:disable SlevomatCodingStandard.PHP.DisallowReference
 		$other->errors = &$this->errors;
 		$other->positionalPlaceholderCount = &$this->positionalPlaceholderCount;
+		$other->referencedTables = &$this->referencedTables;
+		$other->referencedTableColumns = &$this->referencedTableColumns;
 		// phpcs:enable SlevomatCodingStandard.PHP.DisallowReference
 
 		return $other;
@@ -1390,5 +1415,23 @@ final class AnalyserState
 			AnalyserConditionTypeEnum::FALSY => AnalyserKnowledgeBase::createFixed(((float) $value) === 0.0),
 			null => null,
 		};
+	}
+
+	/** @throws AnalyserException */
+	private function recordColumnReference(?ColumnInfo $columnInfo): void
+	{
+		if ($columnInfo?->tableType !== ColumnInfoTableTypeEnum::TABLE) {
+			return;
+		}
+
+		$this->referencedTableColumns[$columnInfo->tableName][$columnInfo->name]
+			= new ReferencedSymbol\TableColumn(
+				$this->referencedTables[$columnInfo->tableName]
+					?? throw new ShouldNotHappenException(
+						"Referencing column {$columnInfo->name} of table "
+						. "{$columnInfo->tableName} which was not referenced.",
+					),
+				$columnInfo->name,
+			);
 	}
 }

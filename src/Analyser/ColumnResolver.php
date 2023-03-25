@@ -64,6 +64,9 @@ final class ColumnResolver
 	/** @var array<string, array<string, bool>> table/subquery alias => column name => true */
 	private array $groupByColumns = [];
 
+	/** @var array<string, ColumnInfoTableTypeEnum> table name/CTE alias => type */
+	private array $tableTypeByName = [];
+
 	private ColumnResolverFieldBehaviorEnum $fieldListBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private int $aggregateFunctionDepth = 0;
 	private ?AnalyserKnowledgeBase $knowledgeBase = null;
@@ -73,7 +76,7 @@ final class ColumnResolver
 	}
 
 	/** @throws DbReflectionException | AnalyserException */
-	public function registerTable(string $table, ?string $alias = null): void
+	public function registerTable(string $table, ?string $alias = null): ColumnInfoTableTypeEnum
 	{
 		$this->tableNamesInOrder[] = [$table, $alias];
 
@@ -95,10 +98,28 @@ final class ColumnResolver
 			$this->tablesWithoutAliasMap[$table] = true;
 		}
 
-		$schema = $this->tableSchemas[$table] ??= $this->findCteSchema($table)
-			?? $this->dbReflection->findTableSchema($table);
+		$schema = $this->tableSchemas[$table] ?? null;
+
+		if ($schema !== null) {
+			$type = $this->tableTypeByName[$table];
+		} else {
+			$schema = $this->findCteSchema($table);
+
+			if ($schema !== null) {
+				$type = ColumnInfoTableTypeEnum::SUBQUERY;
+			} else {
+				$schema = $this->tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
+				$type = ColumnInfoTableTypeEnum::TABLE;
+			}
+
+			$this->tableTypeByName[$table] ??= $type;
+			$this->tableSchemas[$table] ??= $schema;
+		}
+
 		$columnNames = array_map(static fn (Schema\Column $c) => $c->name, $schema->columns);
 		$this->registerColumnsForSchema($alias ?? $table, $columnNames);
+
+		return $type;
 	}
 
 	/**
@@ -587,9 +608,7 @@ final class ColumnResolver
 					$columnSchema->name,
 					$normalizedTableName,
 					$table,
-					isset($this->cteSchemas[$normalizedTableName])
-						? ColumnInfoTableTypeEnum::SUBQUERY
-						: ColumnInfoTableTypeEnum::TABLE,
+					$this->tableTypeByName[$normalizedTableName],
 				),
 			);
 		}
@@ -623,6 +642,7 @@ final class ColumnResolver
 		$this->outerJoinedTableMap = array_merge($this->outerJoinedTableMap, $other->outerJoinedTableMap);
 		$this->tableNamesInOrder = array_merge($this->tableNamesInOrder, $other->tableNamesInOrder);
 		$this->tableSchemas = array_merge($this->tableSchemas, $other->tableSchemas);
+		$this->tableTypeByName += $other->tableTypeByName;
 
 		$duplicateSubqueries = array_intersect_key($this->subquerySchemas, $other->subquerySchemas);
 
