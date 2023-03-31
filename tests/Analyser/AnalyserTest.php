@@ -1308,7 +1308,7 @@ class AnalyserTest extends TestCase
 		');
 		$db->query('
 			INSERT INTO analyser_test_nullability_1 (col_vchar)
-			VALUES (NULL), ("aa"), ("1"), ("2023-02-10 13:19:25")
+			VALUES (NULL), ("aa"), ("1"), ("2023-02-10 13:19:25"), ("18446744073709551615")
 		');
 		$db->query('
 			CREATE OR REPLACE TABLE analyser_test_nullability_2 (
@@ -1385,11 +1385,18 @@ class AnalyserTest extends TestCase
 			'col_vchar NOT IN (SELECT col_vchar FROM analyser_test_nullability_1 WHERE id = 2)',
 		];
 
+		foreach (['+', '-', '~', 'BINARY'] as $unaryOp) {
+			$operations[] = "{$unaryOp} col_vchar";
+			$operations[] = "! ({$unaryOp} col_vchar)";
+			$operations[] = "({$unaryOp} col_vchar) IS NULL";
+			$operations[] = "({$unaryOp} col_vchar) IS NOT NULL";
+		}
+
 		$arithmeticOperators = ['+', '-', '*', '/', 'DIV', '%'];
 		$divOperators = ['/', 'DIV', '%'];
 
 		foreach ($arithmeticOperators as $op) {
-			$operations[] = "(col_vchar {$op} 1) IS NOT NULL";
+			$operations[] = "(col_vchar {$op} 5) IS NOT NULL";
 
 			if (in_array($op, $divOperators, true)) {
 				continue;
@@ -1445,7 +1452,7 @@ class AnalyserTest extends TestCase
 		}
 
 		foreach ($arithmeticOperators as $op) {
-			$operations[] = "t1.col_vchar {$op} (t2.col_int + 1)";
+			$operations[] = "t1.col_vchar {$op} (t2.col_int + 5)";
 		}
 
 		foreach ($operations as $op) {

@@ -737,7 +737,6 @@ final class AnalyserState
 				assert($expr instanceof Expr\UnaryOp);
 				$innerCondition = $condition;
 
-				// TODO: handle $condition for +, -, ~, BINARY
 				if ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::LOGIC_NOT) {
 					$innerCondition = match ($innerCondition) {
 						AnalyserConditionTypeEnum::TRUTHY => AnalyserConditionTypeEnum::FALSY,
