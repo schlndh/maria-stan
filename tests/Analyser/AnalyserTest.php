@@ -1438,14 +1438,27 @@ class AnalyserTest extends TestCase
 		}
 
 		$operations = [
-			'col_vchar IS NULL AND col_int IS NOT NULL',
-			'col_vchar IS NULL OR col_int IS NOT NULL',
-			'NOT (col_vchar IS NULL OR col_int IS NOT NULL)',
-			'NOT (col_vchar IS NULL AND col_int IS NOT NULL)',
 			'col_vchar <=> col_int',
 			'col_int = 1',
 			't1.col_vchar IN (t2.col_int, 1)',
 		];
+
+		foreach (['AND', 'OR', '&', '|'] as $logOp) {
+			$operations[] = "col_vchar {$logOp} col_int";
+
+			// TODO: implement this later. For now, I'm limited by the fact that TRUTHY & TRUTHY may be 0 (e.g. 2&4).
+			// In this case it is known statically that both of the arguments are either 0 or 1, so & works like AND,
+			// but I can't get that information yet.
+			// The FALSY alternative of this is something like NOT ((col_vchar IS NULL) & true).
+			if ($logOp !== '&') {
+				$operations[] = "(col_vchar IS NULL) {$logOp} (col_int IS NOT NULL)";
+			}
+
+			foreach (['NOT', '~'] as $notOp) {
+				$operations[] = "{$notOp} (col_vchar {$logOp} col_int)";
+				$operations[] = "{$notOp} ((col_vchar IS NULL) {$logOp} (col_int IS NOT NULL))";
+			}
+		}
 
 		foreach (['XOR', '^'] as $xorOp) {
 			$operations[] = "col_vchar {$xorOp} col_int";

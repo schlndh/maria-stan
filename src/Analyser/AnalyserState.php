@@ -795,7 +795,7 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::MODULO,
 				];
 
-				// TODO: handle $condition for <=>, REGEXP, |, &, <<, >>
+				// TODO: handle $condition for <=>, REGEXP, <<, >>
 				if (
 					(
 						$condition === AnalyserConditionTypeEnum::TRUTHY
@@ -812,9 +812,17 @@ final class AnalyserState
 					if ($condition === AnalyserConditionTypeEnum::FALSY) {
 						$kbCombinineWithAnd = ! $kbCombinineWithAnd;
 					}
+				} elseif ($expr->operation === Expr\BinaryOpTypeEnum::BITWISE_OR) {
+					$innerConditionLeft = $innerConditionRight = match ($condition) {
+						AnalyserConditionTypeEnum::TRUTHY => AnalyserConditionTypeEnum::NOT_NULL,
+						default => $condition,
+					};
+					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL
+						|| $innerConditionLeft === AnalyserConditionTypeEnum::FALSY;
 				} elseif (
 					in_array($expr->operation, $nullUnsafeComparisonOperators, true)
 					|| in_array($expr->operation, $nullUnsafeArithmeticOperators, true)
+					|| $expr->operation === Expr\BinaryOpTypeEnum::BITWISE_AND
 				) {
 					$innerConditionLeft = $innerConditionRight = match ($condition) {
 						null => null,
