@@ -789,7 +789,7 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::MODULO,
 				];
 
-				// TODO: handle $condition for XOR, <=>, REGEXP, |, &, <<, >>, ^
+				// TODO: handle $condition for <=>, REGEXP, |, &, <<, >>
 				if (
 					(
 						$condition === AnalyserConditionTypeEnum::TRUTHY
@@ -811,6 +811,7 @@ final class AnalyserState
 					|| in_array($expr->operation, $nullUnsafeArithmeticOperators, true)
 				) {
 					$innerConditionLeft = $innerConditionRight = match ($condition) {
+						null => null,
 						AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
 						// For now, we can only determine that none of the operands can be NULL.
 						default => AnalyserConditionTypeEnum::NOT_NULL,
@@ -818,6 +819,7 @@ final class AnalyserState
 					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL;
 				} elseif (in_array($expr->operation, $divOperators, true)) {
 					[$innerConditionLeft, $innerConditionRight] = match ($condition) {
+						null,
 						// We'd have to consider both FALSY and NULL for right side.
 						AnalyserConditionTypeEnum::NULL => [null, null],
 						// For now, we can only determine that none of the operands can be NULL.
@@ -828,10 +830,11 @@ final class AnalyserState
 					$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_XOR
 					|| $expr->operation === Expr\BinaryOpTypeEnum::BITWISE_XOR
 				) {
-					[$innerConditionLeft, $innerConditionRight] = match ($condition) {
-						AnalyserConditionTypeEnum::NULL => [$condition, $condition],
+					$innerConditionLeft = $innerConditionRight = match ($condition) {
+						null => null,
+						AnalyserConditionTypeEnum::NULL => $condition,
 						// For now, we can only determine that none of the operands can be NULL.
-						default => [AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::NOT_NULL],
+						default => AnalyserConditionTypeEnum::NOT_NULL,
 					};
 					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL;
 				}
