@@ -1394,17 +1394,19 @@ class AnalyserTest extends TestCase
 			$operations[] = "({$unaryOp} col_vchar) IS NOT NULL";
 		}
 
-		$arithmeticOperators = ['+', '-', '*', '/', 'DIV', '%'];
+		$arithmeticOperators = ['+', '-', '*', '/', 'DIV', '%', '<<', '>>'];
 		$divOperators = ['/', 'DIV', '%'];
 
 		foreach ($arithmeticOperators as $op) {
 			$operations[] = "(col_vchar {$op} 5) IS NOT NULL";
+			$operations[] = "(5 {$op} col_vchar) IS NOT NULL";
 
 			if (in_array($op, $divOperators, true)) {
 				continue;
 			}
 
 			$operations[] = "(col_vchar {$op} 1) IS NULL";
+			$operations[] = "(5 {$op} col_vchar) IS NULL";
 		}
 
 		$falseValues = ['0', '0.0', '0.0e1', '""', '"a"', '"0.0"', '"0.0e1"'];

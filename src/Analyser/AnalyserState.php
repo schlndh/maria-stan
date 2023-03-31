@@ -788,6 +788,8 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::PLUS,
 					Expr\BinaryOpTypeEnum::MINUS,
 					Expr\BinaryOpTypeEnum::MULTIPLICATION,
+					Expr\BinaryOpTypeEnum::SHIFT_LEFT,
+					Expr\BinaryOpTypeEnum::SHIFT_RIGHT,
 				];
 				$divOperators = [
 					Expr\BinaryOpTypeEnum::DIVISION,
@@ -795,7 +797,7 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::MODULO,
 				];
 
-				// TODO: handle $condition for <=>, REGEXP, <<, >>
+				// TODO: handle $condition for <=>, REGEXP
 				if (
 					(
 						$condition === AnalyserConditionTypeEnum::TRUTHY
