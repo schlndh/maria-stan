@@ -30,7 +30,7 @@ final class AnalyserKnowledgeBase
 		return new self([], null);
 	}
 
-	public function and(AnalyserKnowledgeBase $other): self
+	public function and(self $other): self
 	{
 		$res = self::tryTrivialAnd($this, $other);
 		$res ??= self::tryTrivialAnd($other, $this);
@@ -56,7 +56,7 @@ final class AnalyserKnowledgeBase
 		return new self($mergedColumnNullability, null);
 	}
 
-	public function or(AnalyserKnowledgeBase $other): self
+	public function or(self $other): self
 	{
 		$res = self::tryTrivialOr($this, $other);
 		$res ??= self::tryTrivialOr($other, $this);
@@ -80,7 +80,7 @@ final class AnalyserKnowledgeBase
 		return new self($mergedColumnNullability, null);
 	}
 
-	private static function tryTrivialAnd(AnalyserKnowledgeBase $a, AnalyserKnowledgeBase $b): ?self
+	private static function tryTrivialAnd(self $a, self $b): ?self
 	{
 		if ($a->truthiness === true) {
 			return $b;
@@ -91,7 +91,7 @@ final class AnalyserKnowledgeBase
 			: null;
 	}
 
-	private static function tryTrivialOr(AnalyserKnowledgeBase $a, AnalyserKnowledgeBase $b): ?self
+	private static function tryTrivialOr(self $a, self $b): ?self
 	{
 		if ($a->truthiness === true) {
 			return $a;

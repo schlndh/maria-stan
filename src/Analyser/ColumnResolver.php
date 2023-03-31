@@ -660,7 +660,7 @@ final class ColumnResolver
 	}
 
 	/** @throws AnalyserException */
-	public function mergeAfterJoin(ColumnResolver $other, Join $join): void
+	public function mergeAfterJoin(self $other, Join $join): void
 	{
 		$duplicateAliases = array_intersect_key($this->tablesByAlias, $other->tablesByAlias);
 
