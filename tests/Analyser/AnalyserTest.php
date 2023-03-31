@@ -1445,6 +1445,13 @@ class AnalyserTest extends TestCase
 			't1.col_vchar IN (t2.col_int, 1)',
 		];
 
+		foreach (['XOR', '^'] as $xorOp) {
+			$operations[] = "col_vchar {$xorOp} col_int";
+			$operations[] = "! (col_vchar {$xorOp} col_int)";
+			$operations[] = "(col_vchar {$xorOp} col_int) IS NULL";
+			$operations[] = "(col_vchar {$xorOp} col_int) IS NOT NULL";
+		}
+
 		foreach ($divOperators as $op) {
 			$operations[] = "(t1.col_vchar {$op} 0) IS NOT NULL OR col_int IS NULL";
 			$operations[] = "! ((t1.col_vchar {$op} 0) IS NULL AND col_int IS NULL)";

@@ -824,6 +824,16 @@ final class AnalyserState
 						default => [AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY],
 					};
 					$kbCombinineWithAnd = true;
+				} elseif (
+					$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_XOR
+					|| $expr->operation === Expr\BinaryOpTypeEnum::BITWISE_XOR
+				) {
+					[$innerConditionLeft, $innerConditionRight] = match ($condition) {
+						AnalyserConditionTypeEnum::NULL => [$condition, $condition],
+						// For now, we can only determine that none of the operands can be NULL.
+						default => [AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::NOT_NULL],
+					};
+					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL;
 				}
 
 				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft);
