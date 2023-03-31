@@ -1147,8 +1147,7 @@ class MariaDbParserState
 	private function parseRestOfIsOperator(Expr $left): Is|UnaryOp
 	{
 		static $precedence = null;
-		// IS is left-associative so + 1
-		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IS) + 1;
+		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IS);
 		$isNot = $this->acceptToken(TokenTypeEnum::NOT) !== null;
 
 		$testToken = $this->expectAnyOfTokens(

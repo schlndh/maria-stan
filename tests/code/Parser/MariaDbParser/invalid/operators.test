@@ -34,3 +34,10 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Got unexpected token INTERVAL after: SELECT
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT ~ (1 IS NULL | 0 IS NOT NULL)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Only NULL, UNKNOWN, TRUE and FALSE can be right of IS. Got | after: ~ (1 IS NULL
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '| 0 IS NOT NULL)' at line 1
