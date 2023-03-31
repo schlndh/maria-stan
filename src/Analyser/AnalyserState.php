@@ -744,6 +744,12 @@ final class AnalyserState
 						// NULL(NOT(a)) <=> NULL(a), NOT_NULL(NOT(a)) <=> NOT_NULL(a)
 						default => $innerCondition,
 					};
+				} elseif ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::BITWISE_NOT) {
+					// ~0, ~1 are non-zero, but ~18446744073709551615 = 0.
+					$innerCondition = match ($innerCondition) {
+						AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
+						default => AnalyserConditionTypeEnum::NOT_NULL,
+					};
 				}
 
 				$resolvedInnerExpr = $this->resolveExprType($expr->expression, $innerCondition);

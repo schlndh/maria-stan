@@ -1383,6 +1383,8 @@ class AnalyserTest extends TestCase
 			'col_vchar NOT IN ("aa")',
 			'(col_vchar NOT IN ("aa", NULL)) IS NULL',
 			'col_vchar NOT IN (SELECT col_vchar FROM analyser_test_nullability_1 WHERE id = 2)',
+			'~(col_vchar IS NULL)',
+			'~(col_vchar IS NOT NULL)',
 		];
 
 		foreach (['+', '-', '~', 'BINARY'] as $unaryOp) {
