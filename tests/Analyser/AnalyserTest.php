@@ -1443,7 +1443,19 @@ class AnalyserTest extends TestCase
 			'col_vchar <=> col_int',
 			'col_int = 1',
 			't1.col_vchar IN (t2.col_int, 1)',
+			'COALESCE(col_vchar)',
+			'COALESCE(col_vchar IS NULL)',
+			'COALESCE(NULL, NULL, col_vchar)',
 		];
+
+		foreach (['COALESCE', 'IFNULL', 'NVL'] as $coalesceFn) {
+			$operations[] = "{$coalesceFn}(col_vchar, col_int) IS NULL";
+			$operations[] = "{$coalesceFn}(col_vchar, NULL) IS NOT NULL";
+			$operations[] = "{$coalesceFn}(NULL, col_vchar) IS NOT NULL";
+			$operations[] = "{$coalesceFn}(NULL, col_vchar) IS NULL";
+			$operations[] = "{$coalesceFn}(NULL, col_vchar)";
+			$operations[] = "NOT {$coalesceFn}(NULL, col_vchar)";
+		}
 
 		foreach (['AND', 'OR', '&', '|'] as $logOp) {
 			$operations[] = "col_vchar {$logOp} col_int";

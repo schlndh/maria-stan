@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
+use MariaStan\Analyser\AnalyserConditionTypeEnum;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
@@ -43,12 +44,22 @@ final class Date implements FunctionInfo
 		}
 	}
 
+	/** @inheritDoc */
+	public function getInnerConditions(?AnalyserConditionTypeEnum $condition, array $arguments): array
+	{
+		// TODO: implement this
+		return [];
+	}
+
 	/**
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
-	{
+	public function getReturnType(
+		FunctionCall $functionCall,
+		array $argumentTypes,
+		?AnalyserConditionTypeEnum $condition,
+	): ExprTypeResult {
 		$date = $argumentTypes[0];
 		$isNullable = $date->isNullable || $date->type::getTypeEnum() !== DbTypeEnum::DATETIME;
 		$type = in_array($date->type::getTypeEnum(), [DbTypeEnum::DATETIME, DbTypeEnum::VARCHAR], true)

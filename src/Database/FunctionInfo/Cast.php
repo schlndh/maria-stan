@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
+use MariaStan\Analyser\AnalyserConditionTypeEnum;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\CastType\CastTypeEnum;
 use MariaStan\Ast\Expr\FunctionCall\Cast as CastFunctionCall;
@@ -39,8 +40,18 @@ final class Cast implements FunctionInfo
 	}
 
 	/** @inheritDoc */
-	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	public function getInnerConditions(?AnalyserConditionTypeEnum $condition, array $arguments): array
 	{
+		// TODO: implement this
+		return [];
+	}
+
+	/** @inheritDoc */
+	public function getReturnType(
+		FunctionCall $functionCall,
+		array $argumentTypes,
+		?AnalyserConditionTypeEnum $condition,
+	): ExprTypeResult {
 		assert($functionCall instanceof CastFunctionCall);
 		$exprType = $argumentTypes[0];
 

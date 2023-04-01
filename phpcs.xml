@@ -164,6 +164,7 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
+		<exclude-pattern>src/Database/FunctionInfo/</exclude-pattern>
 		<exclude-pattern>src/PHPStan</exclude-pattern>
 		<exclude-pattern>tests/PHPStan</exclude-pattern>
 	</rule>

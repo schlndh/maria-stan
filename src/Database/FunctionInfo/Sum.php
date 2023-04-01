@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
+use MariaStan\Analyser\AnalyserConditionTypeEnum;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall;
@@ -52,12 +53,22 @@ final class Sum implements FunctionInfo
 		);
 	}
 
+	/** @inheritDoc */
+	public function getInnerConditions(?AnalyserConditionTypeEnum $condition, array $arguments): array
+	{
+		// TODO: implement this
+		return [];
+	}
+
 	/**
 	 * @inheritDoc
 	 * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
 	 */
-	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
-	{
+	public function getReturnType(
+		FunctionCall $functionCall,
+		array $argumentTypes,
+		?AnalyserConditionTypeEnum $condition,
+	): ExprTypeResult {
 		$arg = reset($argumentTypes);
 		assert($arg instanceof ExprTypeResult);
 

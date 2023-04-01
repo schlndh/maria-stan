@@ -1186,7 +1186,6 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::FUNCTION_CALL:
 				assert($expr instanceof Expr\FunctionCall\FunctionCall);
-				// TODO: handle $condition
 				$position = 0;
 				$arguments = $expr->getArguments();
 				$normalizedFunctionName = strtoupper($expr->getFunctionName());
@@ -1204,14 +1203,16 @@ final class AnalyserState
 						$functionType === FunctionTypeEnum::AGGREGATE_OR_WINDOW
 						&& $expr::getFunctionCallType() !== Expr\FunctionCall\FunctionCallTypeEnum::WINDOW
 					);
+				$innerConditions = $functionInfo?->getInnerConditions($condition, $arguments) ?? [];
 
 				if ($isAggregateFunction) {
 					$this->columnResolver->enterAggregateFunction();
 				}
 
 				foreach ($arguments as $arg) {
+					$innerCondition = $innerConditions[$position] ?? null;
 					$position++;
-					$resolvedArguments[] = $resolvedArg = $this->resolveExprType($arg);
+					$resolvedArguments[] = $resolvedArg = $this->resolveExprType($arg, $innerCondition);
 
 					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
 						$this->errors[] = new AnalyserError(
@@ -1230,7 +1231,7 @@ final class AnalyserState
 
 				if ($functionInfo !== null) {
 					try {
-						return $functionInfo->getReturnType($expr, $resolvedArguments);
+						return $functionInfo->getReturnType($expr, $resolvedArguments, $condition);
 					} catch (AnalyserException $e) {
 						$this->errors[] = new AnalyserError($e->getMessage());
 					}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
+use MariaStan\Analyser\AnalyserConditionTypeEnum;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\Expr;
@@ -54,8 +55,18 @@ final class Value implements FunctionInfo
 	}
 
 	/** @inheritDoc */
-	public function getReturnType(FunctionCall $functionCall, array $argumentTypes): ExprTypeResult
+	public function getInnerConditions(?AnalyserConditionTypeEnum $condition, array $arguments): array
 	{
+		// TODO: implement this
+		return [];
+	}
+
+	/** @inheritDoc */
+	public function getReturnType(
+		FunctionCall $functionCall,
+		array $argumentTypes,
+		?AnalyserConditionTypeEnum $condition,
+	): ExprTypeResult {
 		$col = $argumentTypes[0];
 		// VALUE(...) can be used in SELECT as well, in which case it always returns null.
 		$isNullable = $col->isNullable || strtoupper($functionCall->getFunctionName()) === 'VALUE';
