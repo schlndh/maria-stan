@@ -216,15 +216,18 @@ class PHPStanReturnTypeHelper
 	 */
 	private function filterDuplicateKeys(array $keyTypes, array $valueTypes): array
 	{
-		$alreadyUsedNames = [];
+		$previousNameIdx = [];
 		assert(count($keyTypes) === count($valueTypes));
 		$keyCount = count($keyTypes);
 
 		for ($i = 0; $i < $keyCount; $i++) {
-			if (isset($alreadyUsedNames[$keyTypes[$i]->getValue()])) {
+			$previousIdx = $previousNameIdx[$keyTypes[$i]->getValue()] ?? null;
+
+			if ($previousIdx !== null) {
+				$valueTypes[$previousIdx] = $valueTypes[$i];
 				unset($keyTypes[$i], $valueTypes[$i]);
 			} else {
-				$alreadyUsedNames[$keyTypes[$i]->getValue()] = 1;
+				$previousNameIdx[$keyTypes[$i]->getValue()] = $i;
 			}
 		}
 

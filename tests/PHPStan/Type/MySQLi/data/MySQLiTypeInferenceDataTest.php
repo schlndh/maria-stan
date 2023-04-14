@@ -154,6 +154,23 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertIsNumeric($row['price']);
 		}
+
+		$rows = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType("array{'id', 'val'}", array_keys($row));
+				assertType('string', $row['id']);
+				assertType('int', $row['val']);
+				assertType('*ERROR*', $row['doesnt_exist']);
+				assertType('*ERROR*', $row[0]);
+			}
+
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
+		}
 	}
 
 	public function testNum(): void
@@ -422,6 +439,29 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertIsInt($row[4]);
 		}
+
+		$rows = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test')->fetch_all(MYSQLI_BOTH);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType("array{0, 'id', 1, 'val', 2}", array_keys($row));
+				assertType('int', $row[0]);
+				assertType('string', $row['id']);
+				assertType('int', $row[1]);
+				assertType('int', $row['val']);
+				assertType('string', $row[2]);
+				assertType('*ERROR*', $row[10]);
+				assertType('*ERROR*', $row['doesnt_exist']);
+			}
+
+			$this->assertSame([0, 'id', 1, 'val', 2], array_keys($row));
+			$this->assertIsInt($row[0]);
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row[1]);
+			$this->assertIsInt($row['val']);
+			$this->assertIsString($row[2]);
+		}
 	}
 
 	// This is not executed, it's just here as a data source for the PHPStan test.
@@ -597,6 +637,24 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertSame(['id'], array_keys($row));
 			$this->assertIsInt($row['id']);
+		} while (true);
+
+		$result = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_array(MYSQLI_ASSOC);
+
+			if (function_exists('assertType')) {
+				assertType('array{id: string, val: int}|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
 		} while (true);
 	}
 
