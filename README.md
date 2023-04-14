@@ -86,7 +86,6 @@ string from PHPStan, pass it to MariaStan for analysis and then report result ty
 - There is currently no cache-invalidation implemented for PHPStan. It is not clear if such a thing is even easily
  possible. See [this discussion](https://github.com/phpstan/phpstan/discussions/5690). However, that only matters
  for schema changes (i.e. if you change a query in a PHP file PHPStan will invalidate it automatically).
-- There is currently no mechanism implemented to provide type information for methods that fetch the result as objects.
 - There is no support for query builders. The analyser expects a query as a string on the input.
 - The query has to be fully known statically. If you have a code like this:
     ```php
