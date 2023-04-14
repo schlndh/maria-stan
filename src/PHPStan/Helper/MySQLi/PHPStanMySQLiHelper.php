@@ -13,9 +13,14 @@ use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectShapeType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
@@ -191,6 +196,59 @@ final class PHPStanMySQLiHelper
 	public function fetchArray(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
 		return TypeCombinator::union($this->getRowType($params, $mode), new NullType(), new ConstantBooleanType(false));
+	}
+
+	public function fetchObject(AnalyserResultPHPStanParams $params, ?string $class): Type
+	{
+		$rowType = $this->getRowType($params, MYSQLI_ASSOC);
+		$baseObjectType = $class !== null
+			? new ObjectType($class)
+			: new ObjectWithoutClassType();
+
+		// Modified from
+		// https://github.com/phpstan/phpstan-src/blob/8cdb5c95fd7a7c1a8f47d07637d5ebbbff0bfb86/src/Analyser/MutatingScope.php#L1375
+		if (count($rowType->getConstantArrays()) > 0) {
+			$objects = [];
+
+			foreach ($rowType->getConstantArrays() as $constantArray) {
+				$properties = [];
+				$optionalProperties = [];
+
+				foreach ($constantArray->getKeyTypes() as $i => $keyType) {
+					if (! $keyType instanceof ConstantStringType) {
+						// an object with integer properties is >weird<
+						continue;
+					}
+
+					$valueType = $constantArray->getValueTypes()[$i];
+					$optional = $constantArray->isOptionalKey($i);
+
+					if ($optional) {
+						$optionalProperties[] = $keyType->getValue();
+					}
+
+					$properties[$keyType->getValue()] = $valueType;
+				}
+
+				$intersectedObject = TypeCombinator::intersect(
+					new ObjectShapeType($properties, $optionalProperties),
+					$baseObjectType,
+				);
+
+				// This happens if the class is not registered in universalObjectCratesClasses.
+				if ($intersectedObject instanceof NeverType) {
+					$intersectedObject = $baseObjectType;
+				}
+
+				$objects[] = $intersectedObject;
+			}
+
+			$objectType = TypeCombinator::union(...$objects);
+		} else {
+			$objectType = $baseObjectType;
+		}
+
+		return TypeCombinator::union($objectType, new NullType(), new ConstantBooleanType(false));
 	}
 
 	public function fetchAll(AnalyserResultPHPStanParams $params, ?int $mode): Type

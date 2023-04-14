@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Type\MySQLi\data;
 
+use MariaStan\PHPStan\Type\MySQLi\CustomResultClass;
+use MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate;
 use MariaStan\TestCaseHelper;
 use mysqli;
 use mysqli_result;
@@ -14,6 +16,7 @@ use function array_key_exists;
 use function array_keys;
 use function assert;
 use function function_exists;
+use function get_object_vars;
 use function gettype;
 use function implode;
 use function in_array;
@@ -652,6 +655,114 @@ class MySQLiTypeInferenceDataTest extends TestCase
 				break;
 			}
 
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
+		} while (true);
+	}
+
+	public function testFetchObject(): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$result = $db->query('SELECT id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_object();
+
+			if (function_exists('assertType')) {
+				assertType('(object{id: int}&stdClass)|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$row = get_object_vars($row);
+			$this->assertSame(['id'], array_keys($row));
+			$this->assertIsInt($row['id']);
+		} while (true);
+
+		$result = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_object();
+
+			if (function_exists('assertType')) {
+				assertType('(object{id: string, val: int}&stdClass)|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$row = get_object_vars($row);
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
+		} while (true);
+
+		$result = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_object(CustomUniversalObjectCrate::class);
+
+			if (function_exists('assertType')) {
+				// The class needs to be registered in universalObjectCratesClasses
+				assertType('(' . CustomUniversalObjectCrate::class . '&object{id: string, val: int})|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertInstanceOf(CustomUniversalObjectCrate::class, $row);
+			$row = get_object_vars($row);
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
+		} while (true);
+
+		$result = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_object(CustomResultClass::class);
+
+			if (function_exists('assertType')) {
+				// This class is not registered in universalObjectCratesClasses, so we can't intersect it with object
+				// shape.
+				assertType(CustomResultClass::class . '|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertInstanceOf(CustomResultClass::class, $row);
+			$row = get_object_vars($row);
+			$this->assertSame(['id', 'val'], array_keys($row));
+			$this->assertIsString($row['id']);
+			$this->assertIsInt($row['val']);
+		} while (true);
+
+		$result = $db->query('SELECT id, 5 val, "aa" id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_object(
+				$this->hideValueFromPhpstan(true)
+					? CustomUniversalObjectCrate::class
+					: \stdClass::class,
+			);
+
+			if (function_exists('assertType')) {
+				assertType('object{id: string, val: int}|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertInstanceOf(CustomUniversalObjectCrate::class, $row);
+			$row = get_object_vars($row);
 			$this->assertSame(['id', 'val'], array_keys($row));
 			$this->assertIsString($row['id']);
 			$this->assertIsInt($row['val']);

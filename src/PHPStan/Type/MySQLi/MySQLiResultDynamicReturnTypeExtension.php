@@ -47,6 +47,7 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				'fetch_row',
 				'fetch_array',
 				'fetch_column',
+				'fetch_object',
 			],
 			true,
 		);
@@ -75,6 +76,10 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				$this->extractModeFromFirstArg($methodCall, $scope),
 			),
 			'fetch_row' => $this->phpstanMysqliHelper->fetchArray($params, MYSQLI_NUM),
+			'fetch_object' => $this->phpstanMysqliHelper->fetchObject(
+				$params,
+				$this->extractClassFromFirstArg($methodCall, $scope),
+			),
 			'fetch_array' => $this->phpstanMysqliHelper->fetchArray(
 				$params,
 				$this->extractModeFromFirstArg($methodCall, $scope),
@@ -112,6 +117,22 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 
 		if ($firstArgType instanceof ConstantIntegerType) {
 			return $firstArgType->getValue();
+		}
+
+		return null;
+	}
+
+	private function extractClassFromFirstArg(MethodCall $methodCall, Scope $scope): ?string
+	{
+		if (count($methodCall->getArgs()) === 0) {
+			return \stdClass::class;
+		}
+
+		$firstArgType = $scope->getType($methodCall->getArgs()[0]->value);
+		$constantStrings = $firstArgType->getConstantStrings();
+
+		if (count($constantStrings) === 1) {
+			return $constantStrings[0]->getValue();
 		}
 
 		return null;

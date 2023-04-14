@@ -6,6 +6,8 @@ parameters:
 			user: 'root'
 			password: 'root'
 			database: 'mariastan_test'
+	universalObjectCratesClasses:
+		- MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate
 
 services:
 	-

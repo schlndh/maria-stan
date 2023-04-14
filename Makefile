@@ -19,3 +19,6 @@ cs-fix:
 
 phpstan:
 	php -d memory_limit=256M vendor/bin/phpstan analyse
+
+phpstan-baseline:
+	php -d memory_limit=256M vendor/bin/phpstan analyse --generate-baseline

@@ -2,5 +2,7 @@ parameters:
 	maria-stan:
 		reflection:
 			file: %rootDir%/../../../tests/PHPStan/Type/MySQLi/schema.dump
+	universalObjectCratesClasses:
+		- MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate
 services:
 	mariaDbReflection: @mariaDbFileDbReflection
