@@ -13,6 +13,8 @@ use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\NeverType;
+use PHPStan\Type\ObjectShapeType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -207,6 +209,54 @@ class PHPStanReturnTypeHelper
 		[$combinedKeyTypes, $combinedValueTypes] = $this->filterDuplicateKeys($combinedKeyTypes, $combinedValueTypes);
 
 		return new ConstantArrayType($combinedKeyTypes, $combinedValueTypes, [$i], []);
+	}
+
+	public function convertConstantArraysToObjectShape(Type $rowType, Type $baseObjectType): Type
+	{
+		// Modified from
+		// https://github.com/phpstan/phpstan-src/blob/8cdb5c95fd7a7c1a8f47d07637d5ebbbff0bfb86/src/Analyser/MutatingScope.php#L1375
+		$constantArrays = $rowType->getConstantArrays();
+
+		if (count($constantArrays) === 0) {
+			return $baseObjectType;
+		}
+
+		$objects = [];
+
+		foreach ($rowType->getConstantArrays() as $constantArray) {
+			$properties = [];
+			$optionalProperties = [];
+
+			foreach ($constantArray->getKeyTypes() as $i => $keyType) {
+				if (! $keyType instanceof ConstantStringType) {
+					// an object with integer properties is >weird<
+					continue;
+				}
+
+				$valueType = $constantArray->getValueTypes()[$i];
+				$optional = $constantArray->isOptionalKey($i);
+
+				if ($optional) {
+					$optionalProperties[] = $keyType->getValue();
+				}
+
+				$properties[$keyType->getValue()] = $valueType;
+			}
+
+			$intersectedObject = TypeCombinator::intersect(
+				new ObjectShapeType($properties, $optionalProperties),
+				$baseObjectType,
+			);
+
+			// This happens if the class is not registered in universalObjectCratesClasses.
+			if ($intersectedObject instanceof NeverType) {
+				$intersectedObject = $baseObjectType;
+			}
+
+			$objects[] = $intersectedObject;
+		}
+
+		return TypeCombinator::union(...$objects);
 	}
 
 	/**
