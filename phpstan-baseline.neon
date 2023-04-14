@@ -3,4 +3,4 @@ parameters:
 		-
 			message: "#^Doing instanceof PHPStan\\\\Type\\\\Constant\\\\ConstantStringType is error\\-prone and deprecated\\. Use Type\\:\\:getConstantStrings\\(\\) instead\\.$#"
 			count: 1
-			path: src/PHPStan/Helper/MySQLi/PHPStanMySQLiHelper.php
+			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
