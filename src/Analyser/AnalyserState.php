@@ -84,10 +84,12 @@ final class AnalyserState
 	/** @throws AnalyserException */
 	public function analyse(): AnalyserResult
 	{
+		$rowCountRange = null;
+
 		switch ($this->queryAst::getQueryType()) {
 			case QueryTypeEnum::SELECT:
 				assert($this->queryAst instanceof SelectQuery);
-				$fields = $this->dispatchAnalyseSelectQuery($this->queryAst);
+				[$fields, $rowCountRange] = $this->dispatchAnalyseSelectQuery($this->queryAst);
 				break;
 			case QueryTypeEnum::INSERT:
 				// fallthrough intentional
@@ -115,6 +117,7 @@ final class AnalyserState
 					[new AnalyserError("Unsupported query: {$this->queryAst::getQueryType()->value}")],
 					null,
 					null,
+					null,
 				);
 		}
 
@@ -124,11 +127,17 @@ final class AnalyserState
 			$referencedSymbols = array_merge($referencedSymbols, $columns);
 		}
 
-		return new AnalyserResult($fields, $this->errors, $this->positionalPlaceholderCount, $referencedSymbols);
+		return new AnalyserResult(
+			$fields,
+			$this->errors,
+			$this->positionalPlaceholderCount,
+			$referencedSymbols,
+			$rowCountRange,
+		);
 	}
 
 	/**
-	 * @return array<QueryResultField>
+	 * @return array{0: array<QueryResultField>, 1: ?QueryResultRowCountRange}
 	 * @throws AnalyserException
 	 */
 	private function dispatchAnalyseSelectQuery(SelectQuery $select): array
@@ -149,12 +158,12 @@ final class AnalyserState
 			default:
 				$this->errors[] = new AnalyserError("Unhandled SELECT type {$select::getSelectQueryType()->value}");
 
-				return [];
+				return [[], null];
 		}
 	}
 
 	/**
-	 * @return array<QueryResultField>
+	 * @return array{0: array<QueryResultField>, 1: ?QueryResultRowCountRange}
 	 * @throws AnalyserException
 	 */
 	private function analyseWithSelectQuery(WithSelectQuery $select): array
@@ -205,7 +214,7 @@ final class AnalyserState
 	}
 
 	/**
-	 * @return array<QueryResultField>
+	 * @return array{0: array<QueryResultField>, 1: ?QueryResultRowCountRange}
 	 * @throws AnalyserException
 	 */
 	private function analyseCombinedSelectQuery(CombinedSelectQuery $select): array
@@ -262,11 +271,11 @@ final class AnalyserState
 			$this->resolveExprType($select->limit->offset);
 		}
 
-		return $fields;
+		return [$fields, null];
 	}
 
 	/**
-	 * @return array<QueryResultField>
+	 * @return array{0: array<QueryResultField>, 1: ?QueryResultRowCountRange}
 	 * @throws AnalyserException
 	 */
 	private function analyseSingleSelectQuery(SimpleSelectQuery $select): array
@@ -280,6 +289,8 @@ final class AnalyserState
 				$this->errors[] = new AnalyserError($e->getMessage());
 			}
 		}
+
+		$whereResult = null;
 
 		if ($select->where) {
 			$whereResult = $this->resolveExprType($select->where, AnalyserConditionTypeEnum::TRUTHY);
@@ -351,7 +362,15 @@ final class AnalyserState
 			$this->resolveExprType($select->limit->offset);
 		}
 
-		return $fields;
+		$rowCount = null;
+
+		if ($select->from === null && $select->having === null) {
+			$rowCount = QueryResultRowCountRange::createFixed(1)
+				->applyWhere($whereResult)
+				->applyLimitClause($select->limit);
+		}
+
+		return [$fields, $rowCount];
 	}
 
 	/**
@@ -736,6 +755,7 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof Expr\UnaryOp);
 				$innerCondition = $condition;
+				$isTruthinessUncertain = false;
 
 				if ($innerCondition !== null && $expr->operation === Expr\UnaryOpTypeEnum::LOGIC_NOT) {
 					$innerCondition = match ($innerCondition) {
@@ -750,6 +770,7 @@ final class AnalyserState
 						AnalyserConditionTypeEnum::NULL => AnalyserConditionTypeEnum::NULL,
 						default => AnalyserConditionTypeEnum::NOT_NULL,
 					};
+					$isTruthinessUncertain = true;
 				}
 
 				$resolvedInnerExpr = $this->resolveExprType($expr->expression, $innerCondition);
@@ -765,12 +786,13 @@ final class AnalyserState
 					default => new Schema\DbType\IntType(),
 				};
 
-				return new ExprTypeResult(
-					$type,
-					$resolvedInnerExpr->isNullable,
-					null,
-					$resolvedInnerExpr->knowledgeBase,
-				);
+				$knowledgeBase = $resolvedInnerExpr->knowledgeBase;
+
+				if ($isTruthinessUncertain) {
+					$knowledgeBase = $knowledgeBase?->removeTruthiness();
+				}
+
+				return new ExprTypeResult($type, $resolvedInnerExpr->isNullable, null, $knowledgeBase);
 			case Expr\ExprTypeEnum::BINARY_OP:
 				assert($expr instanceof Expr\BinaryOp);
 				$innerConditionLeft = $innerConditionRight = null;
@@ -796,6 +818,7 @@ final class AnalyserState
 					Expr\BinaryOpTypeEnum::INT_DIVISION,
 					Expr\BinaryOpTypeEnum::MODULO,
 				];
+				$isTruthinessUncertain = true;
 
 				// TODO: handle $condition for <=>, REGEXP
 				if (
@@ -841,6 +864,11 @@ final class AnalyserState
 						// For now, we can only determine that none of the operands can be NULL.
 						default => [AnalyserConditionTypeEnum::NOT_NULL, AnalyserConditionTypeEnum::TRUTHY],
 					};
+
+					if ($condition === AnalyserConditionTypeEnum::NOT_NULL) {
+						$isTruthinessUncertain = false;
+					}
+
 					$kbCombinineWithAnd = true;
 				} elseif (
 					$expr->operation === Expr\BinaryOpTypeEnum::LOGIC_XOR
@@ -962,19 +990,27 @@ final class AnalyserState
 						: $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
 				}
 
+				// TODO: In many cases I'm relaxing the condition, because I can't check the real condition statically.
+				// E.g. TRUTHY(5 = 1) becomes TRUTHY(5 IS NOT NULL AND 1 IS NOT NULL). So I have to remove truthiness
+				// in these cases.
+				if ($isTruthinessUncertain) {
+					$knowledgeBase = $knowledgeBase?->removeTruthiness();
+				}
+
 				return new ExprTypeResult($type, $isNullable, null, $knowledgeBase);
 			case Expr\ExprTypeEnum::SUBQUERY:
 				assert($expr instanceof Expr\Subquery);
 				// TODO: handle $condition
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
+				$canBeEmpty = ($result->rowCountRange?->min ?? 0) === 0;
 
 				if ($result->resultFields === null) {
 					return new ExprTypeResult(
 						new Schema\DbType\MixedType(),
 						// TODO: Change it to false if we can statically determine that the query will always return
 						// a result: e.g. SELECT 1
-						true,
+						$canBeEmpty,
 					);
 				}
 
@@ -984,7 +1020,7 @@ final class AnalyserState
 						// TODO: Change it to false if we can statically determine that the query will always return
 						// a result: e.g. SELECT 1
 						// TODO: Fix this for "x IN (SELECT ...)".
-						true,
+						$canBeEmpty || $result->resultFields[0]->exprType->isNullable,
 					);
 				}
 

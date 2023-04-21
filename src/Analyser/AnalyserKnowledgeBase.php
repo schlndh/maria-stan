@@ -80,6 +80,15 @@ final class AnalyserKnowledgeBase
 		return new self($mergedColumnNullability, null);
 	}
 
+	public function removeTruthiness(): self
+	{
+		if ($this->truthiness === null) {
+			return $this;
+		}
+
+		return new self($this->columnNullability, null);
+	}
+
 	private static function tryTrivialAnd(self $a, self $b): ?self
 	{
 		if ($a->truthiness === true) {

@@ -528,6 +528,15 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT (SELECT 1)',
 		];
 
+		// TODO: is this a mariadb bug? It returns 1
+		//yield 'subquery as SELECT expression - LIMIT 0' => [
+		//	'query' => 'SELECT (SELECT 1 LIMIT 0)',
+		//];
+
+		yield 'subquery as SELECT expression - LIMIT 0' => [
+			'query' => 'SELECT (SELECT 1 FROM analyser_test LIMIT 0)',
+		];
+
 		yield 'subquery as SELECT expression - reference to outer table' => [
 			'query' => 'SELECT (SELECT id FROM analyser_test WHERE id = t_out.id LIMIT 1) FROM analyser_test t_out',
 		];
@@ -2708,6 +2717,123 @@ class AnalyserTest extends TestCase
 		}
 
 		$this->assertSame($expectedCount, $result->positionalPlaceholderCount);
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public function provideTestRowCountRangeData(): iterable
+	{
+		yield 'no FROM' => [
+			'query' => 'SELECT 1',
+			'expected range' => QueryResultRowCountRange::createFixed(1),
+		];
+
+		yield 'no FROM LIMIT 2' => [
+			'query' => 'SELECT 1 LIMIT 2',
+			'expected range' => QueryResultRowCountRange::createFixed(1),
+		];
+
+		yield 'no FROM LIMIT 1, 2' => [
+			'query' => 'SELECT 1 LIMIT 1, 2',
+			'expected range' => QueryResultRowCountRange::createFixed(0),
+		];
+
+		yield 'no FROM LIMIT 0' => [
+			'query' => 'SELECT 1 LIMIT 0',
+			'expected range' => QueryResultRowCountRange::createFixed(0),
+		];
+
+		$uncertainFalseConds = [
+			'-5 + 5',
+			'5 - 5',
+			'0 / 5',
+			'0 DIV 5',
+			'0 MOD 5',
+			'0 % 5',
+			'0 & 5',
+			'0 | 0',
+			'0 << 5',
+			'0 >> 5',
+			'5 ^ 5',
+			'~~0',
+			'5 = 1',
+			'5 != 5',
+			'5 < 1',
+			'5 <= 1',
+			'1 > 5',
+			'1 >= 5',
+			'1 AND 1',
+		];
+
+		foreach ($uncertainFalseConds as $cond) {
+			$query = "SELECT 1 WHERE ({$cond})";
+
+			yield $query => [
+				'query' => $query,
+				// TODO: make this fixed 0 once the condition analysis improves
+				'expected range' => new QueryResultRowCountRange(0, 1),
+			];
+
+			$query = "SELECT 1 WHERE NOT ({$cond})";
+
+			yield $query => [
+				'query' => $query,
+				// TODO: make this fixed 1 once the condition analysis improves
+				'expected range' => new QueryResultRowCountRange(0, 1),
+			];
+		}
+	}
+
+	/**
+	 * @dataProvider provideTestRowCountRangeData
+	 * @param array<scalar|null> $params
+	 */
+	public function testRowCountRange(
+		string $query,
+		?QueryResultRowCountRange $expectedRange,
+		array $params = [],
+	): void {
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
+		$result = $analyser->analyzeQuery($query);
+		$this->assertEquals($expectedRange, $result->rowCountRange);
+		$db->begin_transaction();
+
+		try {
+			$stmt = null;
+
+			if (count($params) > 0) {
+				$stmt = $db->prepare($query);
+				$stmt->execute($params);
+				$dbResult = $stmt->get_result();
+			} else {
+				$dbResult = $db->query($query);
+			}
+
+			$warningArr = $this->getRelevantWarnings($db);
+
+			$this->assertInstanceOf(mysqli_result::class, $dbResult);
+			$rows = $dbResult->fetch_all(MYSQLI_NUM);
+			$dbResult->close();
+			$stmt?->close();
+		} finally {
+			$db->rollback();
+		}
+
+		if (count($warningArr) > 0) {
+			$this->fail("Warnings: " . implode("\n", $warningArr));
+		}
+
+		if ($expectedRange === null) {
+			return;
+		}
+
+		$this->assertGreaterThanOrEqual($expectedRange->min, count($rows));
+
+		if ($expectedRange->max === null) {
+			return;
+		}
+
+		$this->assertLessThanOrEqual($expectedRange->max, count($rows));
 	}
 
 	/**

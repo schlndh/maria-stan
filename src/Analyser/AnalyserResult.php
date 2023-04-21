@@ -18,6 +18,7 @@ final class AnalyserResult
 		public readonly array $errors,
 		public readonly ?int $positionalPlaceholderCount,
 		public readonly ?array $referencedSymbols,
+		public readonly ?QueryResultRowCountRange $rowCountRange,
 	) {
 	}
 }
