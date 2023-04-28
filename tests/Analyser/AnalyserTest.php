@@ -1509,6 +1509,28 @@ class AnalyserTest extends TestCase
 			];
 		}
 
+		$placeholderOperations = [
+			['col_vchar = ?', ['1']],
+			['col_vchar != ?', ['1']],
+			['col_vchar > ?', ['1']],
+			['col_vchar >= ?', ['1']],
+			['col_vchar < ?', ['aa']],
+			['col_vchar <= ?', ['1']],
+			['col_vchar + ?', ['1']],
+			['col_vchar - ?', ['1']],
+			['col_vchar * ?', ['1']],
+			['col_vchar / ?', ['1']],
+			['col_vchar MOD ?', ['2']],
+			['? IS NULL', [null]],
+		];
+
+		foreach ($placeholderOperations as [$op, $params]) {
+			yield "placeholder: {$op}" => [
+				'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE ' . $op,
+				'params' => $params,
+			];
+		}
+
 		$operations = [
 			't1.col_vchar = t2.col_vchar',
 			't1.col_vchar != t2.col_vchar',

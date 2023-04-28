@@ -1083,11 +1083,15 @@ final class AnalyserState
 					$isNullable,
 				);
 			case Expr\ExprTypeEnum::PLACEHOLDER:
-				// TODO: handle $condition
 				$this->positionalPlaceholderCount++;
 
 				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
-				return new ExprTypeResult(new Schema\DbType\VarcharType(), true);
+				return new ExprTypeResult(
+					new Schema\DbType\VarcharType(),
+					true,
+					null,
+					AnalyserKnowledgeBase::createEmpty(),
+				);
 			case Expr\ExprTypeEnum::TUPLE:
 				assert($expr instanceof Expr\Tuple);
 				$innerCondition = match ($condition) {
