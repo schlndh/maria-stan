@@ -1298,10 +1298,10 @@ final class AnalyserState
 
 				$subresults = [];
 
-				foreach ($expr->conditions as $condition) {
-					$field = $this->resolveExprType($condition->when);
+				foreach ($expr->conditions as $caseCondition) {
+					$field = $this->resolveExprType($caseCondition->when);
 					$this->checkNotTuple($field->type);
-					$subresults[] = $field = $this->resolveExprType($condition->then);
+					$subresults[] = $field = $this->resolveExprType($caseCondition->then);
 					$this->checkNotTuple($field->type);
 				}
 

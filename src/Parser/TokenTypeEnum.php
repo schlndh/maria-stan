@@ -8,6 +8,7 @@ use function array_combine;
 use function array_map;
 use function array_search;
 use function array_slice;
+use function assert;
 
 enum TokenTypeEnum: string
 {
@@ -325,6 +326,7 @@ enum TokenTypeEnum: string
 			/** @phpstan-var array<int, TokenTypeEnum> $result Analysis is needlessly slow without this. */
 			$result = self::cases();
 			$eoiIdx = array_search(self::END_OF_INPUT, $result, true);
+			assert($eoiIdx !== false);
 			$result = array_slice($result, $eoiIdx + 1);
 			$result = array_combine(
 				array_map(static fn (self $e) => $e->value, $result),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\Parser;
 
+use function assert;
 use function max;
 use function mb_substr;
 use function min;
@@ -28,9 +29,13 @@ final class Position
 		$lines = substr_count($str, "\n");
 
 		if ($lines) {
+			$newLinePos = strrpos($str, "\n");
+			// implied by if ($lines)
+			assert($newLinePos !== false);
+
 			return new self(
 				$this->line + $lines,
-				strlen($str) - strrpos($str, "\n"),
+				strlen($str) - $newLinePos,
 				$this->offset + strlen($str),
 			);
 		}

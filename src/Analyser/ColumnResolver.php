@@ -593,8 +593,8 @@ final class ColumnResolver
 				$fields[] = new QueryResultField($column, $exprType);
 			}
 		} else {
-			foreach ($this->allColumns as ['column' => $column, 'table' => $table]) {
-				$exprType = $this->findColumnExprType($table, $column);
+			foreach ($this->allColumns as ['column' => $column, 'table' => $columnTable]) {
+				$exprType = $this->findColumnExprType($columnTable, $column);
 
 				// This would have already been reported previously, so let's ignore it.
 				if ($exprType === null) {

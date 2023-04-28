@@ -1,6 +1,7 @@
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
 	- phpstan-baseline.neon
 parameters:
 	phpVersion: 80100
@@ -19,6 +20,13 @@ parameters:
 			- 'MariaStan\Ast\Exception\InvalidArgumentException'
 			- 'InvalidArgumentException'
 			- 'ReflectionException'
+	strictRules:
+		# Ignore Dynamic call to static method PHPUnit\Framework\Assert::assertSame(). etc
+		strictCalls: false
+		# Ignore: Only booleans are allowed in an if condition, MariaStan\Parser\Token|null given etc
+		booleansInConditions: false
+		# Allow short ternary operator
+		disallowedConstructs: false
 	ignoreErrors:
 		-
 			message: '#.*throws checked exception.*#'

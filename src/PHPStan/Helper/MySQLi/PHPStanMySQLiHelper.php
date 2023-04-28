@@ -117,8 +117,8 @@ final class PHPStanMySQLiHelper
 		$supportedPlaceholderTxt = implode(', ', array_keys($supportedPlaceholderCounts));
 		$errors = [];
 
-		foreach ($executeParamTypes as $params) {
-			$count = count($params);
+		foreach ($executeParamTypes as $executeParams) {
+			$count = count($executeParams);
 
 			if (isset($supportedPlaceholderCounts[$count])) {
 				continue;

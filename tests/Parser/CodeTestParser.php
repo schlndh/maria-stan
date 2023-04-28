@@ -101,7 +101,7 @@ class CodeTestParser
 			return [$expected, null];
 		}
 
-		$expected = (string) substr($expected, $firstNewLine + 1);
+		$expected = substr($expected, $firstNewLine + 1);
 
 		return [$expected, substr($firstLine, 2)];
 	}

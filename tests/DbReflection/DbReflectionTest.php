@@ -123,7 +123,6 @@ class DbReflectionTest extends TestCase
 		$valDefaultExpr = $parser->parseSingleExpression('(abs(`val_mediumint`) + 5)');
 		$nullExpr = $parser->parseSingleExpression('NULL');
 
-		$this->assertNotNull($schema);
 		$this->assertSame($tableName, $schema->name);
 		$this->assertEquals([
 			'id' => new Column('id', new IntType(), false, null, true),
