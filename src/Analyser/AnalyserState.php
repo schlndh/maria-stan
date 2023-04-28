@@ -68,8 +68,8 @@ final class AnalyserState
 
 	/** @var array<string, array<string, ReferencedSymbol\TableColumn>> table name => column name => column */
 	private array $referencedTableColumns = [];
-
 	private ColumnResolverFieldBehaviorEnum $fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
+	private bool $hasAggregateFunctionCalls = false;
 
 	public function __construct(
 		private readonly DbReflection $dbReflection,
@@ -271,6 +271,7 @@ final class AnalyserState
 			$this->resolveExprType($select->limit->offset);
 		}
 
+		// TODO: implement row count
 		return [$fields, null];
 	}
 
@@ -290,7 +291,7 @@ final class AnalyserState
 			}
 		}
 
-		$whereResult = null;
+		$whereResult = $havingResult = null;
 
 		if ($select->where) {
 			$whereResult = $this->resolveExprType($select->where, AnalyserConditionTypeEnum::TRUTHY);
@@ -345,7 +346,7 @@ final class AnalyserState
 
 		if ($select->having) {
 			$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::HAVING;
-			$this->resolveExprType($select->having);
+			$havingResult = $this->resolveExprType($select->having);
 		}
 
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
@@ -364,11 +365,15 @@ final class AnalyserState
 
 		$rowCount = null;
 
-		if ($select->from === null && $select->having === null) {
-			$rowCount = QueryResultRowCountRange::createFixed(1)
-				->applyWhere($whereResult)
-				->applyLimitClause($select->limit);
+		if ($select->from === null) {
+			$rowCount = QueryResultRowCountRange::createFixed(1)->applyWhere($whereResult);
+		} elseif ($this->hasAggregateFunctionCalls && $select->groupBy === null) {
+			// WHERE doesn't matter here.
+			$rowCount = QueryResultRowCountRange::createFixed(1);
 		}
+
+		$rowCount = $rowCount?->applyWhere($havingResult)
+			->applyLimitClause($select->limit);
 
 		return [$fields, $rowCount];
 	}
@@ -1247,6 +1252,7 @@ final class AnalyserState
 
 				if ($isAggregateFunction) {
 					$this->columnResolver->enterAggregateFunction();
+					$this->hasAggregateFunctionCalls = true;
 				}
 
 				foreach ($arguments as $arg) {

@@ -1590,6 +1590,11 @@ class AnalyserTest extends TestCase
 		yield 'useless part of condition: NOT AND' => [
 			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE NOT (id IS NOT NULL AND col_vchar IS NOT NULL)',
 		];
+
+		// TODO: fix this
+		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
+		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',
+		//];
 	}
 
 	/**
@@ -2744,15 +2749,34 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	public function provideTestRowCountRangeData(): iterable
 	{
-		yield 'no FROM' => [
-			'query' => 'SELECT 1',
-			'expected range' => QueryResultRowCountRange::createFixed(1),
+		$singleRowQueries = [
+			'SELECT 1',
+			'SELECT 1 LIMIT 2',
+			'SELECT COUNT(*)',
+			'SELECT (SELECT COUNT(*))',
+			'SELECT COUNT(*) FROM analyser_test WHERE id > 5',
+			'SELECT 1 FROM analyser_test ORDER BY COUNT(*)',
+			'SELECT 1 FROM analyser_test WHERE id > 5 ORDER BY COUNT(*)',
 		];
 
-		yield 'no FROM LIMIT 2' => [
-			'query' => 'SELECT 1 LIMIT 2',
-			'expected range' => QueryResultRowCountRange::createFixed(1),
+		foreach ($singleRowQueries as $query) {
+			yield $query => [
+				'query' => $query,
+				'expected range' => QueryResultRowCountRange::createFixed(1),
+			];
+		}
+
+		$uncertainSingleRowQueries = [
+			'SELECT id FROM analyser_test WHERE id > 5 HAVING COUNT(*)',
+			'SELECT id FROM analyser_test HAVING id > 5 ORDER BY COUNT(*)',
 		];
+
+		foreach ($uncertainSingleRowQueries as $query) {
+			yield $query => [
+				'query' => $query,
+				'expected range' => new QueryResultRowCountRange(0, 1),
+			];
+		}
 
 		yield 'no FROM LIMIT 1, 2' => [
 			'query' => 'SELECT 1 LIMIT 1, 2',
