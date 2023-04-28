@@ -1591,6 +1591,26 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE NOT (id IS NOT NULL AND col_vchar IS NOT NULL)',
 		];
 
+		$irrelevantTrueConditions = [
+			'NOW() - INTERVAL 2 MONTH < NOW()',
+			'NOW() IS NOT NULL',
+			'CURDATE() IS NOT NULL',
+		];
+
+		foreach ($irrelevantTrueConditions as $condition) {
+			$where = "col_vchar IS NOT NULL AND ({$condition})";
+
+			yield $where => [
+				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$where}",
+			];
+
+			$where = "NOT (col_vchar IS NULL OR NOT ({$condition}))";
+
+			yield $where => [
+				'query' => "SELECT * FROM analyser_test_nullability_1 WHERE {$where}",
+			];
+		}
+
 		// TODO: fix this
 		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
 		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',

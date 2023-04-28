@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Database\FunctionInfo;
 
 use MariaStan\Analyser\AnalyserConditionTypeEnum;
+use MariaStan\Analyser\AnalyserKnowledgeBase;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Parser\Exception\ParserException;
@@ -44,7 +45,6 @@ final class Curdate implements FunctionInfo
 	/** @inheritDoc */
 	public function getInnerConditions(?AnalyserConditionTypeEnum $condition, array $arguments): array
 	{
-		// TODO: implement this
 		return [];
 	}
 
@@ -57,6 +57,14 @@ final class Curdate implements FunctionInfo
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
 	): ExprTypeResult {
-		return new ExprTypeResult(new DateTimeType(), false);
+		$kb = match ($condition) {
+			null => null,
+			AnalyserConditionTypeEnum::TRUTHY, AnalyserConditionTypeEnum::NOT_NULL
+			=> AnalyserKnowledgeBase::createFixed(true),
+			AnalyserConditionTypeEnum::FALSY, AnalyserConditionTypeEnum::NULL
+			=> AnalyserKnowledgeBase::createFixed(false),
+		};
+
+		return new ExprTypeResult(new DateTimeType(), false, null, $kb);
 	}
 }
