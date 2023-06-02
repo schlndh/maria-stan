@@ -22,6 +22,7 @@ use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
+use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Subquery;
@@ -43,10 +44,12 @@ use MariaStan\Parser\Position;
 use MariaStan\Schema;
 
 use function array_fill_keys;
+use function array_intersect;
 use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_reduce;
+use function array_unique;
 use function array_values;
 use function assert;
 use function count;
@@ -248,7 +251,7 @@ final class AnalyserState
 		for (; $i < $commonCount; $i++) {
 			$lf = $leftFields[$i];
 			$rf = $rightFields[$i];
-			$combinedType = $this->getCombinedType($lf->exprType->type, $rf->exprType->type);
+			$combinedType = $this->getCombinedType($lf->exprType->type, $rf->exprType->type, $select->combinator);
 			$fields[] = new QueryResultField(
 				$lf->name,
 				new ExprTypeResult($combinedType, $lf->exprType->isNullable || $rf->exprType->isNullable),
@@ -1328,7 +1331,7 @@ final class AnalyserState
 
 					$type = $type === null
 						? $subresult->type
-						: $this->getCombinedType($type, $subresult->type);
+						: FunctionInfoHelper::castToCommonType($type, $subresult->type);
 				}
 
 				return new ExprTypeResult($type, $isNullable);
@@ -1500,9 +1503,30 @@ final class AnalyserState
 		return array_reduce($fields, static fn (bool $carry, ExprTypeResult $f) => $carry || $f->isNullable, false);
 	}
 
-	private function getCombinedType(Schema\DbType\DbType $left, Schema\DbType\DbType $right): Schema\DbType\DbType
-	{
-		return FunctionInfoHelper::castToCommonType($left, $right);
+	private function getCombinedType(
+		Schema\DbType\DbType $left,
+		Schema\DbType\DbType $right,
+		SelectQueryCombinatorTypeEnum $combinator,
+	): Schema\DbType\DbType {
+		if (
+			$left::getTypeEnum() !== Schema\DbType\DbTypeEnum::ENUM
+			|| $right::getTypeEnum() !== Schema\DbType\DbTypeEnum::ENUM
+		) {
+			return FunctionInfoHelper::castToCommonType($left, $right);
+		}
+
+		assert($left instanceof Schema\DbType\EnumType && $right instanceof Schema\DbType\EnumType);
+		// TODO: Consider collation
+		$combinedCases = match ($combinator) {
+			SelectQueryCombinatorTypeEnum::UNION => array_values(
+				array_unique(array_merge($left->cases, $right->cases)),
+			),
+			SelectQueryCombinatorTypeEnum::INTERSECT => array_values(array_intersect($left->cases, $right->cases)),
+			// not array_diff: not all right cases may be returned by the right query.
+			SelectQueryCombinatorTypeEnum::EXCEPT => $left->cases,
+		};
+
+		return new Schema\DbType\EnumType($combinedCases);
 	}
 
 	/**

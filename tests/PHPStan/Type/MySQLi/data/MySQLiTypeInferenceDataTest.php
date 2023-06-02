@@ -56,12 +56,14 @@ class MySQLiTypeInferenceDataTest extends TestCase
 				col_decimal DECIMAL(10, 2) NOT NULL,
 				col_float FLOAT NOT NULL,
 				col_double DOUBLE NOT NULL,
-				col_datetime DATETIME NOT NULL
+				col_datetime DATETIME NOT NULL,
+				col_enum ENUM('a', 'b', 'c') NOT NULL
 			);
 		");
 		$db->query("
-			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime)
-			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW()), (2, NULL, 222.22, 22.22, 2.2, NOW())
+			INSERT INTO {$dataTypesTable}
+			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum)
+			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a'), (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b')
 		");
 	}
 
@@ -598,6 +600,31 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertGettype('NULL', $value);
+		}
+
+		$rows = $db->query('SELECT col_enum FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType("'a'|'b'|'c'", $value);
+			}
+
+			$this->assertTrue(in_array($value, ['a', 'b', 'c'], true));
+		}
+
+		$rows = $db->query('
+			SELECT col_enum FROM mysqli_test_data_types
+			UNION ALL SELECT col_enum FROM mysqli_test_data_types
+		')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType("'a'|'b'|'c'", $value);
+			}
+
+			$this->assertTrue(in_array($value, ['a', 'b', 'c'], true));
 		}
 	}
 

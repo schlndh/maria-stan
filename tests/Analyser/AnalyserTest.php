@@ -31,6 +31,7 @@ use function count;
 use function implode;
 use function in_array;
 use function is_string;
+use function reset;
 use function str_starts_with;
 
 use const MYSQLI_ASSOC;
@@ -70,14 +71,15 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	public function provideValidTestData(): iterable
 	{
-		$tableName = 'analyser_test';
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
-			CREATE OR REPLACE TABLE {$tableName} (
+			CREATE OR REPLACE TABLE analyser_test (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				name VARCHAR(255) NULL
 			);
 		");
+		$db->query("INSERT INTO analyser_test (id, name) VALUES (1, 'aa'), (2, NULL)");
+
 		$db->query("
 			CREATE OR REPLACE TABLE analyse_test_insert (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -99,18 +101,28 @@ class AnalyserTest extends TestCase
 			);
 		");
 
-		$db->query("INSERT INTO {$tableName} (id, name) VALUES (1, 'aa'), (2, NULL)");
+		$db->query("
+			CREATE OR REPLACE TABLE analyser_test_enum (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				enum_abc ENUM ('a', 'b', 'c') NOT NULL,
+				enum_ab ENUM ('a', 'b') NOT NULL,
+				enum_bc ENUM ('b', 'c') NOT NULL
+			);
+		");
+		$db->query("
+			INSERT INTO analyser_test_enum (enum_abc, enum_ab, enum_bc) VALUES ('a', 'b', 'c');
+		");
 
 		yield 'SELECT *' => [
-			'query' => "SELECT * FROM {$tableName}",
+			'query' => "SELECT * FROM analyser_test",
 		];
 
 		yield 'manually specified columns' => [
-			'query' => "SELECT name, id FROM {$tableName}",
+			'query' => "SELECT name, id FROM analyser_test",
 		];
 
 		yield 'manually specified columns + *' => [
-			'query' => "SELECT *, name, id FROM {$tableName}",
+			'query' => "SELECT *, name, id FROM analyser_test",
 		];
 
 		yield 'field alias' => [
@@ -912,6 +924,54 @@ class AnalyserTest extends TestCase
 				'query' => "SELECT 1 IN (SELECT 1 {$combinatorVal} SELECT 2)",
 			];
 		}
+
+		yield "UNION - same enum" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum UNION ALL SELECT enum_ab FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['a', 'b']),
+			],
+		];
+
+		yield "UNION - different enums" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum UNION ALL SELECT enum_bc FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['a', 'b', 'c']),
+			],
+		];
+
+		yield "INTERSECT - same enum" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum INTERSECT SELECT enum_ab FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['a', 'b']),
+			],
+		];
+
+		yield "INTERSECT - different enums" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum INTERSECT SELECT enum_bc FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['b']),
+			],
+		];
+
+		yield "EXCEPT - same enum" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum EXCEPT SELECT enum_ab FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['a', 'b']),
+			],
+		];
+
+		yield "EXCEPT - different enums" => [
+			'query' => 'SELECT enum_ab FROM analyser_test_enum EXCEPT SELECT enum_bc FROM analyser_test_enum',
+			'params' => [],
+			'explicit field types' => [
+				'enum_ab' => new EnumType(['a', 'b']),
+			],
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1104,8 +1164,9 @@ class AnalyserTest extends TestCase
 	/**
 	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
+	 * @param array<string, DbType> $explicitFieldTypes
 	 */
-	public function testValid(string $query, array $params = []): void
+	public function testValid(string $query, array $params = [], array $explicitFieldTypes = []): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$analyser = $this->createAnalyser();
@@ -1277,6 +1338,22 @@ class AnalyserTest extends TestCase
 				assert($analyzedExprType->type instanceof EnumType);
 				$this->assertContains($value, $analyzedExprType->type->cases);
 			}
+		}
+
+		$analyserFieldNameMap = [];
+
+		foreach ($result->resultFields ?? [] as $field) {
+			$analyserFieldNameMap[$field->name][] = $field;
+		}
+
+		foreach ($explicitFieldTypes as $column => $expectedType) {
+			$this->assertArrayHasKey($column, $analyserFieldNameMap);
+			$fields = $analyserFieldNameMap[$column];
+			$this->assertCount(1, $fields);
+			$field = reset($fields);
+			$this->assertInstanceOf(QueryResultField::class, $field);
+			$type = $field->exprType->type;
+			$this->assertEquals($expectedType, $type);
 		}
 
 		$incompleteTestErrors = [];
