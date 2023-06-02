@@ -995,6 +995,16 @@ final class AnalyserState
 						: $leftResult->knowledgeBase->or($rightResult->knowledgeBase);
 				}
 
+				// This fallback should handle simple conditions broken by some inner expression which doesn't handle
+				// conditions yet. TODO: remove this once it's no longer necessary.
+				if ($condition === AnalyserConditionTypeEnum::TRUTHY && $knowledgeBase === null) {
+					if ($expr->operation === Expr\BinaryOpTypeEnum::LOGIC_AND) {
+						$knowledgeBase = $leftResult->knowledgeBase ?? $rightResult->knowledgeBase;
+					} elseif ($expr->operation === Expr\BinaryOpTypeEnum::LOGIC_OR) {
+						$knowledgeBase = AnalyserKnowledgeBase::createEmpty();
+					}
+				}
+
 				// TODO: In many cases I'm relaxing the condition, because I can't check the real condition statically.
 				// E.g. TRUTHY(5 = 1) becomes TRUTHY(5 IS NOT NULL AND 1 IS NOT NULL). So I have to remove truthiness
 				// in these cases.
