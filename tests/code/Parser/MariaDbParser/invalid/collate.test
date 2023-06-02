@@ -1,0 +1,15 @@
+COLLATE
+-----
+SELECT 'a' COLLATE CONCAT('utf8mb4', '_unicode_ci')
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '(' after: SELECT 'a' COLLATE CONCAT
+#####
+1273: Unknown collation: 'CONCAT'
+-----
+SELECT 'a' COLLATE
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of STRING_LITERAL, IDENTIFIER, got END_OF_INPUT after: SELECT 'a' COLLATE
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1

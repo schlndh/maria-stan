@@ -126,6 +126,8 @@ class MariaDbParserTest extends TestCase
 					MariaDbErrorCodes::ER_UNKNOWN_DATA_TYPE,
 					// Some of these functions have custom syntax and in those cases it can be enforced on AST level.
 					MariaDbErrorCodes::ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT,
+					// E.g. 'x' COLLATE CONCAT(...) returns this error instead of parser error.
+					MariaDbErrorCodes::ER_UNKNOWN_COLLATION,
 				],
 				true,
 			)

@@ -1,0 +1,420 @@
+COLLATE
+-----
+SELECT 'a' COLLATE 'utf8mb4_unicode_ci'
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT 'a' COLLATE utf8mb4_unicode_ci
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT 'a' COLLATE "utf8mb4_unicode_ci"
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT 'a' COLLATE "utf8mb4_unicode_ci" COLLATE "utf8mb4_unicode_ci"
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT 0 + 'a' COLLATE "utf8mb4_unicode_ci"
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 0
+								)
+							[right] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test WHERE 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[where] => MariaStan\Ast\Expr\Collate
+		(
+			[expression] => MariaStan\Ast\Expr\LiteralString
+				(
+					[value] => a
+					[firstConcatPart] => a
+				)
+			[collation] => utf8mb4_unicode_ci
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test HAVING 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[having] => MariaStan\Ast\Expr\Collate
+		(
+			[expression] => MariaStan\Ast\Expr\LiteralString
+				(
+					[value] => a
+					[firstConcatPart] => a
+				)
+			[collation] => utf8mb4_unicode_ci
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test GROUP BY 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[groupBy] => MariaStan\Ast\GroupBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+			[isWithRollup] => false
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test ORDER BY 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT CONCAT('a' COLLATE utf8mb4_unicode_ci, 'b')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => CONCAT
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Collate
+										(
+											[expression] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => a
+													[firstConcatPart] => a
+												)
+											[collation] => utf8mb4_unicode_ci
+										)
+									[1] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => b
+											[firstConcatPart] => b
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+UPDATE parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\Collate
+						(
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => a
+									[firstConcatPart] => a
+								)
+							[collation] => utf8mb4_unicode_ci
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+REPLACE INTO parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => parser_test
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\Collate
+								(
+									[expression] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[collation] => utf8mb4_unicode_ci
+								)
+						)
+				)
+		)
+)

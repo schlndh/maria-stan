@@ -52,6 +52,9 @@ class MariaDbErrorCodes
 	// 1264	22003	ER_WARN_DATA_OUT_OF_RANGE	Out of range value for column '%s' at row %ld
 	public const ER_WARN_DATA_OUT_OF_RANGE = 1264;
 
+	// 1273	HY000	ER_UNKNOWN_COLLATION	Unknown collation: '%s'
+	public const ER_UNKNOWN_COLLATION = 1273;
+
 	// 1292	22007	ER_TRUNCATED_WRONG_VALUE	Truncated incorrect %s value: '%s'
 	public const ER_TRUNCATED_WRONG_VALUE = 1292;
 

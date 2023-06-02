@@ -9,6 +9,9 @@ enum SpecialOpTypeEnum: string
 	/** @see Between */
 	case BETWEEN = 'BETWEEN';
 
+	/** @see Collate */
+	case COLLATE = 'COLLATE';
+
 	/** @see Is */
 	case IS = 'IS';
 

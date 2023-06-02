@@ -22,6 +22,7 @@ use MariaStan\Ast\Expr\CastType\DoubleCastType;
 use MariaStan\Ast\Expr\CastType\FloatCastType;
 use MariaStan\Ast\Expr\CastType\IntegerCastType;
 use MariaStan\Ast\Expr\CastType\TimeCastType;
+use MariaStan\Ast\Expr\Collate;
 use MariaStan\Ast\Expr\Column;
 use MariaStan\Ast\Expr\ColumnDefault;
 use MariaStan\Ast\Expr\Exists;
@@ -86,6 +87,7 @@ use MariaStan\Ast\WindowFrameTypeEnum;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Parser\Exception\MissingSubqueryAliasException;
 use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Parser\Exception\ShouldNotHappenException;
 use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
@@ -1091,6 +1093,8 @@ class MariaDbParserState
 				$exp = $this->parseRestOfIsOperator($exp);
 			} elseif ($operator === SpecialOpTypeEnum::IN) {
 				$exp = $this->parseRestOfInOperator($exp);
+			} elseif ($operator === SpecialOpTypeEnum::COLLATE) {
+				$exp = $this->parseRestOfCollateOperator($exp);
 			} else {
 				// INTERVAL is handled as a unary operator
 				assert($operator !== SpecialOpTypeEnum::INTERVAL);
@@ -1223,6 +1227,19 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
+	private function parseRestOfCollateOperator(Expr $left): Collate
+	{
+		$token = $this->expectAnyOfTokens(TokenTypeEnum::LITERAL_STRING, TokenTypeEnum::IDENTIFIER);
+		$collation = match ($token->type) {
+			TokenTypeEnum::LITERAL_STRING => $this->cleanStringLiteral($token->content),
+			TokenTypeEnum::IDENTIFIER => $this->cleanIdentifier($token->content),
+			default => throw new ShouldNotHappenException(),
+		};
+
+		return new Collate($left->getStartPosition(), $token->getEndPosition(), $left, $collation);
+	}
+
+	/** @throws ParserException */
 	private function parseTimeUnit(): TimeUnitEnum
 	{
 		$token = $this->expectAnyOfTokens(
@@ -1266,6 +1283,7 @@ class MariaDbParserState
 			TokenTypeEnum::BETWEEN => SpecialOpTypeEnum::BETWEEN,
 			TokenTypeEnum::IS => SpecialOpTypeEnum::IS,
 			TokenTypeEnum::LIKE => SpecialOpTypeEnum::LIKE,
+			TokenTypeEnum::COLLATE => SpecialOpTypeEnum::COLLATE,
 			default => null,
 		};
 	}
@@ -1288,8 +1306,7 @@ class MariaDbParserState
 		// https://mariadb.com/kb/en/operator-precedence/
 		return match ($op) {
 			SpecialOpTypeEnum::INTERVAL => 17,
-			// COLLATE => 16
-			UnaryOpTypeEnum::BINARY => 16,
+			UnaryOpTypeEnum::BINARY, SpecialOpTypeEnum::COLLATE => 16,
 			UnaryOpTypeEnum::LOGIC_NOT => 15,
 			UnaryOpTypeEnum::PLUS, UnaryOpTypeEnum::MINUS, UnaryOpTypeEnum::BITWISE_NOT => 14,
 			// || as string concat => 13

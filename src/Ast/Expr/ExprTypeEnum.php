@@ -68,4 +68,7 @@ enum ExprTypeEnum: string
 
 	/** @see ColumnDefault */
 	case COLUMN_DEFAULT = 'COLUMN_DEFAULT';
+
+	/** @see Collate */
+	case COLLATE = 'COLLATE';
 }
