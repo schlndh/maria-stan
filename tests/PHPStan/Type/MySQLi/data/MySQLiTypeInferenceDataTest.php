@@ -707,7 +707,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$row = $result->fetch_object(CustomUniversalObjectCrate::class);
 
 			if (function_exists('assertType')) {
-				// The class needs to be registered in universalObjectCratesClasses
+				// This class is registered in universalObjectCratesClasses
 				assertType('(' . CustomUniversalObjectCrate::class . '&object{id: string, val: int})|false|null', $row);
 			}
 
@@ -728,9 +728,8 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$row = $result->fetch_object(CustomResultClass::class);
 
 			if (function_exists('assertType')) {
-				// This class is not registered in universalObjectCratesClasses, so we can't intersect it with object
-				// shape.
-				assertType(CustomResultClass::class . '|false|null', $row);
+				// This class is NOT registered in universalObjectCratesClasses
+				assertType('(' . CustomResultClass::class . '&object{id: string, val: int})|false|null', $row);
 			}
 
 			if ($row === null) {
