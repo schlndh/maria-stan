@@ -501,6 +501,9 @@ class AnalyserTest extends TestCase
 			'BINARY 1 + 2',
 			'BINARY (1 + 2)',
 			'BINARY NULL',
+			'"a" COLLATE utf8mb4_unicode_ci',
+			'name COLLATE utf8mb4_unicode_ci FROM analyser_test',
+			'id COLLATE utf8mb4_unicode_ci FROM analyser_test',
 		];
 
 		foreach ($exprs as $expr) {
@@ -1473,6 +1476,7 @@ class AnalyserTest extends TestCase
 			'~(col_vchar IS NOT NULL)',
 			'col_vchar AND DATE(NOW())',
 			'col_vchar OR DATE(NOW())',
+			'col_vchar COLLATE utf8mb4_unicode_ci IS NOT NULL',
 		];
 
 		foreach (['+', '-', '~', 'BINARY'] as $unaryOp) {
@@ -2181,6 +2185,12 @@ class AnalyserTest extends TestCase
 
 		yield 'unknown column in CASE ELSE' => [
 			'query' => 'SELECT CASE 1 WHEN 1 THEN 1 ELSE aaa END FROM analyser_test',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'unknown column in COLLATE' => [
+			'query' => 'SELECT aaa COLLATE utf8mb4_unicode_ci FROM analyser_test',
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];

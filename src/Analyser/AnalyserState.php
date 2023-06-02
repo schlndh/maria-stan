@@ -1356,6 +1356,16 @@ final class AnalyserState
 					new Schema\DbType\MixedType(),
 					true,
 				);
+			case Expr\ExprTypeEnum::COLLATE:
+				assert($expr instanceof Expr\Collate);
+				$subresult = $this->resolveExprType($expr->expression, $condition);
+
+				return new ExprTypeResult(
+					new Schema\DbType\VarcharType(),
+					$subresult->isNullable,
+					null,
+					$subresult->knowledgeBase,
+				);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
 
