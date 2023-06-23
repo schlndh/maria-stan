@@ -1742,8 +1742,10 @@ class MariaDbParserState
 		}
 
 		$endPosition = $this->getPreviousToken()->getEndPosition();
+		// Workaround for https://github.com/phpstan/phpstan/issues/9499
+		$boundStartTokenType = $boundStartToken->type;
 
-		return match ($boundStartToken->type) {
+		return match ($boundStartTokenType) {
 			TokenTypeEnum::CURRENT => WindowFrameBound::createCurrentRow($startPosition, $endPosition),
 			TokenTypeEnum::UNBOUNDED => WindowFrameBound::createUnbounded($startPosition, $endPosition),
 			TokenTypeEnum::LITERAL_INT, TokenTypeEnum::TRUE, TokenTypeEnum::FALSE => WindowFrameBound::createExpression(
@@ -1753,7 +1755,7 @@ class MariaDbParserState
 					$boundStartToken->position,
 					$boundStartToken->getEndPosition(),
 					// phpcs:disable PSR2.Methods.FunctionCallSignature.Indent
-					match ($boundStartToken->type) {
+					match ($boundStartTokenType) {
 						TokenTypeEnum::LITERAL_INT => (int) $boundStartToken->content,
 						TokenTypeEnum::TRUE => 1,
 						TokenTypeEnum::FALSE => 1,
