@@ -1,6 +1,6 @@
 parameters:
 	maria-stan:
-		# Apparetly this has to exist even if it's not used. Otherwise DI is not happy.
+		# Apparently this has to exist even if it's not used. Otherwise DI is not happy.
 		db:
 			host: 127.0.0.1
 			port: 3306
@@ -9,8 +9,10 @@ parameters:
 			database: ''
 		reflection:
 			file:
+		columnTypeOverrides: []
 parametersSchema:
 	maria-stan: structure([
+		# Connection information for online DB reflection.
 		db: structure([
 			host: string()
 			port: int()
@@ -19,8 +21,19 @@ parametersSchema:
 			database: string()
 		])
 		reflection: structure([
+			# Schema dump for file DB reflection.
 			file: anyOf(string(), null)
 		])
+		# This option lets you narrow down the type of columns. It can be useful e.g. if some table has fixed data
+		# and you use something like EntityId::* in your phpdocs. Of course it's your responsibility to make sure
+		# that the type is actually correct.
+		columnTypeOverrides: listOf(structure([
+			# table.column
+			column: string()
+			# Any type that PHPStan can parse. Must be a subtype of the column type as returned by mysqli.
+			# Column nullability is considered automatically, so you don't have to add null to the type.
+			type: string()
+		]))
 	])
 services:
 	mariaStanDb:
@@ -54,7 +67,10 @@ services:
 		arguments:
 			dbReflection: @mariaDbReflection
 	- MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper
-	- MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
+	-
+		class: MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
+		arguments:
+			columnTypeOverrides: %maria-stan.columnTypeOverrides%
 	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper
 	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory
 	-

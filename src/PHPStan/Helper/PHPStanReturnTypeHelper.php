@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Helper;
 
 use MariaStan\Analyser\AnalyserResult;
+use MariaStan\Analyser\ColumnInfo;
+use MariaStan\Analyser\ColumnInfoTableTypeEnum;
 use MariaStan\Analyser\QueryResultField;
+use MariaStan\Ast\Expr\Column;
+use MariaStan\Parser\Exception\ParserException;
+use MariaStan\Parser\MariaDbParser;
+use MariaStan\PHPStan\Exception\InvalidArgumentException;
 use MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper;
 use MariaStan\Schema\DbType;
+use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
@@ -20,6 +27,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
 use function array_values;
@@ -29,8 +37,20 @@ use function reset;
 
 class PHPStanReturnTypeHelper
 {
-	public function __construct(private readonly DbToPhpstanTypeMapper $typeMapper)
-	{
+	/** @var array<string, array<string, Type>> table => column => type */
+	private array $columnTypeOverrides;
+
+	/** @var array<array{column: string, type: string}> */
+	private array $rawColumnTypeOverrides;
+
+	/** @param array<array{column: string, type: string}> $columnTypeOverrides */
+	public function __construct(
+		private readonly DbToPhpstanTypeMapper $typeMapper,
+		private readonly TypeStringResolver $typeStringResolver,
+		private readonly MariaDbParser $mariaDbParser,
+		array $columnTypeOverrides,
+	) {
+		$this->rawColumnTypeOverrides = $columnTypeOverrides;
 	}
 
 	/** @param array<AnalyserResult> $analyserResults */
@@ -109,6 +129,12 @@ class PHPStanReturnTypeHelper
 
 			if ($field->exprType->isNullable) {
 				$type = TypeCombinator::addNull($type);
+			}
+
+			$typeOverride = $this->findColumnTypeOverride($field->exprType->column);
+
+			if ($typeOverride !== null) {
+				$type = TypeCombinator::intersect($type, $typeOverride);
 			}
 
 			$values[] = new ConstantArrayType(
@@ -294,5 +320,51 @@ class PHPStanReturnTypeHelper
 		}
 
 		return $result;
+	}
+
+	private function findColumnTypeOverride(?ColumnInfo $column): ?Type
+	{
+		if ($column === null || $column->tableType !== ColumnInfoTableTypeEnum::TABLE) {
+			return null;
+		}
+
+		if (! isset($this->columnTypeOverrides)) {
+			$this->columnTypeOverrides = [];
+
+			// This has to be done lazily, otherwise it can lead to circular dependency in the constructor for "X::*"
+			foreach ($this->rawColumnTypeOverrides as ['column' => $columnStr, 'type' => $typeStr]) {
+				$type = $this->typeStringResolver->resolve($typeStr);
+				$expr = null;
+				$prevException = null;
+
+				try {
+					$expr = $this->mariaDbParser->parseSingleExpression($columnStr);
+				} catch (ParserException $prevException) {
+				}
+
+				if (! $expr instanceof Column || $expr->tableName === null) {
+					throw new InvalidArgumentException(
+						"Invalid configuration. Expected table.column got '{$typeStr}'",
+						0,
+						$prevException,
+					);
+				}
+
+				$conflictingType = $this->columnTypeOverrides[$expr->tableName][$expr->name] ?? null;
+
+				if ($conflictingType !== null) {
+					throw new InvalidArgumentException(
+						"Type for '{$typeStr}' was already specified as "
+						. $conflictingType->describe(VerbosityLevel::precise()),
+					);
+				}
+
+				// I add null, so that it can be intersected with nullable columns
+				// (e.g. WHERE col IS NULL, LEFT JOIN, ...)
+				$this->columnTypeOverrides[$expr->tableName][$expr->name] = TypeCombinator::addNull($type);
+			}
+		}
+
+		return $this->columnTypeOverrides[$column->tableName][$column->name] ?? null;
 	}
 }

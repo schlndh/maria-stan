@@ -1,0 +1,9 @@
+parameters:
+	maria-stan:
+		columnTypeOverrides:
+			-
+				column: mysqli_test_column_overrides.id
+				type: 1|2
+			-
+				column: mysqli_test_column_overrides.constant
+				type: \MariaStan\PHPStan\Type\MySQLi\TestConstants::*

@@ -18,6 +18,7 @@ parameters:
 		uncheckedExceptionClasses:
 			- 'MariaStan\Ast\Exception\InvalidAstException'
 			- 'MariaStan\Ast\Exception\InvalidArgumentException'
+			- 'MariaStan\PHPStan\Exception\InvalidArgumentException'
 			- 'InvalidArgumentException'
 			- 'ReflectionException'
 	strictRules:

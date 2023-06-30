@@ -65,6 +65,15 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum)
 			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a'), (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b')
 		");
+
+		$db->query('
+			CREATE OR REPLACE TABLE mysqli_test_column_overrides (
+				id INT NOT NULL,
+				constant INT NOT NULL
+			);
+		');
+
+		$db->query("INSERT INTO mysqli_test_column_overrides (id, constant) VALUES (1, 5), (2, 6)");
 	}
 
 	public function testAssoc(): void
@@ -916,6 +925,56 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			if (function_exists('assertType')) {
 				assertType("array{aa: string, count: int}|array{id: int}", $row);
 			}
+		}
+	}
+
+	public function testTypeOverrides(): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+
+		$rows = $db->query('SELECT id FROM mysqli_test_column_overrides')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('1|2', $row['id']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [1, 2], true));
+		}
+
+		$rows = $db->query('
+			SELECT t2.id FROM (SELECT 5 id) t1
+			LEFT JOIN mysqli_test_column_overrides t2 ON t1.id = t2.id
+		')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('1|2|null', $row['id']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [1, 2, null], true));
+		}
+
+		$rows = $db->query('
+			SELECT id FROM (SELECT 5 id) mysqli_test_column_overrides
+		')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('int', $row['id']);
+			}
+
+			$this->assertIsInt($row['id']);
+		}
+
+		$rows = $db->query('SELECT constant FROM mysqli_test_column_overrides')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('5|6', $row['constant']);
+			}
+
+			$this->assertTrue(in_array($row['constant'], [5, 6], true));
 		}
 	}
 

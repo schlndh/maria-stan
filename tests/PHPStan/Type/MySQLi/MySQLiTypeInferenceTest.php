@@ -32,6 +32,7 @@ class MySQLiTypeInferenceTest extends TypeInferenceTestCase
 		return [
 			__DIR__ . '/../../../../extension.mysqli.neon',
 			__DIR__ . '/../../test.neon',
+			__DIR__ . '/test.column-type-overrides.neon',
 		];
 	}
 }

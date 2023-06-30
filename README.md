@@ -70,6 +70,8 @@ Note that the [automatic expansion of relative paths](https://phpstan.org/config
 with PHPStan's own configuration (i.e. it's a hardcoded list of config keys). So you'll have to provide an absolute path
 to the dump file.
 
+See `extension.neon` for a complete list of parameters.
+
 ## Usage
 
 MariaStan includes a sample PHPStan extension for [MySQLi](https://www.php.net/manual/en/book.mysqli.php). However,
