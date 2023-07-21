@@ -12,6 +12,9 @@ enum SelectQueryTypeEnum: string
 	/** @see CombinedSelectQuery */
 	case COMBINED = 'COMBINED';
 
+	/** @see TableValueConstructorSelectQuery */
+	case TABLE_VALUE_CONSTRUCTOR = 'TABLE_VALUE_CONSTRUCTOR';
+
 	/** @see WithSelectQuery */
 	case WITH = 'WITH';
 }

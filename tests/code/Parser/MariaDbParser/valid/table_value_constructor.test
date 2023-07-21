@@ -1,0 +1,533 @@
+Table value constructor
+-----
+SELECT * FROM (VALUES (5, 8), (7, 7)) t
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 8
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 7
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 7
+								)
+						)
+				)
+			[alias] => t
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM ((VALUES (5, 8), (7, 7))) t
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 8
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 7
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 7
+								)
+						)
+				)
+			[alias] => t
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM (((VALUES (5, 8), (9, 9))) t)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 5
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 8
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 9
+								)
+							[1] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 9
+								)
+						)
+				)
+			[alias] => t
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT id, id FROM parser_test
+UNION
+VALUES (5, 6), (7, 8)
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+					[1] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+		(
+			[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+				(
+					[values] => Array
+						(
+							[0] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[1] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT id, id FROM parser_test
+UNION
+(VALUES (5, 6), (7, 8))
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+					[1] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+		(
+			[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+				(
+					[values] => Array
+						(
+							[0] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[1] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT id, id FROM parser_test
+INTERSECT
+VALUES (5, 6), (7, 8)
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::INTERSECT
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+					[1] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+		(
+			[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+				(
+					[values] => Array
+						(
+							[0] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[1] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT id, id FROM parser_test
+EXCEPT
+VALUES (5, 6), (7, 8)
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::EXCEPT
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+					[1] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+		(
+			[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+				(
+					[values] => Array
+						(
+							[0] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[1] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+SELECT id, id FROM parser_test
+UNION
+(VALUES (5, 6), (7, 8))
+-----
+MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery
+(
+	[combinator] => MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum::UNION
+	[left] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+					[1] => MariaStan\Ast\SelectExpr\RegularExpr
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => parser_test
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[right] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+		(
+			[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+				(
+					[values] => Array
+						(
+							[0] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 5
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 6
+										)
+								)
+							[1] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 7
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 8
+										)
+								)
+						)
+				)
+		)
+	[isDistinct] => true
+)
+-----
+WITH t AS (VALUES (1, 2))
+SELECT * FROM t
+-----
+MariaStan\Ast\Query\SelectQuery\WithSelectQuery
+(
+	[commonTableExpressions] => Array
+		(
+			[0] => MariaStan\Ast\CommonTableExpression
+				(
+					[name] => t
+					[subquery] => MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery
+						(
+							[tableValueConstructor] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+								(
+									[values] => Array
+										(
+											[0] => Array
+												(
+													[0] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 1
+														)
+													[1] => MariaStan\Ast\Expr\LiteralInt
+														(
+															[value] => 2
+														)
+												)
+										)
+								)
+						)
+				)
+		)
+	[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+		(
+			[select] => Array
+				(
+					[0] => MariaStan\Ast\SelectExpr\AllColumns
+						(
+						)
+				)
+			[from] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => t
+					[indexHints] => Array
+						(
+						)
+				)
+			[isDistinct] => false
+			[isSqlCalcFoundRows] => false
+		)
+	[allowRecursive] => false
+)

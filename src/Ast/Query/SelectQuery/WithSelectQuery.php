@@ -14,7 +14,7 @@ final class WithSelectQuery extends BaseSelectQuery
 		Position $startPosition,
 		Position $endPosition,
 		public readonly array $commonTableExpressions,
-		public readonly SimpleSelectQuery|CombinedSelectQuery $selectQuery,
+		public readonly SimpleSelectQuery|CombinedSelectQuery|TableValueConstructorSelectQuery $selectQuery,
 		public readonly bool $allowRecursive = false,
 	) {
 		parent::__construct($startPosition, $endPosition);

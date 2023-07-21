@@ -14,4 +14,7 @@ enum TableReferenceTypeEnum: string
 
 	/** @see Subquery */
 	case SUBQUERY = 'SUBQUERY';
+
+	/** @see TableValueConstructor */
+	case TABLE_VALUE_CONSTRUCTOR = 'TABLE_VALUE_CONSTRUCTOR';
 }

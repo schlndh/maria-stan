@@ -29,7 +29,7 @@ UNION
 SELECT * FROM tbl)
 -----
 MariaStan\Parser\Exception\ParserException
-Only simple/combined query is possible here. Got WITH after: ITH tbl AS (SELECT 1 id)
+Only simple/combined/TVC query is possible here. Got WITH after: ITH tbl AS (SELECT 1 id)
 SELECT * FROM tbl
 UNION
 (
@@ -51,7 +51,7 @@ WITH tbl2 AS (SELECT 1 id)
 SELECT * FROM tbl, tbl2
 -----
 MariaStan\Parser\Exception\ParserException
-Only simple/combined query is possible here. Got WITH after: WITH tbl AS (SELECT 1 id)
+Only simple/combined/TVC query is possible here. Got WITH after: WITH tbl AS (SELECT 1 id)
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WITH tbl2 AS (SELECT 1 id)
 SELECT * FROM tbl, tbl2' at line 2

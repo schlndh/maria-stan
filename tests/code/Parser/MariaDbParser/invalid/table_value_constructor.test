@@ -1,0 +1,95 @@
+Table value constructor
+-----
+SELECT * FROM (VALUES (5, 8), (7, 7))
+-----
+MariaStan\Parser\Exception\MissingSubqueryAliasException
+Table value constructor doesn't have alias: VALUES (5, 8), (7, 7)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT * FROM (((VALUES (5, 8), (7, 7))))
+-----
+MariaStan\Parser\Exception\MissingSubqueryAliasException
+Table value constructor doesn't have alias: VALUES (5, 8), (7, 7)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT * FROM (((VALUES (5, 8), (7, 7)) t)) t2
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got IDENTIFIER after: )) t))
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't2' at line 1
+-----
+SELECT * FROM VALUES (5, 8), (7, 7) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got VALUES after: SELECT * FROM
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'VALUES (5, 8), (7, 7) t' at line 1
+-----
+SELECT * FROM (VALUES (5, 8),
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got END_OF_INPUT after: 5, 8),
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+-----
+SELECT id, id FROM parser_test
+UNION
+VALUES (5, 6), (7, 8)
+WHERE 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got WHERE after: (7, 8)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE 1' at line 4
+-----
+SELECT id, id FROM parser_test
+UNION
+VALUES (5, 6), (7, 8)
+GROUP BY 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got GROUP after: (7, 8)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'GROUP BY 1' at line 4
+-----
+SELECT id, id FROM parser_test
+UNION
+VALUES (5, 6), (7, 8)
+HAVING 1
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got HAVING after: (7, 8)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'HAVING 1' at line 4
+-----
+SELECT VALUES (5, 6), (7, 8)
+UNION
+SELECT id, id FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+VALUES function can only be used in ON DUPLICATE KEY UPDATE, after: SELECT
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'VALUES (5, 6), (7, 8)
+UNION
+SELECT id, id FROM parser_test' at line 1
+-----
+SELECT id, id FROM parser_test
+UNION
+(VALUES (5, 6), (7, 8)) t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got IDENTIFIER after: 7, 8))
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 't' at line 3
+-----
+WITH t AS VALUES (1, 2)
+SELECT * FROM t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected '(', got VALUES after: WITH t AS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'VALUES (1, 2)
+SELECT * FROM t' at line 1

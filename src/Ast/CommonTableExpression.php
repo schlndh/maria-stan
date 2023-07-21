@@ -6,6 +6,7 @@ namespace MariaStan\Ast;
 
 use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery;
 use MariaStan\Parser\Position;
 
 final class CommonTableExpression extends BaseNode
@@ -18,7 +19,7 @@ final class CommonTableExpression extends BaseNode
 		Position $startPosition,
 		Position $endPosition,
 		public readonly string $name,
-		public readonly SimpleSelectQuery|CombinedSelectQuery $subquery,
+		public readonly SimpleSelectQuery|CombinedSelectQuery|TableValueConstructorSelectQuery $subquery,
 		public readonly ?array $columnList = null,
 		public readonly ?array $restrictCycleColumnList = null,
 	) {

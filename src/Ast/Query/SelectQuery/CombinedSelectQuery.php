@@ -16,7 +16,7 @@ final class CombinedSelectQuery extends BaseSelectQuery
 		Position $endPosition,
 		public readonly SelectQueryCombinatorTypeEnum $combinator,
 		public readonly SimpleSelectQuery|self $left,
-		public readonly SimpleSelectQuery|self $right,
+		public readonly SimpleSelectQuery|self|TableValueConstructorSelectQuery $right,
 		public readonly ?OrderBy $orderBy = null,
 		public readonly ?Limit $limit = null,
 		public readonly bool $isDistinct = true,

@@ -64,6 +64,7 @@ use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\IndexHint;
@@ -74,6 +75,7 @@ use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
+use MariaStan\Ast\Query\TableReference\TableValueConstructor;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\Query\TruncateQuery;
 use MariaStan\Ast\Query\UpdateQuery;
@@ -466,12 +468,14 @@ class MariaDbParserState
 	 * @phpstan-impure
 	 * @throws ParserException
 	 */
-	private function parseSelectQuery(int $precedence = self::SELECT_PRECEDENCE_NORMAL): SelectQuery
-	{
+	private function parseSelectQuery(
+		int $precedence = self::SELECT_PRECEDENCE_NORMAL,
+		bool $allowTableValueConstructor = false,
+	): SelectQuery {
 		// TODO: INTO OUTFILE/DUMPFILE/variable
 		if ($this->acceptToken('(')) {
 			$startPosition = $this->getPreviousToken()->position;
-			$left = $this->parseSelectQuery();
+			$left = $this->parseSelectQuery(allowTableValueConstructor: $allowTableValueConstructor);
 			$this->expectToken(')');
 
 			if ($precedence === self::SELECT_PRECEDENCE_NORMAL && $left instanceof SimpleSelectQuery) {
@@ -504,7 +508,7 @@ class MariaDbParserState
 			} while ($this->acceptToken(','));
 
 			$selectQuery = $this->parseSelectQuery();
-			$selectQuery = $this->ensureSimpleOrCombinedSelectQuery($selectQuery);
+			$selectQuery = $this->ensureSimpleCombinedOrTvcSelectQuery($selectQuery);
 
 			return new WithSelectQuery(
 				$startPosition,
@@ -512,6 +516,15 @@ class MariaDbParserState
 				$commonTableExpressions,
 				$selectQuery,
 				$allowRecursive,
+			);
+		} elseif ($allowTableValueConstructor && $this->acceptToken(TokenTypeEnum::VALUES)) {
+			$this->position -= 1;
+			$tvc = $this->parseTableValueConstructor();
+
+			return new TableValueConstructorSelectQuery(
+				$tvc->getStartPosition(),
+				$tvc->getEndPosition(),
+				$tvc,
 			);
 		} else {
 			$startToken = $this->expectToken(TokenTypeEnum::SELECT);
@@ -637,12 +650,12 @@ class MariaDbParserState
 			);
 			$isDistinct = $distinctAllToken?->type !== TokenTypeEnum::ALL;
 			// left-associative = +1
-			$right = $this->parseSelectQuery($combinatorPrecedence + 1);
+			$right = $this->parseSelectQuery($combinatorPrecedence + 1, true);
 			$orderBy = $this->parseOrderBy();
 			$limit = $this->parseLimit();
 			$endPosition = $this->getPreviousToken()->getEndPosition();
 			$left = $this->ensureSimpleOrCombinedSelectQuery($left);
-			$right = $this->ensureSimpleOrCombinedSelectQuery($right);
+			$right = $this->ensureSimpleCombinedOrTvcSelectQuery($right);
 			$left = new CombinedSelectQuery(
 				$left->getStartPosition(),
 				$endPosition,
@@ -676,6 +689,26 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
+	private function ensureSimpleCombinedOrTvcSelectQuery(
+		SelectQuery $subquery,
+	): SimpleSelectQuery|CombinedSelectQuery|TableValueConstructorSelectQuery {
+		if (
+			! (
+			$subquery instanceof SimpleSelectQuery
+			|| $subquery instanceof CombinedSelectQuery
+			|| $subquery instanceof TableValueConstructorSelectQuery
+			)
+		) {
+			throw new ParserException(
+				"Only simple/combined/TVC query is possible here. Got {$subquery::getSelectQueryType()->value} after: "
+				. $this->getContextPriorToPosition($subquery->getStartPosition()),
+			);
+		}
+
+		return $subquery;
+	}
+
+	/** @throws ParserException */
 	private function parseCommonTableExpression(bool $allowRecursive): CommonTableExpression
 	{
 		$startPosition = $this->getCurrentPosition();
@@ -696,8 +729,8 @@ class MariaDbParserState
 
 		$this->expectToken(TokenTypeEnum::AS);
 		$this->expectToken('(');
-		$subquery = $this->parseSelectQuery();
-		$subquery = $this->ensureSimpleOrCombinedSelectQuery($subquery);
+		$subquery = $this->parseSelectQuery(allowTableValueConstructor: true);
+		$subquery = $this->ensureSimpleCombinedOrTvcSelectQuery($subquery);
 		$this->expectToken(')');
 
 		if ($allowRecursive && $this->acceptToken(TokenTypeEnum::CYCLE)) {
@@ -832,18 +865,29 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function checkSubqueryAlias(TableReference $tableReference): void
 	{
-		if ($tableReference::getTableReferenceType() !== TableReferenceTypeEnum::SUBQUERY) {
+		switch ($tableReference::getTableReferenceType()) {
+			case TableReferenceTypeEnum::SUBQUERY:
+				assert($tableReference instanceof \MariaStan\Ast\Query\TableReference\Subquery);
+				$type = 'Subquery';
+				$alias = $tableReference->alias;
+				break;
+			case TableReferenceTypeEnum::TABLE_VALUE_CONSTRUCTOR:
+				assert($tableReference instanceof TableValueConstructor);
+				$type = 'Table value constructor';
+				$alias = $tableReference->alias;
+				break;
+			default:
+				return;
+		}
+
+		if ($alias !== null) {
 			return;
 		}
 
-		assert($tableReference instanceof \MariaStan\Ast\Query\TableReference\Subquery);
+		$tableStr = $tableReference->getStartPosition()
+			->findSubstringToEndPosition($this->query, $tableReference->getEndPosition(), 50);
 
-		if ($tableReference->alias === null) {
-			$subqueryStr = $tableReference->getStartPosition()
-				->findSubstringToEndPosition($this->query, $tableReference->getEndPosition(), 50);
-
-			throw new MissingSubqueryAliasException("Subquery doesn't have alias: {$subqueryStr}");
-		}
+		throw new MissingSubqueryAliasException("{$type} doesn't have alias: {$tableStr}");
 	}
 
 	/**
@@ -868,6 +912,17 @@ class MariaDbParserState
 				);
 			}
 
+			if ($this->acceptToken(TokenTypeEnum::VALUES)) {
+				$this->position -= 1;
+				$tvc = $this->parseTableValueConstructor();
+				$tvc = $this->tryParseTvcAlias($tvc);
+
+				$this->expectToken(')');
+				$tvc = $this->tryParseTvcAlias($tvc);
+
+				return $tvc;
+			}
+
 			$result = $this->parseJoins();
 			$this->expectToken(')');
 
@@ -890,6 +945,10 @@ class MariaDbParserState
 				}
 			}
 
+			if ($result instanceof TableValueConstructor) {
+				$result = $this->tryParseTvcAlias($result);
+			}
+
 			return $result;
 		}
 
@@ -904,6 +963,55 @@ class MariaDbParserState
 			$this->cleanIdentifier($table->content),
 			$alias,
 			$indexHints,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseTableValueConstructor(): TableValueConstructor
+	{
+		$startPosition = $this->getCurrentPosition();
+		$this->expectToken(TokenTypeEnum::VALUES);
+
+		$values = [];
+
+		do {
+			$row = [];
+			$this->expectToken('(');
+
+			do {
+				$row[] = $this->parseExpression();
+			} while ($this->acceptToken(','));
+
+			$this->expectToken(')');
+			$values[] = $row;
+		} while ($this->acceptToken(','));
+
+		return new TableValueConstructor(
+			$startPosition,
+			$this->getPreviousToken()->getEndPosition(),
+			$values,
+			null,
+		);
+	}
+
+	/** @throws ParserException */
+	private function tryParseTvcAlias(TableValueConstructor $tvc): TableValueConstructor
+	{
+		if ($tvc->alias !== null) {
+			return $tvc;
+		}
+
+		$alias = $this->parseTableAlias();
+
+		if ($alias === null) {
+			return $tvc;
+		}
+
+		return new TableValueConstructor(
+			$tvc->getStartPosition(),
+			$this->getPreviousToken()->getEndPosition(),
+			$tvc->values,
+			$alias,
 		);
 	}
 
