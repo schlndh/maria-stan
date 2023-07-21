@@ -143,6 +143,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideValidOtherQueryTestData();
 		yield from $this->provideValidUpdateTestData();
 		yield from $this->provideValidDeleteTestData();
+		yield from $this->provideValidTableValueConstructorData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1028,6 +1029,32 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
+	private function provideValidTableValueConstructorData(): iterable
+	{
+		yield 'TVC - simple WITH' => [
+			'query' => "WITH tbl AS (VALUES (1, 2), (3, 4)) SELECT * FROM tbl",
+		];
+
+		yield 'TVC - simple WITH - column names' => [
+			'query' => "WITH tbl (a, b) AS (VALUES (1, 2), (3, 4)) SELECT * FROM tbl",
+		];
+
+		yield 'TVC - simple WITH - combined types' => [
+			'query' => "WITH tbl (a, b) AS (VALUES (1, 'a'), ('b', null)) SELECT * FROM tbl",
+		];
+
+		yield 'TVC - subquery' => [
+			'query' => "SELECT * FROM (VALUES (1 + 1, 2), (3, 4)) t",
+		];
+
+		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
+			yield 'TVC - ' . $combinator->value => [
+				'query' => "SELECT id, id FROM analyser_test {$combinator->value} VALUES (1, 1)",
+			];
+		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
 	private function provideValidOtherQueryTestData(): iterable
 	{
 		yield "TRUNCATE TABLE" => [
@@ -1899,6 +1926,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideInvalidOtherQueryTestData();
 		yield from $this->provideInvalidUpdateTestData();
 		yield from $this->provideInvalidDeleteTestData();
+		yield from $this->provideInvalidTableValueConstructorData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -2734,6 +2762,22 @@ class AnalyserTest extends TestCase
 		];
 
 		// TODO: detect deleting non-tables
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private function provideInvalidTableValueConstructorData(): iterable
+	{
+		yield 'TVC - different number of values' => [
+			'query' => 'WITH t AS (VALUES (1, 2), (3)) SELECT * FROM t',
+			'error' => AnalyserErrorMessageBuilder::createTvcDifferentNumberOfValues(1, 2),
+			'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_VALUES_IN_TVC,
+		];
+
+		yield 'TVC - unknown column' => [
+			'query' => 'WITH t AS (VALUES (1, id)) SELECT * FROM t',
+			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_FIELD_REFERENCE_IN_TVC,
+		];
 	}
 
 	/**

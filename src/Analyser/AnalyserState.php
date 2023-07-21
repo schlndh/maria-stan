@@ -21,6 +21,7 @@ use MariaStan\Ast\Query\SelectQuery\CombinedSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQuery;
 use MariaStan\Ast\Query\SelectQuery\SelectQueryTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
@@ -29,6 +30,7 @@ use MariaStan\Ast\Query\TableReference\Subquery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
+use MariaStan\Ast\Query\TableReference\TableValueConstructor;
 use MariaStan\Ast\Query\TableReference\UsingJoinCondition;
 use MariaStan\Ast\Query\TruncateQuery;
 use MariaStan\Ast\Query\UpdateQuery;
@@ -54,6 +56,7 @@ use function array_values;
 use function assert;
 use function count;
 use function in_array;
+use function max;
 use function mb_strlen;
 use function min;
 use function stripos;
@@ -158,6 +161,10 @@ final class AnalyserState
 				assert($select instanceof WithSelectQuery);
 
 				return $this->analyseWithSelectQuery($select);
+			case SelectQueryTypeEnum::TABLE_VALUE_CONSTRUCTOR:
+				assert($select instanceof TableValueConstructorSelectQuery);
+
+				return $this->analyseTableValueConstructor($select->tableValueConstructor);
 			default:
 				$this->errors[] = new AnalyserError("Unhandled SELECT type {$select::getSelectQueryType()->value}");
 
@@ -276,6 +283,66 @@ final class AnalyserState
 
 		// TODO: implement row count
 		return [$fields, null];
+	}
+
+	/**
+	 * @return array{0: array<QueryResultField>, 1: ?QueryResultRowCountRange}
+	 * @throws AnalyserException
+	 */
+	private function analyseTableValueConstructor(TableValueConstructor $tvc): array
+	{
+		$colCounts = [];
+		$rowColTypes = [];
+
+		foreach ($tvc->values as $exprs) {
+			$colCounts[] = count($exprs);
+			$colTypes = [];
+
+			foreach ($exprs as $expr) {
+				$colTypes[] = $this->resolveExprType($expr);
+			}
+
+			$rowColTypes[] = $colTypes;
+		}
+
+		$minColCount = min($colCounts);
+		$maxColCount = max($colCounts);
+
+		if ($minColCount !== $maxColCount) {
+			$this->errors[] = new AnalyserError(
+				AnalyserErrorMessageBuilder::createTvcDifferentNumberOfValues($minColCount, $maxColCount),
+			);
+		}
+
+		$fields = [];
+		$rowCount = count($rowColTypes);
+
+		for ($i = 0; $i < $minColCount; $i++) {
+			$type = $rowColTypes[0][$i];
+
+			for ($j = 1; $j < $rowCount; $j++) {
+				$otherRowType = $rowColTypes[$j][$i];
+				$combinedType = $this->getCombinedType(
+					$type->type,
+					$otherRowType->type,
+					SelectQueryCombinatorTypeEnum::UNION,
+				);
+				$type = new ExprTypeResult(
+					$combinedType,
+					$type->isNullable || $otherRowType->isNullable,
+					// TODO: is there something to combined here?
+					null,
+					null,
+				);
+			}
+
+			$fields[] = new QueryResultField(
+				$this->getDefaultFieldNameForExpr($tvc->values[0][$i]),
+				$type,
+			);
+		}
+
+		return [$fields, new QueryResultRowCountRange($rowCount, $rowCount)];
 	}
 
 	/**
@@ -449,6 +516,23 @@ final class AnalyserState
 				}
 
 				return [array_merge($leftTables, $rightTables), $columnResolver];
+			case TableReferenceTypeEnum::TABLE_VALUE_CONSTRUCTOR:
+				assert($fromClause instanceof TableValueConstructor);
+				$columnResolver = clone $columnResolver;
+				[$tvcFields] = $this->analyseTableValueConstructor($fromClause);
+
+				try {
+					$columnResolver->registerSubquery($tvcFields, $fromClause->getAliasOrThrow());
+				} catch (AnalyserException $e) {
+					$this->errors[] = new AnalyserError($e->getMessage());
+				}
+
+				return [[$fromClause->getAliasOrThrow()], $columnResolver];
+			default:
+				$this->errors[] = new AnalyserError(
+					'Unhandled table reference type ' . $fromClause::getTableReferenceType()->value,
+				);
+				break;
 		}
 
 		return [[], $columnResolver];

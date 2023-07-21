@@ -138,6 +138,11 @@ class AnalyserErrorMessageBuilder
 			. " columns used in aggregate functions, columns from the SELECT list and outer subqueries can be used.";
 	}
 
+	public static function createTvcDifferentNumberOfValues(int $min, int $max): string
+	{
+		return "The used table value constructor has a different number of values: {$min} - {$max}.";
+	}
+
 	private static function formatDbType(DbType $type): string
 	{
 		if ($type::getTypeEnum() === DbTypeEnum::TUPLE) {

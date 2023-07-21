@@ -92,6 +92,12 @@ class MariaDbErrorCodes
 	// 4079	ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION	Illegal parameter data type %s for operation '%s'
 	public const ER_ILLEGAL_PARAMETER_DATA_TYPE_FOR_OPERATION = 4079;
 
+	// 4099		ER_WRONG_NUMBER_OF_VALUES_IN_TVC	The used table value constructor has a different number of values
+	public const ER_WRONG_NUMBER_OF_VALUES_IN_TVC = 4099;
+
+	// 4100		ER_FIELD_REFERENCE_IN_TVC	Field reference '%-.192s' can't be used in table value constructor
+	public const ER_FIELD_REFERENCE_IN_TVC = 4100;
+
 	// 4107		ER_INVALID_VALUE_TO_LIMIT	Limit only accepts integer values
 	public const ER_INVALID_VALUE_TO_LIMIT = 4107;
 

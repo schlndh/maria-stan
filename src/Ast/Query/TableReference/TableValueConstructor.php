@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Ast\Query\TableReference;
 
 use MariaStan\Ast\BaseNode;
+use MariaStan\Ast\Exception\InvalidAstException;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Parser\Position;
 
@@ -23,5 +24,10 @@ final class TableValueConstructor extends BaseNode implements TableReference
 	public static function getTableReferenceType(): TableReferenceTypeEnum
 	{
 		return TableReferenceTypeEnum::TABLE_VALUE_CONSTRUCTOR;
+	}
+
+	public function getAliasOrThrow(): string
+	{
+		return $this->alias ?? throw new InvalidAstException('TVC was expected to have an alias.');
 	}
 }
