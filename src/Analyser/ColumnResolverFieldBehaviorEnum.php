@@ -11,4 +11,7 @@ enum ColumnResolverFieldBehaviorEnum: string
 	case GROUP_BY = 'GROUP_BY';
 	case HAVING = 'HAVING';
 	case ORDER_BY = 'ORDER_BY';
+
+	// left side of assignment (e.g. ON DUPLICATE KEY UPDATE a = ...)
+	case ASSIGNMENT = 'ASSIGNMENT';
 }

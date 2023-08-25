@@ -67,11 +67,21 @@ final class ColumnResolver
 	/** @var array<string, ColumnInfoTableTypeEnum> table name/CTE alias => type */
 	private array $tableTypeByName = [];
 
+	private ?Schema\Table $insertReplaceTargetTable = null;
+
 	private int $aggregateFunctionDepth = 0;
 	private ?AnalyserKnowledgeBase $knowledgeBase = null;
 
 	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
 	{
+	}
+
+	public function registerInsertReplaceTargetTable(Schema\Table $table): void
+	{
+		$this->insertReplaceTargetTable = $table;
+		$this->registerColumnsForSchema($table->name, array_keys($table->columns));
+		$this->tableSchemas[$table->name] = $table;
+		$this->tableTypeByName[$table->name] = ColumnInfoTableTypeEnum::TABLE;
 	}
 
 	/** @throws DbReflectionException | AnalyserException */
@@ -361,6 +371,37 @@ final class ColumnResolver
 		?string $table,
 		ColumnResolverFieldBehaviorEnum $fieldBehavior,
 	): ResultWithWarnings {
+		if (
+			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
+			&& $this->insertReplaceTargetTable !== null
+		) {
+			if ($table !== null && $table !== $this->insertReplaceTargetTable->name) {
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createAssignToNonWritableColumn($column, $table),
+				);
+			}
+
+			$columnSchema = $this->insertReplaceTargetTable->columns[$column] ?? null;
+
+			if ($columnSchema === null) {
+				throw new AnalyserException(
+					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
+				);
+			}
+
+			return new ResultWithWarnings(
+				new TableFullyQualifiedColumn(
+					new ColumnInfo(
+						$column,
+						$this->insertReplaceTargetTable->name,
+						$this->insertReplaceTargetTable->name,
+						ColumnInfoTableTypeEnum::TABLE,
+					),
+				),
+				[],
+			);
+		}
+
 		if (
 			$table === null
 			&& in_array(

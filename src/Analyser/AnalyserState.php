@@ -637,6 +637,7 @@ final class AnalyserState
 
 		$tableSchema = $this->columnResolver->findTableSchema($query->tableName);
 		$setColumnNames = [];
+		$onDuplicateKeyAnalyser = $this;
 
 		switch ($query->insertBody::getInsertBodyType()) {
 			case InsertBodyTypeEnum::SELECT:
@@ -646,7 +647,8 @@ final class AnalyserState
 					$this->resolveExprType($column);
 				}
 
-				$selectResult = $this->getSubqueryAnalyser($query->insertBody->selectQuery)->analyse()->resultFields
+				$onDuplicateKeyAnalyser = $this->getSubqueryAnalyser($query->insertBody->selectQuery);
+				$selectResult = $onDuplicateKeyAnalyser->analyse()->resultFields
 					?? [];
 
 				// if $selectResult is empty (e.g. missing table) then there should already be an error reported.
@@ -654,6 +656,7 @@ final class AnalyserState
 					break;
 				}
 
+				$onDuplicateKeyAnalyser->fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 				$setColumnNames = $query->insertBody->columnList !== null
 					? array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList)
 					: array_keys($tableSchema->columns);
@@ -721,9 +724,20 @@ final class AnalyserState
 				break;
 		}
 
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ASSIGNMENT;
+
+		if ($tableSchema !== null) {
+			$this->columnResolver->registerInsertReplaceTargetTable($tableSchema);
+
+			if ($this !== $onDuplicateKeyAnalyser) {
+				$onDuplicateKeyAnalyser->columnResolver->registerInsertReplaceTargetTable($tableSchema);
+			}
+		}
+
 		if ($query instanceof InsertQuery) {
 			foreach ($query->onDuplicateKeyUpdate ?? [] as $assignment) {
-				$this->resolveExprType($assignment);
+				$this->resolveExprType($assignment->target);
+				$onDuplicateKeyAnalyser->resolveExprType($assignment->expression);
 			}
 		}
 
@@ -1431,7 +1445,10 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::ASSIGNMENT:
 				assert($expr instanceof Expr\Assignment);
 				// TODO: handle $condition
-				$this->resolveExprType($expr->target);
+				$this->runWithDifferentFieldBehavior(
+					ColumnResolverFieldBehaviorEnum::ASSIGNMENT,
+					fn () => $this->resolveExprType($expr->target),
+				);
 				$value = $this->resolveExprType($expr->expression);
 
 				return new ExprTypeResult($value->type, $value->isNullable);
@@ -1658,5 +1675,22 @@ final class AnalyserState
 					),
 				$columnInfo->name,
 			);
+	}
+
+	/**
+	 * @template T
+	 * @param callable(): T $fn
+	 * @return T
+	 */
+	private function runWithDifferentFieldBehavior(ColumnResolverFieldBehaviorEnum $fieldBehavior, callable $fn): mixed
+	{
+		$bak = $this->fieldBehavior;
+		$this->fieldBehavior = $fieldBehavior;
+
+		try {
+			return $fn();
+		} finally {
+			$this->fieldBehavior = $bak;
+		}
 	}
 }

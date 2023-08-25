@@ -1128,6 +1128,32 @@ class AnalyserTest extends TestCase
 			'params' => ['aaa'],
 		];
 
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - subquery' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT * FROM (
+				    SELECT 1 new_id, "abcd" name
+				) t
+				ON DUPLICATE KEY UPDATE id = new_id, val_string_not_null_no_default = t.name
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - table' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT id, "abcd" FROM analyser_test
+				ON DUPLICATE KEY UPDATE id = analyse_test_insert.id
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - almost ambiguous' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT 1, "aa" FROM analyse_test_insert
+				ON DUPLICATE KEY UPDATE analyse_test_insert.id = 5;
+			',
+		];
+
 		// TODO: DEFAULT expression
 	}
 
@@ -2612,6 +2638,36 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE missing_column = 1
 			",
 			'error' => AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - ambiguous column' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT id, "abcd" FROM analyser_test
+				ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
+			',
+			'error' => AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - writing into the SELECT table' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT id, "abcd" FROM analyser_test
+				ON DUPLICATE KEY UPDATE analyser_test.id = 1
+			',
+			'error' => AnalyserErrorMessageBuilder::createAssignToNonWritableColumn('id', 'analyser_test'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - writing into the SELECT subqeuery' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT * FROM (SELECT 1 id, "abcd" name) t
+				ON DUPLICATE KEY UPDATE t.id = 1
+			',
+			'error' => AnalyserErrorMessageBuilder::createAssignToNonWritableColumn('id', 't'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 	}
