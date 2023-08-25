@@ -21,6 +21,7 @@ parameters:
 			- 'MariaStan\PHPStan\Exception\InvalidArgumentException'
 			- 'InvalidArgumentException'
 			- 'ReflectionException'
+			- 'Error'
 	strictRules:
 		# Ignore Dynamic call to static method PHPUnit\Framework\Assert::assertSame(). etc
 		strictCalls: false
