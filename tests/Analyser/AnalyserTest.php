@@ -2741,22 +2741,29 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		// TODO: detect this
-		//yield "UPDATE - trying to update subquery" => [
-		//	'query' => "UPDATE (SELECT * FROM analyser_test) t SET name = 'aa'",
-		//	'error' => [
-		//		AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
-		//	],
-		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		//];
-		//
-		//yield "UPDATE - trying to update subquery - with normal table as well" => [
-		//	'query' => "UPDATE (SELECT 1 aaa) t, analyser_test SET name = 'aaa', aaa = 2",
-		//	'error' => [
-		//		AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage('missing_col'),
-		//	],
-		//	'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		//];
+		yield "UPDATE - trying to update subquery" => [
+			'query' => "UPDATE (SELECT * FROM analyser_test) t SET name = 'aa'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createAssignToNonWritableColumn('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
+		];
+
+		yield "UPDATE - trying to update subquery - with normal table as well" => [
+			'query' => "UPDATE (SELECT 1 aaa) t, analyser_test SET name = 'aaa', aaa = 2",
+			'error' => [
+				AnalyserErrorMessageBuilder::createAssignToNonWritableColumn('aaa'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
+		];
+
+		yield "UPDATE - trying to update subquery - with normal table as well - ambiguous" => [
+			'query' => "UPDATE (SELECT 1 name) t, analyser_test SET name = 'aaa'",
+			'error' => [
+				AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */

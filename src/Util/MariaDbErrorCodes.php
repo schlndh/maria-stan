@@ -55,6 +55,9 @@ class MariaDbErrorCodes
 	// 1273	HY000	ER_UNKNOWN_COLLATION	Unknown collation: '%s'
 	public const ER_UNKNOWN_COLLATION = 1273;
 
+	// 1288	HY000	ER_NON_UPDATABLE_TABLE	The target table %s of the %s is not updatable
+	public const ER_NON_UPDATABLE_TABLE = 1288;
+
 	// 1292	22007	ER_TRUNCATED_WRONG_VALUE	Truncated incorrect %s value: '%s'
 	public const ER_TRUNCATED_WRONG_VALUE = 1292;
 

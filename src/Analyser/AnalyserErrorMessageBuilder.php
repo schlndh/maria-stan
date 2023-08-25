@@ -143,9 +143,9 @@ class AnalyserErrorMessageBuilder
 		return "The used table value constructor has a different number of values: {$min} - {$max}.";
 	}
 
-	public static function createAssignToNonWritableColumn(string $column, ?string $table): string
+	public static function createAssignToNonWritableColumn(string $column, ?string $table = null): string
 	{
-		return 'You cannot assign to ' . self::formatColumnName($column, $table) . '.';
+		return 'You cannot assign to \'' . self::formatColumnName($column, $table) . '\'.';
 	}
 
 	private static function formatDbType(DbType $type): string

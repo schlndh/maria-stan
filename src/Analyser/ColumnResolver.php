@@ -262,11 +262,18 @@ final class ColumnResolver
 		?AnalyserConditionTypeEnum $condition = null,
 	): ResultWithWarnings {
 		$resolvedColumn = $this->resolveColumnName($column, $table, $fieldBehavior);
+		$columnType = $this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $fieldBehavior, $condition);
 
-		return new ResultWithWarnings(
-			$this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $fieldBehavior, $condition),
-			$resolvedColumn->warnings,
-		);
+		if (
+			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
+			&& $columnType->column?->tableType !== ColumnInfoTableTypeEnum::TABLE
+		) {
+			throw new AnalyserException(
+				AnalyserErrorMessageBuilder::createAssignToNonWritableColumn($column, $table),
+			);
+		}
+
+		return new ResultWithWarnings($columnType, $resolvedColumn->warnings);
 	}
 
 	/** @throws AnalyserException */
