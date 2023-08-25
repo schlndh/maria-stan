@@ -1366,6 +1366,12 @@ final class AnalyserState
 					$this->hasAggregateFunctionCalls = true;
 				}
 
+				$bakFieldBehavior = $this->fieldBehavior;
+
+				if (in_array($normalizedFunctionName, ['VALUE', 'VALUES'], true)) {
+					$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ASSIGNMENT;
+				}
+
 				foreach ($arguments as $arg) {
 					$innerCondition = $innerConditions[$position] ?? null;
 					$position++;
@@ -1381,6 +1387,8 @@ final class AnalyserState
 						);
 					}
 				}
+
+				$this->fieldBehavior = $bakFieldBehavior;
 
 				if ($isAggregateFunction) {
 					$this->columnResolver->exitAggregateFunction();

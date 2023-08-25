@@ -1154,6 +1154,22 @@ class AnalyserTest extends TestCase
 			',
 		];
 
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - ambiguity resolved via VALUE' => [
+			'query' => '
+				INSERT INTO analyse_test_insert
+				SELECT * FROM analyse_test_insert
+				ON DUPLICATE KEY UPDATE id = VALUE(id);
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - ambiguity resolved via VALUES' => [
+			'query' => '
+				INSERT INTO analyse_test_insert
+				SELECT * FROM analyse_test_insert
+				ON DUPLICATE KEY UPDATE id = VALUES(id);
+			',
+		];
+
 		// TODO: DEFAULT expression
 	}
 
