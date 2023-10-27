@@ -19,6 +19,7 @@ final class FunctionInfoRegistryFactory
 			new Cast(),
 			new CeilFloor(),
 			new Coalesce(),
+			new Concat(),
 			new Count(),
 			new Curdate(),
 			new Date(),

@@ -1224,3 +1224,10 @@ MariaStan\Parser\Exception\ParserException
 Function CEIL takes 1 argument, got 0.
 #####
 1582: Incorrect parameter count in the call to native function 'CEIL'
+-----
+SELECT CONCAT()
+-----
+MariaStan\Parser\Exception\ParserException
+Function CONCAT takes at least 1 argument, got 0.
+#####
+1582: Incorrect parameter count in the call to native function 'CONCAT'

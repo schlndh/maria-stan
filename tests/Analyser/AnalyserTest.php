@@ -844,6 +844,7 @@ class AnalyserTest extends TestCase
 				$selects["COALESCE(NULL, {$label1}, {$label2})"] = "SELECT COALESCE(NULL, {$value1}, {$value2})";
 				$selects["COALESCE({$label1}, {$label2}, int)"] = "SELECT COALESCE(NULL, {$value1}, {$value2}, 9)";
 				$selects["ROUND({$label1}, {$label2})"] = "SELECT ROUND({$value1}, {$value2})";
+				$selects["CONCAT({$label1}, {$label2})"] = "SELECT CONCAT({$value1}, {$value2})";
 			}
 
 			$selects["TRIM({$label1})"] = "SELECT TRIM({$value1})";
@@ -852,6 +853,7 @@ class AnalyserTest extends TestCase
 			$selects["FLOOR({$label1})"] = "SELECT FLOOR({$value1})";
 			$selects["CEIL({$label1})"] = "SELECT CEIL({$value1})";
 			$selects["CEILING({$label1})"] = "SELECT CEILING({$value1})";
+			$selects["CONCAT({$label1})"] = "SELECT CONCAT({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
@@ -1368,9 +1370,15 @@ class AnalyserTest extends TestCase
 
 			foreach ($forceNullsForColumns as $col => $mustBeNull) {
 				if ($mustBeNull) {
-					$this->assertNull($row[$col]);
+					$this->assertNull(
+						$row[$col],
+						'Analyser thinks that column is always NULL, but it contains non NULL value.',
+					);
 				} else {
-					$this->assertNotNull($row[$col]);
+					$this->assertNotNull(
+						$row[$col],
+						'Analyser thinks that column is not nullable, but it contains null.',
+					);
 				}
 			}
 
@@ -1607,6 +1615,11 @@ class AnalyserTest extends TestCase
 			'COALESCE(col_vchar)',
 			'COALESCE(col_vchar IS NULL)',
 			'COALESCE(NULL, NULL, col_vchar)',
+			'CONCAT(col_vchar)',
+			'CONCAT(col_vchar, NULL) IS NULL',
+			'CONCAT(col_vchar) IS NOT NULL',
+			'CONCAT(col_vchar, col_int) IS NOT NULL',
+			'CONCAT(col_vchar, col_int) IS NULL',
 		];
 
 		foreach (['COALESCE', 'IFNULL', 'NVL'] as $coalesceFn) {
@@ -1811,7 +1824,11 @@ class AnalyserTest extends TestCase
 		$this->assertNotNull($result->resultFields);
 		$this->assertSameSize($result->resultFields, $fields);
 		$rowCount = count($rows);
-		$this->assertGreaterThanOrEqual(1, $rowCount, 'The query did not return any results.');
+		$this->assertGreaterThanOrEqual(
+			1,
+			$rowCount,
+			'Nullability test query has to return at least 1 row, but it did not return any.',
+		);
 		$nullCountsByColumn = array_fill_keys(array_keys($rows[0]), 0);
 
 		foreach ($rows as $row) {
