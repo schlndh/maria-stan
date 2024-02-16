@@ -783,6 +783,12 @@ final class ColumnResolver
 		} else {
 			$this->allColumns = array_merge($this->allColumns, $other->allColumns);
 		}
+
+		if ($this->knowledgeBase !== null && $other->knowledgeBase !== null) {
+			$this->knowledgeBase = $this->knowledgeBase->and($other->knowledgeBase);
+		} elseif ($this->knowledgeBase !== null) {
+			$this->knowledgeBase = $other->knowledgeBase;
+		}
 	}
 
 	/** @throws AnalyserException */

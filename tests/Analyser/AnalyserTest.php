@@ -1776,6 +1776,37 @@ class AnalyserTest extends TestCase
 			];
 		}
 
+		yield 'JOIN' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				JOIN analyser_test_nullability_1 t2 ON t1.col_vchar = t2.col_vchar
+			',
+		];
+
+		yield 'LEFT JOIN' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				LEFT JOIN analyser_test_nullability_1 t2 ON t1.col_vchar = t2.col_vchar
+			',
+		];
+
+		yield 'RIGHT JOIN' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				RIGHT JOIN analyser_test_nullability_1 t2 ON t1.col_vchar = t2.col_vchar
+			',
+		];
+
+		yield 'LEFT JOIN (JOIN)' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				LEFT JOIN (
+				    analyser_test_nullability_1 t2
+				    JOIN analyser_test_nullability_1 t3 ON t2.col_vchar = t3.col_vchar
+				) ON t2.col_vchar = t1.col_vchar
+			',
+		];
+
 		// TODO: fix this
 		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
 		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',

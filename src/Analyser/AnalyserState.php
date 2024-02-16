@@ -495,9 +495,9 @@ final class AnalyserState
 				$bakResolver = $this->columnResolver;
 				$this->columnResolver = $columnResolver;
 
-				match (true) {
+				$onResult = match (true) {
 					$fromClause->joinCondition instanceof Expr\Expr
-						=> $this->resolveExprType($fromClause->joinCondition),
+						=> $this->resolveExprType($fromClause->joinCondition, AnalyserConditionTypeEnum::TRUTHY),
 					/** This is checked in {@see ColumnResolver::mergeAfterJoin()} */
 					$fromClause->joinCondition instanceof UsingJoinCondition => 1,
 					$fromClause->joinCondition === null => null,
@@ -513,6 +513,8 @@ final class AnalyserState
 					foreach ($leftTables as $leftTable) {
 						$columnResolver->registerOuterJoinedTable($leftTable);
 					}
+				} elseif ($onResult instanceof ExprTypeResult) {
+					$columnResolver->addKnowledge($onResult->knowledgeBase);
 				}
 
 				return [array_merge($leftTables, $rightTables), $columnResolver];
