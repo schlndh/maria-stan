@@ -15,7 +15,8 @@ use function unserialize;
 
 /**
  * @phpcs:ignore
- * @phpstan-type SchemaDump array{__version: int, tables: array<string, array{columns: array<array<string, scalar|null>>, foreign_keys: array<array<string, scalar|null>>}>}
+ * @phpstan-type SchemaDump array{__version: int, tables: array<string, array{columns: array<array<string,
+ *     scalar|null>>, foreign_keys: array<array<string, scalar|null>>}>}
  */
 class MariaDbFileDbReflection implements DbReflection
 {
@@ -25,7 +26,7 @@ class MariaDbFileDbReflection implements DbReflection
 	private readonly array $schemaDump;
 
 	/** @var array<string, Table> table name => schema */
-	private array $parsedSchemas;
+	private array $parsedSchemas = [];
 
 	public function __construct(string $dumpFile, private readonly InformationSchemaParser $schemaParser)
 	{
@@ -95,6 +96,7 @@ class MariaDbFileDbReflection implements DbReflection
 		$stmt->execute([$database]);
 		$columns = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);
 
+		/** @var array<string, scalar|null> $col */
 		foreach ($columns as $col) {
 			$result['tables'][$col['TABLE_NAME']]['columns'][] = $col;
 		}
@@ -108,6 +110,7 @@ class MariaDbFileDbReflection implements DbReflection
 		$stmt->execute([$database]);
 		$foreignKeys = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);
 
+		/** @var array<string, scalar|null> $fk */
 		foreach ($foreignKeys as $fk) {
 			$result['tables'][$fk['TABLE_NAME']]['foreign_keys'][] = $fk;
 		}

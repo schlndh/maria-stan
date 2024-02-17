@@ -27,6 +27,7 @@ use function array_map;
 use function assert;
 use function in_array;
 use function is_array;
+use function is_string;
 use function preg_match;
 use function str_contains;
 
@@ -102,6 +103,27 @@ class MariaDbParserOperatorTest extends TestCase
 				$left = $this->getValueFromAstExpression($expr->left);
 				$right = $this->getValueFromAstExpression($expr->right);
 
+				if ($left === null || $right === null) {
+					return null;
+				}
+
+				$this->assertIsNotArray($left);
+				$this->assertIsNotArray($right);
+
+				if ($expr->operation === BinaryOpTypeEnum::REGEXP) {
+					$right = (string) $right;
+					$left = (string) $left;
+
+					return match (preg_match('/' . $right . '/', $left)) {
+						1 => 1,
+						0 => 0,
+						false => throw new RuntimeException("Invalid {$left} REGEXP {$right}"),
+					};
+				}
+
+				$this->assertIsNumeric($left);
+				$this->assertIsNumeric($right);
+
 				return match ($expr->operation) {
 					BinaryOpTypeEnum::PLUS => $left + $right,
 					BinaryOpTypeEnum::MINUS => $left - $right,
@@ -117,16 +139,20 @@ class MariaDbParserOperatorTest extends TestCase
 					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
 					BinaryOpTypeEnum::SHIFT_LEFT => ((int) $left) << ((int) $right),
 					BinaryOpTypeEnum::SHIFT_RIGHT => ((int) $left) >> ((int) $right),
-					BinaryOpTypeEnum::REGEXP => match (preg_match('/' . $right . '/', (string) $left)) {
-						1 => 1,
-						0 => 0,
-						false => throw new RuntimeException("Invalid {$left} REGEXP {$right}"),
-					},
 					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};
 			case ExprTypeEnum::UNARY_OP:
 				assert($expr instanceof UnaryOp);
 				$inner = $this->getValueFromAstExpression($expr->expression);
+				$this->assertIsNotArray($inner);
+
+				if ($inner === null) {
+					return null;
+				}
+
+				if (is_string($inner)) {
+					$inner = (float) $inner;
+				}
 
 				return match ($expr->operation) {
 					UnaryOpTypeEnum::PLUS => $inner,
@@ -193,10 +219,13 @@ class MariaDbParserOperatorTest extends TestCase
 					return null;
 				}
 
-				// @phpstan-ignore-next-line
-				assert(! str_contains($pattern, '%') && ! str_contains($pattern, '_'));
+				$this->assertIsNotArray($left);
+				$this->assertIsNotArray($pattern);
+				$left = (string) $left;
+				$pattern = (string) $pattern;
+				$this->assertTrue(! str_contains($pattern, '%') && ! str_contains($pattern, '_'));
 
-				return str_contains((string) $left, (string) $pattern)
+				return str_contains($left, $pattern)
 					? 1
 					: 0;
 			default:

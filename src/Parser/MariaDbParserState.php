@@ -1234,6 +1234,7 @@ class MariaDbParserState
 	{
 		static $precedence = null;
 		// BETWEEN is right-associative so no + 1
+		/** @phpstan-var int $precedence */
 		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::BETWEEN);
 		$this->expectToken(TokenTypeEnum::AND);
 		$max = $this->parseExpression($precedence);
@@ -1248,6 +1249,7 @@ class MariaDbParserState
 		$escapeChar = null;
 
 		if ($this->acceptToken(TokenTypeEnum::ESCAPE)) {
+			/** @phpstan-var int $precedence */
 			$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::LIKE) + 1;
 			$escapeChar = $this->parseExpression($precedence);
 		}
@@ -2816,6 +2818,7 @@ class MariaDbParserState
 			}
 		}
 
+		/** @phpstan-var array<string, string> $map */
 		return strtr($contents, $map);
 	}
 

@@ -56,6 +56,7 @@ use function array_values;
 use function assert;
 use function count;
 use function in_array;
+use function is_string;
 use function max;
 use function mb_strlen;
 use function min;
@@ -166,7 +167,9 @@ final class AnalyserState
 
 				return $this->analyseTableValueConstructor($select->tableValueConstructor);
 			default:
-				$this->errors[] = new AnalyserError("Unhandled SELECT type {$select::getSelectQueryType()->value}");
+				$typeVal = $select::getSelectQueryType()->value;
+				assert(is_string($typeVal));
+				$this->errors[] = new AnalyserError("Unhandled SELECT type {$typeVal}");
 
 				return [[], null];
 		}
@@ -629,6 +632,7 @@ final class AnalyserState
 	{
 		static $mockPosition = null;
 		$mockPosition ??= new Position(0, 0, 0);
+		assert($mockPosition instanceof Position);
 		$tableReferenceNode = new Table($mockPosition, $mockPosition, $query->tableName);
 
 		try {

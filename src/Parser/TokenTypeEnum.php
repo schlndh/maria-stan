@@ -320,9 +320,10 @@ enum TokenTypeEnum: string
 	/** @return array<value-of<self>, self> upper-case keyword => enum type */
 	public static function getKeywordsMap(): array
 	{
-		static $result = null;
+		/** @var array<value-of<self>, self> $result */
+		static $result;
 
-		if ($result === null) {
+		if (! isset($result)) {
 			$result = self::cases();
 			$eoiIdx = array_search(self::END_OF_INPUT, $result, true);
 			assert($eoiIdx !== false);

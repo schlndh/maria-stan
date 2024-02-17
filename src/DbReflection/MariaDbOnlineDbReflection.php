@@ -18,7 +18,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 	private readonly string $database;
 
 	/** @var array<string, Table> table name => schema */
-	private array $parsedSchemas;
+	private array $parsedSchemas = [];
 
 	public function __construct(private readonly mysqli $mysqli, private readonly InformationSchemaParser $schemaParser)
 	{
@@ -37,6 +37,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 				'SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
 			);
 			$stmt->execute([$this->database, $table]);
+			/** @var array<array<string, scalar|null>> $tableCols */
 			$tableCols = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 			$stmt = $this->mysqli->prepare('
@@ -46,6 +47,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
 			');
 			$stmt->execute([$this->database, $table]);
+			/** @var array<array<string, scalar|null>> $foreignKeys */
 			$foreignKeys = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 		} catch (mysqli_sql_exception $e) {
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);

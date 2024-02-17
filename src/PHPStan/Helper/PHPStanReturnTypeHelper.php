@@ -79,7 +79,7 @@ class PHPStanReturnTypeHelper
 		return new AnalyserResultPHPStanParams($rowTypes, $placeholderCounts);
 	}
 
-	/** @return array<Type> */
+	/** @return list<Type> */
 	public function packPHPStanParamsIntoTypes(?AnalyserResultPHPStanParams $params): array
 	{
 		return $params !== null
@@ -122,6 +122,8 @@ class PHPStanReturnTypeHelper
 		$keys = [];
 		$values = [];
 		$i = 0;
+
+		/** @var array{ConstantIntegerType, ConstantIntegerType} $colKeyTypes */
 		static $colKeyTypes = [
 			new ConstantIntegerType(0),
 			new ConstantIntegerType(1),
