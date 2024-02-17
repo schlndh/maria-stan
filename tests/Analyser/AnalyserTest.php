@@ -1808,6 +1808,21 @@ class AnalyserTest extends TestCase
 		];
 
 		// TODO: fix this
+		//yield 'JOIN USING' => [
+		//	'query' => '
+		//		SELECT * FROM analyser_test_nullability_1 t1
+		//		JOIN analyser_test_nullability_1 t2 USING (col_vchar)
+		//	',
+		//];
+		//
+		//yield 'JOIN USING - nested' => [
+		//	'query' => '
+		//		SELECT * FROM (analyser_test_nullability_1 t1 JOIN analyser_test_nullability_1 t2 USING (col_vchar))
+		//		JOIN analyser_test_nullability_1 r3 USING (col_vchar)
+		//	',
+		//];
+
+		// TODO: fix this
 		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
 		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',
 		//];
