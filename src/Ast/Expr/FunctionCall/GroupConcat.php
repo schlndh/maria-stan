@@ -41,7 +41,7 @@ final class GroupConcat extends BaseFunctionCall
 			$this->expressions,
 			array_map(
 				static fn (ExprWithDirection $e) => $e->expr,
-				$this->orderBy?->expressions ?? [],
+				$this->orderBy->expressions ?? [],
 			),
 			array_filter([
 				$this->limit?->count,

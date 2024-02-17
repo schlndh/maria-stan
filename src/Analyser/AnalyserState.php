@@ -269,7 +269,7 @@ final class AnalyserState
 		$this->columnResolver->registerFieldList($fields);
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
 
-		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
+		foreach ($select->orderBy->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
@@ -404,7 +404,7 @@ final class AnalyserState
 
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::GROUP_BY;
 
-		foreach ($select->groupBy?->expressions ?? [] as $groupByExpr) {
+		foreach ($select->groupBy->expressions ?? [] as $groupByExpr) {
 			$exprType = $this->resolveExprType($groupByExpr->expr);
 
 			if ($exprType->column === null) {
@@ -421,7 +421,7 @@ final class AnalyserState
 
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
 
-		foreach ($select->orderBy?->expressions ?? [] as $orderByExpr) {
+		foreach ($select->orderBy->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
@@ -583,7 +583,7 @@ final class AnalyserState
 			$this->resolveExprType($query->where);
 		}
 
-		foreach ($query->orderBy?->expressions ?? [] as $orderByExpr) {
+		foreach ($query->orderBy->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
@@ -612,7 +612,7 @@ final class AnalyserState
 			$this->resolveExprType($query->where);
 		}
 
-		foreach ($query->orderBy?->expressions ?? [] as $orderByExpr) {
+		foreach ($query->orderBy->expressions ?? [] as $orderByExpr) {
 			$this->resolveExprType($orderByExpr->expr);
 		}
 
@@ -745,7 +745,7 @@ final class AnalyserState
 
 		$setColumNamesMap = array_fill_keys($setColumnNames, 1);
 
-		foreach ($tableSchema?->columns ?? [] as $name => $column) {
+		foreach ($tableSchema->columns ?? [] as $name => $column) {
 			if (
 				isset($setColumNamesMap[$name])
 				|| $column->defaultValue !== null
@@ -1121,7 +1121,7 @@ final class AnalyserState
 				// TODO: handle $condition
 				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
 				$result = $subqueryAnalyser->analyse();
-				$canBeEmpty = ($result->rowCountRange?->min ?? 0) === 0;
+				$canBeEmpty = ($result->rowCountRange->min ?? 0) === 0;
 
 				if ($result->resultFields === null) {
 					return new ExprTypeResult(

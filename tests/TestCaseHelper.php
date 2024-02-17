@@ -10,6 +10,7 @@ use MariaStan\Parser\MariaDbParser;
 use mysqli;
 use mysqli_sql_exception;
 
+use function is_string;
 use function mysqli_report;
 
 // phpcs:disable SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
@@ -47,18 +48,25 @@ abstract class TestCaseHelper
 				throw new \RuntimeException("Missing DB config {$configKey}!");
 			}
 
-			$values[$property] = $GLOBALS[$configKey];
+			$value = $GLOBALS[$configKey];
+			$values[$property] = $value;
 		}
 
-		$mysqli = new mysqli($values['host'], $values['user'], $values['password'], port: (int) $values['port']);
+		$mysqli = new mysqli(
+			self::getConfigValue($prefix, 'host'),
+			self::getConfigValue($prefix, 'user'),
+			self::getConfigValue($prefix, 'password'),
+			port: (int) self::getConfigValue($prefix, 'port'),
+		);
 		$mysqli->set_opt(\MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
 		$mysqli->set_charset('utf8mb4');
 		mysqli_report(\MYSQLI_REPORT_ERROR | \MYSQLI_REPORT_STRICT);
+		$dbName = self::getConfigValue($prefix, 'dbname');
 
 		try {
-			$mysqli->query('USE ' . $values['dbname']);
+			$mysqli->query('USE ' . $dbName);
 		} catch (mysqli_sql_exception) {
-			$mysqli->query('CREATE DATABASE ' . $values['dbname']);
+			$mysqli->query('CREATE DATABASE ' . $dbName);
 		}
 
 		return self::$connections[$prefix] = $mysqli;
@@ -72,5 +80,22 @@ abstract class TestCaseHelper
 	public static function createParser(): MariaDbParser
 	{
 		return new MariaDbParser(self::createFunctionInfoRegistry());
+	}
+
+	private static function getConfigValue(string $prefix, string $property): string
+	{
+		$configKey = $prefix . $property;
+
+		if (! isset($GLOBALS[$configKey])) {
+			throw new \RuntimeException("Missing DB config {$configKey}!");
+		}
+
+		$value = $GLOBALS[$configKey];
+
+		if (! is_string($value)) {
+			throw new \RuntimeException("Wrong config value for {$configKey} - expected string!");
+		}
+
+		return $value;
 	}
 }

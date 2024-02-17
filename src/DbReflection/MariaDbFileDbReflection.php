@@ -13,11 +13,15 @@ use function is_array;
 use function serialize;
 use function unserialize;
 
+/**
+ * @phpcs:ignore
+ * @phpstan-type SchemaDump array{__version: int, tables: array<string, array{columns: array<array<string, scalar|null>>, foreign_keys: array<array<string, scalar|null>>}>}
+ */
 class MariaDbFileDbReflection implements DbReflection
 {
 	private const DUMP_VERSION = 2;
 
-	/** @var array{__version: int, tables: array<string, array{columns: array<array<string, scalar|null>>}>} */
+	/** @var SchemaDump */
 	private readonly array $schemaDump;
 
 	/** @var array<string, Table> table name => schema */
@@ -39,6 +43,7 @@ class MariaDbFileDbReflection implements DbReflection
 			);
 		}
 
+		/** @phpstan-var SchemaDump $dump */
 		$this->schemaDump = $dump;
 	}
 

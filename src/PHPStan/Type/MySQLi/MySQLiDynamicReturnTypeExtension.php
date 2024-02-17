@@ -57,7 +57,7 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 
 		// @phpstan-ignore-next-line This is here for phpstorm
 		assert($result === null || $result instanceof QueryPrepareCallResult);
-		$analyserResults = $result?->analyserResults ?? [];
+		$analyserResults = $result->analyserResults ?? [];
 
 		if (count($analyserResults) === 0) {
 			return new ObjectType($returnClass);

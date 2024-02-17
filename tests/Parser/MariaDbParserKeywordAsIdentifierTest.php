@@ -30,7 +30,6 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestFieldAliasData(): iterable
 	{
-		/** @phpstan-var array<TokenTypeEnum> $cases */
 		$cases = TokenTypeEnum::cases();
 
 		foreach ($cases as $tokenType) {
@@ -112,7 +111,6 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 			);
 		");
 
-		/** @phpstan-var array<TokenTypeEnum> $cases */
 		$cases = TokenTypeEnum::cases();
 
 		foreach ($cases as $tokenType) {
@@ -163,7 +161,6 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestCommonTableExpressionAliasData(): iterable
 	{
-		/** @phpstan-var array<TokenTypeEnum> $cases */
 		$cases = TokenTypeEnum::cases();
 
 		foreach ($cases as $tokenType) {
@@ -241,7 +238,6 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	/** @return iterable<string, array<mixed>> name => args */
 	public function provideTestColumnNameData(): iterable
 	{
-		/** @phpstan-var array<TokenTypeEnum> $cases */
 		$cases = TokenTypeEnum::cases();
 		$i = 1;
 

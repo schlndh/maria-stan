@@ -40,7 +40,7 @@ final class WindowFunctionCall extends BaseFunctionCall
 			$this->partitionBy ?? [],
 			array_map(
 				static fn (ExprWithDirection $e) => $e->expr,
-				$this->orderBy?->expressions ?? [],
+				$this->orderBy->expressions ?? [],
 			),
 			array_filter([
 				$this->frame?->preceding->expression,

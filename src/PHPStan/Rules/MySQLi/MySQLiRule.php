@@ -81,7 +81,7 @@ class MySQLiRule implements Rule
 			default => null,
 		};
 
-		return $result?->errors ?? [];
+		return $result->errors ?? [];
 	}
 
 	/** @return array<string|RuleError> */
