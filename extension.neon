@@ -70,6 +70,7 @@ services:
 	-
 		class: MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper
 		arguments:
+			dbReflection: @mariaDbReflection
 			columnTypeOverrides: %maria-stan.columnTypeOverrides%
 	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper
 	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory

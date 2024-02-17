@@ -9,6 +9,8 @@ use MariaStan\Analyser\ColumnInfo;
 use MariaStan\Analyser\ColumnInfoTableTypeEnum;
 use MariaStan\Analyser\QueryResultField;
 use MariaStan\Ast\Expr\Column;
+use MariaStan\DbReflection\DbReflection;
+use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\PHPStan\Exception\InvalidArgumentException;
@@ -30,6 +32,7 @@ use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
+use function array_search;
 use function array_values;
 use function assert;
 use function count;
@@ -37,7 +40,7 @@ use function reset;
 
 class PHPStanReturnTypeHelper
 {
-	/** @var array<string, array<string, Type>> table => column => type */
+	/** @var array<string, array<string, Type|null>> table => column => type */
 	private array $columnTypeOverrides;
 
 	/** @var array<array{column: string, type: string}> */
@@ -48,6 +51,7 @@ class PHPStanReturnTypeHelper
 		private readonly DbToPhpstanTypeMapper $typeMapper,
 		private readonly TypeStringResolver $typeStringResolver,
 		private readonly MariaDbParser $mariaDbParser,
+		private readonly DbReflection $dbReflection,
 		array $columnTypeOverrides,
 	) {
 		$this->rawColumnTypeOverrides = $columnTypeOverrides;
@@ -365,6 +369,34 @@ class PHPStanReturnTypeHelper
 			}
 		}
 
-		return $this->columnTypeOverrides[$column->tableName][$column->name] ?? null;
+		$override = $this->columnTypeOverrides[$column->tableName][$column->name] ?? false;
+
+		if ($override !== false) {
+			return $override;
+		}
+
+		$override = null;
+		$table = null;
+
+		try {
+			$table = $this->dbReflection->findTableSchema($column->tableName);
+		} catch (DbReflectionException) {
+		}
+
+		foreach ($table->foreignKeys ?? [] as $fk) {
+			$key = array_search($column->name, $fk->columnNames, true);
+
+			if ($key === false) {
+				continue;
+			}
+
+			$override = $this->columnTypeOverrides[$fk->referencedTableName][$fk->referencedColumnNames[$key]] ?? null;
+
+			if ($override !== null) {
+				break;
+			}
+		}
+
+		return $this->columnTypeOverrides[$column->tableName][$column->name] = $override;
 	}
 }

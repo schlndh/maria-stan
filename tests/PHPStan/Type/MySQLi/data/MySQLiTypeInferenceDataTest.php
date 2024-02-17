@@ -67,13 +67,32 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		");
 
 		$db->query('
-			CREATE OR REPLACE TABLE mysqli_test_column_overrides (
-				id INT NOT NULL,
-				constant INT NOT NULL
+			SET STATEMENT FOREIGN_KEY_CHECKS=0 FOR CREATE OR REPLACE TABLE mysqli_test_column_overrides (
+				id INT NOT NULL PRIMARY KEY,
+				constant INT NOT NULL,
+				UNIQUE (constant, id)
 			);
 		');
 
 		$db->query("INSERT INTO mysqli_test_column_overrides (id, constant) VALUES (1, 5), (2, 6)");
+
+		$db->query('
+			CREATE OR REPLACE TABLE mysqli_test_column_overrides_fk_1 (
+				id INT NOT NULL REFERENCES mysqli_test_column_overrides (id)
+			);
+		');
+
+		$db->query("INSERT INTO mysqli_test_column_overrides_fk_1 (id) VALUES (1), (2)");
+
+		$db->query('
+			CREATE OR REPLACE TABLE mysqli_test_column_overrides_fk_2 (
+				id INT NOT NULL,
+				constant_2 INT NOT NULL,
+				FOREIGN KEY (constant_2, id) REFERENCES mysqli_test_column_overrides (constant, id)
+			);
+		');
+
+		$db->query("INSERT INTO mysqli_test_column_overrides_fk_2 (id, constant_2) VALUES (1, 5), (2, 6)");
 	}
 
 	public function testAssoc(): void
@@ -975,6 +994,28 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertTrue(in_array($row['constant'], [5, 6], true));
+		}
+
+		$rows = $db->query('SELECT * FROM mysqli_test_column_overrides_fk_1')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('1|2', $row['id']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [1, 2], true));
+		}
+
+		$rows = $db->query('SELECT * FROM mysqli_test_column_overrides_fk_2')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('1|2', $row['id']);
+				assertType('5|6', $row['constant_2']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [1, 2], true));
+			$this->assertTrue(in_array($row['constant_2'], [5, 6], true));
 		}
 	}
 
