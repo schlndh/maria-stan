@@ -38,10 +38,23 @@ class MariaDbOnlineDbReflection implements DbReflection
 			);
 			$stmt->execute([$this->database, $table]);
 			$tableCols = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+			$stmt = $this->mysqli->prepare('
+				SELECT * FROM information_schema.TABLE_CONSTRAINTS tc
+				JOIN information_schema.KEY_COLUMN_USAGE kcu
+					USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
+				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
+			');
+			$stmt->execute([$this->database, $table]);
+			$foreignKeys = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 		} catch (mysqli_sql_exception $e) {
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
 		}
 
-		return $this->parsedSchemas[$table] = $this->schemaParser->parseTableSchema($table, $tableCols);
+		return $this->parsedSchemas[$table] = new Table(
+			$table,
+			$this->schemaParser->parseTableColumns($table, $tableCols),
+			$this->schemaParser->parseTableForeignKeys($foreignKeys),
+		);
 	}
 }

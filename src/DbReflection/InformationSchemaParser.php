@@ -19,14 +19,16 @@ use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
-use MariaStan\Schema\Table;
+use MariaStan\Schema\ForeignKey;
 use MariaStan\Util\MariaDbErrorCodes;
 
 use function array_combine;
 use function array_map;
 use function count;
 use function explode;
+use function ksort;
 use function preg_match;
+use function sprintf;
 use function stripos;
 use function trim;
 
@@ -38,9 +40,10 @@ class InformationSchemaParser
 
 	/**
 	 * @param array<array<string, scalar|null>> $tableCols [[column => value]]
+	 * @return non-empty-array<string, Column> name => column
 	 * @throws DbReflectionException
 	 */
-	public function parseTableSchema(string $table, array $tableCols): Table
+	public function parseTableColumns(string $table, array $tableCols): array
 	{
 		if (count($tableCols) === 0) {
 			throw new TableDoesNotExistException(
@@ -54,20 +57,87 @@ class InformationSchemaParser
 			fn (InformationSchemaColumn $c) => $this->createColumnSchema($table, $c),
 			$isColumns,
 		);
-		$columns = array_combine(
+
+		return array_combine(
 			array_map(
 				static fn (Column $c) => $c->name,
 				$columns,
 			),
 			$columns,
 		);
-
-		return new Table($table, $columns);
 	}
 
 	/**
-	 * @param array<array<string, scalar|null>> $tableCols
-	 * @return array<InformationSchemaColumn>
+	 * @param array<array<string, scalar|null>> $foreignKeyRows information_schema.KEY_COLUMN_USAGE rows
+	 * @return array<string, ForeignKey> name => foreign key
+	 * @throws DbReflectionException
+	 */
+	public function parseTableForeignKeys(array $foreignKeyRows): array
+	{
+		$rowsByConstraintName = [];
+
+		foreach ($foreignKeyRows as $row) {
+			$rowsByConstraintName[$row['CONSTRAINT_NAME']][$row['ORDINAL_POSITION']] = $row;
+		}
+
+		$result = [];
+
+		// Ignore phpstan issues because of possible type errors
+
+		/** @phpstan-var array<array<string, string|null>> $rows */
+		foreach ($rowsByConstraintName as $rows) {
+			ksort($rows);
+			$constraintName = $rows[1]['CONSTRAINT_NAME']
+				?? throw new UnexpectedValueException('CONSTRAINT_NAME cannot be null');
+			$tableName = $rows[1]['TABLE_NAME']
+				?? throw new UnexpectedValueException('TABLE_NAME cannot be null');
+			$refTableName = $rows[1]['REFERENCED_TABLE_NAME']
+				?? throw new UnexpectedValueException('REFERENCED_TABLE_NAME cannot be null');
+			$columnNames = [];
+			$refColumnNames = [];
+
+			foreach ($rows as $row) {
+				if ($row['TABLE_NAME'] !== $tableName) {
+					throw new DbReflectionException(
+						sprintf(
+							'Foreign key TABLE_NAME does not match: "%s" vs "%s',
+							$tableName,
+							$row['TABLE_NAME'],
+						),
+					);
+				}
+
+				if ($row['REFERENCED_TABLE_NAME'] !== $refTableName) {
+					throw new DbReflectionException(
+						sprintf(
+							'Foreign key REFERENCED_TABLE_NAME does not match: "%s" vs "%s',
+							$refTableName,
+							$row['REFERENCED_TABLE_NAME'],
+						),
+					);
+				}
+
+				$columnNames[] = $row['COLUMN_NAME']
+					?? throw new UnexpectedValueException('COLUMN_NAME cannot be null');
+				$refColumnNames[] = $row['REFERENCED_COLUMN_NAME']
+					?? throw new UnexpectedValueException('REFERENCED_COLUMN_NAME cannot be null');
+			}
+
+			$result[$constraintName] = new ForeignKey(
+				$constraintName,
+				$tableName,
+				$columnNames,
+				$refTableName,
+				$refColumnNames,
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param non-empty-array<array<string, scalar|null>> $tableCols
+	 * @return non-empty-list<InformationSchemaColumn>
 	 * @throws DbReflectionException
 	 */
 	private function parseInformationSchemaColumns(array $tableCols): array

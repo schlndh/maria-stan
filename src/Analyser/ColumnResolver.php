@@ -196,8 +196,8 @@ final class ColumnResolver
 	}
 
 	/**
-	 * @param array<QueryResultField> $fields
-	 * @return array<string, Schema\Column> name => column
+	 * @param non-empty-array<QueryResultField> $fields
+	 * @return non-empty-array<string, Schema\Column> name => column
 	 * @throws AnalyserException
 	 */
 	private function getColumnsFromFields(array $fields): array

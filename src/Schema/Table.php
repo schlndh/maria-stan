@@ -6,8 +6,14 @@ namespace MariaStan\Schema;
 
 final class Table
 {
-	/** @param array<string, Column> $columns name => column */
-	public function __construct(public readonly string $name, public readonly array $columns)
-	{
+	/**
+	 * @param non-empty-array<string, Column> $columns name => column
+	 * @param array<string, ForeignKey> $foreignKeys name => foreign key
+	 */
+	public function __construct(
+		public readonly string $name,
+		public readonly array $columns,
+		public readonly array $foreignKeys = [],
+	) {
 	}
 }

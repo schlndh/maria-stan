@@ -14,6 +14,7 @@ use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\VarcharType;
+use MariaStan\Schema\ForeignKey;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
 use PHPUnit\Framework\TestCase;
@@ -52,7 +53,7 @@ class DbReflectionTest extends TestCase
 
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
-			CREATE OR REPLACE TABLE db_reflection_test (
+			SET STATEMENT FOREIGN_KEY_CHECKS=0 FOR CREATE OR REPLACE TABLE db_reflection_test (
 				id INT NULL PRIMARY KEY AUTO_INCREMENT,
 				name VARCHAR(255) NOT NULL,
 				val_tinyint_u TINYINT(1) UNSIGNED NOT NULL,
@@ -72,7 +73,8 @@ class DbReflectionTest extends TestCase
 				val_timestamp TIMESTAMP NULL,
 				val_year YEAR NOT NULL,
 				val_enum ENUM('a', 'b', 'c') NOT NULL,
-				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5)
+				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5),
+				UNIQUE (id, name)
 			);
 		");
 		$db->query("
@@ -93,24 +95,45 @@ class DbReflectionTest extends TestCase
 			);
 		");
 
+		$db->query("
+			CREATE OR REPLACE TABLE db_reflection_test_foreign_keys (
+				id INT NOT NULL,
+				name_2 VARCHAR(255) NOT NULL,
+				CONSTRAINT db_reflection_test_fk_id FOREIGN KEY (id) REFERENCES db_reflection_test (id)
+					ON DELETE CASCADE ON UPDATE CASCADE,
+				CONSTRAINT db_reflection_test_fk_id_name FOREIGN KEY (id, name_2)
+					REFERENCES db_reflection_test (id, name)
+					ON DELETE CASCADE ON UPDATE CASCADE
+			);
+		");
+
 		self::$dumpFile = tmpfile() ?: throw new RuntimeException('tmpfile() failed!');
 		fwrite(self::$dumpFile, MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)));
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideDbReflections(): iterable
+	public static function provideDbReflections(): iterable
 	{
 		self::initDb();
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$parser = TestCaseHelper::createParser();
+		$informationSchemaParser = new InformationSchemaParser($parser);
 
-		yield 'online' => [new MariaDbOnlineDbReflection($db, new InformationSchemaParser($parser))];
+		yield 'online' => [new MariaDbOnlineDbReflection($db, $informationSchemaParser)];
 
 		assert(self::$dumpFile !== null);
 		$meta_data = stream_get_meta_data(self::$dumpFile);
 		$filename = $meta_data["uri"];
 
-		yield 'file' => [new MariaDbFileDbReflection($filename, new InformationSchemaParser($parser))];
+		yield 'file - current' => [new MariaDbFileDbReflection($filename, $informationSchemaParser)];
+
+		yield 'file - v1' => [
+			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v1.bin', $informationSchemaParser),
+		];
+
+		yield 'file - v2' => [
+			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v2.bin', $informationSchemaParser),
+		];
 	}
 
 	/** @dataProvider provideDbReflections */
@@ -168,6 +191,47 @@ class DbReflectionTest extends TestCase
 		$this->assertIntDefaultValue(0, $schema->columns['int_default_string']);
 
 		$this->assertFnCallDefaultValue('ROUND', $schema->columns['fn_call_default']);
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public static function provideForeignKeyDbReflections(): iterable
+	{
+		foreach (self::provideDbReflections() as $name => $dbReflection) {
+			if ($name === 'file - v1') {
+				continue;
+			}
+
+			yield $name => $dbReflection;
+		}
+	}
+
+	/** @dataProvider provideForeignKeyDbReflections */
+	public function testForeignKeys(DbReflection $reflection): void
+	{
+		$schema = $reflection->findTableSchema('db_reflection_test_foreign_keys');
+		$this->assertArrayHasKey('db_reflection_test_fk_id', $schema->foreignKeys);
+		$this->assertEquals(
+			new ForeignKey(
+				'db_reflection_test_fk_id',
+				'db_reflection_test_foreign_keys',
+				['id'],
+				'db_reflection_test',
+				['id'],
+			),
+			$schema->foreignKeys['db_reflection_test_fk_id'],
+		);
+
+		$this->assertArrayHasKey('db_reflection_test_fk_id_name', $schema->foreignKeys);
+		$this->assertEquals(
+			new ForeignKey(
+				'db_reflection_test_fk_id_name',
+				'db_reflection_test_foreign_keys',
+				['id', 'name_2'],
+				'db_reflection_test',
+				['id', 'name'],
+			),
+			$schema->foreignKeys['db_reflection_test_fk_id_name'],
+		);
 	}
 
 	/** @dataProvider provideDbReflections */
