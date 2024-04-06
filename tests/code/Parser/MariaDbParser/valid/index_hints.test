@@ -120,6 +120,67 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isSqlCalcFoundRows] => false
 )
 -----
+SELECT * FROM parser_test_index FORCE INDEX (PRIMARY)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::FORCE
+							[columnNames] => Array
+								(
+									[0] => PRIMARY
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test_index FORCE INDEX (name, PRIMARY)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test_index
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::FORCE
+							[columnNames] => Array
+								(
+									[0] => name
+									[1] => PRIMARY
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
 SELECT * FROM parser_test_index USE INDEX (id) USE INDEX (name)
 -----
 MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery

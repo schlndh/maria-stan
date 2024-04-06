@@ -2582,8 +2582,8 @@ class MariaDbParserState
 			if ($indexHintType === IndexHintTypeEnum::USE && $this->acceptToken(')')) {
 				$indexHintColumns = [];
 			} else {
-				// TODO: implement USE INDEX (PRIMARY)
 				$columnIdentTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
+				$columnIdentTokenTypes[] = TokenTypeEnum::PRIMARY;
 				$indexHintColumns = [];
 
 				do {
