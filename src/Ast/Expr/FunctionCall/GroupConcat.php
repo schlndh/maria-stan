@@ -46,7 +46,7 @@ final class GroupConcat extends BaseFunctionCall
 			array_filter([
 				$this->limit?->count,
 				$this->limit?->offset,
-			]),
+			], static fn (mixed $v) => $v !== null),
 		);
 	}
 

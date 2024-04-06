@@ -251,7 +251,10 @@ class MariaDbParserTest extends TestCase
 		}
 
 		if (is_array($data)) {
-			return array_filter(array_map($this->dumpNodeData(...), $data));
+			return array_filter(
+				array_map($this->dumpNodeData(...), $data),
+				static fn (mixed $value) => $value !== null,
+			);
 		}
 
 		return $data;
