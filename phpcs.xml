@@ -42,7 +42,6 @@
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison" />
 		<exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint" />
 		<exclude name="SlevomatCodingStandard.Functions.FunctionLength" />
-		<exclude name="SlevomatCodingStandard.Files.FunctionLength" />
 		<exclude name="SlevomatCodingStandard.Functions.DisallowArrowFunction.DisallowedArrowFunction" />
 		<exclude name="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator.DisallowedNumericLiteralSeparator"/>
 		<exclude name="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion.DisallowedConstructorPropertyPromotion"/>
