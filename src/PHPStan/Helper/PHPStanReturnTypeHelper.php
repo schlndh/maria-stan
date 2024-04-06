@@ -294,7 +294,7 @@ class PHPStanReturnTypeHelper
 	/**
 	 * @param array<ConstantStringType|ConstantIntegerType> $keyTypes
 	 * @param array<Type> $valueTypes
-	 * @return array{array<ConstantStringType|ConstantIntegerType>, array<Type>} [filtered keys, filtered values]
+	 * @return array{list<ConstantStringType|ConstantIntegerType>, list<Type>} [filtered keys, filtered values]
 	 */
 	private function filterDuplicateKeys(array $keyTypes, array $valueTypes): array
 	{
@@ -316,7 +316,7 @@ class PHPStanReturnTypeHelper
 		return [array_values($keyTypes), array_values($valueTypes)];
 	}
 
-	/** @return array<ConstantIntegerType> */
+	/** @return list<ConstantIntegerType> */
 	private function getNumberedKeyTypes(int $count): array
 	{
 		$result = [];
