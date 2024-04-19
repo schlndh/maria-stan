@@ -1366,6 +1366,7 @@ class AnalyserTest extends TestCase
 		}
 
 		foreach ($rows as $row) {
+			$this->assertIsArray($row);
 			$this->assertSame($fieldKeys, array_keys($row));
 
 			foreach ($forceNullsForColumns as $col => $mustBeNull) {
@@ -1392,6 +1393,7 @@ class AnalyserTest extends TestCase
 				}
 
 				$parsedDateTime = false;
+				$this->assertIsString($val);
 
 				foreach (['Y-m-d H:i:s', 'Y-m-d'] as $format) {
 					$parsedDateTime = $parsedDateTime ?: DateTimeImmutable::createFromFormat($format, $val);
@@ -1875,9 +1877,13 @@ class AnalyserTest extends TestCase
 			$rowCount,
 			'Nullability test query has to return at least 1 row, but it did not return any.',
 		);
-		$nullCountsByColumn = array_fill_keys(array_keys($rows[0]), 0);
+		$firstRow = $rows[0];
+		$this->assertIsArray($firstRow);
+		$nullCountsByColumn = array_fill_keys(array_keys($firstRow), 0);
 
 		foreach ($rows as $row) {
+			$this->assertIsArray($row);
+
 			foreach ($row as $col => $value) {
 				if ($value !== null) {
 					continue;

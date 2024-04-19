@@ -11,8 +11,7 @@ parameters:
 		- src
 		- tests
 	treatPhpDocTypesAsCertain: false
-	# TODO: enable this
-	# checkImplicitMixed: true
+	checkImplicitMixed: true
 	excludePaths:
 		- tests/*/data/*
 	exceptions:
