@@ -3,8 +3,19 @@
 MariaStan is a static analysis tool for MariaDB queries. Its primary purpose is to serve as a basis for
 [PHPStan](https://phpstan.org/) extensions.
 
-**Currently, it is in a very early experimental stage. Therefore, if you want to use it be prepared for BC breaks,
-bugs, incomplete features, ...**
+**Current status** (24. 04. 2024):
+
+MariaStan is very much incomplete. It covers probably ~90% of use-cases in a large code-base where I use it
+(hundreds of tables, thousands of queries). As a result there is not much activity. But it is actively maintained in
+the sense that if something breaks for me it will probably get fixed.
+
+If you try to use it in your project, you are likely to run into use-cases which are not implemented
+(e.g. syntax/functions which my project doesn't use). If that happens, you should be prepared to fix things for yourself
+(most things should be easy).
+
+There is no backwards-compatibility promise on anything, and there are no releases - I just use master.
+
+MariaStan is tested with MariaDB 10.11 and PHP 8.1-8.3.
 
 ## Installation
 
@@ -82,6 +93,28 @@ in your `phpstan.neon`.
 
 You can use the MySQLi extension as a starting point a modify it to match your needs. The basic idea is to get the query
 string from PHPStan, pass it to MariaStan for analysis and then report result types and errors back to PHPStan.
+
+## Features
+
+Here is a list of features that you could implement into your own PHPStan extension based on MariaStan
+(most of them should be demonstrated in the MySQLi extension):
+
+- Type inference for query results. This alone is invaluable when using PHPStan with code that works with DB data.
+  - MariaStan can sometimes infer narrower types than the types returned by the database (e.g. `mysqli_result::fetch_fields`).
+    This is because MariaStan can (in simple cases) understand queries like `SELECT col FROM tbl WHERE col IS NOT NULL`
+    and remove the `NULL` from the result type, whereas MariaDB doesn't seem to do that.
+- Basic error detection. For example:
+    - Unknown tables, columns, ...
+    - ambiguous column names,
+    - mismatched number of placeholders,
+    - missing data for mandatory columns in `INSERT`/`REPLACE`
+    - ...
+- Report usage of deprecated tables/columns.
+- Row count range: in simple cases MariaStan can determine the number of returned rows (e.g. `SELECT COUNT(*) FROM tbl`)
+  which can be used to narrow-down the return type of methods like `mysqli_result::fetch_all` (i.e. `non-empty-array`).
+- Column type overrides: You can override the type of a column (e.g. because the table is "static") and even propagate it
+  automatically via foreign keys.
+- Custom PHPDoc types: e.g. [MySQLiTableAssocRowType](https://github.com/schlndh/maria-stan/blob/master/src/PHPStan/Type/MySQLi/MySQLiTableAssocRowType.php).
 
 ## Limitations
 
