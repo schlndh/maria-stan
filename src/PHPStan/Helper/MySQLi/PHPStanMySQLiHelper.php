@@ -13,6 +13,7 @@ use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
@@ -160,6 +161,18 @@ final class PHPStanMySQLiHelper
 		}
 
 		return TypeCombinator::union(...$types);
+	}
+
+	public function getRowTypeFromStringQuery(string $query, int $mode): Type
+	{
+		$queryResult = $this->query(new ConstantStringType($query));
+		$params = $this->phpstanHelper->createPhpstanParamsFromMultipleAnalyserResults($queryResult->analyserResults);
+
+		if ($params === null) {
+			return new ErrorType();
+		}
+
+		return $this->getRowType($params, $mode);
 	}
 
 	public function getColumnType(AnalyserResultPHPStanParams $params, ?int $column): Type

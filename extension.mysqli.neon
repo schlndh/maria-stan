@@ -17,3 +17,7 @@ services:
 		class: MariaStan\PHPStan\Rules\MySQLi\MySQLiRule
 		tags:
 			- phpstan.rules.rule
+	-
+		class: MariaStan\PHPStan\Type\MySQLi\MySQLiTypeNodeResolverExtension
+		tags:
+			- phpstan.phpDoc.typeNodeResolverExtension

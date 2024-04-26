@@ -4,3 +4,18 @@ parameters:
 			message: "#^Doing instanceof PHPStan\\\\Type\\\\Constant\\\\ConstantStringType is error\\-prone and deprecated\\. Use Type\\:\\:getConstantStrings\\(\\) instead\\.$#"
 			count: 1
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
+
+		-
+			message: "#^Accessing PHPStan\\\\Analyser\\\\Analyser\\:\\:class is not covered by backward compatibility promise\\. The class might change in a minor PHPStan version\\.$#"
+			count: 1
+			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
+
+		-
+			message: "#^Calling PHPStan\\\\Analyser\\\\Analyser\\:\\:analyse\\(\\) is not covered by backward compatibility promise\\. The method might change in a minor PHPStan version\\.$#"
+			count: 1
+			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
+
+		-
+			message: "#^Calling PHPStan\\\\Analyser\\\\AnalyserResult\\:\\:getErrors\\(\\) is not covered by backward compatibility promise\\. The method might change in a minor PHPStan version\\.$#"
+			count: 1
+			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
