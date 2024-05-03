@@ -39,7 +39,7 @@ class PHPStanIntegrationTest extends PHPStanTestCase
 		$this->assertAnalyserErrors([
 			[
 				'Method MariaStan\PHPStan\Integration\data\MySQLiTypeNodeResolverData::wrongReturn() should return array{id: int, name: string|null, price: numeric-string} but returns array{1: int}.',
-				73,
+				75,
 				"Array does not have offset 'id'.",
 			],
 		], $errors);

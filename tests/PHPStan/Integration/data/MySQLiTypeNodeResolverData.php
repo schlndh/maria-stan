@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Integration\data;
 
 use MariaStan\PHPStan\Type\MySQLi\MySQLiTableAssocRowType;
+use MariaStan\PHPStan\Type\MySQLi\MySQLiTableAssocRowType as RowType;
 
 use function is_array;
 use function rand;
@@ -23,6 +24,7 @@ class MySQLiTypeNodeResolverData
 		$row = $this->returnSingleMysqliTestRow();
 		$this->acceptMysqliTestRow($row);
 		$this->acceptMysqliTestRow(['id' => 5, 'name' => 'aaa', 'price' => '11.11']);
+		$this->acceptMysqliTestRow($this->returnSingleMysqliTestRowAlias());
 		var_dump($this->returnSingleRowFromSeveralTables()['id']);
 	}
 
@@ -79,6 +81,19 @@ class MySQLiTypeNodeResolverData
 		$result = rand()
 			? $this->db->query('SELECT * FROM mysqli_type_node_test')
 			: $this->db->query('SELECT * FROM mysqli_type_node_test_2');
+		$row = $result->fetch_array(MYSQLI_ASSOC);
+
+		if (! is_array($row)) {
+			throw new \Exception();
+		}
+
+		return $row;
+	}
+
+	/** @phpstan-return RowType<'mysqli_type_node_test'> */
+	public function returnSingleMysqliTestRowAlias(): array
+	{
+		$result = $this->db->query('SELECT * FROM mysqli_type_node_test');
 		$row = $result->fetch_array(MYSQLI_ASSOC);
 
 		if (! is_array($row)) {

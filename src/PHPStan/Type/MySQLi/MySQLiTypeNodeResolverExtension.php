@@ -17,7 +17,6 @@ use PHPStan\Type\TypeCombinator;
 
 use function count;
 use function sprintf;
-use function str_contains;
 
 use const MYSQLI_ASSOC;
 
@@ -36,11 +35,7 @@ class MySQLiTypeNodeResolverExtension implements TypeNodeResolverExtension, Type
 
 	public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
 	{
-		if (! $typeNode instanceof GenericTypeNode) {
-			return null;
-		}
-
-		if (! str_contains($typeNode->type->name, 'MySQLiTableAssocRowType') || count($typeNode->genericTypes) !== 1) {
+		if (! $typeNode instanceof GenericTypeNode || count($typeNode->genericTypes) !== 1) {
 			return null;
 		}
 
