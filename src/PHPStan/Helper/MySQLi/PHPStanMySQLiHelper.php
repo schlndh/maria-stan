@@ -10,6 +10,8 @@ use MariaStan\Analyser\AnalyserError;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
+use MariaStan\PHPStan\Helper\MariaStanError;
+use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
@@ -52,8 +54,11 @@ final class PHPStanMySQLiHelper
 		if (count($constantStrings) === 0) {
 			return new QueryPrepareCallResult(
 				[
-					"Dynamic SQL: expected query as constant string, got: "
-					. $queryType->describe(VerbosityLevel::precise()),
+					new MariaStanError(
+						"Dynamic SQL: expected query as constant string, got: "
+						. $queryType->describe(VerbosityLevel::precise()),
+						MariaStanErrorIdentifiers::DYNAMIC_SQL,
+					),
 				],
 				[],
 			);
@@ -66,15 +71,21 @@ final class PHPStanMySQLiHelper
 			try {
 				$analyserResults[] = $this->analyser->analyzeQuery($sqlType->getValue());
 			} catch (AnalyserException $e) {
-				$errors[] = $e->getMessage();
+				$errors[] = new MariaStanError(
+					$e->getMessage(),
+					$e->errorType->value,
+				);
 			}
 		}
 
-		$errors = array_unique(
+		$errors = MariaStanError::getUniqueErrors(
 			array_merge(
 				$errors,
 				...array_map(
-					static fn (AnalyserResult $r) => array_map(static fn (AnalyserError $e) => $e->message, $r->errors),
+					static fn (AnalyserResult $r) => array_map(static fn (AnalyserError $e) => new MariaStanError(
+						$e->message,
+						$e->type->value,
+					), $r->errors),
 					$analyserResults,
 				),
 			),
@@ -92,7 +103,12 @@ final class PHPStanMySQLiHelper
 				return new QueryPrepareCallResult(
 					array_merge(
 						$result->errors,
-						['Placeholders cannot be used with query(), use prepared statements.'],
+						[
+							new MariaStanError(
+								'Placeholders cannot be used with query(), use prepared statements.',
+								MariaStanErrorIdentifiers::UNSUPPORTED_PLACEHOLDER,
+							),
+						],
 					),
 					$result->analyserResults,
 				);
@@ -104,7 +120,7 @@ final class PHPStanMySQLiHelper
 
 	/**
 	 * @param array<array<Type>> $executeParamTypes possible params
-	 * @return array<string>
+	 * @return array<MariaStanError>
 	 */
 	public function execute(AnalyserResultPHPStanParams $params, array $executeParamTypes): array
 	{
@@ -128,7 +144,13 @@ final class PHPStanMySQLiHelper
 			$errors[] = "Prepared statement needs {$supportedPlaceholderTxt} parameters, got {$count}.";
 		}
 
-		return array_values(array_unique($errors));
+		return array_map(
+			static fn (string $error) => new MariaStanError(
+				$error,
+				MariaStanErrorIdentifiers::PLACEHOLDER_MISMATCH,
+			),
+			array_values(array_unique($errors)),
+		);
 	}
 
 	public function getRowType(AnalyserResultPHPStanParams $params, ?int $mode): Type

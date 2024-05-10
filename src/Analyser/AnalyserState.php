@@ -121,7 +121,12 @@ final class AnalyserState
 			default:
 				return new AnalyserResult(
 					null,
-					[new AnalyserError("Unsupported query: {$this->queryAst::getQueryType()->value}")],
+					[
+						new AnalyserError(
+							"Unsupported query: {$this->queryAst::getQueryType()->value}",
+							AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+						),
+					],
 					null,
 					null,
 					null,
@@ -169,7 +174,10 @@ final class AnalyserState
 			default:
 				$typeVal = $select::getSelectQueryType()->value;
 				assert(is_string($typeVal));
-				$this->errors[] = new AnalyserError("Unhandled SELECT type {$typeVal}");
+				$this->errors[] = new AnalyserError(
+					"Unhandled SELECT type {$typeVal}",
+					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+				);
 
 				return [[], null];
 		}
@@ -184,6 +192,7 @@ final class AnalyserState
 		if ($select->allowRecursive) {
 			$this->errors[] = new AnalyserError(
 				"WITH RECURSIVE is not currently supported. There may be false positives!",
+				AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
 			);
 		}
 
@@ -191,7 +200,10 @@ final class AnalyserState
 			$subqueryFields = $this->getSubqueryAnalyser($cte->subquery)->analyse()->resultFields ?? [];
 
 			if (count($subqueryFields) === 0) {
-				$this->errors[] = new AnalyserError("CTE {$cte->name} doesn't have any columns.");
+				$this->errors[] = new AnalyserError(
+					"CTE {$cte->name} doesn't have any columns.",
+					AnalyserErrorTypeEnum::INVALID_CTE,
+				);
 
 				continue;
 			}
@@ -201,11 +213,9 @@ final class AnalyserState
 				$columnCount = count($cte->columnList);
 
 				if ($fieldCount !== $columnCount) {
-					$this->errors[] = new AnalyserError(
-						AnalyserErrorMessageBuilder::createDifferentNumberOfWithColumnsErrorMessage(
-							$columnCount,
-							$fieldCount,
-						),
+					$this->errors[] = AnalyserErrorBuilder::createDifferentNumberOfWithColumnsError(
+						$columnCount,
+						$fieldCount,
 					);
 				}
 
@@ -219,7 +229,7 @@ final class AnalyserState
 			try {
 				$this->columnResolver->registerCommonTableExpression($subqueryFields, $cte->name);
 			} catch (AnalyserException $e) {
-				$this->errors[] = new AnalyserError($e->getMessage());
+				$this->errors[] = $e->toAnalyserError();
 			}
 		}
 
@@ -235,13 +245,13 @@ final class AnalyserState
 		$leftFields = $this->getSubqueryAnalyser($select->left)->analyse()->resultFields;
 
 		if ($leftFields === null) {
-			throw new AnalyserException('Subquery fields are null, this should not happen.');
+			throw new ShouldNotHappenException('Subquery fields are null, this should not happen.');
 		}
 
 		$rightFields = $this->getSubqueryAnalyser($select->right)->analyse()->resultFields;
 
 		if ($rightFields === null) {
-			throw new AnalyserException('Subquery fields are null, this should not happen.');
+			throw new ShouldNotHappenException('Subquery fields are null, this should not happen.');
 		}
 
 		$countLeft = count($leftFields);
@@ -250,9 +260,7 @@ final class AnalyserState
 
 		if ($countLeft !== $countRight) {
 			$commonCount = min($countLeft, $countRight);
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createDifferentNumberOfColumnsErrorMessage($countLeft, $countRight),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createDifferentNumberOfColumnsError($countLeft, $countRight);
 		}
 
 		$fields = [];
@@ -312,9 +320,7 @@ final class AnalyserState
 		$maxColCount = max($colCounts);
 
 		if ($minColCount !== $maxColCount) {
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createTvcDifferentNumberOfValues($minColCount, $maxColCount),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createTvcDifferentNumberOfValues($minColCount, $maxColCount);
 		}
 
 		$fields = [];
@@ -360,7 +366,7 @@ final class AnalyserState
 			try {
 				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver)[1];
 			} catch (AnalyserException | DbReflectionException $e) {
-				$this->errors[] = new AnalyserError($e->getMessage());
+				$this->errors[] = $e->toAnalyserError();
 			}
 		}
 
@@ -469,7 +475,7 @@ final class AnalyserState
 						$this->referencedTables[$fromClause->name] ??= new ReferencedSymbol\Table($fromClause->name);
 					}
 				} catch (AnalyserException | DbReflectionException $e) {
-					$this->errors[] = new AnalyserError($e->getMessage());
+					$this->errors[] = $e->toAnalyserError();
 				}
 
 				return [[$fromClause->alias ?? $fromClause->name], $columnResolver];
@@ -484,7 +490,7 @@ final class AnalyserState
 						$fromClause->getAliasOrThrow(),
 					);
 				} catch (AnalyserException $e) {
-					$this->errors[] = new AnalyserError($e->getMessage());
+					$this->errors[] = $e->toAnalyserError();
 				}
 
 				return [[$fromClause->getAliasOrThrow()], $columnResolver];
@@ -529,13 +535,14 @@ final class AnalyserState
 				try {
 					$columnResolver->registerSubquery($tvcFields, $fromClause->getAliasOrThrow());
 				} catch (AnalyserException $e) {
-					$this->errors[] = new AnalyserError($e->getMessage());
+					$this->errors[] = $e->toAnalyserError();
 				}
 
 				return [[$fromClause->getAliasOrThrow()], $columnResolver];
 			default:
 				$this->errors[] = new AnalyserError(
 					'Unhandled table reference type ' . $fromClause::getTableReferenceType()->value,
+					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
 				);
 				break;
 		}
@@ -568,18 +575,14 @@ final class AnalyserState
 					continue;
 				}
 
-				$this->errors[] = new AnalyserError(
-					AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage($table),
-				);
+				$this->errors[] = AnalyserErrorBuilder::createTableDoesntExistError($table);
 			}
 		} catch (AnalyserException | DbReflectionException $e) {
-			$this->errors[] = new AnalyserError($e->getMessage());
+			$this->errors[] = $e->toAnalyserError();
 		}
 
 		foreach ($this->columnResolver->getCollidingSubqueryAndTableAliases() as $alias) {
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createNotUniqueTableAliasError($alias);
 		}
 
 		if ($query->where !== null) {
@@ -604,7 +607,7 @@ final class AnalyserState
 		try {
 			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
 		} catch (AnalyserException | DbReflectionException $e) {
-			$this->errors[] = new AnalyserError($e->getMessage());
+			$this->errors[] = $e->toAnalyserError();
 		}
 
 		foreach ($query->assignments as $assignment) {
@@ -638,7 +641,7 @@ final class AnalyserState
 		try {
 			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver)[1];
 		} catch (AnalyserException | DbReflectionException $e) {
-			$this->errors[] = new AnalyserError($e->getMessage());
+			$this->errors[] = $e->toAnalyserError();
 		}
 
 		$tableSchema = $this->columnResolver->findTableSchema($query->tableName);
@@ -672,11 +675,9 @@ final class AnalyserState
 					break;
 				}
 
-				$this->errors[] = new AnalyserError(
-					AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(
-						$expectedCount,
-						count($selectResult),
-					),
+				$this->errors[] = AnalyserErrorBuilder::createMismatchedInsertColumnCountError(
+					$expectedCount,
+					count($selectResult),
 				);
 
 				break;
@@ -716,11 +717,9 @@ final class AnalyserState
 						continue;
 					}
 
-					$this->errors[] = new AnalyserError(
-						AnalyserErrorMessageBuilder::createMismatchedInsertColumnCountErrorMessage(
-							$expectedCount,
-							count($tuple),
-						),
+					$this->errors[] = AnalyserErrorBuilder::createMismatchedInsertColumnCountError(
+						$expectedCount,
+						count($tuple),
 					);
 
 					// Report only 1 mismatch. The mismatches are probably all going to be the same.
@@ -761,9 +760,7 @@ final class AnalyserState
 				continue;
 			}
 
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createMissingValueForColumnErrorMessage($name),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createMissingValueForColumnError($name);
 		}
 
 		// TODO: INSERT ... ON DUPLICATE KEY
@@ -777,7 +774,7 @@ final class AnalyserState
 		try {
 			$this->dbReflection->findTableSchema($query->tableName);
 		} catch (DbReflectionException $e) {
-			$this->errors[] = new AnalyserError($e->getMessage());
+			$this->errors[] = $e->toAnalyserError();
 		}
 	}
 
@@ -796,16 +793,12 @@ final class AnalyserState
 						$this->fieldBehavior,
 						$condition,
 					);
-
-					foreach ($resolvedColumn->warnings as $warning) {
-						$this->errors[] = new AnalyserError($warning);
-					}
-
+					$this->errors = array_merge($this->errors, $resolvedColumn->warnings);
 					$this->recordColumnReference($resolvedColumn->result->column);
 
 					return $resolvedColumn->result;
 				} catch (AnalyserException $e) {
-					$this->errors[] = new AnalyserError($e->getMessage());
+					$this->errors[] = $e->toAnalyserError();
 				}
 
 				return new ExprTypeResult(new Schema\DbType\MixedType(), true);
@@ -1045,12 +1038,10 @@ final class AnalyserState
 								true,
 							)
 						) {
-							$this->errors[] = new AnalyserError(
-								AnalyserErrorMessageBuilder::createInvalidBinaryOpUsageErrorMessage(
-									$expr->operation,
-									$lt,
-									$rt,
-								),
+							$this->errors[] = AnalyserErrorBuilder::createInvalidBinaryOpUsageError(
+								$expr->operation,
+								$lt,
+								$rt,
 							);
 							$type = new Schema\DbType\MixedType();
 						} else {
@@ -1325,20 +1316,16 @@ final class AnalyserState
 						true,
 					)
 				) {
-					$this->errors[] = new AnalyserError(
-						AnalyserErrorMessageBuilder::createInvalidLikeUsageErrorMessage(
-							$expressionResult->type::getTypeEnum(),
-							$patternResult->type::getTypeEnum(),
-							$escapeCharResult?->type::getTypeEnum(),
-						),
+					$this->errors[] = AnalyserErrorBuilder::createInvalidLikeUsageError(
+						$expressionResult->type::getTypeEnum(),
+						$patternResult->type::getTypeEnum(),
+						$escapeCharResult?->type::getTypeEnum(),
 					);
 				}
 
 				if ($expr->escapeChar instanceof Expr\LiteralString && mb_strlen($expr->escapeChar->value) > 1) {
-					$this->errors[] = new AnalyserError(
-						AnalyserErrorMessageBuilder::createInvalidLikeEscapeMulticharErrorMessage(
-							$expr->escapeChar->value,
-						),
+					$this->errors[] = AnalyserErrorBuilder::createInvalidLikeEscapeMulticharError(
+						$expr->escapeChar->value,
 					);
 				}
 
@@ -1356,7 +1343,10 @@ final class AnalyserState
 					->findFunctionInfoByFunctionName($normalizedFunctionName);
 
 				if ($functionInfo === null) {
-					$this->errors[] = new AnalyserError("Unhandled function: {$expr->getFunctionName()}");
+					$this->errors[] = new AnalyserError(
+						"Unhandled function: {$expr->getFunctionName()}",
+						AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+					);
 				}
 
 				$functionType = $functionInfo?->getFunctionType();
@@ -1384,12 +1374,10 @@ final class AnalyserState
 					$resolvedArguments[] = $resolvedArg = $this->resolveExprType($arg, $innerCondition);
 
 					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
-						$this->errors[] = new AnalyserError(
-							AnalyserErrorMessageBuilder::createInvalidFunctionArgumentErrorMessage(
-								$expr->getFunctionName(),
-								$position,
-								$resolvedArg->type,
-							),
+						$this->errors[] = AnalyserErrorBuilder::createInvalidFunctionArgumentError(
+							$expr->getFunctionName(),
+							$position,
+							$resolvedArg->type,
 						);
 					}
 				}
@@ -1404,7 +1392,7 @@ final class AnalyserState
 					try {
 						return $functionInfo->getReturnType($expr, $resolvedArguments, $condition);
 					} catch (AnalyserException $e) {
-						$this->errors[] = new AnalyserError($e->getMessage());
+						$this->errors[] = $e->toAnalyserError();
 					}
 				}
 
@@ -1482,7 +1470,10 @@ final class AnalyserState
 					$subresult->knowledgeBase,
 				);
 			default:
-				$this->errors[] = new AnalyserError("Unhandled expression type: {$expr::getExprType()->value}");
+				$this->errors[] = new AnalyserError(
+					"Unhandled expression type: {$expr::getExprType()->value}",
+					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+				);
 
 				return new ExprTypeResult(
 					new Schema\DbType\MixedType(),
@@ -1575,17 +1566,13 @@ final class AnalyserState
 		}
 
 		if ($lt !== Schema\DbType\DbTypeEnum::TUPLE) {
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createInvalidTupleComparisonError($left, $right);
 
 			return false;
 		}
 
 		if ($rt !== Schema\DbType\DbTypeEnum::TUPLE) {
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createInvalidTupleComparisonError($left, $right);
 
 			return false;
 		}
@@ -1594,9 +1581,7 @@ final class AnalyserState
 		assert($right instanceof Schema\DbType\TupleType);
 
 		if ($left->typeCount !== $right->typeCount) {
-			$this->errors[] = new AnalyserError(
-				AnalyserErrorMessageBuilder::createInvalidTupleComparisonErrorMessage($left, $right),
-			);
+			$this->errors[] = AnalyserErrorBuilder::createInvalidTupleComparisonError($left, $right);
 
 			return false;
 		}
@@ -1617,9 +1602,7 @@ final class AnalyserState
 		}
 
 		assert($type instanceof Schema\DbType\TupleType);
-		$this->errors[] = new AnalyserError(
-			AnalyserErrorMessageBuilder::createInvalidTupleUsageErrorMessage($type),
-		);
+		$this->errors[] = AnalyserErrorBuilder::createInvalidTupleUsageError($type);
 	}
 
 	/** @param array<ExprTypeResult> $fields */

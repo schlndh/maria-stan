@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\DbReflection;
 
-use MariaStan\Analyser\AnalyserErrorMessageBuilder;
+use MariaStan\Analyser\AnalyserErrorBuilder;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
@@ -47,7 +47,7 @@ class InformationSchemaParser
 	{
 		if (count($tableCols) === 0) {
 			throw new TableDoesNotExistException(
-				AnalyserErrorMessageBuilder::createTableDoesntExistErrorMessage($table),
+				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($table),
 				MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			);
 		}

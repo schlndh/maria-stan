@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
+use MariaStan\PHPStan\Helper\MariaStanError;
 use MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper;
 use MariaStan\PHPStan\MySQLiWrapper;
 use MariaStan\Util\MysqliUtil;
@@ -11,7 +12,6 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\VerbosityLevel;
 
@@ -36,7 +36,7 @@ class MySQLiWrapperRule implements Rule
 		return MethodCall::class;
 	}
 
-	/** @return array<string|RuleError> */
+	/** @inheritDoc */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		assert($node instanceof MethodCall);
@@ -110,6 +110,6 @@ class MySQLiWrapperRule implements Rule
 		$queryType = new ConstantStringType($sql);
 		$result = $this->phpstanMysqliHelper->prepare($queryType);
 
-		return $result->errors;
+		return MariaStanError::arrayToPHPStanRuleErrors($result->errors);
 	}
 }

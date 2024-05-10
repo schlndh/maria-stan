@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
+use MariaStan\PHPStan\Helper\MariaStanError;
+use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
 use MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use mysqli;
@@ -39,7 +41,7 @@ class MySQLiRule implements Rule
 		return MethodCall::class;
 	}
 
-	/** @return array<string|RuleError> */
+	/** @inheritDoc */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		assert($node instanceof MethodCall);
@@ -71,7 +73,7 @@ class MySQLiRule implements Rule
 		};
 	}
 
-	/** @return array<string|RuleError> */
+	/** @return array<RuleError> */
 	private function handleMysqliCall(string $methodName, MethodCall $node, Scope $scope): array
 	{
 		$queryType = $scope->getType($node->getArgs()[0]->value);
@@ -81,7 +83,7 @@ class MySQLiRule implements Rule
 			default => null,
 		};
 
-		return $result->errors ?? [];
+		return MariaStanError::arrayToPHPStanRuleErrors($result->errors ?? []);
 	}
 
 	/** @return array<string|RuleError> */
@@ -95,8 +97,11 @@ class MySQLiRule implements Rule
 
 		if (! $callerType instanceof GenericObjectType) {
 			return [
-				"Dynamic SQL: missing analyser result for mysqli_stmt::{$methodName}() call. Got "
+				MariaStanError::buildPHPSTanRuleError(
+					"Dynamic SQL: missing analyser result for mysqli_stmt::{$methodName}() call. Got "
 					. $callerType->describe(VerbosityLevel::precise()),
+					MariaStanErrorIdentifiers::DYNAMIC_SQL,
+				),
 			];
 		}
 
@@ -104,8 +109,11 @@ class MySQLiRule implements Rule
 
 		if ($params === null) {
 			return [
-				"Dynamic SQL: unable to recover analyser result for mysqli_stmt::{$methodName}() call. Got "
+				MariaStanError::buildPHPSTanRuleError(
+					"Dynamic SQL: unable to recover analyser result for mysqli_stmt::{$methodName}() call. Got "
 					. $callerType->describe(VerbosityLevel::precise()),
+					MariaStanErrorIdentifiers::DYNAMIC_SQL,
+				),
 			];
 		}
 
@@ -120,7 +128,9 @@ class MySQLiRule implements Rule
 			}
 		}
 
-		return $this->phpstanMysqliHelper->execute($params, $executeParamTypes);
+		return MariaStanError::arrayToPHPStanRuleErrors(
+			$this->phpstanMysqliHelper->execute($params, $executeParamTypes),
+		);
 	}
 
 	/** @return array<array<Type>> [possible combinations of params] */

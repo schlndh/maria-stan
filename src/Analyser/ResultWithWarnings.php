@@ -9,7 +9,7 @@ final class ResultWithWarnings
 {
 	/**
 	 * @param TValue $result
-	 * @param array<string> $warnings
+	 * @param array<AnalyserError> $warnings
 	 */
 	public function __construct(public readonly mixed $result, public readonly array $warnings)
 	{

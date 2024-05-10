@@ -6,7 +6,7 @@ namespace MariaStan\Analyser;
 
 final class AnalyserError
 {
-	public function __construct(public readonly string $message)
+	public function __construct(public readonly string $message, public readonly AnalyserErrorTypeEnum $type)
 	{
 	}
 }

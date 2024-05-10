@@ -7,6 +7,7 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\Exception\DuplicateFieldNameException;
 use MariaStan\Analyser\Exception\NotUniqueTableAliasException;
+use MariaStan\Analyser\Exception\ShouldNotHappenException;
 use MariaStan\Analyser\FullyQualifiedColumn\FieldListFullyQualifiedColumn;
 use MariaStan\Analyser\FullyQualifiedColumn\FullyQualifiedColumn;
 use MariaStan\Analyser\FullyQualifiedColumn\FullyQualifiedColumnTypeEnum;
@@ -91,17 +92,13 @@ final class ColumnResolver
 
 		if ($alias !== null) {
 			if (isset($this->tablesByAlias[$alias])) {
-				throw new NotUniqueTableAliasException(
-					AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
-				);
+				throw new NotUniqueTableAliasException($alias);
 			}
 
 			$this->tablesByAlias[$alias] = $table;
 		} else {
 			if (isset($this->tablesWithoutAliasMap[$table])) {
-				throw new NotUniqueTableAliasException(
-					AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($table),
-				);
+				throw new NotUniqueTableAliasException($table);
 			}
 
 			$this->tablesWithoutAliasMap[$table] = true;
@@ -138,9 +135,7 @@ final class ColumnResolver
 	public function registerCommonTableExpression(array $fields, string $name): void
 	{
 		if (isset($this->cteSchemas[$name])) {
-			throw new NotUniqueTableAliasException(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($name),
-			);
+			throw new NotUniqueTableAliasException($name);
 		}
 
 		$columns = $this->getColumnsFromFields($fields);
@@ -163,9 +158,7 @@ final class ColumnResolver
 	{
 		// Subquery can have the same alias as a normal table, so we don't have to check it.
 		if (isset($this->subquerySchemas[$alias])) {
-			throw new NotUniqueTableAliasException(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage($alias),
-			);
+			throw new NotUniqueTableAliasException($alias);
 		}
 
 		$this->tableNamesInOrder[] = [null, $alias];
@@ -174,9 +167,7 @@ final class ColumnResolver
 
 		foreach ($fields as $field) {
 			if (isset($uniqueFieldNameMap[$field->name])) {
-				throw new DuplicateFieldNameException(
-					AnalyserErrorMessageBuilder::createDuplicateColumnName($field->name),
-				);
+				throw new DuplicateFieldNameException($field->name);
 			}
 
 			$field = new QueryResultField(
@@ -207,9 +198,7 @@ final class ColumnResolver
 
 		foreach ($fields as $field) {
 			if (isset($uniqueFieldNameMap[$field->name])) {
-				throw new DuplicateFieldNameException(
-					AnalyserErrorMessageBuilder::createDuplicateColumnName($field->name),
-				);
+				throw new DuplicateFieldNameException($field->name);
 			}
 
 			$uniqueFieldNameMap[$field->name] = true;
@@ -268,8 +257,8 @@ final class ColumnResolver
 			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
 			&& $columnType->column?->tableType !== ColumnInfoTableTypeEnum::TABLE
 		) {
-			throw new AnalyserException(
-				AnalyserErrorMessageBuilder::createAssignToNonWritableColumn($column, $table),
+			throw AnalyserException::fromAnalyserError(
+				AnalyserErrorBuilder::createAssignToReadonlyColumnError($column, $table),
 			);
 		}
 
@@ -337,14 +326,16 @@ final class ColumnResolver
 			}
 
 			if (! $isColumnUsedInFieldList) {
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createInvalidHavingColumn($columnInfo->name),
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createInvalidHavingColumnError($columnInfo->name),
 				);
 			}
 		}
 
 		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
-			?? throw new AnalyserException("Unknown column {$columnInfo->tableAlias}.{$columnInfo->name}");
+			?? throw AnalyserException::fromAnalyserError(
+				AnalyserErrorBuilder::createUnknownColumnError($columnInfo->name, $columnInfo->tableAlias),
+			);
 		$knowledgeBase = null;
 
 		if ($condition === AnalyserConditionTypeEnum::NULL || $condition === AnalyserConditionTypeEnum::NOT_NULL) {
@@ -383,16 +374,16 @@ final class ColumnResolver
 			&& $this->insertReplaceTargetTable !== null
 		) {
 			if ($table !== null && $table !== $this->insertReplaceTargetTable->name) {
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createAssignToNonWritableColumn($column, $table),
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createAssignToReadonlyColumnError($column, $table),
 				);
 			}
 
 			$columnSchema = $this->insertReplaceTargetTable->columns[$column] ?? null;
 
 			if ($columnSchema === null) {
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table),
 				);
 			}
 
@@ -481,8 +472,8 @@ final class ColumnResolver
 				}
 
 				if ($uniqueColumnCount > 1) {
-					throw new AnalyserException(
-						AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage(
+					throw AnalyserException::fromAnalyserError(
+						AnalyserErrorBuilder::createAmbiguousColumnError(
 							$column,
 							$table,
 							$isAmbiguousWarning,
@@ -493,7 +484,7 @@ final class ColumnResolver
 				$warnings = [];
 
 				if ($isAmbiguousWarning) {
-					$warnings[] = AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage(
+					$warnings[] = AnalyserErrorBuilder::createAmbiguousColumnError(
 						$column,
 						$table,
 						$isAmbiguousWarning,
@@ -559,8 +550,8 @@ final class ColumnResolver
 					}
 				}
 
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column, $table),
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table),
 				);
 			case 1:
 				return new ResultWithWarnings(
@@ -568,8 +559,8 @@ final class ColumnResolver
 					[],
 				);
 			default:
-				throw new AnalyserException(
-					AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column, $table),
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createAmbiguousColumnError($column, $table),
 				);
 		}
 	}
@@ -713,9 +704,7 @@ final class ColumnResolver
 		$duplicateAliases = array_intersect_key($this->tablesByAlias, $other->tablesByAlias);
 
 		if (count($duplicateAliases) > 0) {
-			throw new AnalyserException(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage(array_key_first($duplicateAliases)),
-			);
+			throw new NotUniqueTableAliasException(array_key_first($duplicateAliases));
 		}
 
 		$this->tablesByAlias = array_merge($this->tablesByAlias, $other->tablesByAlias);
@@ -727,11 +716,7 @@ final class ColumnResolver
 		$duplicateSubqueries = array_intersect_key($this->subquerySchemas, $other->subquerySchemas);
 
 		if (count($duplicateSubqueries) > 0) {
-			throw new AnalyserException(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage(
-					array_key_first($duplicateSubqueries),
-				),
-			);
+			throw new NotUniqueTableAliasException(array_key_first($duplicateSubqueries));
 		}
 
 		$this->subquerySchemas = array_merge($this->subquerySchemas, $other->subquerySchemas);
@@ -739,11 +724,7 @@ final class ColumnResolver
 		$duplicateTables = array_intersect_key($this->tablesWithoutAliasMap, $other->tablesWithoutAliasMap);
 
 		if (count($duplicateTables) > 0) {
-			throw new AnalyserException(
-				AnalyserErrorMessageBuilder::createNotUniqueTableAliasErrorMessage(
-					array_key_first($duplicateTables),
-				),
-			);
+			throw new NotUniqueTableAliasException(array_key_first($duplicateTables));
 		}
 
 		$this->tablesWithoutAliasMap = array_merge($this->tablesWithoutAliasMap, $other->tablesWithoutAliasMap);
@@ -801,11 +782,15 @@ final class ColumnResolver
 
 		switch (count($candidateTables)) {
 			case 0:
-				throw new AnalyserException(AnalyserErrorMessageBuilder::createUnknownColumnErrorMessage($column));
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createUnknownColumnError($column),
+				);
 			case 1:
 				return;
 			default:
-				throw new AnalyserException(AnalyserErrorMessageBuilder::createAmbiguousColumnErrorMessage($column));
+				throw AnalyserException::fromAnalyserError(
+					AnalyserErrorBuilder::createAmbiguousColumnError($column),
+				);
 		}
 	}
 
@@ -837,7 +822,7 @@ final class ColumnResolver
 	public function exitAggregateFunction(): void
 	{
 		if ($this->aggregateFunctionDepth === 0) {
-			throw new AnalyserException('Invalid state: exiting aggregate function without entering it.');
+			throw new ShouldNotHappenException('Invalid state: exiting aggregate function without entering it.');
 		}
 
 		$this->aggregateFunctionDepth--;

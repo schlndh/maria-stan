@@ -31,7 +31,12 @@ final class Analyser
 
 			return new AnalyserResult(
 				null,
-				[new AnalyserError("Couldn't parse query: '{$queryShort}'. Error: {$e->getMessage()}")],
+				[
+					new AnalyserError(
+						"Couldn't parse query: '{$queryShort}'. Error: {$e->getMessage()}",
+						AnalyserErrorTypeEnum::PARSE,
+					),
+				],
 				null,
 				null,
 				null,
