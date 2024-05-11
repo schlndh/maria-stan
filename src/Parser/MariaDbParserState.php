@@ -99,6 +99,7 @@ use function chr;
 use function count;
 use function implode;
 use function in_array;
+use function is_int;
 use function is_string;
 use function max;
 use function reset;
@@ -2116,6 +2117,7 @@ class MariaDbParserState
 
 		static $inPrecedence = null;
 		$inPrecedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IN);
+		assert(is_int($inPrecedence));
 
 		// If we encounter IN we want to interpret it as the separator between the two arguments
 		$substrExpr = $this->parseExpression($inPrecedence + 1);

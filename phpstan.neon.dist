@@ -12,6 +12,7 @@ parameters:
 		- tests
 	treatPhpDocTypesAsCertain: false
 	checkImplicitMixed: true
+	checkBenevolentUnionTypes: true
 	excludePaths:
 		- tests/*/data/*
 	exceptions:
