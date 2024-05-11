@@ -2606,17 +2606,13 @@ class MariaDbParserState
 		return $indexHints;
 	}
 
-	/**
-	 * @phpstan-impure
-	 * @throws ParserException
-	 */
+	/** @throws ParserException */
 	private function getPreviousToken(): Token
 	{
 		// It can only be called after a token was consumed.
 		return $this->tokens[$this->position - 1] ?? throw new UnexpectedTokenException('No previous token');
 	}
 
-	/** @phpstan-impure */
 	private function findCurrentToken(): ?Token
 	{
 		if ($this->position >= $this->tokenCount) {
@@ -2626,10 +2622,7 @@ class MariaDbParserState
 		return $this->tokens[$this->position];
 	}
 
-	/**
-	 * @phpstan-impure
-	 * @throws ParserException
-	 */
+	/** @throws ParserException */
 	private function getCurrentToken(): Token
 	{
 		return $this->tokens[$this->position] ?? throw new UnexpectedTokenException('Out of tokens');

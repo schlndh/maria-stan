@@ -13,8 +13,8 @@ use mysqli_stmt;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
@@ -73,7 +73,7 @@ class MySQLiRule implements Rule
 		};
 	}
 
-	/** @return array<RuleError> */
+	/** @return list<IdentifierRuleError> */
 	private function handleMysqliCall(string $methodName, MethodCall $node, Scope $scope): array
 	{
 		$queryType = $scope->getType($node->getArgs()[0]->value);
@@ -86,7 +86,7 @@ class MySQLiRule implements Rule
 		return MariaStanError::arrayToPHPStanRuleErrors($result->errors ?? []);
 	}
 
-	/** @return array<string|RuleError> */
+	/** @return list<IdentifierRuleError> */
 	private function handleMysqliStmtCall(string $methodName, MethodCall $node, Scope $scope): array
 	{
 		if ($methodName !== 'execute') {

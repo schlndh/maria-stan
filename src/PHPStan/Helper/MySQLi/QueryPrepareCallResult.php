@@ -10,8 +10,8 @@ use MariaStan\PHPStan\Helper\MariaStanError;
 final class QueryPrepareCallResult
 {
 	/**
-	 * @param array<MariaStanError> $errors
-	 * @param array<AnalyserResult> $analyserResults
+	 * @param list<MariaStanError> $errors
+	 * @param list<AnalyserResult> $analyserResults
 	 */
 	public function __construct(public readonly array $errors, public readonly array $analyserResults)
 	{

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
 use MariaStan\PHPStan\Helper\MariaStanError;
+use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
 use MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper;
 use MariaStan\PHPStan\MySQLiWrapper;
 use MariaStan\Util\MysqliUtil;
@@ -76,8 +77,11 @@ class MySQLiWrapperRule implements Rule
 
 		if (count($tableConstantStrings) !== 1) {
 			return [
-				"Dynamic SQL: expected table as constant string, got: "
+				MariaStanError::buildPHPSTanRuleError(
+					"Dynamic SQL: expected table as constant string, got: "
 					. $tableType->describe(VerbosityLevel::precise()),
+					MariaStanErrorIdentifiers::DYNAMIC_SQL,
+				),
 			];
 		}
 
@@ -86,8 +90,11 @@ class MySQLiWrapperRule implements Rule
 
 		if (count($dataConstantArrays) !== 1) {
 			return [
-				"Dynamic SQL: expected data as constant array, got: "
-				. $dataType->describe(VerbosityLevel::precise()),
+				MariaStanError::buildPHPSTanRuleError(
+					"Dynamic SQL: expected data as constant array, got: "
+					. $dataType->describe(VerbosityLevel::precise()),
+					MariaStanErrorIdentifiers::DYNAMIC_SQL,
+				),
 			];
 		}
 

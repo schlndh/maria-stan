@@ -123,6 +123,7 @@ class DbReflectionTest extends TestCase
 
 		assert(self::$dumpFile !== null);
 		$meta_data = stream_get_meta_data(self::$dumpFile);
+		self::assertArrayHasKey('uri', $meta_data);
 		$filename = $meta_data["uri"];
 
 		yield 'file - current' => [new MariaDbFileDbReflection($filename, $informationSchemaParser)];

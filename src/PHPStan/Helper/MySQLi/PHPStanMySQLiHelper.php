@@ -120,7 +120,7 @@ final class PHPStanMySQLiHelper
 
 	/**
 	 * @param array<array<Type>> $executeParamTypes possible params
-	 * @return array<MariaStanError>
+	 * @return list<MariaStanError>
 	 */
 	public function execute(AnalyserResultPHPStanParams $params, array $executeParamTypes): array
 	{

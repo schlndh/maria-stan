@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Helper;
 
-use PHPStan\Rules\RuleError;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use function array_map;
@@ -16,12 +16,12 @@ final class MariaStanError
 	{
 	}
 
-	public function toPHPStanRuleError(): RuleError
+	public function toPHPStanRuleError(): IdentifierRuleError
 	{
 		return self::buildPHPSTanRuleError($this->error, $this->identifier);
 	}
 
-	public static function buildPHPSTanRuleError(string $message, string $identifier): RuleError
+	public static function buildPHPSTanRuleError(string $message, string $identifier): IdentifierRuleError
 	{
 		return RuleErrorBuilder::message($message)
 			->identifier('mariaStan.' . $identifier)
@@ -29,8 +29,8 @@ final class MariaStanError
 	}
 
 	/**
-	 * @param array<self> $errors
-	 * @return array<RuleError>
+	 * @param list<self> $errors
+	 * @return list<IdentifierRuleError>
 	 */
 	public static function arrayToPHPStanRuleErrors(array $errors): array
 	{
