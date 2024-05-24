@@ -2334,6 +2334,24 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
+
+		yield 'cannot use table alias from two levels up' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT t.a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a', 't'),
+			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+		];
+
+		yield 'cannot use column from two levels up' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'cannot use field alias from two levels up' => [
+			'query' => 'SELECT 1 a, (SELECT * FROM (SELECT a) t);',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */

@@ -368,6 +368,7 @@ final class ColumnResolver
 		string $column,
 		?string $table,
 		ColumnResolverFieldBehaviorEnum $fieldBehavior,
+		bool $allowParentColumn = true,
 	): ResultWithWarnings {
 		if (
 			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
@@ -510,6 +511,12 @@ final class ColumnResolver
 
 		switch (count($candidateTables)) {
 			case 0:
+				if (! $allowParentColumn) {
+					throw AnalyserException::fromAnalyserError(
+						AnalyserErrorBuilder::createUnknownColumnError($column, $table),
+					);
+				}
+
 				$resolvedParentColumn = null;
 
 				if ($this->aggregateFunctionDepth > 0) {
@@ -517,7 +524,7 @@ final class ColumnResolver
 				}
 
 				try {
-					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table, $fieldBehavior);
+					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table, $fieldBehavior, false);
 				} catch (AnalyserException) {
 				}
 
