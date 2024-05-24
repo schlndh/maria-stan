@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method MariaStan\\\\PHPStan\\\\Helper\\\\MariaStanError\\:\\:buildPHPSTanRuleError\\(\\) should return PHPStan\\\\Rules\\\\IdentifierRuleError but returns PHPStan\\\\Rules\\\\RuleError\\.$#"
-			count: 1
-			path: src/PHPStan/Helper/MariaStanError.php
-
-		-
 			message: "#^Doing instanceof PHPStan\\\\Type\\\\Constant\\\\ConstantStringType is error\\-prone and deprecated\\. Use Type\\:\\:getConstantStrings\\(\\) instead\\.$#"
 			count: 1
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
