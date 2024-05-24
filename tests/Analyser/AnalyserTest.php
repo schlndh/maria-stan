@@ -474,6 +474,8 @@ class AnalyserTest extends TestCase
 			'NOW() - INTERVAL 10 DAY',
 			'1 IN (1, 2)',
 			'1 IN (NULL)',
+			'1 IN (SELECT * FROM (SELECT id FROM analyser_test LIMIT 10) t)',
+			'1 IN (WITH t AS (SELECT * FROM analyser_test LIMIT 10) SELECT id FROM t)',
 			'NULL IN (1)',
 			'NULL IN (NULL)',
 			'(1, 2) IN ((1, NULL))',
@@ -2039,6 +2041,7 @@ class AnalyserTest extends TestCase
 		yield from $this->provideInvalidUpdateTestData();
 		yield from $this->provideInvalidDeleteTestData();
 		yield from $this->provideInvalidTableValueConstructorData();
+		yield from self::provideInvalidUnsupportedFeaturesData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -2933,6 +2936,43 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id'),
 			'DB error code' => MariaDbErrorCodes::ER_FIELD_REFERENCE_IN_TVC,
 		];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private static function provideInvalidUnsupportedFeaturesData(): iterable
+	{
+		yield 'LIMIT inside of IN - simple' => [
+			'query' => 'SELECT 1 IN (SELECT id FROM analyser_test LIMIT 10)',
+			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
+			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		];
+
+		yield 'LIMIT inside of IN - WITH ... SIMPLE' => [
+			'query' => 'SELECT 1 IN (WITH t AS (SELECT * FROM analyser_test) SELECT id FROM t LIMIT 10)',
+			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
+			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		];
+
+		yield 'LIMIT inside of IN - WITH ... UNION' => [
+			'query' => 'SELECT 1 IN (
+				WITH t AS (SELECT * FROM analyser_test) SELECT id FROM t UNION ALL SELECT id FROM t LIMIT 10
+			)',
+			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
+			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		];
+
+		yield 'LIMIT inside of IN - UNION top level LIMIT' => [
+			'query' => 'SELECT 1 IN (SELECT id FROM analyser_test UNION ALL SELECT id FROM analyser_test LIMIT 50)',
+			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
+			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		];
+
+		// TODO: fix this. Currently we're unable to parse the query.
+		//yield 'LIMIT inside of IN - UNION subquery LIMIT' => [
+		//	'query' => 'SELECT 1 IN ((SELECT id FROM analyser_test LIMIT 50) UNION ALL SELECT id FROM analyser_test)',
+		//	'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
+		//	'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		//];
 	}
 
 	/**

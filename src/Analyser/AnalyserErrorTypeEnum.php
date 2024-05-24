@@ -10,6 +10,7 @@ enum AnalyserErrorTypeEnum: string
 	case ASSIGN_TO_READONLY_COLUMN = 'assignToReadonlyColumn';
 	case COLUMN_MISMATCH = 'columnMismatch';
 	case DB_REFLECTION = 'dbReflection';
+	case DB_UNSUPPORTED_FEATURE = 'dbUnsupportedFeature';
 	case DUPLICATE_COLUMN = 'duplicateColumn';
 	case INVALID_BINARY_OP = 'invalidBinaryOp';
 	case INVALID_CTE = 'invalidCTE';
@@ -19,10 +20,10 @@ enum AnalyserErrorTypeEnum: string
 	case INVALID_HAVING_COLUMN = 'invalidHavingColumn';
 	case INVALID_TUPLE_USAGE = 'invalidTupleUsage';
 	case NON_UNIQUE_TABLE_ALIAS = 'nonUniqueTableAlias';
+	case MARIA_STAN_UNSUPPORTED_FEATURE = 'mariaStanUnsupportedFeature';
 	case MISSING_COLUMN_VALUE = 'missingColumnValue';
 	case OTHER = 'other';
 	case PARSE = 'parse';
 	case UNKNOWN_TABLE = 'unknownTable';
 	case UNKNOWN_COLUMN = 'unknownColumn';
-	case UNSUPPORTED_FEATURE = 'unsupportedFeature';
 }

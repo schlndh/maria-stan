@@ -186,6 +186,14 @@ class AnalyserErrorBuilder
 		);
 	}
 
+	public static function createNoLimitInsideIn(): AnalyserError
+	{
+		return new AnalyserError(
+			'MariaDB does not support LIMIT inside of IN/ALL/ANY/SOME subquery.',
+			AnalyserErrorTypeEnum::DB_UNSUPPORTED_FEATURE,
+		);
+	}
+
 	private static function formatDbType(DbType $type): string
 	{
 		if ($type::getTypeEnum() === DbTypeEnum::TUPLE) {

@@ -40,6 +40,9 @@ class MariaDbErrorCodes
 	// 1222	21000	ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT The used SELECT statements have a different number of columns
 	public const ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT = 1222;
 
+	// 1235	42000	ER_NOT_SUPPORTED_YET	This version of MariaDB doesn't yet support '%s'
+	public const ER_NOT_SUPPORTED_YET = 1235;
+
 	// 1241	21000	ER_OPERAND_COLUMNS	Operand should contain %d column(s)
 	public const ER_OPERAND_COLUMNS = 1241;
 

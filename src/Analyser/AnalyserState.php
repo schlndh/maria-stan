@@ -124,7 +124,7 @@ final class AnalyserState
 					[
 						new AnalyserError(
 							"Unsupported query: {$this->queryAst::getQueryType()->value}",
-							AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+							AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 						),
 					],
 					null,
@@ -176,7 +176,7 @@ final class AnalyserState
 				assert(is_string($typeVal));
 				$this->errors[] = new AnalyserError(
 					"Unhandled SELECT type {$typeVal}",
-					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+					AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 				);
 
 				return [[], null];
@@ -192,7 +192,7 @@ final class AnalyserState
 		if ($select->allowRecursive) {
 			$this->errors[] = new AnalyserError(
 				"WITH RECURSIVE is not currently supported. There may be false positives!",
-				AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+				AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 			);
 		}
 
@@ -542,7 +542,7 @@ final class AnalyserState
 			default:
 				$this->errors[] = new AnalyserError(
 					'Unhandled table reference type ' . $fromClause::getTableReferenceType()->value,
-					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+					AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 				);
 				break;
 		}
@@ -1288,6 +1288,12 @@ final class AnalyserState
 					$knowledgeBase = $leftResult->knowledgeBase->and($rightResult->knowledgeBase);
 				}
 
+				if ($expr->right instanceof Expr\Subquery) {
+					if ($this->hasLimitClause($expr->right->query)) {
+						$this->errors[] = AnalyserErrorBuilder::createNoLimitInsideIn();
+					}
+				}
+
 				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
 					$leftResult->isNullable || $rightResult->isNullable,
@@ -1345,7 +1351,7 @@ final class AnalyserState
 				if ($functionInfo === null) {
 					$this->errors[] = new AnalyserError(
 						"Unhandled function: {$expr->getFunctionName()}",
-						AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+						AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 					);
 				}
 
@@ -1472,7 +1478,7 @@ final class AnalyserState
 			default:
 				$this->errors[] = new AnalyserError(
 					"Unhandled expression type: {$expr::getExprType()->value}",
-					AnalyserErrorTypeEnum::UNSUPPORTED_FEATURE,
+					AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
 				);
 
 				return new ExprTypeResult(
@@ -1688,6 +1694,27 @@ final class AnalyserState
 			return $fn();
 		} finally {
 			$this->fieldBehavior = $bak;
+		}
+	}
+
+	private function hasLimitClause(SelectQuery $selectQuery): bool
+	{
+		switch ($selectQuery::getSelectQueryType()) {
+			case SelectQueryTypeEnum::SIMPLE:
+				assert($selectQuery instanceof SimpleSelectQuery);
+
+				return $selectQuery->limit !== null;
+			case SelectQueryTypeEnum::WITH:
+				assert($selectQuery instanceof WithSelectQuery);
+
+				return $this->hasLimitClause($selectQuery->selectQuery);
+			case SelectQueryTypeEnum::TABLE_VALUE_CONSTRUCTOR:
+				return false;
+			case SelectQueryTypeEnum::COMBINED:
+				assert($selectQuery instanceof CombinedSelectQuery);
+
+				return $selectQuery->limit !== null || $this->hasLimitClause($selectQuery->left)
+					|| $this->hasLimitClause($selectQuery->right);
 		}
 	}
 }
