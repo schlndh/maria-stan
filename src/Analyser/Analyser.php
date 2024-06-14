@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Analyser\PlaceholderTypeProvider\MixedPlaceholderTypeProvider;
+use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\Parser\Exception\ParserException;
@@ -21,9 +23,16 @@ final class Analyser
 	) {
 	}
 
-	/** @throws AnalyserException */
-	public function analyzeQuery(string $query): AnalyserResult
-	{
+	/**
+	 * @param ?PlaceholderTypeProvider $placeholderTypeProvider Pass PlaceholderTypeProvider to narrow down placeholder
+	 * 	types. If you pass null, then all placeholders will get nullable mixed type. If you bind all placeholders as
+	 * 	strings, you can pass {@see VarcharPlaceholderTypeProvider}.
+	 * @throws AnalyserException
+	 */
+	public function analyzeQuery(
+		string $query,
+		?PlaceholderTypeProvider $placeholderTypeProvider = null,
+	): AnalyserResult {
 		try {
 			$ast = $this->parser->parseSingleQuery($query);
 		} catch (ParserException $e) {
@@ -43,6 +52,14 @@ final class Analyser
 			);
 		}
 
-		return (new AnalyserState($this->dbReflection, $this->functionInfoRegistry, $ast, $query))->analyse();
+		$placeholderTypeProvider ??= new MixedPlaceholderTypeProvider();
+
+		return (new AnalyserState(
+			$this->dbReflection,
+			$this->functionInfoRegistry,
+			$placeholderTypeProvider,
+			$ast,
+			$query,
+		))->analyse();
 	}
 }

@@ -6,7 +6,10 @@ namespace MariaStan\Analyser;
 
 use DateTimeImmutable;
 use MariaStan\Analyser\Exception\DuplicateFieldNameException;
+use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
+use MariaStan\Analyser\PlaceholderTypeProvider\VarcharPlaceholderTypeProvider;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
+use MariaStan\Ast\Expr\Placeholder;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\DbReflection\InformationSchemaParser;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
@@ -14,8 +17,10 @@ use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\EnumType;
+use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\TupleType;
+use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
 use mysqli_result;
@@ -1247,7 +1252,7 @@ class AnalyserTest extends TestCase
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$analyser = $this->createAnalyser();
-		$result = $analyser->analyzeQuery($query);
+		$result = $analyser->analyzeQuery($query, new VarcharPlaceholderTypeProvider());
 		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
 			$e->message,
 			'Unhandled expression type',
@@ -1841,7 +1846,7 @@ class AnalyserTest extends TestCase
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$analyser = $this->createAnalyser();
-		$result = $analyser->analyzeQuery($query);
+		$result = $analyser->analyzeQuery($query, new VarcharPlaceholderTypeProvider());
 
 		$this->assertSame(count($params), $result->positionalPlaceholderCount);
 		$db->begin_transaction();
@@ -3228,6 +3233,72 @@ class AnalyserTest extends TestCase
 		}
 
 		$this->assertLessThanOrEqual($expectedRange->max, count($rows));
+	}
+
+	public function testPlaceholderTypeProvider(): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$analyser = $this->createAnalyser();
+		$query = 'SELECT ?, ?, ?';
+		$params = array_fill(0, 3, 1);
+		$paramTypeString = 'ids';
+		$result = $analyser->analyzeQuery($query, new class implements PlaceholderTypeProvider {
+			public function getPlaceholderDbType(Placeholder $placeholder): DbType
+			{
+				return match ($placeholder->name) {
+					1 => new IntType(),
+					2 => new FloatType(),
+					3 => new VarcharType(),
+					default => AnalyserTest::fail("Unhandled placeholder: {$placeholder->name}"),
+				};
+			}
+
+			public function isPlaceholderNullable(Placeholder $placeholder): bool
+			{
+				return $placeholder->name === 2;
+			}
+		});
+
+		$this->assertSame(count($params), $result->positionalPlaceholderCount);
+		$db->begin_transaction();
+
+		try {
+			$stmt = $db->prepare($query);
+			$stmt->bind_param($paramTypeString, ...$params);
+			$stmt->execute();
+			$dbResult = $stmt->get_result();
+			$warningArr = $this->getRelevantWarnings($db);
+
+			$this->assertInstanceOf(mysqli_result::class, $dbResult);
+			$fields = $dbResult->fetch_fields();
+			$rows = $dbResult->fetch_all(MYSQLI_NUM);
+			$dbResult->close();
+			$stmt->close();
+		} finally {
+			$db->rollback();
+		}
+
+		if (count($warningArr) > 0) {
+			$this->fail("Warnings: " . implode("\n", $warningArr));
+		}
+
+		$this->assertNotNull($result->resultFields);
+		$this->assertSameSize($result->resultFields, $fields);
+		$this->assertCount(1, $rows);
+		$firstRow = $rows[0];
+		$this->assertIsArray($firstRow);
+
+		$this->assertSame(DbTypeEnum::INT, $result->resultFields[0]->exprType->type::getTypeEnum());
+		$this->assertSame(DbTypeEnum::FLOAT, $result->resultFields[1]->exprType->type::getTypeEnum());
+		$this->assertSame(DbTypeEnum::VARCHAR, $result->resultFields[2]->exprType->type::getTypeEnum());
+
+		$this->assertFalse($result->resultFields[0]->exprType->isNullable);
+		$this->assertTrue($result->resultFields[1]->exprType->isNullable);
+		$this->assertFalse($result->resultFields[2]->exprType->isNullable);
+
+		$this->assertIsInt($firstRow[0]);
+		$this->assertIsFloat($firstRow[1]);
+		$this->assertIsString($firstRow[2]);
 	}
 
 	/**

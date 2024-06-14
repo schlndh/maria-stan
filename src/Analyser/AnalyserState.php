@@ -6,6 +6,7 @@ namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\Exception\ShouldNotHappenException;
+use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
 use MariaStan\Ast\Expr;
 use MariaStan\Ast\Node;
 use MariaStan\Ast\Query\DeleteQuery;
@@ -81,6 +82,7 @@ final class AnalyserState
 	public function __construct(
 		private readonly DbReflection $dbReflection,
 		private readonly FunctionInfoRegistry $functionInfoRegistry,
+		private readonly PlaceholderTypeProvider $placeholderTypeProvider,
 		private readonly Query $queryAst,
 		private readonly string $query,
 		?ColumnResolver $columnResolver = null,
@@ -1197,11 +1199,11 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::PLACEHOLDER:
 				$this->positionalPlaceholderCount++;
+				assert($expr instanceof Expr\Placeholder);
 
-				// TODO: is VARCHAR just a side-effect of the way mysqli binds the parameters?
 				return new ExprTypeResult(
-					new Schema\DbType\VarcharType(),
-					true,
+					$this->placeholderTypeProvider->getPlaceholderDbType($expr),
+					$this->placeholderTypeProvider->isPlaceholderNullable($expr),
 					null,
 					AnalyserKnowledgeBase::createEmpty(),
 				);
@@ -1547,6 +1549,7 @@ final class AnalyserState
 		$other = new self(
 			$this->dbReflection,
 			$this->functionInfoRegistry,
+			$this->placeholderTypeProvider,
 			$subquery,
 			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
 			$this->query,
