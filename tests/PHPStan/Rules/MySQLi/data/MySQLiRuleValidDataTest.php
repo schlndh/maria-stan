@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 use function rand;
 
+use const PHP_VERSION_ID;
+
 class MySQLiRuleValidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
@@ -67,6 +69,11 @@ class MySQLiRuleValidDataTest extends TestCase
 		$stmt = $db->prepare('SELECT ?, ?');
 		$stmt->execute($params);
 		$stmt->close();
+
+		if (PHP_VERSION_ID >= 80200) {
+			$result = $db->execute_query('SELECT ?', [1]);
+			$result->close();
+		}
 
 		// Make phpunit happy. I just care that it doesn't throw an exception and that phpstan doesn't report errors.
 		$this->assertTrue(true);

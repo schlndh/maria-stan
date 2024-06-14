@@ -15,14 +15,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
-use function array_map;
-use function array_merge;
 use function assert;
 use function count;
 use function reset;
@@ -76,9 +71,15 @@ class MySQLiRule implements Rule
 	/** @return list<IdentifierRuleError> */
 	private function handleMysqliCall(string $methodName, MethodCall $node, Scope $scope): array
 	{
-		$queryType = $scope->getType($node->getArgs()[0]->value);
+		// TODO: normalized arguments - this doesn't work with named arguments.
+		$args = $node->getArgs();
+		$queryType = $scope->getType($args[0]->value);
 		$result = match ($methodName) {
 			'query' => $this->phpstanMysqliHelper->query($queryType),
+			'execute_query' => $this->phpstanMysqliHelper->executeQuery(
+				$queryType,
+				$this->phpstanMysqliHelper->getExecuteParamTypesFromArgument($scope, $args[1] ?? null),
+			),
 			'prepare' => $this->phpstanMysqliHelper->prepare($queryType),
 			default => null,
 		};
@@ -117,39 +118,13 @@ class MySQLiRule implements Rule
 			];
 		}
 
-		$executeParamTypes = [[]];
-
-		if (count($node->getArgs()) > 0) {
-			$paramsType = $scope->getType($node->getArgs()[0]->value);
-			$executeParamTypes = $this->getExecuteParamTypesFromType($paramsType);
-
-			if (count($executeParamTypes) === 0) {
-				return [];
-			}
-		}
+		$executeParamTypes = $this->phpstanMysqliHelper->getExecuteParamTypesFromArgument(
+			$scope,
+			$node->getArgs()[0] ?? null,
+		);
 
 		return MariaStanError::arrayToPHPStanRuleErrors(
 			$this->phpstanMysqliHelper->execute($params, $executeParamTypes),
 		);
-	}
-
-	/** @return array<array<Type>> [possible combinations of params] */
-	private function getExecuteParamTypesFromType(Type $type): array
-	{
-		if ($type->isNull()->yes()) {
-			return [[]];
-		}
-
-		if ($type instanceof UnionType) {
-			$subParams = [];
-
-			foreach ($type->getTypes() as $subtype) {
-				$subParams = array_merge($subParams, $this->getExecuteParamTypesFromType($subtype));
-			}
-
-			return $subParams;
-		}
-
-		return array_map(static fn (ConstantArrayType $t) => $t->getValueTypes(), $type->getConstantArrays());
 	}
 }

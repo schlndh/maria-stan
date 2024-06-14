@@ -13,6 +13,8 @@ use ValueError;
 
 use function rand;
 
+use const PHP_VERSION_ID;
+
 class MySQLiRuleInvalidDataTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
@@ -111,6 +113,19 @@ class MySQLiRuleInvalidDataTest extends TestCase
 			$stmt->execute($params);
 			$this->fail('Exception expected');
 		} catch (ValueError) {
+		}
+
+		// phpcs:ignore SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed
+		if (PHP_VERSION_ID >= 80200) {
+			$params = rand()
+				? [1, 2, 3]
+				: ['a', 'b', 'c'];
+
+			try {
+				$db->execute_query('SELECT ?, ?', $params);
+				$this->fail('Exception expected');
+			} catch (ValueError) {
+			}
 		}
 	}
 

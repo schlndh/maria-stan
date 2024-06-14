@@ -36,7 +36,7 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 
 	public function isMethodSupported(MethodReflection $methodReflection): bool
 	{
-		return in_array($methodReflection->getName(), ['query', 'prepare'], true);
+		return in_array($methodReflection->getName(), ['query', 'prepare', 'execute_query'], true);
 	}
 
 	public function getTypeFromMethodCall(
@@ -44,9 +44,18 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		MethodCall $methodCall,
 		Scope $scope,
 	): ?Type {
-		$queryType = $scope->getType($methodCall->getArgs()[0]->value);
+		// TODO: normalized arguments - this doesn't work with named arguments.
+		$args = $methodCall->getArgs();
+		$queryType = $scope->getType($args[0]->value);
 		[$returnClass, $result] = match ($methodReflection->getName()) {
 			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->query($queryType)],
+			'execute_query' => [
+				mysqli_result::class,
+				$this->phpstanMysqliHelper->executeQuery(
+					$queryType,
+					$this->phpstanMysqliHelper->getExecuteParamTypesFromArgument($scope, $args[1] ?? null),
+				),
+			],
 			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->prepare($queryType)],
 			default => [null, null],
 		};

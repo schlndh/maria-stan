@@ -13,7 +13,10 @@ use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\MariaStanError;
 use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
+use PhpParser\Node\Arg;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
@@ -23,6 +26,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
@@ -153,6 +157,25 @@ final class PHPStanMySQLiHelper
 		);
 	}
 
+	/** @param array<array<Type>> $executeParamTypes possible params */
+	public function executeQuery(Type $queryType, array $executeParamTypes): QueryPrepareCallResult
+	{
+		$prepareResult = $this->prepare($queryType);
+		$phpstanParams = $this->phpstanHelper
+			->createPhpstanParamsFromMultipleAnalyserResults($prepareResult->analyserResults);
+
+		if ($phpstanParams === null) {
+			return $prepareResult;
+		}
+
+		$executeErrors = $this->execute($phpstanParams, $executeParamTypes);
+
+		return new QueryPrepareCallResult(
+			array_merge($prepareResult->errors, $executeErrors),
+			$prepareResult->analyserResults,
+		);
+	}
+
 	public function getRowType(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
 		$types = [];
@@ -244,5 +267,35 @@ final class PHPStanMySQLiHelper
 	public function fetchAll(AnalyserResultPHPStanParams $params, ?int $mode): Type
 	{
 		return new ArrayType(new IntegerType(), $this->getRowType($params, $mode));
+	}
+
+	/** @return array<array<Type>> [possible combinations of params] */
+	public function getExecuteParamTypesFromType(Type $type): array
+	{
+		if ($type->isNull()->yes()) {
+			return [[]];
+		}
+
+		if ($type instanceof UnionType) {
+			$subParams = [];
+
+			foreach ($type->getTypes() as $subtype) {
+				$subParams = array_merge($subParams, $this->getExecuteParamTypesFromType($subtype));
+			}
+
+			return $subParams;
+		}
+
+		return array_map(static fn (ConstantArrayType $t) => $t->getValueTypes(), $type->getConstantArrays());
+	}
+
+	/** @return array<array<Type>> [possible combinations of params] */
+	public function getExecuteParamTypesFromArgument(Scope $scope, ?Arg $arg): array
+	{
+		if ($arg === null) {
+			return [[]];
+		}
+
+		return $this->getExecuteParamTypesFromType($scope->getType($arg->value));
 	}
 }

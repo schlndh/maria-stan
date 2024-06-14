@@ -1,15 +1,16 @@
-35: Dynamic SQL: expected query as constant string, got: non-falsy-string
-41: Dynamic SQL: expected query as constant string, got: non-falsy-string
-49: Unknown column 'missing'
-56: Placeholders cannot be used with query(), use prepared statements.
-65: Prepared statement needs 1 parameters, got 0.
-74: Prepared statement needs 1 parameters, got 0.
-82: Prepared statement needs 1 parameters, got 0.
-91: Prepared statement needs 0 parameters, got 3.
-97: Couldn't parse query: 'asdlajkd qeosdasd ?'. Error: Unsupported query.
-99: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
-111: Prepared statement needs 2 parameters, got 3.
-121: Dynamic SQL: expected query as constant string, got: non-falsy-string
-124: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
-134: Table 'missing_table' doesn't exist
-147: Prepared statement needs 1, 2 parameters, got 3.
+37: Dynamic SQL: expected query as constant string, got: non-falsy-string
+43: Dynamic SQL: expected query as constant string, got: non-falsy-string
+51: Unknown column 'missing'
+58: Placeholders cannot be used with query(), use prepared statements.
+67: Prepared statement needs 1 parameters, got 0.
+76: Prepared statement needs 1 parameters, got 0.
+84: Prepared statement needs 1 parameters, got 0.
+93: Prepared statement needs 0 parameters, got 3.
+99: Couldn't parse query: 'asdlajkd qeosdasd ?'. Error: Unsupported query.
+101: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
+113: Prepared statement needs 2 parameters, got 3.
+125: Prepared statement needs 2 parameters, got 3.
+136: Dynamic SQL: expected query as constant string, got: non-falsy-string
+139: Dynamic SQL: missing analyser result for mysqli_stmt::execute() call. Got mysqli_stmt
+149: Table 'missing_table' doesn't exist
+162: Prepared statement needs 1, 2 parameters, got 3.
