@@ -561,6 +561,7 @@ MariaStan\Ast\Query\UpdateQuery
 						)
 					[expression] => MariaStan\Ast\Expr\Placeholder
 						(
+							[name] => 1
 						)
 				)
 		)
@@ -573,6 +574,7 @@ MariaStan\Ast\Query\UpdateQuery
 				)
 			[right] => MariaStan\Ast\Expr\Placeholder
 				(
+					[name] => 2
 				)
 		)
 	[orderBy] => MariaStan\Ast\OrderBy
@@ -583,6 +585,7 @@ MariaStan\Ast\Query\UpdateQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Placeholder
 								(
+									[name] => 3
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::ASC
 						)
@@ -590,6 +593,7 @@ MariaStan\Ast\Query\UpdateQuery
 		)
 	[limit] => MariaStan\Ast\Expr\Placeholder
 		(
+			[name] => 4
 		)
 	[ignoreErrors] => false
 )

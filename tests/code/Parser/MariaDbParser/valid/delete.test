@@ -476,6 +476,7 @@ MariaStan\Ast\Query\DeleteQuery
 		)
 	[where] => MariaStan\Ast\Expr\Placeholder
 		(
+			[name] => 1
 		)
 	[orderBy] => MariaStan\Ast\OrderBy
 		(
@@ -485,6 +486,7 @@ MariaStan\Ast\Query\DeleteQuery
 						(
 							[expr] => MariaStan\Ast\Expr\Placeholder
 								(
+									[name] => 2
 								)
 							[direction] => MariaStan\Ast\DirectionEnum::ASC
 						)
@@ -492,6 +494,7 @@ MariaStan\Ast\Query\DeleteQuery
 		)
 	[limit] => MariaStan\Ast\Expr\Placeholder
 		(
+			[name] => 3
 		)
 	[ignoreErrors] => false
 )

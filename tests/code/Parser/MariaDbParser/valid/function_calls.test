@@ -3286,6 +3286,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[expression] => MariaStan\Ast\Expr\Placeholder
 								(
+									[name] => 1
 								)
 							[castType] => MariaStan\Ast\Expr\CastType\IntegerCastType
 								(
@@ -3930,6 +3931,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[0] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 								)
 							[separator] => ,
@@ -4209,6 +4211,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												(
 													[expr] => MariaStan\Ast\Expr\Placeholder
 														(
+															[name] => 1
 														)
 													[direction] => MariaStan\Ast\DirectionEnum::DESC
 												)
@@ -4319,9 +4322,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[count] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 2
 										)
 									[offset] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 								)
 							[isDistinct] => false
@@ -4489,9 +4494,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[count] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 									[offset] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 2
 										)
 								)
 							[isDistinct] => false
@@ -4550,6 +4557,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 						(
 							[expression] => MariaStan\Ast\Expr\Placeholder
 								(
+									[name] => 1
 								)
 							[isDistinct] => false
 						)
@@ -4679,9 +4687,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[count] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 2
 										)
 									[offset] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 								)
 							[isDistinct] => false
@@ -4833,9 +4843,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[count] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 									[offset] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 2
 										)
 								)
 							[isDistinct] => false
@@ -5215,6 +5227,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[timeUnit] => MariaStan\Ast\Expr\TimeUnitEnum::SECOND
 							[from] => MariaStan\Ast\Expr\Placeholder
 								(
+									[name] => 1
 								)
 						)
 				)
@@ -5510,12 +5523,15 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								(
 									[0] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 1
 										)
 									[1] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 2
 										)
 									[2] => MariaStan\Ast\Expr\Placeholder
 										(
+											[name] => 3
 										)
 								)
 							[isDistinct] => false

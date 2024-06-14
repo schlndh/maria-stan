@@ -598,9 +598,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[count] => MariaStan\Ast\Expr\Placeholder
 				(
+					[name] => 2
 				)
 			[offset] => MariaStan\Ast\Expr\Placeholder
 				(
+					[name] => 1
 				)
 		)
 	[isDistinct] => false
@@ -617,6 +619,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				(
 					[expr] => MariaStan\Ast\Expr\Placeholder
 						(
+							[name] => 1
 						)
 				)
 		)

@@ -125,6 +125,7 @@ class MariaDbParserState
 	private int $position = 0;
 	private int $tokenCount;
 	private bool $isInOnDuplicateKeyUpdate = false;
+	private int $positionalPlaceholderIdx = 0;
 
 	/** @param array<Token> $tokens */
 	public function __construct(
@@ -1622,6 +1623,7 @@ class MariaDbParserState
 			return new Placeholder(
 				$positionalPlaceholderToken->position,
 				$positionalPlaceholderToken->getEndPosition(),
+				$this->incrementPositionalPlaceholderIdx(),
 			);
 		}
 
@@ -2446,7 +2448,7 @@ class MariaDbParserState
 			);
 		}
 
-		return new Placeholder($token->position, $token->getEndPosition());
+		return new Placeholder($token->position, $token->getEndPosition(), $this->incrementPositionalPlaceholderIdx());
 	}
 
 	/** @throws ParserException */
@@ -2847,5 +2849,12 @@ class MariaDbParserState
 		}
 
 		return $token->type->value;
+	}
+
+	private function incrementPositionalPlaceholderIdx(): int
+	{
+		$this->positionalPlaceholderIdx++;
+
+		return $this->positionalPlaceholderIdx;
 	}
 }
