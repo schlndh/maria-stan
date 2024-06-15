@@ -46,6 +46,7 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				'fetch_all',
 				'fetch_row',
 				'fetch_array',
+				'fetch_assoc',
 				'fetch_column',
 				'fetch_object',
 			],
@@ -76,6 +77,7 @@ class MySQLiResultDynamicReturnTypeExtension implements DynamicMethodReturnTypeE
 				$this->extractModeFromFirstArg($methodCall, $scope),
 			),
 			'fetch_row' => $this->phpstanMysqliHelper->fetchArray($params, MYSQLI_NUM),
+			'fetch_assoc' => $this->phpstanMysqliHelper->fetchArray($params, MYSQLI_ASSOC),
 			'fetch_object' => $this->phpstanMysqliHelper->fetchObject(
 				$params,
 				$this->extractClassFromFirstArg($methodCall, $scope),

@@ -678,6 +678,27 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		} while (true);
 	}
 
+	public function testFetchAssoc(): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$result = $db->query('SELECT id FROM mysqli_test');
+
+		do {
+			$row = $result->fetch_assoc();
+
+			if (function_exists('assertType')) {
+				assertType('array{id: int}|false|null', $row);
+			}
+
+			if ($row === null) {
+				break;
+			}
+
+			$this->assertSame(['id'], array_keys($row));
+			$this->assertIsInt($row['id']);
+		} while (true);
+	}
+
 	public function testFetchArray(): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
