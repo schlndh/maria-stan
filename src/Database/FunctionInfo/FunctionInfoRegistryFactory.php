@@ -28,6 +28,7 @@ final class FunctionInfoRegistryFactory
 			new FoundRows(),
 			new IfFunction(),
 			new GroupConcat(),
+			new LowerUpper(),
 			new MaxMin(),
 			new Now(),
 			new Round(),

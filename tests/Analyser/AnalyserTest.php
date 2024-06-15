@@ -862,6 +862,10 @@ class AnalyserTest extends TestCase
 			$selects["CEIL({$label1})"] = "SELECT CEIL({$value1})";
 			$selects["CEILING({$label1})"] = "SELECT CEILING({$value1})";
 			$selects["CONCAT({$label1})"] = "SELECT CONCAT({$value1})";
+			$selects["LOWER({$label1})"] = "SELECT LOWER({$value1})";
+			$selects["LCASE({$label1})"] = "SELECT LCASE({$value1})";
+			$selects["UPPER({$label1})"] = "SELECT UPPER({$value1})";
+			$selects["UCASE({$label1})"] = "SELECT UCASE({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
@@ -1630,6 +1634,10 @@ class AnalyserTest extends TestCase
 			'CONCAT(col_vchar) IS NOT NULL',
 			'CONCAT(col_vchar, col_int) IS NOT NULL',
 			'CONCAT(col_vchar, col_int) IS NULL',
+			'LOWER(col_vchar)',
+			'NOT LCASE(col_vchar)',
+			'UPPER(col_vchar) IS NULL',
+			'UCASE(col_vchar) IS NOT NULL',
 		];
 
 		foreach (['COALESCE', 'IFNULL', 'NVL'] as $coalesceFn) {

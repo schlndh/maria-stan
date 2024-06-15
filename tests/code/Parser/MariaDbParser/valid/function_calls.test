@@ -6381,3 +6381,74 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT LOWER(1), LCASE(NULL), UPPER('a'), UCASE(1.1)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => LOWER
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => LCASE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralNull
+										(
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[2] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => UPPER
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[3] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => UCASE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralFloat
+										(
+											[value] => 1.1
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
