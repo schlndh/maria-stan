@@ -7,10 +7,12 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\PlaceholderTypeProvider\MixedPlaceholderTypeProvider;
 use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
+use MariaStan\Analyser\PlaceholderTypeProvider\VarcharPlaceholderTypeProvider;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\Parser\MariaDbParser;
+use MariaStan\PHPStan\Helper\PHPStanTypeVarcharPlaceholderTypeProvider;
 
 use function mb_substr;
 
@@ -26,8 +28,10 @@ final class Analyser
 	/**
 	 * @param ?PlaceholderTypeProvider $placeholderTypeProvider Pass PlaceholderTypeProvider to narrow down placeholder
 	 * 	types. If you pass null, then all placeholders will get nullable mixed type. If you bind all placeholders as
-	 * 	strings, you can pass {@see VarcharPlaceholderTypeProvider}.
+	 * 	strings, you can pass {@see VarcharPlaceholderTypeProvider}, or {@see PHPStanTypeVarcharPlaceholderTypeProvider}
 	 * @throws AnalyserException
+	 * @see VarcharPlaceholderTypeProvider
+	 * @see PHPStanTypeVarcharPlaceholderTypeProvider
 	 */
 	public function analyzeQuery(
 		string $query,

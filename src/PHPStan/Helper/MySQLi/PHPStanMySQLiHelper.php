@@ -9,10 +9,12 @@ use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\AnalyserError;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\Exception\AnalyserException;
+use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\MariaStanError;
 use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
+use MariaStan\PHPStan\Helper\PHPStanTypeVarcharPlaceholderTypeProvider;
 use PhpParser\Node\Arg;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
@@ -38,6 +40,7 @@ use function array_values;
 use function count;
 use function implode;
 use function ksort;
+use function reset;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
@@ -51,8 +54,10 @@ final class PHPStanMySQLiHelper
 	) {
 	}
 
-	public function prepare(Type $queryType): QueryPrepareCallResult
-	{
+	private function prepareImpl(
+		Type $queryType,
+		?PlaceholderTypeProvider $placeholderTypeProvider,
+	): QueryPrepareCallResult {
 		$constantStrings = $queryType->getConstantStrings();
 
 		if (count($constantStrings) === 0) {
@@ -73,7 +78,7 @@ final class PHPStanMySQLiHelper
 
 		foreach ($constantStrings as $sqlType) {
 			try {
-				$analyserResults[] = $this->analyser->analyzeQuery($sqlType->getValue());
+				$analyserResults[] = $this->analyser->analyzeQuery($sqlType->getValue(), $placeholderTypeProvider);
 			} catch (AnalyserException $e) {
 				$errors[] = new MariaStanError(
 					$e->getMessage(),
@@ -96,6 +101,11 @@ final class PHPStanMySQLiHelper
 		);
 
 		return new QueryPrepareCallResult($errors, $analyserResults);
+	}
+
+	public function prepare(Type $queryType): QueryPrepareCallResult
+	{
+		return $this->prepareImpl($queryType, null);
 	}
 
 	public function query(Type $queryType): QueryPrepareCallResult
@@ -160,7 +170,8 @@ final class PHPStanMySQLiHelper
 	/** @param array<array<Type>> $executeParamTypes possible params */
 	public function executeQuery(Type $queryType, array $executeParamTypes): QueryPrepareCallResult
 	{
-		$prepareResult = $this->prepare($queryType);
+		$placeholderTypeProvider = $this->createPlaceholderTypeProviderFromExecuteParamTypes($executeParamTypes);
+		$prepareResult = $this->prepareImpl($queryType, $placeholderTypeProvider);
 		$phpstanParams = $this->phpstanHelper
 			->createPhpstanParamsFromMultipleAnalyserResults($prepareResult->analyserResults);
 
@@ -297,5 +308,42 @@ final class PHPStanMySQLiHelper
 		}
 
 		return $this->getExecuteParamTypesFromType($scope->getType($arg->value));
+	}
+
+	/** @param array<array<Type>> $executeParamTypes */
+	private function createPlaceholderTypeProviderFromExecuteParamTypes(
+		array $executeParamTypes,
+	): ?PlaceholderTypeProvider {
+		if (count($executeParamTypes) === 0) {
+			return null;
+		}
+
+		$paramsByCount = [];
+
+		foreach ($executeParamTypes as $paramTypes) {
+			$paramsByCount[count($paramTypes)][] = $paramTypes;
+		}
+
+		// TODO: support different param counts. We'll need to match them to the placeholder count in query.
+		if (count($paramsByCount) !== 1) {
+			return null;
+		}
+
+		$paramTypes = reset($paramsByCount);
+		$typesByPosition = [];
+
+		foreach ($paramTypes as $types) {
+			foreach (array_values($types) as $i => $type) {
+				// The placeholders are indexed starting from 1
+				$typesByPosition[$i + 1][] = $type;
+			}
+		}
+
+		$unionedTypeByPosition = array_map(
+			static fn (array $positionTypes) => TypeCombinator::union(...$positionTypes),
+			$typesByPosition,
+		);
+
+		return new PHPStanTypeVarcharPlaceholderTypeProvider($unionedTypeByPosition);
 	}
 }
