@@ -8,16 +8,31 @@ use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
 use MariaStan\TestCaseHelper;
 use PHPStan\Testing\TypeInferenceTestCase;
 
+use const PHP_VERSION_ID;
+
 class MySQLiTypeInferenceTest extends TypeInferenceTestCase
 {
+	/** @return list<string> */
+	public static function getTestFiles(): array
+	{
+		$result = [__DIR__ . '/data/MySQLiTypeInferenceDataTest.php'];
+
+		if (PHP_VERSION_ID >= 80200) {
+			$result[] = __DIR__ . '/data/MySQLiExecuteQueryTypeInferenceDataTest.php';
+		}
+
+		return $result;
+	}
+
 	/** @return iterable<mixed> */
-	public function dataFileAsserts(): iterable
+	public static function dataFileAsserts(): iterable
 	{
 		$mysqli = TestCaseHelper::getDefaultSharedConnection();
 		MySQLiTypeInferenceDataTest::initData($mysqli);
 
-		// path to a file with actual asserts of expected types:
-		yield from $this->gatherAssertTypes(__DIR__ . '/data/MySQLiTypeInferenceDataTest.php');
+		foreach (self::getTestFiles() as $testFile) {
+			yield from self::gatherAssertTypes($testFile);
+		}
 	}
 
 	/** @dataProvider dataFileAsserts */

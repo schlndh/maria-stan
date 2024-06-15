@@ -15,7 +15,7 @@ use function file_put_contents;
 class MySQLiTypeInferenceWithFileReflectionTest extends TypeInferenceTestCase
 {
 	/** @return iterable<mixed> */
-	public function dataFileAsserts(): iterable
+	public static function dataFileAsserts(): iterable
 	{
 		$mysqli = TestCaseHelper::getDefaultSharedConnection();
 		MySQLiTypeInferenceDataTest::initData($mysqli);
@@ -24,8 +24,9 @@ class MySQLiTypeInferenceWithFileReflectionTest extends TypeInferenceTestCase
 			MariaDbFileDbReflection::dumpSchema($mysqli, MysqliUtil::getDatabaseName($mysqli)),
 		);
 
-		// path to a file with actual asserts of expected types:
-		yield from $this->gatherAssertTypes(__DIR__ . '/data/MySQLiTypeInferenceDataTest.php');
+		foreach (MySQLiTypeInferenceTest::getTestFiles() as $testFile) {
+			yield from self::gatherAssertTypes($testFile);
+		}
 	}
 
 	/** @dataProvider dataFileAsserts */
