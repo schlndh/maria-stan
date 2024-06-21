@@ -1,11 +1,11 @@
 parameters:
 	maria-stan:
 		db:
-			host: 127.0.0.1
-			port: 3306
-			user: 'root'
-			password: 'root'
-			database: 'mariastan_test'
+			host: %env.testdb_host%
+			port: int(%env.testdb_port%)
+			user: %env.testdb_user%
+			password: %env.testdb_password%
+			database: %env.testdb_dbname%
 	universalObjectCratesClasses:
 		- MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate
 

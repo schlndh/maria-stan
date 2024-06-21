@@ -31,28 +31,8 @@ abstract class TestCaseHelper
 			return self::$connections[$prefix];
 		}
 
-		// see phpunit.xml
-		$properties = [
-			'host',
-			'port',
-			'user',
-			'password',
-			'dbname',
-		];
-		$values = [];
-
-		foreach ($properties as $property) {
-			$configKey = $prefix . $property;
-
-			if (! isset($GLOBALS[$configKey])) {
-				throw new \RuntimeException("Missing DB config {$configKey}!");
-			}
-
-			$value = $GLOBALS[$configKey];
-			$values[$property] = $value;
-		}
-
 		$mysqli = new mysqli(
+			// see phpunit.xml
 			self::getConfigValue($prefix, 'host'),
 			self::getConfigValue($prefix, 'user'),
 			self::getConfigValue($prefix, 'password'),
@@ -86,11 +66,11 @@ abstract class TestCaseHelper
 	{
 		$configKey = $prefix . $property;
 
-		if (! isset($GLOBALS[$configKey])) {
+		if (! isset($_ENV[$configKey])) {
 			throw new \RuntimeException("Missing DB config {$configKey}!");
 		}
 
-		$value = $GLOBALS[$configKey];
+		$value = $_ENV[$configKey];
 
 		if (! is_string($value)) {
 			throw new \RuntimeException("Wrong config value for {$configKey} - expected string!");

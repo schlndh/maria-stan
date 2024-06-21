@@ -9,12 +9,14 @@
 		<ini name="error_reporting" value="-1" />
 		<ini name="assert.exception" value="1" />
 
-		<var name="testdb_host" value="127.0.0.1" />
-		<var name="testdb_port" value="3306"/>
-		<var name="testdb_user" value="root" />
-		<var name="testdb_password" value="root" />
+		<!-- you can override these by editing them here, or creating a copy of the XML and passing it via `-c`, or
+		 by setting the environment variables yourself (they're not overridden if they're already set). -->
+		<env name="testdb_host" value="127.0.0.1" />
+		<env name="testdb_port" value="3306"/>
+		<env name="testdb_user" value="root" />
+		<env name="testdb_password" value="root" />
 		<!-- Make sure the database is used exclusively for purpose of these tests, data in it could be lost! -->
-		<var name="testdb_dbname" value="mariastan_test" />
+		<env name="testdb_dbname" value="mariastan_test" />
 	</php>
 
 	<testsuites>
