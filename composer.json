@@ -21,7 +21,7 @@
 	"require": {
 		"php": "^8.1",
 		"ext-mbstring": "*",
-		"phpstan/phpstan": "^1.10.15"
+		"phpstan/phpstan": "^1.10.36"
 	},
 	"require-dev": {
 		"ext-mysqli": "*",
