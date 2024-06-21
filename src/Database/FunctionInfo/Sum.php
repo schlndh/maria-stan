@@ -68,6 +68,7 @@ final class Sum implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$arg = reset($argumentTypes);
 		assert($arg instanceof ExprTypeResult);
@@ -78,6 +79,6 @@ final class Sum implements FunctionInfo
 			default => new DecimalType(),
 		};
 
-		return new ExprTypeResult($type, true);
+		return new ExprTypeResult($type, ! $isNonEmptyAggResultSet || $arg->isNullable);
 	}
 }

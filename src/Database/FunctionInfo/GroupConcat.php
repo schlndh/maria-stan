@@ -43,7 +43,14 @@ final class GroupConcat implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
-		return new ExprTypeResult(new VarcharType(), true);
+		$isAnyArgNullable = false;
+
+		foreach ($argumentTypes as $argumentType) {
+			$isAnyArgNullable = $isAnyArgNullable || $argumentType->isNullable;
+		}
+
+		return new ExprTypeResult(new VarcharType(), ! $isNonEmptyAggResultSet || $isAnyArgNullable);
 	}
 }

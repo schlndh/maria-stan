@@ -60,6 +60,7 @@ final class Round implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$valueType = $argumentTypes[0];
 		$digitsType = $argumentTypes[1] ?? null;

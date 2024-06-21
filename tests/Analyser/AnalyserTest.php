@@ -38,6 +38,7 @@ use function implode;
 use function in_array;
 use function is_array;
 use function reset;
+use function sprintf;
 use function str_starts_with;
 
 use const MYSQLI_ASSOC;
@@ -1823,6 +1824,112 @@ class AnalyserTest extends TestCase
 				    JOIN analyser_test_nullability_1 t3 ON t2.col_vchar = t3.col_vchar
 				) ON t2.col_vchar = t1.col_vchar
 			',
+		];
+
+		// TODO: add /, % and DIV once we can remove nullability for "/ 1" etc.
+		$binaryOps = ['+', '-', '*'];
+		$unaryOps = ['+', '-', '~', 'BINARY'];
+
+		foreach (['AVG', 'MAX', 'MIN', 'SUM', 'GROUP_CONCAT'] as $fn) {
+			$aggFnCalls = [
+				"{$fn}(not-null)" => [
+					"{$fn}(a2.id)",
+					'SELECT %s FROM analyser_test a1, analyser_test a2 GROUP BY a1.id',
+				],
+				"{$fn}(nullable)" => [
+					"{$fn}(a3.name)",
+					'
+						SELECT %s
+						FROM (SELECT a1.* FROM analyser_test a1, analyser_test a2) t
+						JOIN analyser_test a3 ON a3.id = t.id
+						GROUP BY a3.id
+					',
+				],
+			];
+
+			foreach ($aggFnCalls as $labelPrefix => [$expr, $queryTemplate]) {
+				yield $labelPrefix . ' GROUP BY' => [
+					'query' => sprintf($queryTemplate, $expr),
+				];
+
+				yield "SELECT * FROM (SELECT {$labelPrefix} GROUP BY) t" => [
+					'query' => 'SELECT * FROM (' . sprintf($queryTemplate, $expr) . ') t',
+				];
+
+				foreach ($binaryOps as $operator) {
+					yield $labelPrefix . ' ' . $operator . ' 1 GROUP BY' => [
+						'query' => sprintf($queryTemplate, $expr . ' ' . $operator . ' 1'),
+					];
+				}
+
+				foreach ($unaryOps as $operator) {
+					yield $operator . ' ' . $labelPrefix . ' GROUP BY' => [
+						'query' => sprintf($queryTemplate, $operator . ' ' . $expr),
+					];
+				}
+
+				yield 'NOW() - INTERVAL ' . $labelPrefix . ' GROUP BY' => [
+					'query' => sprintf($queryTemplate, 'NOW() - INTERVAL ' . $expr . ' SECOND'),
+				];
+
+				yield "{$labelPrefix} BETWEEN GROUP BY" => [
+					'query' => sprintf($queryTemplate, "{$expr} BETWEEN 1 AND 2"),
+				];
+
+				yield "BETWEEN {$labelPrefix} GROUP BY" => [
+					'query' => sprintf($queryTemplate, "1 BETWEEN {$expr} AND 2"),
+				];
+
+				yield "(1, {$labelPrefix}) = (1, 1) GROUP BY" => [
+					'query' => sprintf($queryTemplate, "(1, {$expr}) = (1, 1)"),
+				];
+
+				yield "{$labelPrefix} IN (1, 2) GROUP BY" => [
+					'query' => sprintf($queryTemplate, "{$expr} IN (1, 2)"),
+				];
+
+				yield "NOW() IN (1, {$labelPrefix}) GROUP BY" => [
+					'query' => sprintf($queryTemplate, "NOW() IN (1, {$expr})"),
+				];
+
+				yield "{$labelPrefix} LIKE 'a' GROUP BY" => [
+					'query' => sprintf($queryTemplate, "{$expr} LIKE 'a'"),
+				];
+
+				yield "'a' LIKE {$labelPrefix} GROUP BY" => [
+					'query' => sprintf($queryTemplate, "'a' LIKE {$expr}"),
+				];
+
+				yield "FN({$labelPrefix}) GROUP BY" => [
+					'query' => sprintf($queryTemplate, "ROUND({$expr})"),
+				];
+
+				yield "CASE ... THEN {$labelPrefix}) GROUP BY" => [
+					'query' => sprintf($queryTemplate, "CASE 1 WHEN 1 THEN {$expr} END"),
+				];
+
+				// AVG and SUM generate result in binary charset, so we can't use utf8mb4_... with them.
+				$collation = in_array($fn, ['AVG', 'SUM'], true)
+					? '`binary`'
+					: '`utf8mb4_unicode_ci`';
+
+				yield "{$labelPrefix} COLLATE GROUP BY" => [
+					'query' => sprintf($queryTemplate, "{$expr} COLLATE {$collation}"),
+				];
+			}
+		}
+
+		yield "GROUP_CONCAT(not-null, 1) GROUP BY" => [
+			'query' => "SELECT GROUP_CONCAT(a2.id, 1) FROM analyser_test a1, analyser_test a2 GROUP BY a1.id",
+		];
+
+		yield "GROUP_CONCAT(nullable, 1) GROUP BY" => [
+			'query' => "
+				SELECT GROUP_CONCAT(a3.name, 1)
+				FROM (SELECT a1.* FROM analyser_test a1, analyser_test a2) t
+				JOIN analyser_test a3 ON a3.id = t.id
+				GROUP BY a3.id
+			",
 		];
 
 		// TODO: fix this

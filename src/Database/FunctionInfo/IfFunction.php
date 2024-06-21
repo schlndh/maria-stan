@@ -55,6 +55,7 @@ final class IfFunction implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$then = $argumentTypes[1];
 		$else = $argumentTypes[2];

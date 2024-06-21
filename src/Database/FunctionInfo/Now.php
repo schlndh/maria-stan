@@ -83,6 +83,7 @@ final class Now implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$kb = match ($condition) {
 			null => null,

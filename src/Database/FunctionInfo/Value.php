@@ -66,6 +66,7 @@ final class Value implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$col = $argumentTypes[0];
 		// VALUE(...) can be used in SELECT as well, in which case it always returns null.

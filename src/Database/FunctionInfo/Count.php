@@ -43,6 +43,7 @@ final class Count implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		return new ExprTypeResult(new IntType(), false);
 	}

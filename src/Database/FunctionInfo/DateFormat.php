@@ -60,6 +60,7 @@ final class DateFormat implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$date = $argumentTypes[0];
 		$format = $argumentTypes[1];

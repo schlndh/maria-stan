@@ -51,6 +51,7 @@ final class Cast implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		assert($functionCall instanceof CastFunctionCall);
 		$exprType = $argumentTypes[0];

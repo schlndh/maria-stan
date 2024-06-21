@@ -44,6 +44,7 @@ final class DateAddSub implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$date = $argumentTypes[0];
 		$interval = $argumentTypes[1];

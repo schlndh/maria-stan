@@ -57,6 +57,7 @@ final class LowerUpper implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$arg = $argumentTypes[0];
 

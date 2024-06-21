@@ -73,6 +73,7 @@ final class Concat implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$leftType = $this->concatOneType($argumentTypes[0]->type);
 		$isNullable = $argumentTypes[0]->isNullable;

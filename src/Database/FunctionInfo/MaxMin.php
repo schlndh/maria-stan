@@ -64,10 +64,11 @@ final class MaxMin implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$arg = reset($argumentTypes);
 		assert($arg instanceof ExprTypeResult);
 
-		return new ExprTypeResult($arg->type, true);
+		return new ExprTypeResult($arg->type, ! $isNonEmptyAggResultSet || $arg->isNullable);
 	}
 }

@@ -84,6 +84,7 @@ final class Coalesce implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$leftType = $argumentTypes[0]->type;
 		$isNullable = $argumentTypes[0]->isNullable;

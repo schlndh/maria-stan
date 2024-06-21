@@ -59,6 +59,7 @@ final class Date implements FunctionInfo
 		FunctionCall $functionCall,
 		array $argumentTypes,
 		?AnalyserConditionTypeEnum $condition,
+		bool $isNonEmptyAggResultSet,
 	): ExprTypeResult {
 		$date = $argumentTypes[0];
 		$isNullable = $date->isNullable || $date->type::getTypeEnum() !== DbTypeEnum::DATETIME;
