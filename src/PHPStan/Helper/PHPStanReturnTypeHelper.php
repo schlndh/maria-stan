@@ -82,12 +82,24 @@ class PHPStanReturnTypeHelper
 	/** @return list<Type> */
 	public function packPHPStanParamsIntoTypes(?AnalyserResultPHPStanParams $params): array
 	{
-		return $params !== null
-			? [
-				TypeCombinator::union(...$params->rowTypes),
-				TypeCombinator::union(...$params->positionalPlaceholderCounts),
-			]
-			: [];
+		if ($params === null) {
+			return [];
+		}
+
+		$keyTypes = [];
+		$valueTypes = [];
+		$idx = 0;
+
+		foreach ($params->rowTypes as $rowType) {
+			$keyTypes[] = new ConstantIntegerType($idx);
+			$valueTypes[] = $rowType;
+			$idx++;
+		}
+
+		return [
+			new ConstantArrayType($keyTypes, $valueTypes, isList: true),
+			TypeCombinator::union(...$params->positionalPlaceholderCounts),
+		];
 	}
 
 	/** @param array<Type> $types */
@@ -97,10 +109,26 @@ class PHPStanReturnTypeHelper
 			return null;
 		}
 
-		$rowTypes = $types[0]->getConstantArrays();
+		$rowTypesArr = $types[0]->getConstantArrays();
 		$placholderCounts = TypeUtils::getConstantIntegers($types[1]);
 
-		if (count($rowTypes) === 0 || count($placholderCounts) === 0) {
+		if (count($rowTypesArr) !== 1 || count($placholderCounts) === 0) {
+			return null;
+		}
+
+		$rowTypes = [];
+
+		foreach ($rowTypesArr[0]->getValueTypes() as $valueType) {
+			$valueTypeArr = $valueType->getConstantArrays();
+
+			if (count($valueTypeArr) !== 1) {
+				return null;
+			}
+
+			$rowTypes[] = $valueTypeArr[0];
+		}
+
+		if (count($rowTypes) === 0) {
 			return null;
 		}
 

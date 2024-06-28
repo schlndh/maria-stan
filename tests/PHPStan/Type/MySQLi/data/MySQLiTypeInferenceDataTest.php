@@ -22,6 +22,7 @@ use function implode;
 use function in_array;
 use function is_string;
 use function PHPStan\Testing\assertType;
+use function rand;
 
 use const MYSQLI_ASSOC;
 use const MYSQLI_BOTH;
@@ -203,6 +204,24 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			$this->assertSame(['id', 'val'], array_keys($row));
 			$this->assertIsString($row['id']);
 			$this->assertIsInt($row['val']);
+		}
+
+		$col = rand()
+			? 'id'
+			: '*';
+		$table = rand()
+			? 't1'
+			: 't2';
+		$rows = $db->query("
+			WITH t1 AS (SELECT 1 id, 'aa' name), t2 AS (SELECT 2 id, 'bb' name, 'c' type)
+			SELECT {$col} FROM {$table}
+		")->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				// All items are non-optional
+				assertType("array{id: int, name?: string, type?: string}", $row);
+			}
 		}
 	}
 
