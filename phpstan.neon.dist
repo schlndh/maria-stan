@@ -15,6 +15,7 @@ parameters:
 	checkBenevolentUnionTypes: true
 	excludePaths:
 		- tests/*/data/*
+		- examples
 	exceptions:
 		check:
 			missingCheckedExceptionInThrows: true

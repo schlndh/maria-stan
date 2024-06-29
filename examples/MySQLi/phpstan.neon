@@ -1,0 +1,12 @@
+includes:
+	- ../../extension.mysqli.neon
+
+parameters:
+	level: 9
+	maria-stan:
+		db:
+			host: 127.0.0.1
+			port: 13306
+			user: 'root'
+			password: 'root'
+			database: 'maria-stan-example-mysqli'

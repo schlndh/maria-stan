@@ -94,6 +94,8 @@ in your `phpstan.neon`.
 You can use the MySQLi extension as a starting point a modify it to match your needs. The basic idea is to get the query
 string from PHPStan, pass it to MariaStan for analysis and then report result types and errors back to PHPStan.
 
+Before you start implementing your own extension to integrate MariaStan into your project, you can quickly try it out. You can start by checking out a [simple example](examples/MySQLi/README.md) which uses the MySQLi extension.  Then you can try to call queries from your codebase via MySQLi and analyze them with the MySQLi extension to make sure that MariaStan supports the features which your projects uses.
+
 ## Features
 
 Here is a list of features that you could implement into your own PHPStan extension based on MariaStan
