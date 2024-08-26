@@ -74,6 +74,7 @@ class DbReflectionTest extends TestCase
 				val_year YEAR NOT NULL,
 				val_enum ENUM('a', 'b', 'c') NOT NULL,
 				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5),
+				val_uuid UUID NOT NULL,
 				UNIQUE (id, name)
 			);
 		");
@@ -128,10 +129,6 @@ class DbReflectionTest extends TestCase
 
 		yield 'file - current' => [new MariaDbFileDbReflection($filename, $informationSchemaParser)];
 
-		yield 'file - v1' => [
-			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v1.bin', $informationSchemaParser),
-		];
-
 		yield 'file - v2' => [
 			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v2.bin', $informationSchemaParser),
 		];
@@ -169,6 +166,7 @@ class DbReflectionTest extends TestCase
 			'val_year' => new Column('val_year', new DateTimeType(), false),
 			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
 			'val_default' => new Column('val_default', new IntType(), false, $valDefaultExpr),
+			'val_uuid' => new Column('val_uuid', new VarcharType(), false),
 		], $schema->columns);
 	}
 

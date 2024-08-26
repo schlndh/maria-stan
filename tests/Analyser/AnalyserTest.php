@@ -194,12 +194,16 @@ class AnalyserTest extends TestCase
 				col_float FLOAT NOT NULL,
 				col_double DOUBLE NOT NULL,
 				col_datetime DATETIME NOT NULL,
-				col_enum ENUM('a', 'b', 'c') NOT NULL
+				col_enum ENUM('a', 'b', 'c') NOT NULL,
+				col_uuid UUID NOT NULL
 			);
 		");
 		$db->query("
-			INSERT INTO {$dataTypesTable} (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime)
-			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW()), (2, NULL, 222.22, 22.22, 2.2, NOW())
+			INSERT INTO {$dataTypesTable}
+				(col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_uuid)
+			VALUES
+			    (1, 'aa', 111.11, 11.11, 1.1, NOW(), UUID()),
+			    (2, NULL, 222.22, 22.22, 2.2, NOW(), UUID())
 		");
 
 		yield 'column - int' => [
@@ -228,6 +232,10 @@ class AnalyserTest extends TestCase
 
 		yield 'column - enum' => [
 			'query' => "SELECT col_enum FROM {$dataTypesTable}",
+		];
+
+		yield 'column - UUID' => [
+			'query' => "SELECT col_uuid FROM {$dataTypesTable}",
 		];
 
 		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP.

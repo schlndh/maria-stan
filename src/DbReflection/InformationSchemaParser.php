@@ -212,6 +212,7 @@ class InformationSchemaParser
 			case 'mediumtext':
 			case 'longtext':
 			case 'char':
+			case 'uuid':
 				return new VarcharType();
 			case 'int':
 			case 'tinyint':

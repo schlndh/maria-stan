@@ -58,13 +58,16 @@ class MySQLiTypeInferenceDataTest extends TestCase
 				col_float FLOAT NOT NULL,
 				col_double DOUBLE NOT NULL,
 				col_datetime DATETIME NOT NULL,
-				col_enum ENUM('a', 'b', 'c') NOT NULL
+				col_enum ENUM('a', 'b', 'c') NOT NULL,
+				col_uuid UUID NOT NULL
 			);
 		");
 		$db->query("
 			INSERT INTO {$dataTypesTable}
-			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum)
-			VALUES (1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a'), (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b')
+			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum, col_uuid)
+			VALUES
+				(1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a', UUID()),
+			    (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b', UUID())
 		");
 
 		$db->query('
@@ -672,6 +675,17 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertTrue(in_array($value, ['a', 'b', 'c'], true));
+		}
+
+		$rows = $db->query('SELECT col_uuid FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('string', $value);
+			}
+
+			$this->assertGettype(['string'], $value);
 		}
 	}
 
