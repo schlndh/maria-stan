@@ -268,6 +268,7 @@ class MariaDbParserTest extends TestCase
 			if (isset($data['__CLASS__'])) {
 				$class = $data['__CLASS__'];
 				unset($data['__CLASS__']);
+				self::assertIsString($class);
 				$result .= $class . "\n(\n";
 			} else {
 				$result .= "Array\n(\n";

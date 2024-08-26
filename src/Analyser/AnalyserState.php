@@ -541,15 +541,7 @@ final class AnalyserState
 				}
 
 				return [[$fromClause->getAliasOrThrow()], $columnResolver];
-			default:
-				$this->errors[] = new AnalyserError(
-					'Unhandled table reference type ' . $fromClause::getTableReferenceType()->value,
-					AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
-				);
-				break;
 		}
-
-		return [[], $columnResolver];
 	}
 
 	/**
