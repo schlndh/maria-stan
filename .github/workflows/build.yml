@@ -85,8 +85,12 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
-          - "8.4"
-
+        include:
+          # It seems that PHPStan doesn't specify its PHP version constraint sufficiently. So it still installs 1.10.36
+          # on PHP 8.4, even though it doesn't work.
+          # TODO: include lowest as well once I bump minimum supported PHPStan.
+          - dependencies: highest
+            php-version: "8.4"
     services:
       mariadb:
         image: "mariadb:10.11.5-jammy"
