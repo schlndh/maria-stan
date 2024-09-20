@@ -143,7 +143,7 @@ class PHPStanReturnTypeHelper
 	 */
 	public function getRowTypeFromFields(?array $resultFields): ConstantArrayType
 	{
-		if (count($resultFields ?? []) === 0) {
+		if ($resultFields === null || count($resultFields) === 0) {
 			return new ConstantArrayType([], []);
 		}
 
