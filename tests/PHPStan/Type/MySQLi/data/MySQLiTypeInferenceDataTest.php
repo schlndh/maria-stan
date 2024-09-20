@@ -856,7 +856,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 		do {
 			$row = $result->fetch_object(
-				$this->hideValueFromPhpstan(true)
+				$this->hideValueFromPhpstan('1')
 					? CustomUniversalObjectCrate::class
 					: \stdClass::class,
 			);
@@ -931,7 +931,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$result = $db->query('SELECT id, price FROM mysqli_test');
 
 		do {
-			$dynamicColumn = $this->hideValueFromPhpstan(0);
+			$dynamicColumn = (int) $this->hideValueFromPhpstan('0');
 			$value = $result->fetch_column($dynamicColumn);
 
 			if (function_exists('assertType')) {
@@ -966,7 +966,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 		$rows = $db->query(
 			'SELECT * FROM mysqli_test'
-				. ($this->hideValueFromPhpstan(true) ? ' WHERE 1' : ' WHERE 2'),
+				. ($this->hideValueFromPhpstan('1') ? ' WHERE 1' : ' WHERE 2'),
 		)->fetch_all(MYSQLI_ASSOC);
 
 		foreach ($rows as $row) {
@@ -991,7 +991,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		}
 
 		$rows = $db->query(
-			$this->hideValueFromPhpstan(true) ? 'SELECT 1 id' : 'SELECT "aa" aa, 2 count',
+			$this->hideValueFromPhpstan('1') ? 'SELECT 1 id' : 'SELECT "aa" aa, 2 count',
 		)->fetch_all(MYSQLI_ASSOC);
 
 		foreach ($rows as $row) {
@@ -1086,12 +1086,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		$this->assertTrue(in_array($type, $allowedTypes, true), $message);
 	}
 
-	/**
-	 * @template T
-	 * @param T $value
-	 * @return T
-	 */
-	private function hideValueFromPhpstan(mixed $value): mixed
+	private function hideValueFromPhpstan(string $value): string
 	{
 		return $value;
 	}

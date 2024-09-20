@@ -85,12 +85,7 @@ class MySQLiWrapperRuleInvalidDataTest extends TestCase
 		$this->assertTrue(true);
 	}
 
-	/**
-	 * @template T
-	 * @param T $value
-	 * @return T
-	 */
-	private function hideValueFromPhpstan(mixed $value): mixed
+	private function hideValueFromPhpstan(string $value): string
 	{
 		return $value;
 	}

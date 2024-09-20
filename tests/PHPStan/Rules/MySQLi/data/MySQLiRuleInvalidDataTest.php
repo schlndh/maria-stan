@@ -139,7 +139,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$stmt->execute();
 		$stmt->get_result();
 
-		$stmt = $this->hideValueFromPhpstan(true)
+		$stmt = $this->hideValueFromPhpstan('1')
 			? $db->prepare('SELECT 1')
 			: $db->prepare('SELECT 2, 3');
 		$stmt->execute();
@@ -148,14 +148,14 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		try {
 			$db->query(
 				'SELECT * FROM missing_table '
-					. ($this->hideValueFromPhpstan(true) ? 'WHERE 1' : ' WHERE 2'),
+					. ($this->hideValueFromPhpstan('1') ? 'WHERE 1' : ' WHERE 2'),
 			);
 			$this->fail('Exception expected');
 		} catch (mysqli_sql_exception $e) {
 			$this->assertSame(MariaDbErrorCodes::ER_NO_SUCH_TABLE, $e->getCode());
 		}
 
-		$condition = $this->hideValueFromPhpstan(true);
+		$condition = $this->hideValueFromPhpstan('1');
 		$stmt = $db->prepare($condition ? 'SELECT ?' : 'SELECT ?, ?');
 
 		try {
@@ -168,12 +168,7 @@ class MySQLiRuleInvalidDataTest extends TestCase
 		$this->assertTrue(true);
 	}
 
-	/**
-	 * @template T
-	 * @param T $value
-	 * @return T
-	 */
-	private function hideValueFromPhpstan(mixed $value): mixed
+	private function hideValueFromPhpstan(string $value): string
 	{
 		return $value;
 	}
