@@ -28,7 +28,7 @@ use function in_array;
 class MariaDbParserKeywordAsIdentifierTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestFieldAliasData(): iterable
+	public static function provideTestFieldAliasData(): iterable
 	{
 		$cases = TokenTypeEnum::cases();
 
@@ -101,7 +101,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestTableAliasData(): iterable
+	public static function provideTestTableAliasData(): iterable
 	{
 		$tableName = 'parser_keyword_test';
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -159,7 +159,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestCommonTableExpressionAliasData(): iterable
+	public static function provideTestCommonTableExpressionAliasData(): iterable
 	{
 		$cases = TokenTypeEnum::cases();
 
@@ -236,7 +236,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestColumnNameData(): iterable
+	public static function provideTestColumnNameData(): iterable
 	{
 		$cases = TokenTypeEnum::cases();
 		$i = 1;

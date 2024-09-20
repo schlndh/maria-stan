@@ -21,7 +21,7 @@ trait CodeTestCase
 	 * @param int<1, max> $chunksPerTest
 	 * @return iterable<string, array<mixed>> test name => args
 	 */
-	protected function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
+	protected static function getTests(string $directory, string $fileExtension, int $chunksPerTest = 2): iterable
 	{
 		$parser = new CodeTestParser();
 		$allTests = [];

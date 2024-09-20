@@ -35,7 +35,7 @@ use function str_contains;
 class MariaDbParserOperatorTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestData(): iterable
+	public static function provideTestData(): iterable
 	{
 		$expressions = [
 			'1 + 2 * 3',

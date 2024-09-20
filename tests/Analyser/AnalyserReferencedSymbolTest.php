@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class AnalyserReferencedSymbolTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestData(): iterable
+	public static function provideTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("

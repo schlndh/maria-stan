@@ -216,15 +216,15 @@ class MariaDbParserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestParseValidData(): iterable
+	public static function provideTestParseValidData(): iterable
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/valid', 'test');
+		return self::getTests(__DIR__ . '/../code/Parser/MariaDbParser/valid', 'test');
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestParseInvalidData(): iterable
+	public static function provideTestParseInvalidData(): iterable
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbParser/invalid', 'test', 2);
+		return self::getTests(__DIR__ . '/../code/Parser/MariaDbParser/invalid', 'test', 2);
 	}
 
 	private function dumpNodeData(mixed $data): mixed

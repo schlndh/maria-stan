@@ -59,9 +59,9 @@ class MariaDbLexerTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestParse(): iterable
+	public static function provideTestParse(): iterable
 	{
-		return $this->getTests(__DIR__ . '/../code/Parser/MariaDbLexer', 'test');
+		return self::getTests(__DIR__ . '/../code/Parser/MariaDbLexer', 'test');
 	}
 
 	private function dumpToken(Token $token): string

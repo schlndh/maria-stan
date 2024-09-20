@@ -17,7 +17,7 @@ class MySQLiWrapperRuleTest extends BaseRuleTestCase
 		return self::getContainer()->getByType(MySQLiWrapperRule::class);
 	}
 
-	public function getCurrentFile(): string
+	public static function getCurrentFile(): string
 	{
 		return __FILE__;
 	}

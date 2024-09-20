@@ -25,7 +25,7 @@ use function trim;
  */
 abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 {
-	abstract public function getCurrentFile(): string;
+	abstract public static function getCurrentFile(): string;
 
 	abstract public function initData(mysqli $db): void;
 
@@ -56,15 +56,15 @@ abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 	}
 
 	/** @return array<string> */
-	public function getTestInputFiles(): array
+	public static function getTestInputFiles(): array
 	{
-		return self::getTestData($this->getCurrentFile());
+		return self::getTestData(static::getCurrentFile());
 	}
 
 	/** @return iterable<string, array<mixed>> name => args */
-	public function provideTestData(): iterable
+	public static function provideTestData(): iterable
 	{
-		foreach ($this->getTestInputFiles() as $fileName) {
+		foreach (self::getTestInputFiles() as $fileName) {
 			$errors = file_get_contents(self::getErrorsFileForPhpFile($fileName));
 
 			yield basename($fileName) => [

@@ -17,7 +17,7 @@ class MySQLiRuleTest extends BaseRuleTestCase
 		return self::getContainer()->getByType(MySQLiRule::class);
 	}
 
-	public function getCurrentFile(): string
+	public static function getCurrentFile(): string
 	{
 		return __FILE__;
 	}

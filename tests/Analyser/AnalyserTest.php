@@ -76,7 +76,7 @@ class AnalyserTest extends TestCase
 	];
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideValidTestData(): iterable
+	public static function provideValidTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
@@ -136,25 +136,25 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT 1 id",
 		];
 
-		yield from $this->provideValidLiteralTestData();
-		yield from $this->provideValidOperatorTestData();
-		yield from $this->provideValidDataTypeTestData();
-		yield from $this->provideValidJoinTestData();
-		yield from $this->provideValidSubqueryTestData();
-		yield from $this->provideValidGroupByHavingOrderTestData();
-		yield from $this->provideValidPlaceholderTestData();
-		yield from $this->provideValidFunctionCallTestData();
-		yield from $this->provideValidUnionTestData();
-		yield from $this->provideValidWithTestData();
-		yield from $this->provideValidInsertTestData();
-		yield from $this->provideValidOtherQueryTestData();
-		yield from $this->provideValidUpdateTestData();
-		yield from $this->provideValidDeleteTestData();
-		yield from $this->provideValidTableValueConstructorData();
+		yield from self::provideValidLiteralTestData();
+		yield from self::provideValidOperatorTestData();
+		yield from self::provideValidDataTypeTestData();
+		yield from self::provideValidJoinTestData();
+		yield from self::provideValidSubqueryTestData();
+		yield from self::provideValidGroupByHavingOrderTestData();
+		yield from self::provideValidPlaceholderTestData();
+		yield from self::provideValidFunctionCallTestData();
+		yield from self::provideValidUnionTestData();
+		yield from self::provideValidWithTestData();
+		yield from self::provideValidInsertTestData();
+		yield from self::provideValidOtherQueryTestData();
+		yield from self::provideValidUpdateTestData();
+		yield from self::provideValidDeleteTestData();
+		yield from self::provideValidTableValueConstructorData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidLiteralTestData(): iterable
+	private static function provideValidLiteralTestData(): iterable
 	{
 		yield 'literal - int' => [
 			'query' => "SELECT 5",
@@ -182,7 +182,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidDataTypeTestData(): iterable
+	private static function provideValidDataTypeTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$dataTypesTable = 'analyser_test_data_types';
@@ -255,7 +255,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidJoinTestData(): iterable
+	private static function provideValidJoinTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$joinTableA = 'analyser_test_join_a';
@@ -443,7 +443,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidOperatorTestData(): iterable
+	private static function provideValidOperatorTestData(): iterable
 	{
 		$operators = ['+', '-', '*', '/', '%', 'DIV'];
 		$values = ['1', '1.1', '1e1', '"a"', 'NULL'];
@@ -555,7 +555,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidSubqueryTestData(): iterable
+	private static function provideValidSubqueryTestData(): iterable
 	{
 		yield 'subquery as SELECT expression' => [
 			'query' => 'SELECT (SELECT 1)',
@@ -649,7 +649,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidGroupByHavingOrderTestData(): iterable
+	private static function provideValidGroupByHavingOrderTestData(): iterable
 	{
 		yield 'use alias from field list in GROUP BY' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test GROUP BY aaa',
@@ -756,7 +756,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidPlaceholderTestData(): iterable
+	private static function provideValidPlaceholderTestData(): iterable
 	{
 		$values = [
 			'int' => 1,
@@ -779,7 +779,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidFunctionCallTestData(): iterable
+	private static function provideValidFunctionCallTestData(): iterable
 	{
 		$tableName = 'analyser_test';
 
@@ -893,7 +893,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidUnionTestData(): iterable
+	private static function provideValidUnionTestData(): iterable
 	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
 			$combinatorVal = $combinator->value;
@@ -1002,7 +1002,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidWithTestData(): iterable
+	private static function provideValidWithTestData(): iterable
 	{
 		yield "WITH" => [
 			'query' => "WITH tbl AS (SELECT * FROM analyser_test) SELECT * FROM tbl",
@@ -1052,7 +1052,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidTableValueConstructorData(): iterable
+	private static function provideValidTableValueConstructorData(): iterable
 	{
 		yield 'TVC - simple WITH' => [
 			'query' => "WITH tbl AS (VALUES (1, 2), (3, 4)) SELECT * FROM tbl",
@@ -1078,7 +1078,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidOtherQueryTestData(): iterable
+	private static function provideValidOtherQueryTestData(): iterable
 	{
 		yield "TRUNCATE TABLE" => [
 			'query' => 'TRUNCATE TABLE analyser_test_truncate',
@@ -1086,7 +1086,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidInsertTestData(): iterable
+	private static function provideValidInsertTestData(): iterable
 	{
 		foreach (['INSERT', 'REPLACE'] as $type) {
 			yield "{$type} ... SET, explicitly set id" => [
@@ -1197,7 +1197,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidUpdateTestData(): iterable
+	private static function provideValidUpdateTestData(): iterable
 	{
 		yield 'UPDATE - single table' => [
 			'query' => 'UPDATE analyser_test SET name = "aaa" WHERE id = 5 ORDER BY id LIMIT 5',
@@ -1232,7 +1232,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideValidDeleteTestData(): iterable
+	private static function provideValidDeleteTestData(): iterable
 	{
 		yield 'DELETE - single table' => [
 			'query' => 'DELETE FROM analyser_test_truncate WHERE id > 5 ORDER BY id, name DESC LIMIT 5',
@@ -1486,7 +1486,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideValidNullabilityTestData(): iterable
+	public static function provideValidNullabilityTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query('
@@ -2062,7 +2062,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideInvalidTestData(): iterable
+	public static function provideInvalidTestData(): iterable
 	{
 		// TODO: improve the error messages to match MariaDB errors more closely.
 		yield 'usage of previous alias in field list' => [
@@ -2161,19 +2161,19 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		yield from $this->provideInvalidColumnTestData();
-		yield from $this->provideInvalidTupleTestData();
-		yield from $this->provideInvalidUnionTestData();
-		yield from $this->provideInvalidInsertTestData();
-		yield from $this->provideInvalidOtherQueryTestData();
-		yield from $this->provideInvalidUpdateTestData();
-		yield from $this->provideInvalidDeleteTestData();
-		yield from $this->provideInvalidTableValueConstructorData();
+		yield from self::provideInvalidColumnTestData();
+		yield from self::provideInvalidTupleTestData();
+		yield from self::provideInvalidUnionTestData();
+		yield from self::provideInvalidInsertTestData();
+		yield from self::provideInvalidOtherQueryTestData();
+		yield from self::provideInvalidUpdateTestData();
+		yield from self::provideInvalidDeleteTestData();
+		yield from self::provideInvalidTableValueConstructorData();
 		yield from self::provideInvalidUnsupportedFeaturesData();
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidColumnTestData(): iterable
+	private static function provideInvalidColumnTestData(): iterable
 	{
 		yield 'unknown column in field list' => [
 			'query' => 'SELECT v.id FROM analyser_test',
@@ -2486,13 +2486,13 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidTupleTestData(): iterable
+	private static function provideInvalidTupleTestData(): iterable
 	{
 		yield 'tuple size does not match' => [
 			'query' => 'SELECT (id, name, 1) = (id, name) FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
-				$this->createMockTuple(3),
-				$this->createMockTuple(2),
+				self::createMockTuple(3),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
@@ -2501,7 +2501,7 @@ class AnalyserTest extends TestCase
 			'query' => 'SELECT 1 IN (SELECT 1, 2)',
 			'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
 				new IntType(),
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
@@ -2509,7 +2509,7 @@ class AnalyserTest extends TestCase
 		yield 'tuple: flat tuple both on left and right with IN' => [
 			'query' => 'SELECT (1, 2) IN (1, 2)',
 			'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 				new IntType(),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
@@ -2519,7 +2519,7 @@ class AnalyserTest extends TestCase
 			'query' =>
 				'SELECT (1,2) IN ((SELECT id FROM analyser_test LIMIT 1), (SELECT id FROM analyser_test LIMIT 1))',
 			'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 				new IntType(),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
@@ -2529,7 +2529,7 @@ class AnalyserTest extends TestCase
 			// This works if right side is wrapped in one more parentheses
 			'query' => 'SELECT ((1,2), 3) IN ((1,2), 3)',
 			'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 				new IntType(),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
@@ -2584,7 +2584,7 @@ class AnalyserTest extends TestCase
 		yield "invalid operator with tuples - CASE WHEN" => [
 			'query' => "SELECT CASE WHEN (1,1) THEN 1 END",
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
@@ -2593,10 +2593,10 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT CASE (1, 1) WHEN (1,1) THEN 1 END",
 			'error' => [
 				AnalyserErrorBuilder::createInvalidTupleUsageError(
-					$this->createMockTuple(2),
+					self::createMockTuple(2),
 				),
 				AnalyserErrorBuilder::createInvalidTupleUsageError(
-					$this->createMockTuple(2),
+					self::createMockTuple(2),
 				),
 			],
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
@@ -2605,7 +2605,7 @@ class AnalyserTest extends TestCase
 		yield "invalid operator with tuples - CASE THEN" => [
 			'query' => "SELECT CASE WHEN 1 THEN (1,1) END",
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
@@ -2613,7 +2613,7 @@ class AnalyserTest extends TestCase
 		yield "invalid operator with tuples - CASE ELSE" => [
 			'query' => "SELECT CASE WHEN 1 THEN 0 ELSE (1,1) END",
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
@@ -2645,14 +2645,14 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createInvalidFunctionArgumentError(
 				'AVG',
 				1,
-				$this->createMockTuple(2),
+				self::createMockTuple(2),
 			),
 			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidUnionTestData(): iterable
+	private static function provideInvalidUnionTestData(): iterable
 	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
 			$combinatorVal = $combinator->value;
@@ -2730,7 +2730,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidOtherQueryTestData(): iterable
+	private static function provideInvalidOtherQueryTestData(): iterable
 	{
 		yield "TRUNCATE missing_table" => [
 			'query' => "TRUNCATE missing_table",
@@ -2742,7 +2742,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidInsertTestData(): iterable
+	private static function provideInvalidInsertTestData(): iterable
 	{
 		foreach (['INSERT', 'REPLACE'] as $type) {
 			yield "{$type} INTO missing_table" => [
@@ -2782,7 +2782,7 @@ class AnalyserTest extends TestCase
 				'query' => "{$type} INTO analyser_test (name) VALUES (1 = (1, 2))",
 				'error' => AnalyserErrorBuilder::createInvalidTupleComparisonError(
 					new IntType(),
-					$this->createMockTuple(2),
+					self::createMockTuple(2),
 				),
 				'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 			];
@@ -2811,7 +2811,7 @@ class AnalyserTest extends TestCase
 				'error' => [
 					AnalyserErrorBuilder::createInvalidTupleComparisonError(
 						new IntType(),
-						$this->createMockTuple(2),
+						self::createMockTuple(2),
 					),
 					AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
 				],
@@ -2896,7 +2896,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidUpdateTestData(): iterable
+	private static function provideInvalidUpdateTestData(): iterable
 	{
 		yield "UPDATE missing_table" => [
 			'query' => "UPDATE missing_table SET col = 'value'",
@@ -2990,7 +2990,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidDeleteTestData(): iterable
+	private static function provideInvalidDeleteTestData(): iterable
 	{
 		yield 'DELETE - missing table' => [
 			'query' => 'DELETE FROM missing_table',
@@ -3051,7 +3051,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	private function provideInvalidTableValueConstructorData(): iterable
+	private static function provideInvalidTableValueConstructorData(): iterable
 	{
 		yield 'TVC - different number of values' => [
 			'query' => 'WITH t AS (VALUES (1, 2), (3)) SELECT * FROM t',
@@ -3144,7 +3144,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestPositionPlaceholderCountData(): iterable
+	public static function provideTestPositionPlaceholderCountData(): iterable
 	{
 		yield 'no placeholders' => [
 			'query' => 'SELECT 1',
@@ -3223,7 +3223,7 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestRowCountRangeData(): iterable
+	public static function provideTestRowCountRangeData(): iterable
 	{
 		$singleRowQueries = [
 			'SELECT 1',
@@ -3457,9 +3457,9 @@ class AnalyserTest extends TestCase
 		};
 	}
 
-	private function createMockTuple(int $count): TupleType
+	private static function createMockTuple(int $count): TupleType
 	{
-		$types = array_fill(0, $count, $this->createMock(DbType::class));
+		$types = array_fill(0, $count, new IntType());
 
 		return new TupleType($types, false);
 	}
