@@ -6452,3 +6452,30 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT YEAR('2024-09-24 14:43:25')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => YEAR
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => 2024-09-24 14:43:25
+											[firstConcatPart] => 2024-09-24 14:43:25
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

@@ -35,6 +35,7 @@ final class FunctionInfoRegistryFactory
 			new Sum(),
 			new Trim(),
 			new Value(),
+			new Year(),
 		];
 	}
 }

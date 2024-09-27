@@ -1287,3 +1287,17 @@ MariaStan\Parser\Exception\ParserException
 Function UCASE takes 1 argument, got 2.
 #####
 1582: Incorrect parameter count in the call to native function 'UCASE'
+-----
+SELECT YEAR()
+-----
+MariaStan\Parser\Exception\ParserException
+Function YEAR takes 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT YEAR(5, 6)
+-----
+MariaStan\Parser\Exception\ParserException
+Function YEAR takes 1 argument, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
