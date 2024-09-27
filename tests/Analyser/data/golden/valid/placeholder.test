@@ -1,0 +1,453 @@
+placeholder
+-----
+SELECT ? id
+#######
+[1]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[knowledgeBase] => MariaStan\Analyser\AnalyserKnowledgeBase
+								(
+									[columnNullability] => Array
+										(
+										)
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 39
+		)
+)
+-----
+SELECT ? + 1 id
+#######
+[1]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 23
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT ? id
+#######
+[null]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[knowledgeBase] => MariaStan\Analyser\AnalyserKnowledgeBase
+								(
+									[columnNullability] => Array
+										(
+										)
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 0
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT ? + 1 id
+#######
+[null]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 17
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 0
+		)
+)
+-----
+SELECT ? id
+#######
+[1.23]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[knowledgeBase] => MariaStan\Analyser\AnalyserKnowledgeBase
+								(
+									[columnNullability] => Array
+										(
+										)
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 16
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 39
+		)
+)
+-----
+SELECT ? + 1 id
+#######
+[1.23]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 23
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT ? id
+#######
+["aaa"]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[knowledgeBase] => MariaStan\Analyser\AnalyserKnowledgeBase
+								(
+									[columnNullability] => Array
+										(
+										)
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 12
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 39
+		)
+)
+-----
+SELECT ? + 1 id
+#######
+["aaa"]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 23
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)

@@ -1,0 +1,24 @@
+other-query
+-----
+TRUNCATE missing_table
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist

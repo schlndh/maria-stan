@@ -1,0 +1,959 @@
+insert
+-----
+INSERT INTO analyser_test SET id = 999, name = "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyser_test VALUES (999, "abcd")
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyser_test SELECT 999, "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyser_test SELECT 999, "abcd" UNION SELECT 998, "aaa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert SET val_string_not_null_no_default = "aaa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (val_string_not_null_no_default) VALUES ("abcd")
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test SET id = 999, name = "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test VALUES (999, "abcd")
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test SELECT 999, "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test SELECT 999, "abcd" UNION SELECT 998, "aaa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test WITH tbl AS (SELECT 999, "abcd") SELECT * FROM tbl
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyse_test_insert SET val_string_not_null_no_default = "aaa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyse_test_insert (val_string_not_null_no_default) VALUES ("abcd")
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+ON DUPLICATE KEY UPDATE id = id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+ON DUPLICATE KEY UPDATE val_string_not_null_no_default = VALUES(val_string_not_null_no_default)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+ON DUPLICATE KEY UPDATE val_string_not_null_no_default = VALUE(val_string_not_null_no_default)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default) SELECT 1, "abcd"
+ON DUPLICATE KEY UPDATE val_string_not_null_no_default = ?
+#######
+["aaa"]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 1
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT * FROM (
+SELECT 1 new_id, "abcd" name
+) t
+ON DUPLICATE KEY UPDATE id = new_id, val_string_not_null_no_default = t.name
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT id, "abcd" FROM analyser_test
+ON DUPLICATE KEY UPDATE id = analyse_test_insert.id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[1] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT 1, "aa" FROM analyse_test_insert
+ON DUPLICATE KEY UPDATE analyse_test_insert.id = 5;
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert
+SELECT * FROM analyse_test_insert
+ON DUPLICATE KEY UPDATE id = VALUE(id);
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_no_default
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+			[val_string_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_default
+				)
+			[val_enum_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_null_no_default
+				)
+			[val_enum_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_null_default
+				)
+			[val_enum_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_not_null_no_default
+				)
+			[val_enum_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_not_null_default
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert
+SELECT * FROM analyse_test_insert
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_no_default
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+			[val_string_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_default
+				)
+			[val_enum_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_null_no_default
+				)
+			[val_enum_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_null_default
+				)
+			[val_enum_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_not_null_no_default
+				)
+			[val_enum_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_enum_not_null_default
+				)
+		)
+)
+#######
+Array
+(
+)

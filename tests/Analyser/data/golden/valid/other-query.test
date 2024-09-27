@@ -1,0 +1,21 @@
+other-query
+-----
+TRUNCATE TABLE analyser_test_truncate
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+)

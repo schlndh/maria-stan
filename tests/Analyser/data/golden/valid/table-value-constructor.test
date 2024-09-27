@@ -1,0 +1,608 @@
+table-value-constructor
+-----
+WITH tbl AS (VALUES (1, 2), (3, 4)) SELECT * FROM tbl
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 2
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 2
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 1
+			[orgname] => 1
+			[table] => tbl
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => 2
+			[orgname] => 2
+			[table] => tbl
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+WITH tbl (a, b) AS (VALUES (1, 2), (3, 4)) SELECT * FROM tbl
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => a
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => a
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => b
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => b
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => a
+			[orgname] => a
+			[table] => tbl
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => b
+			[orgname] => b
+			[table] => tbl
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+WITH tbl (a, b) AS (VALUES (1, 'a'), ('b', null)) SELECT * FROM tbl
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => a
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => a
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => b
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => b
+									[tableName] => tbl
+									[tableAlias] => tbl
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => a
+			[orgname] => a
+			[table] => tbl
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => b
+			[orgname] => b
+			[table] => tbl
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 45
+			[flags] => Array
+				(
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT * FROM (VALUES (1 + 1, 2), (3, 4)) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1 + 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1 + 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 2
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 2
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 1 + 1
+			[orgname] => 1 + 1
+			[table] => t
+			[orgtable] =>
+			[length] => 3
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => 2
+			[orgname] => 2
+			[table] => t
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT id, id FROM analyser_test UNION VALUES (1, 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT id, id FROM analyser_test EXCEPT VALUES (1, 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT id, id FROM analyser_test INTERSECT VALUES (1, 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)

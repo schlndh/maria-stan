@@ -1,0 +1,101 @@
+table-value-constructor
+-----
+WITH t AS (VALUES (1, 2), (3)) SELECT * FROM t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used table value constructor has a different number of values: 1 - 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+4099: The used table value constructor has a different number of values
+-----
+WITH t AS (VALUES (1, id)) SELECT * FROM t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+4100: Field reference 'id' can't be used in table value constructor

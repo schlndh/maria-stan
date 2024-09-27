@@ -1,0 +1,159 @@
+delete
+-----
+DELETE FROM analyser_test_truncate WHERE id > 5 ORDER BY id, name DESC LIMIT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_truncate
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_truncate
+						)
+					[name] => name
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+DELETE t1 FROM analyser_test_truncate t1 JOIN (SELECT 1 id) t2 ON ? WHERE t1.id > ?
+#######
+[1,2]
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 2
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_truncate
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+DELETE FROM analyser_test_truncate WHERE id IN (SELECT id FROM analyser_test_truncate)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_truncate
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+DELETE t1 FROM analyser_test_truncate t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+DELETE analyser_test_truncate FROM analyser_test_truncate, analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+Array
+(
+)

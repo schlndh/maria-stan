@@ -1,0 +1,1291 @@
+union
+-----
+SELECT v.id FROM analyser_test UNION SELECT id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test UNION SELECT v.id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test
+UNION
+SELECT v.id FROM analyser_test
+UNION SELECT 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT * FROM (SELECT 1 UNION SELECT 2, 3) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT 1 IN (SELECT 1 UNION SELECT 2, 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1 IN (SELECT 1 UNION SELECT 2, 3)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT 1 aa UNION SELECT 2 bb ORDER BY bb
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'bb'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1054: Unknown column 'bb' in 'order clause'
+-----
+SELECT id aa FROM analyser_test UNION SELECT 2 bb ORDER BY id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'id' in 'order clause'
+-----
+SELECT id FROM analyser_test
+UNION
+SELECT id FROM analyser_test
+ORDER BY analyser_test.id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'analyser_test.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+-----
+SELECT 1 UNION SELECT 2, 3
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT id aa FROM analyser_test UNION SELECT 2 + aa
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'aa'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'aa' in 'field list'
+-----
+SELECT v.id FROM analyser_test EXCEPT SELECT id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test EXCEPT SELECT v.id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test
+EXCEPT
+SELECT v.id FROM analyser_test
+EXCEPT SELECT 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT * FROM (SELECT 1 EXCEPT SELECT 2, 3) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT 1 IN (SELECT 1 EXCEPT SELECT 2, 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1 IN (SELECT 1 EXCEPT SELECT 2, 3)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT 1 aa EXCEPT SELECT 2 bb ORDER BY bb
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'bb'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1054: Unknown column 'bb' in 'order clause'
+-----
+SELECT id aa FROM analyser_test EXCEPT SELECT 2 bb ORDER BY id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'id' in 'order clause'
+-----
+SELECT id FROM analyser_test
+EXCEPT
+SELECT id FROM analyser_test
+ORDER BY analyser_test.id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'analyser_test.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+-----
+SELECT 1 EXCEPT SELECT 2, 3
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT id aa FROM analyser_test EXCEPT SELECT 2 + aa
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'aa'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'aa' in 'field list'
+-----
+SELECT v.id FROM analyser_test INTERSECT SELECT id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test INTERSECT SELECT v.id FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT id FROM analyser_test
+INTERSECT
+SELECT v.id FROM analyser_test
+INTERSECT SELECT 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'v.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'v.id' in 'field list'
+-----
+SELECT * FROM (SELECT 1 INTERSECT SELECT 2, 3) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => 1
+									[tableName] => t
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::SUBQUERY
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT 1 IN (SELECT 1 INTERSECT SELECT 2, 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1 IN (SELECT 1 INTERSECT SELECT 2, 3)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT 1 aa INTERSECT SELECT 2 bb ORDER BY bb
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'bb'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1054: Unknown column 'bb' in 'order clause'
+-----
+SELECT id aa FROM analyser_test INTERSECT SELECT 2 bb ORDER BY id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'id' in 'order clause'
+-----
+SELECT id FROM analyser_test
+INTERSECT
+SELECT id FROM analyser_test
+ORDER BY analyser_test.id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'analyser_test.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+-----
+SELECT 1 INTERSECT SELECT 2, 3
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1222: The used SELECT statements have a different number of columns
+-----
+SELECT id aa FROM analyser_test INTERSECT SELECT 2 + aa
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'aa'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+1054: Unknown column 'aa' in 'field list'

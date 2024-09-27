@@ -1,0 +1,2012 @@
+tuple
+-----
+SELECT (id, name, 1) = (id, name) FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) = (id, name)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between TUPLE<3> and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 3 column(s)
+-----
+SELECT 1 IN (SELECT 1, 2)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 1 IN (SELECT 1, 2)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between INT and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (1, 2) IN (1, 2)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (1, 2) IN (1, 2)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between TUPLE<2> and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation 'in'
+-----
+SELECT (1,2) IN ((SELECT id FROM analyser_test LIMIT 1), (SELECT id FROM analyser_test LIMIT 1))
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (1,2) IN ((SELECT id FROM analyser_test LIMIT 1), (SELECT id FROM analyser_test LIMIT 1))
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between TUPLE<2> and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation 'in'
+-----
+SELECT ((1,2), 3) IN ((1,2), 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => ((1,2), 3) IN ((1,2), 3)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between TUPLE<2> and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation 'in'
+-----
+SELECT (id, name, 1) + (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) + (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator + cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and row for operation '+'
+-----
+SELECT (id, name, 1) + 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) + 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator + cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation '+'
+-----
+SELECT (id, name, 1) - (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) - (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator - cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and row for operation '-'
+-----
+SELECT (id, name, 1) - 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) - 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator - cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation '-'
+-----
+SELECT (id, name, 1) * (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) * (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator * cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and row for operation '*'
+-----
+SELECT (id, name, 1) * 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) * 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator * cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation '*'
+-----
+SELECT (id, name, 1) / (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) / (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator / cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and row for operation '/'
+-----
+SELECT (id, name, 1) / 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) / 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator / cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation '/'
+-----
+SELECT (id, name, 1) % (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) % (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator % cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and row for operation 'MOD'
+-----
+SELECT (id, name, 1) % 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) % 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator % cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types row and int for operation 'MOD'
+-----
+SELECT (id, name, 1) DIV (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) DIV (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator DIV cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) DIV 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) DIV 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator DIV cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) AND (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) AND (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator AND cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) AND 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) AND 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator AND cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) OR (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) OR (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator OR cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) OR 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) OR 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator OR cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) XOR (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) XOR (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator XOR cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) XOR 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) XOR 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator XOR cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) << (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) << (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator << cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '<<'
+-----
+SELECT (id, name, 1) << 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) << 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator << cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '<<'
+-----
+SELECT (id, name, 1) >> (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) >> (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator >> cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '>>'
+-----
+SELECT (id, name, 1) >> 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) >> 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator >> cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '>>'
+-----
+SELECT (id, name, 1) & (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) & (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator & cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '&'
+-----
+SELECT (id, name, 1) & 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) & 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator & cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '&'
+-----
+SELECT (id, name, 1) | (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) | (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator | cannot be used between TUPLE and TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '|'
+-----
+SELECT (id, name, 1) | 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) | 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator | cannot be used between TUPLE and INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_BINARY_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4079: Illegal parameter data type row for operation '|'
+-----
+SELECT CASE WHEN (1,1) THEN 1 END
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CASE WHEN (1,1) THEN 1 END
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Expected single value, got TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT CASE (1, 1) WHEN (1,1) THEN 1 END
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CASE (1, 1) WHEN (1,1) THEN 1 END
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Expected single value, got TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Expected single value, got TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT CASE WHEN 1 THEN (1,1) END
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CASE WHEN 1 THEN (1,1) END
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\TupleType
+								(
+									[typeCount] => 2
+									[types] => Array
+										(
+											MariaStan\Schema\DbType\IntType
+												(
+												)
+											MariaStan\Schema\DbType\IntType
+												(
+												)
+										)
+									[isFromSubquery] => false
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Expected single value, got TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT CASE WHEN 1 THEN 0 ELSE (1,1) END
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CASE WHEN 1 THEN 0 ELSE (1,1) END
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Expected single value, got TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) LIKE (1, 'aa') FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) LIKE (1, 'aa')
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator LIKE cannot be used as: TUPLE LIKE TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_LIKE_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT name LIKE 'a' ESCAPE (1, 2) FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name LIKE 'a' ESCAPE (1, 2)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator LIKE cannot be used as: VARCHAR LIKE VARCHAR ESCAPE TUPLE
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_LIKE_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT (id, name, 1) LIKE 1 FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => (id, name, 1) LIKE 1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Operator LIKE cannot be used as: TUPLE LIKE INT
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_LIKE_OP
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1241: Operand should contain 1 column(s)
+-----
+SELECT AVG((id, name)) FROM analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => AVG((id, name))
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Function AVG does not accept TUPLE<2> as argument 1.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_FUNCTION_ARGUMENT
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1241: Operand should contain 1 column(s)

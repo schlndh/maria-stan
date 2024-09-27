@@ -1,0 +1,1336 @@
+insert
+-----
+INSERT INTO missing_table SET col = 'value'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'col'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+INSERT INTO analyser_test SET missing_column = 'value'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+INSERT INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+INSERT INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+INSERT INTO analyser_test SELECT * FROM missing_table
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+INSERT INTO analyser_test (name) VALUES (1 = (1, 2))
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between INT and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types int and row for operation '='
+-----
+INSERT INTO analyser_test (id, name) VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
+INSERT INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1), (111, 1 = (1, 1))
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between INT and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
+INSERT INTO analyser_test VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test (name) SELECT 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 1 columns, but got 2 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test SELECT 999, 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+INSERT INTO analyse_test_insert SET val_string_null_default = 'aaa'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+INSERT INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+REPLACE INTO missing_table SET col = 'value'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'col'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+REPLACE INTO analyser_test SET missing_column = 'value'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+REPLACE INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+REPLACE INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+REPLACE INTO analyser_test SELECT * FROM missing_table
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+REPLACE INTO analyser_test (name) VALUES (1 = (1, 2))
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between INT and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+4078: Illegal parameter data types int and row for operation '='
+-----
+REPLACE INTO analyser_test (id, name) VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
+REPLACE INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1), (111, 1 = (1, 1))
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Invalid comparison between INT and TUPLE<2>
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::INVALID_TUPLE_USAGE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
+REPLACE INTO analyser_test VALUES (999, 'adasd', 1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test (name) SELECT 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 1 columns, but got 2 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test SELECT 999, 'adasd', 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+REPLACE INTO analyse_test_insert SET val_string_null_default = 'aaa'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+REPLACE INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+INSERT INTO analyser_test (id, name) SELECT 999, 'adasd'
+ON DUPLICATE KEY UPDATE missing_column = 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'field list'
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT id, "abcd" FROM analyser_test
+ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Ambiguous column 'id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::AMBIGUOUS_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[1] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+1052: Column 'id' in field list is ambiguous
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT id, "abcd" FROM analyser_test
+ON DUPLICATE KEY UPDATE analyser_test.id = 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => You cannot assign to 'analyser_test.id'.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::ASSIGN_TO_READONLY_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[1] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+1054: Unknown column 'analyser_test.id' in 'field list'
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT * FROM (SELECT 1 id, "abcd" name) t
+ON DUPLICATE KEY UPDATE t.id = 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => You cannot assign to 't.id'.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::ASSIGN_TO_READONLY_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => id
+				)
+			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+						)
+					[name] => val_string_not_null_no_default
+				)
+		)
+)
+#######
+1054: Unknown column 't.id' in 'field list'

@@ -6,13 +6,20 @@ namespace MariaStan;
 
 use function array_map;
 use function assert;
+use function closedir;
 use function explode;
+use function file_exists;
 use function file_get_contents;
 use function implode;
+use function is_dir;
+use function opendir;
 use function preg_quote;
+use function readdir;
 use function realpath;
+use function rmdir;
 use function rtrim;
 use function str_replace;
+use function unlink;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -99,4 +106,35 @@ function filesInDir(string $directory, string $fileExtension): iterable
 
 		yield $fileName => $contents;
 	}
+}
+
+// https://www.php.net/manual/en/function.rmdir.php#119949
+function rrmdir(string $src): void
+{
+	if (! file_exists($src)) {
+		return;
+	}
+
+	$dir = opendir($src);
+
+	if ($dir === false) {
+		return;
+	}
+
+	while (($file = readdir($dir)) !== false) {
+		if (($file === '.') || ($file === '..')) {
+			continue;
+		}
+
+		$full = $src . '/' . $file;
+
+		if (is_dir($full)) {
+			rrmdir($full);
+		} else {
+			unlink($full);
+		}
+	}
+
+	closedir($dir);
+	rmdir($src);
 }

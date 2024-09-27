@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan;
 
+use MariaStan\Analyser\AnalyserGoldenTest;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbLexerTest;
 use MariaStan\Parser\MariaDbParserTest;
@@ -14,7 +15,14 @@ use PHPUnit\TextUI\XmlConfiguration\Loader;
 use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
 use function file_put_contents;
+use function json_encode;
+use function mkdir;
+use function preg_last_error_msg;
+use function preg_replace;
 use function strpos;
+use function trim;
+
+use const JSON_THROW_ON_ERROR;
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/Parser/CodeTestParser.php';
@@ -27,6 +35,35 @@ require __DIR__ . '/../vendor/autoload.php';
 $config = (new Loader())->load(__DIR__ . '/../phpunit.xml');
 (new PhpHandler())->handle($config->php());
 $testParser = new CodeTestParser();
+rrmdir(__DIR__ . '/Analyser/data/golden/');
+
+foreach (AnalyserGoldenTest::getTestSets() as $directory => $dirData) {
+	$dirPath = __DIR__ . '/Analyser/data/golden/' . $directory;
+	@mkdir($dirPath, 0777, true);
+
+	foreach ($dirData as $set => $data) {
+		$newTests = [];
+
+		foreach ($data as $name => ['query' => $query, 'params' => $params]) {
+			$query = trim($query);
+			$query = preg_replace('/^[ \t]*/m', '', $query)
+				?? throw new \RuntimeException(preg_last_error_msg());
+			$input = $query;
+			$output = AnalyserGoldenTest::getTestOutput($query, $params);
+
+			if ($params !== []) {
+				$input .= AnalyserGoldenTest::SUBFIELD_SEPARATOR . json_encode($params, JSON_THROW_ON_ERROR);
+			}
+
+			$newTests[] = [null, [$input, $output]];
+		}
+
+		file_put_contents(
+			$dirPath . '/' . $set . '.test',
+			$testParser->reconstructTest($set, $newTests),
+		);
+	}
+}
 
 $parserDir = __DIR__ . '/code/Parser/MariaDbParser';
 $codeParsingTest = new MariaDbParserTest();

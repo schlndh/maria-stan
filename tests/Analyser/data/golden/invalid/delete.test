@@ -1,0 +1,240 @@
+delete
+-----
+DELETE FROM missing_table
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+DELETE t_miss FROM analyser_test_truncate t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 't_miss' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1109: Unknown table 't_miss' in MULTI DELETE
+-----
+DELETE analyser_test_truncate FROM analyser_test_truncate t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1109: Unknown table 'analyser_test_truncate' in MULTI DELETE
+-----
+DELETE FROM analyser_test_truncate WHERE missing_col > 1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_col'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_col' in 'where clause'
+-----
+DELETE FROM analyser_test_truncate ORDER BY missing_col
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_col'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_col' in 'order clause'
+-----
+DELETE t1 FROM analyser_test_truncate t1, (SELECT * FROM missing_table) t2
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+DELETE t1 FROM analyser_test_truncate t1, (SELECT 1) t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: 't1'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1066: Not unique table/alias: 't1'
+-----
+DELETE analyser_test_truncate FROM analyser_test_truncate, (SELECT 1) analyser_test_truncate
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: 'analyser_test_truncate'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1066: Not unique table/alias: 'analyser_test_truncate'
+-----
+DELETE t1 FROM analyser_test_truncate t1, analyser_test_truncate t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: 't1'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+				)
+		)
+)
+#######
+1066: Not unique table/alias: 't1'

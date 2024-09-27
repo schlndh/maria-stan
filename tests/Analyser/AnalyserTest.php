@@ -65,18 +65,19 @@ use const MYSQLI_TYPE_YEAR;
 
 class AnalyserTest extends TestCase
 {
-	private const IGNORED_WARNINGS = [
-		MariaDbErrorCodes::ER_TRUNCATED_WRONG_VALUE,
-		MariaDbErrorCodes::ER_WARN_DATA_OUT_OF_RANGE,
-		MariaDbErrorCodes::ER_DIVISION_BY_ZER,
-		// I have a few test-cases with explicit null, which I could detect, but in general I don't
-		// want to bother.
-		MariaDbErrorCodes::ER_UNKNOWN_LOCALE,
-		MariaDbErrorCodes::ER_BAD_DATA,
-	];
+	private const IGNORED_WARNINGS
+		= [
+			MariaDbErrorCodes::ER_TRUNCATED_WRONG_VALUE,
+			MariaDbErrorCodes::ER_WARN_DATA_OUT_OF_RANGE,
+			MariaDbErrorCodes::ER_DIVISION_BY_ZER,
+			// I have a few test-cases with explicit null, which I could detect, but in general I don't
+			// want to bother.
+			MariaDbErrorCodes::ER_UNKNOWN_LOCALE,
+			MariaDbErrorCodes::ER_BAD_DATA,
+		];
 
-	/** @return iterable<string, array<mixed>> */
-	public static function provideValidTestData(): iterable
+	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	public static function getValidTestSets(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
@@ -120,37 +121,47 @@ class AnalyserTest extends TestCase
 			INSERT INTO analyser_test_enum (enum_abc, enum_ab, enum_bc) VALUES ('a', 'b', 'c');
 		");
 
-		yield 'SELECT *' => [
-			'query' => "SELECT * FROM analyser_test",
-		];
+		yield 'misc' => static function (): iterable {
+			yield 'SELECT *' => [
+				'query' => "SELECT * FROM analyser_test",
+			];
 
-		yield 'manually specified columns' => [
-			'query' => "SELECT name, id FROM analyser_test",
-		];
+			yield 'manually specified columns' => [
+				'query' => "SELECT name, id FROM analyser_test",
+			];
 
-		yield 'manually specified columns + *' => [
-			'query' => "SELECT *, name, id FROM analyser_test",
-		];
+			yield 'manually specified columns + *' => [
+				'query' => "SELECT *, name, id FROM analyser_test",
+			];
 
-		yield 'field alias' => [
-			'query' => "SELECT 1 id",
-		];
+			yield 'field alias' => [
+				'query' => "SELECT 1 id",
+			];
+		};
 
-		yield from self::provideValidLiteralTestData();
-		yield from self::provideValidOperatorTestData();
-		yield from self::provideValidDataTypeTestData();
-		yield from self::provideValidJoinTestData();
-		yield from self::provideValidSubqueryTestData();
-		yield from self::provideValidGroupByHavingOrderTestData();
-		yield from self::provideValidPlaceholderTestData();
-		yield from self::provideValidFunctionCallTestData();
-		yield from self::provideValidUnionTestData();
-		yield from self::provideValidWithTestData();
-		yield from self::provideValidInsertTestData();
-		yield from self::provideValidOtherQueryTestData();
-		yield from self::provideValidUpdateTestData();
-		yield from self::provideValidDeleteTestData();
-		yield from self::provideValidTableValueConstructorData();
+		yield 'literal' => self::provideValidLiteralTestData(...);
+		yield 'operator' => self::provideValidOperatorTestData(...);
+		yield 'data-type' => self::provideValidDataTypeTestData(...);
+		yield 'join' => self::provideValidJoinTestData(...);
+		yield 'subquery' => self::provideValidSubqueryTestData(...);
+		yield 'having' => self::provideValidGroupByHavingOrderTestData(...);
+		yield 'placeholder' => self::provideValidPlaceholderTestData(...);
+		yield 'functional' => self::provideValidFunctionCallTestData(...);
+		yield 'union' => self::provideValidUnionTestData(...);
+		yield 'with' => self::provideValidWithTestData(...);
+		yield 'insert' => self::provideValidInsertTestData(...);
+		yield 'other-query' => self::provideValidOtherQueryTestData(...);
+		yield 'update' => self::provideValidUpdateTestData(...);
+		yield 'delete' => self::provideValidDeleteTestData(...);
+		yield 'table-value-constructor' => self::provideValidTableValueConstructorData(...);
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public static function provideValidTestData(): iterable
+	{
+		foreach (self::getValidTestSets() as $testSet) {
+			yield from $testSet();
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1192,7 +1203,6 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE id = VALUES(id);
 			',
 		];
-
 		// TODO: DEFAULT expression
 	}
 
@@ -1417,7 +1427,8 @@ class AnalyserTest extends TestCase
 				$this->assertIsString($val);
 
 				foreach (['Y-m-d H:i:s', 'Y-m-d'] as $format) {
-					$parsedDateTime = $parsedDateTime ?: DateTimeImmutable::createFromFormat($format, $val);
+					$parsedDateTime = $parsedDateTime
+						?: DateTimeImmutable::createFromFormat($format, $val);
 				}
 
 				$this->assertNotFalse($parsedDateTime);
@@ -1486,62 +1497,8 @@ class AnalyserTest extends TestCase
 	}
 
 	/** @return iterable<string, array<mixed>> */
-	public static function provideValidNullabilityTestData(): iterable
+	private static function provideValidNullabilityOperatorTestData(): iterable
 	{
-		$db = TestCaseHelper::getDefaultSharedConnection();
-		$db->query('
-			CREATE OR REPLACE TABLE analyser_test_nullability_1 (
-				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				col_vchar VARCHAR(255) NULL
-			);
-		');
-		$db->query('
-			INSERT INTO analyser_test_nullability_1 (col_vchar)
-			VALUES (NULL), ("aa"), ("1"), ("2023-02-10 13:19:25"), ("18446744073709551615")
-		');
-		$db->query('
-			CREATE OR REPLACE TABLE analyser_test_nullability_2 (
-				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				col_int INT NULL
-			);
-		');
-		$db->query('
-			INSERT INTO analyser_test_nullability_2 (col_int)
-			VALUES (NULL), (0), (1)
-		');
-
-		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
-		// column are NULL, then the analyser must infer it as NULL type.
-		yield 'no WHERE' => [
-			'query' => 'SELECT * FROM analyser_test_nullability_1',
-		];
-
-		yield 'useless WHERE 1' => [
-			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE 1',
-		];
-
-		yield 'useless WHERE id IS NOT NULL' => [
-			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE id IS NOT NULL',
-		];
-
-		yield 'nullability narrowing works with SELECT *' => [
-			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
-		];
-
-		yield 'nullability narrowing works with SELECT t.*' => [
-			'query' => 'SELECT t.* FROM analyser_test_nullability_1 t WHERE col_vchar IS NOT NULL',
-		];
-
-		yield 'nullability narrowing works with SELECT col_vchar' => [
-			'query' => 'SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
-		];
-
-		yield 'nullability narrowing works with SELECT * FROM (SELECT col_vchar)' => [
-			'query' => '
-				SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL) t
-			',
-		];
-
 		$operations = [
 			'col_vchar IS NOT NULL',
 			'col_vchar IS NULL',
@@ -1747,6 +1704,40 @@ class AnalyserTest extends TestCase
 				",
 			];
 		}
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private static function provideValidNullabilityMiscTestData(): iterable
+	{
+		yield 'no WHERE' => [
+			'query' => 'SELECT * FROM analyser_test_nullability_1',
+		];
+
+		yield 'useless WHERE 1' => [
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE 1',
+		];
+
+		yield 'useless WHERE id IS NOT NULL' => [
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE id IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT *' => [
+			'query' => 'SELECT * FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT t.*' => [
+			'query' => 'SELECT t.* FROM analyser_test_nullability_1 t WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT col_vchar' => [
+			'query' => 'SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL',
+		];
+
+		yield 'nullability narrowing works with SELECT * FROM (SELECT col_vchar)' => [
+			'query' => '
+				SELECT * FROM (SELECT col_vchar FROM analyser_test_nullability_1 WHERE col_vchar IS NOT NULL) t
+			',
+		];
 
 		yield 'CROSS JOIN same table, one col is NOT NULL' => [
 			'query' => '
@@ -1834,6 +1825,30 @@ class AnalyserTest extends TestCase
 			',
 		];
 
+		// TODO: fix this
+		//yield 'JOIN USING' => [
+		//	'query' => '
+		//		SELECT * FROM analyser_test_nullability_1 t1
+		//		JOIN analyser_test_nullability_1 t2 USING (col_vchar)
+		//	',
+		//];
+		//
+		//yield 'JOIN USING - nested' => [
+		//	'query' => '
+		//		SELECT * FROM (analyser_test_nullability_1 t1 JOIN analyser_test_nullability_1 t2 USING (col_vchar))
+		//		JOIN analyser_test_nullability_1 r3 USING (col_vchar)
+		//	',
+		//];
+
+		// TODO: fix this
+		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
+		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',
+		//];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private static function provideValidNullabilityGroupByTestData(): iterable
+	{
 		// TODO: add /, % and DIV once we can remove nullability for "/ 1" etc.
 		$binaryOps = ['+', '-', '*'];
 		$unaryOps = ['+', '-', '~', 'BINARY'];
@@ -1939,26 +1954,46 @@ class AnalyserTest extends TestCase
 				GROUP BY a3.id
 			",
 		];
+	}
 
-		// TODO: fix this
-		//yield 'JOIN USING' => [
-		//	'query' => '
-		//		SELECT * FROM analyser_test_nullability_1 t1
-		//		JOIN analyser_test_nullability_1 t2 USING (col_vchar)
-		//	',
-		//];
-		//
-		//yield 'JOIN USING - nested' => [
-		//	'query' => '
-		//		SELECT * FROM (analyser_test_nullability_1 t1 JOIN analyser_test_nullability_1 t2 USING (col_vchar))
-		//		JOIN analyser_test_nullability_1 r3 USING (col_vchar)
-		//	',
-		//];
+	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	public static function getValidNullabilityTestSets(): iterable
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->query('
+			CREATE OR REPLACE TABLE analyser_test_nullability_1 (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				col_vchar VARCHAR(255) NULL
+			);
+		');
+		$db->query('
+			INSERT INTO analyser_test_nullability_1 (col_vchar)
+			VALUES (NULL), ("aa"), ("1"), ("2023-02-10 13:19:25"), ("18446744073709551615")
+		');
+		$db->query('
+			CREATE OR REPLACE TABLE analyser_test_nullability_2 (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				col_int INT NULL
+			);
+		');
+		$db->query('
+			INSERT INTO analyser_test_nullability_2 (col_int)
+			VALUES (NULL), (0), (1)
+		');
 
-		// TODO: fix this
-		//yield 'WHERE 0 ORDER BY COUNT(*)' => [
-		//	'query' => 'SELECT id FROM analyser_test WHERE 0 ORDER BY COUNT(*)',
-		//];
+		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
+		// column are NULL, then the analyser must infer it as NULL type.
+		yield 'misc' => self::provideValidNullabilityMiscTestData(...);
+		yield 'operator' => self::provideValidNullabilityOperatorTestData(...);
+		yield 'group-by' => self::provideValidNullabilityGroupByTestData(...);
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public static function provideValidNullabilityTestData(): iterable
+	{
+		foreach (self::getValidNullabilityTestSets() as $testSet) {
+			yield from $testSet();
+		}
 	}
 
 	/**
@@ -2061,115 +2096,125 @@ class AnalyserTest extends TestCase
 		}
 	}
 
+	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	public static function getInvalidTestSets(): iterable
+	{
+		yield 'misc' => static function (): iterable {
+			// TODO: improve the error messages to match MariaDB errors more closely.
+			yield 'usage of previous alias in field list' => [
+				'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
+				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield 'subquery - forward reference to alias in field list' => [
+				'query' => 'SELECT (SELECT aaa), 1 aaa',
+				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
+				'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_REFERENCE,
+			];
+
+			yield 'subquery - reference field alias in WHERE' => [
+				'query' => 'SELECT 1 aaa WHERE (SELECT aaa) = 1',
+				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
+			yield 'not unique table name in top-level query' => [
+				'query' => 'SELECT * FROM analyser_test, analyser_test',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique table alias in top-level query' => [
+				'query' => 'SELECT * FROM analyser_test t, analyser_test t',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique subquery alias' => [
+				'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique table alias - nested JOIN' => [
+				'query' => 'SELECT * FROM (analyser_test a, analyser_test b) JOIN (analyser_test a, analyser_test c)',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('a'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique table - nested JOIN' => [
+				'query' => 'SELECT * FROM (analyser_test, (SELECT 1) b) JOIN (analyser_test, (SELECT 2) c)',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique table in subquery' => [
+				'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
+				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			];
+
+			yield 'not unique table alias in WITH' => [
+				'query' => 'WITH tbl AS (SELECT 1), tbl AS (SELECT 1) SELECT * FROM tbl',
+				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('tbl'),
+				'DB error code' => MariaDbErrorCodes::ER_DUP_QUERY_NAME,
+			];
+
+			yield 'duplicate column name in subquery' => [
+				'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
+				'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
+				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+			];
+
+			yield 'duplicate column name in WITH' => [
+				'query' => 'WITH analyser_test AS (SELECT 1, 1) SELECT * FROM analyser_test',
+				'error' => (new DuplicateFieldNameException('1'))->toAnalyserError(),
+				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+			];
+
+			yield 'duplicate column name in WITH - explicit column list' => [
+				'query' => 'WITH tbl (id, id) AS (SELECT 1, 2) SELECT 1',
+				'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
+				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+			];
+
+			yield 'WITH - mismatched number of columns in column list' => [
+				'query' => 'WITH tbl (id, aa) AS (SELECT 1) SELECT * FROM tbl',
+				'error' => AnalyserErrorBuilder::createDifferentNumberOfWithColumnsError(2, 1),
+				'DB error code' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
+			];
+
+			yield "LIKE - multichar ESCAPE literal" => [
+				'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
+				'error' => AnalyserErrorBuilder::createInvalidLikeEscapeMulticharError('cd'),
+				'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
+			];
+
+			yield 'bug - valid subquery should not clear errors from parent query' => [
+				'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
+				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+		};
+
+		yield 'column' => self::provideInvalidColumnTestData(...);
+		yield 'tuple' => self::provideInvalidTupleTestData(...);
+		yield 'union' => self::provideInvalidUnionTestData(...);
+		yield 'insert' => self::provideInvalidInsertTestData(...);
+		yield 'other-query' => self::provideInvalidOtherQueryTestData(...);
+		yield 'update' => self::provideInvalidUpdateTestData(...);
+		yield 'delete' => self::provideInvalidDeleteTestData(...);
+		yield 'table-value-constructor' => self::provideInvalidTableValueConstructorData(...);
+		yield 'unsupported-feature' => self::provideInvalidUnsupportedFeaturesData(...);
+	}
+
 	/** @return iterable<string, array<mixed>> */
 	public static function provideInvalidTestData(): iterable
 	{
-		// TODO: improve the error messages to match MariaDB errors more closely.
-		yield 'usage of previous alias in field list' => [
-			'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
-			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'subquery - forward reference to alias in field list' => [
-			'query' => 'SELECT (SELECT aaa), 1 aaa',
-			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_REFERENCE,
-		];
-
-		yield 'subquery - reference field alias in WHERE' => [
-			'query' => 'SELECT 1 aaa WHERE (SELECT aaa) = 1',
-			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield 'not unique table name in top-level query' => [
-			'query' => 'SELECT * FROM analyser_test, analyser_test',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique table alias in top-level query' => [
-			'query' => 'SELECT * FROM analyser_test t, analyser_test t',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique subquery alias' => [
-			'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique table alias - nested JOIN' => [
-			'query' => 'SELECT * FROM (analyser_test a, analyser_test b) JOIN (analyser_test a, analyser_test c)',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique table - nested JOIN' => [
-			'query' => 'SELECT * FROM (analyser_test, (SELECT 1) b) JOIN (analyser_test, (SELECT 2) c)',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique table in subquery' => [
-			'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
-		];
-
-		yield 'not unique table alias in WITH' => [
-			'query' => 'WITH tbl AS (SELECT 1), tbl AS (SELECT 1) SELECT * FROM tbl',
-			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('tbl'),
-			'DB error code' => MariaDbErrorCodes::ER_DUP_QUERY_NAME,
-		];
-
-		yield 'duplicate column name in subquery' => [
-			'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
-			'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
-			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
-		];
-
-		yield 'duplicate column name in WITH' => [
-			'query' => 'WITH analyser_test AS (SELECT 1, 1) SELECT * FROM analyser_test',
-			'error' => (new DuplicateFieldNameException('1'))->toAnalyserError(),
-			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
-		];
-
-		yield 'duplicate column name in WITH - explicit column list' => [
-			'query' => 'WITH tbl (id, id) AS (SELECT 1, 2) SELECT 1',
-			'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
-			'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
-		];
-
-		yield 'WITH - mismatched number of columns in column list' => [
-			'query' => 'WITH tbl (id, aa) AS (SELECT 1) SELECT * FROM tbl',
-			'error' => AnalyserErrorBuilder::createDifferentNumberOfWithColumnsError(2, 1),
-			'DB error code' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
-		];
-
-		yield "LIKE - multichar ESCAPE literal" => [
-			'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
-			'error' => AnalyserErrorBuilder::createInvalidLikeEscapeMulticharError('cd'),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
-		];
-
-		yield 'bug - valid subquery should not clear errors from parent query' => [
-			'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
-			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
-		];
-
-		yield from self::provideInvalidColumnTestData();
-		yield from self::provideInvalidTupleTestData();
-		yield from self::provideInvalidUnionTestData();
-		yield from self::provideInvalidInsertTestData();
-		yield from self::provideInvalidOtherQueryTestData();
-		yield from self::provideInvalidUpdateTestData();
-		yield from self::provideInvalidDeleteTestData();
-		yield from self::provideInvalidTableValueConstructorData();
-		yield from self::provideInvalidUnsupportedFeaturesData();
+		foreach (self::getInvalidTestSets() as $testSet) {
+			yield from $testSet();
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */
