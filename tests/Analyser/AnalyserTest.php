@@ -1362,7 +1362,7 @@ class AnalyserTest extends TestCase
 				if ($actualType === DbTypeEnum::VARCHAR) {
 					$datetimeFields[] = $i;
 				} else {
-					$this->assertSame($actualType, $analyzedExprType->type::getTypeEnum());
+					$this->assertSame($actualType->value, $analyzedExprType->type::getTypeEnum()->value);
 				}
 			} elseif ($analyzedExprType->type::getTypeEnum() === DbTypeEnum::MIXED) {
 				$mixedFieldErrors[] = "DB type for {$analyzedField->name} should be {$actualType->value} got MIXED.";
