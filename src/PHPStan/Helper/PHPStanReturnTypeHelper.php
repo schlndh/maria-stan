@@ -17,6 +17,7 @@ use MariaStan\PHPStan\Exception\InvalidArgumentException;
 use MariaStan\PHPStan\Type\MySQLi\DbToPhpstanTypeMapper;
 use MariaStan\Schema\DbType;
 use PHPStan\PhpDoc\TypeStringResolver;
+use PHPStan\TrinaryLogic;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
@@ -97,7 +98,7 @@ class PHPStanReturnTypeHelper
 		}
 
 		return [
-			new ConstantArrayType($keyTypes, $valueTypes, isList: true),
+			new ConstantArrayType($keyTypes, $valueTypes, isList: TrinaryLogic::createYes()),
 			TypeCombinator::union(...$params->positionalPlaceholderCounts),
 		];
 	}
@@ -230,7 +231,7 @@ class PHPStanReturnTypeHelper
 
 		$valueTypes = array_column($columns, 1);
 
-		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes, count($valueTypes));
+		return new ConstantArrayType($this->getNumberedKeyTypes(count($valueTypes)), $valueTypes, [count($valueTypes)]);
 	}
 
 	/** @param ?array<array{ConstantStringType, Type}> $columns [[name, type]] */
