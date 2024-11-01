@@ -1301,3 +1301,31 @@ MariaStan\Parser\Exception\ParserException
 Function YEAR takes 1 argument, got 2.
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 6)' at line 1
+-----
+SELECT REPLACE()
+-----
+MariaStan\Parser\Exception\ParserException
+Function REPLACE takes 3 arguments, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT REPLACE('a')
+-----
+MariaStan\Parser\Exception\ParserException
+Function REPLACE takes 3 arguments, got 1.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT REPLACE('a', 'b')
+-----
+MariaStan\Parser\Exception\ParserException
+Function REPLACE takes 3 arguments, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT REPLACE('a', 'b', 'c', 'd')
+-----
+MariaStan\Parser\Exception\ParserException
+Function REPLACE takes 3 arguments, got 4.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 'd')' at line 1

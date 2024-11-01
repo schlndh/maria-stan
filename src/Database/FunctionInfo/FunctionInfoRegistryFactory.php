@@ -31,6 +31,7 @@ final class FunctionInfoRegistryFactory
 			new LowerUpper(),
 			new MaxMin(),
 			new Now(),
+			new Replace(),
 			new Round(),
 			new Sum(),
 			new Trim(),

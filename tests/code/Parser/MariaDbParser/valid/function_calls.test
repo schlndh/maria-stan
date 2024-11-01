@@ -6479,3 +6479,40 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT REPLACE('a', 'b', 'c')
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => REPLACE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => a
+											[firstConcatPart] => a
+										)
+									[1] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => b
+											[firstConcatPart] => b
+										)
+									[2] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => c
+											[firstConcatPart] => c
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

@@ -897,6 +897,11 @@ class AnalyserTest extends TestCase
 		$selects['CURRENT_DATE'] = "SELECT CURRENT_DATE";
 		$selects['FOUND_ROWS()'] = "SELECT FOUND_ROWS()";
 
+		foreach ($dataTypes as $label1 => $value1) {
+			$selects["REPLACE({$label1}, {$label1}, {$label1})"]
+				= "SELECT REPLACE({$value1}, {$value1}, {$value1})";
+		}
+
 		foreach ($selects as $label => $select) {
 			yield $label => [
 				'query' => $select,
@@ -1697,6 +1702,14 @@ class AnalyserTest extends TestCase
 			't1.col_vchar IN (t2.col_vchar, 1)',
 			't1.col_vchar NOT IN (t2.col_vchar, 1)',
 			'(t1.col_vchar NOT IN (t2.col_vchar, NULL)) IS NULL',
+			'REPLACE(t1.col_vchar, "value not contained in col_vchar", t2.col_vchar) IS NOT NULL',
+			'REPLACE(t1.col_vchar, t2.col_vchar, "a") IS NOT NULL',
+			'REPLACE(t1.col_vchar, t1.col_vchar, t1.col_vchar) IS NULL',
+			'REPLACE(t1.col_vchar, "a", "b") IS NULL',
+			'REPLACE("a", t1.col_vchar, "b") IS NULL',
+			'REPLACE("a", "b", t1.col_vchar) IS NULL',
+			'REPLACE(t1.col_vchar, t2.col_vchar, "b") IS NULL',
+			'REPLACE(t1.col_vchar, t2.col_vchar, NULL) IS NULL',
 		];
 
 		foreach ($operations as $op) {
