@@ -28,11 +28,11 @@ parameters:
 			- 'Error'
 	strictRules:
 		# Ignore Dynamic call to static method PHPUnit\Framework\Assert::assertSame(). etc
-		strictCalls: false
+		dynamicCallOnStaticMethod: false
 		# Ignore: Only booleans are allowed in an if condition, MariaStan\Parser\Token|null given etc
 		booleansInConditions: false
 		# Allow short ternary operator
-		disallowedConstructs: false
+		disallowedShortTernary: false
 	ignoreErrors:
 		-
 			message: '#.*throws checked exception.*#'
