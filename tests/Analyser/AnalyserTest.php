@@ -698,6 +698,42 @@ class AnalyserTest extends TestCase
 		yield 'value IN (subquery)' => [
 			'query' => 'SELECT 1 IN (SELECT 1)',
 		];
+
+		yield 'use column from two levels up when in SELECT expression' => [
+			'query' => 'SELECT 1 IN (SELECT (SELECT id)) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - UNION' => [
+			'query' => 'SELECT 1 IN (SELECT 1 UNION SELECT (SELECT t.id) UNION SELECT 2) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - tuple' => [
+			'query' => 'SELECT 1 IN (0, (SELECT 1 + (SELECT id))) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - LIKE' => [
+			'query' => 'SELECT (SELECT 1 + (SELECT id)) LIKE "x" a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - function call' => [
+			'query' => 'SELECT (SELECT COALESCE((SELECT id), 0)) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - CASE' => [
+			'query' => 'SELECT (SELECT CASE (SELECT id) WHEN 1 THEN 2 END) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - binary op' => [
+			'query' => 'SELECT 1 IN (SELECT 1 + (SELECT id)) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - EXISTS' => [
+			'query' => 'SELECT EXISTS(SELECT 1 + (SELECT id)) a FROM (SELECT 1 id) t',
+		];
+
+		yield 'use column from two levels up when in SELECT expression - COLLATE' => [
+			'query' => 'SELECT (SELECT (SELECT id) COLLATE "utf8mb4_unicode_ci") a FROM (SELECT 1 id) t',
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */

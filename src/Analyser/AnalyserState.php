@@ -387,7 +387,7 @@ final class AnalyserState
 				case SelectExprTypeEnum::REGULAR_EXPR:
 					assert($selectExpr instanceof RegularExpr);
 					$expr = $this->removeUnaryPlusPrefix($selectExpr->expr);
-					$resolvedExpr = $this->resolveExprType($expr, null, $select->groupBy !== null);
+					$resolvedExpr = $this->resolveExprType($expr, null, $select->groupBy !== null, true);
 					$resolvedField = new QueryResultField(
 						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($expr),
 						$resolvedExpr,
@@ -778,6 +778,7 @@ final class AnalyserState
 		?AnalyserConditionTypeEnum $condition = null,
 		// false doesn't mean that the result set is empty, it may be empty.
 		bool $isNonEmptyAggResultSet = false,
+		bool $isSelectExpr = false,
 	): ExprTypeResult {
 		// TODO: handle all expression types
 		switch ($expr::getExprType()) {
@@ -851,6 +852,7 @@ final class AnalyserState
 					$expr->timeQuantity,
 					$innerCondition,
 					$isNonEmptyAggResultSet,
+					$isSelectExpr,
 				);
 
 				return new ExprTypeResult(
@@ -884,6 +886,7 @@ final class AnalyserState
 					$expr->expression,
 					$innerCondition,
 					$isNonEmptyAggResultSet,
+					$isSelectExpr,
 				);
 
 				$type = match ($expr->operation) {
@@ -994,8 +997,18 @@ final class AnalyserState
 					$kbCombinineWithAnd = $innerConditionLeft === AnalyserConditionTypeEnum::NOT_NULL;
 				}
 
-				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft, $isNonEmptyAggResultSet);
-				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight, $isNonEmptyAggResultSet);
+				$leftResult = $this->resolveExprType(
+					$expr->left,
+					$innerConditionLeft,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
+				$rightResult = $this->resolveExprType(
+					$expr->right,
+					$innerConditionRight,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
 				$type = null;
 
 				if (
@@ -1121,7 +1134,7 @@ final class AnalyserState
 				assert($expr instanceof Expr\Subquery);
 				// TODO: handle $condition
 				// TODO: handle $isNonEmptyAggResultSet
-				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query);
+				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query, $isSelectExpr);
 				$result = $subqueryAnalyser->analyse();
 				$canBeEmpty = ($result->rowCountRange->min ?? 0) === 0;
 
@@ -1181,7 +1194,7 @@ final class AnalyserState
 				}
 
 				// Make sure there are no errors on the left of IS.
-				$exprResult = $this->resolveExprType($expr->expression, $innerCondition);
+				$exprResult = $this->resolveExprType($expr->expression, $innerCondition, isSelectExpr: $isSelectExpr);
 
 				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
@@ -1194,7 +1207,7 @@ final class AnalyserState
 				// TODO: handle $condition
 				$isNullable = array_reduce(
 					array_map(
-						fn (Expr\Expr $e) => $this->resolveExprType($e, null, $isNonEmptyAggResultSet),
+						fn (Expr\Expr $e) => $this->resolveExprType($e, null, $isNonEmptyAggResultSet, $isSelectExpr),
 						[$expr->expression, $expr->min, $expr->max],
 					),
 					static fn (bool $isNullable, ExprTypeResult $f) => $isNullable || $f->isNullable,
@@ -1224,7 +1237,12 @@ final class AnalyserState
 				};
 				$kbCombinineWithAnd = $innerCondition === AnalyserConditionTypeEnum::NOT_NULL;
 				$innerFields = array_map(
-					fn (Expr\Expr $e) => $this->resolveExprType($e, $innerCondition, $isNonEmptyAggResultSet),
+					fn (Expr\Expr $e) => $this->resolveExprType(
+						$e,
+						$innerCondition,
+						$isNonEmptyAggResultSet,
+						$isSelectExpr,
+					),
 					$expr->expressions,
 				);
 				$innerTypes = array_map(static fn (ExprTypeResult $f) => $f->type, $innerFields);
@@ -1269,8 +1287,18 @@ final class AnalyserState
 					AnalyserConditionTypeEnum::NULL => [AnalyserConditionTypeEnum::NULL, null],
 					null => [null, null],
 				};
-				$leftResult = $this->resolveExprType($expr->left, $innerConditionLeft, $isNonEmptyAggResultSet);
-				$rightResult = $this->resolveExprType($expr->right, $innerConditionRight, $isNonEmptyAggResultSet);
+				$leftResult = $this->resolveExprType(
+					$expr->left,
+					$innerConditionLeft,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
+				$rightResult = $this->resolveExprType(
+					$expr->right,
+					$innerConditionRight,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
 				$rightType = $rightResult->type;
 
 				// $rightType may not be a tuple if it's a subquery (e.g. "1 IN (SELECT 1)")
@@ -1313,12 +1341,17 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::LIKE:
 				assert($expr instanceof Expr\Like);
 				// TODO: handle $condition
-				$expressionResult = $this->resolveExprType($expr->expression, null, $isNonEmptyAggResultSet);
-				$patternResult = $this->resolveExprType($expr->pattern, null, $isNonEmptyAggResultSet);
+				$expressionResult = $this->resolveExprType(
+					$expr->expression,
+					null,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
+				$patternResult = $this->resolveExprType($expr->pattern, null, $isNonEmptyAggResultSet, $isSelectExpr);
 				// TODO: check for valid escape char expressions.
 				// For example "ESCAPE IF(0, 'a', 'b')" seems to work, but "ESCAPE IF(id = id, 'a', 'b')" doesn't.
 				$escapeCharResult = $expr->escapeChar !== null
-					? $this->resolveExprType($expr->escapeChar)
+					? $this->resolveExprType($expr->escapeChar, isSelectExpr: $isSelectExpr)
 					: null;
 
 				if (
@@ -1391,6 +1424,7 @@ final class AnalyserState
 						$arg,
 						$innerCondition,
 						$isNonEmptyAggResultSet,
+						$isSelectExpr,
 					);
 
 					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
@@ -1430,26 +1464,32 @@ final class AnalyserState
 
 				// TODO: handle $condition
 				if ($expr->compareValue) {
-					$field = $this->resolveExprType($expr->compareValue, null, $isNonEmptyAggResultSet);
+					$field = $this->resolveExprType($expr->compareValue, null, $isNonEmptyAggResultSet, $isSelectExpr);
 					$this->checkNotTuple($field->type);
 				}
 
 				$subresults = [];
 
 				foreach ($expr->conditions as $caseCondition) {
-					$field = $this->resolveExprType($caseCondition->when);
+					$field = $this->resolveExprType($caseCondition->when, isSelectExpr: $isSelectExpr);
 					$this->checkNotTuple($field->type);
 					$subresults[] = $field = $this->resolveExprType(
 						$caseCondition->then,
 						null,
 						$isNonEmptyAggResultSet,
+						$isSelectExpr,
 					);
 					$this->checkNotTuple($field->type);
 				}
 
 				// TODO: CASE with no else may be nullable
 				if ($expr->else) {
-					$subresults[] = $field = $this->resolveExprType($expr->else, null, $isNonEmptyAggResultSet);
+					$subresults[] = $field = $this->resolveExprType(
+						$expr->else,
+						null,
+						$isNonEmptyAggResultSet,
+						$isSelectExpr,
+					);
 					$this->checkNotTuple($field->type);
 				}
 
@@ -1481,9 +1521,9 @@ final class AnalyserState
 				// TODO: handle $isNonEmptyAggResultSet
 				$this->runWithDifferentFieldBehavior(
 					ColumnResolverFieldBehaviorEnum::ASSIGNMENT,
-					fn () => $this->resolveExprType($expr->target),
+					fn () => $this->resolveExprType($expr->target, isSelectExpr: $isSelectExpr),
 				);
-				$value = $this->resolveExprType($expr->expression);
+				$value = $this->resolveExprType($expr->expression, isSelectExpr: $isSelectExpr);
 
 				return new ExprTypeResult($value->type, $value->isNullable);
 			case Expr\ExprTypeEnum::CAST_TYPE:
@@ -1493,7 +1533,12 @@ final class AnalyserState
 				);
 			case Expr\ExprTypeEnum::COLLATE:
 				assert($expr instanceof Expr\Collate);
-				$subresult = $this->resolveExprType($expr->expression, $condition, $isNonEmptyAggResultSet);
+				$subresult = $this->resolveExprType(
+					$expr->expression,
+					$condition,
+					$isNonEmptyAggResultSet,
+					$isSelectExpr,
+				);
 
 				return new ExprTypeResult(
 					new Schema\DbType\VarcharType(),
