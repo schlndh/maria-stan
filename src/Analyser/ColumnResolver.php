@@ -73,8 +73,11 @@ final class ColumnResolver
 	private int $aggregateFunctionDepth = 0;
 	private ?AnalyserKnowledgeBase $knowledgeBase = null;
 
-	public function __construct(private readonly DbReflection $dbReflection, private readonly ?self $parent = null)
-	{
+	public function __construct(
+		private readonly DbReflection $dbReflection,
+		private readonly ?self $parent = null,
+		private readonly bool $canReferenceGrandParent = false,
+	) {
 	}
 
 	public function registerInsertReplaceTargetTable(Schema\Table $table): void
@@ -524,7 +527,12 @@ final class ColumnResolver
 				}
 
 				try {
-					$resolvedParentColumn = $this->parent?->resolveColumnName($column, $table, $fieldBehavior, false);
+					$resolvedParentColumn = $this->parent?->resolveColumnName(
+						$column,
+						$table,
+						$fieldBehavior,
+						$this->canReferenceGrandParent,
+					);
 				} catch (AnalyserException) {
 				}
 

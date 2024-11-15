@@ -340,6 +340,47 @@ class AnalyserTest extends TestCase
 			",
 		];
 
+		yield 'reference column from previous table in ON subquery after UNION - left' => [
+			'query' => "
+				SELECT 1
+				FROM (SELECT 1 aaa) foo
+				JOIN (SELECT 1 id) t ON 1 IN (
+					SELECT id FROM (SELECT 1 id) bar
+					WHERE bar.id = foo.aaa
+					UNION
+					SELECT 1 as id
+				)
+			",
+		];
+
+		yield 'reference column from previous table in ON subquery after UNION - right' => [
+			'query' => "
+				SELECT 1
+				FROM (SELECT 1 aaa) foo
+				JOIN (SELECT 1 id) t ON 1 IN (
+					SELECT 1 as id
+					UNION
+					SELECT id FROM (SELECT 1 id) bar
+					WHERE bar.id = foo.aaa
+				)
+			",
+		];
+
+		yield 'reference column from previous table in ON subquery after UNION - 2nd level' => [
+			'query' => "
+				SELECT 1
+				FROM (SELECT 1 aaa) foo
+				JOIN (SELECT 1 id) t ON 1 IN (
+					SELECT 1 as id
+					UNION
+					SELECT 2 as id
+					UNION
+					SELECT id FROM (SELECT 1 id) bar
+					WHERE bar.id = foo.aaa
+				)
+			",
+		];
+
 		yield 'multiple JOINs - track outer JOINs - LEFT' => [
 			'query' => "
 				SELECT a.id aid, b.id bid, c.id cid

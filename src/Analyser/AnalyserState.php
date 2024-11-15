@@ -244,13 +244,13 @@ final class AnalyserState
 	 */
 	private function analyseCombinedSelectQuery(CombinedSelectQuery $select): array
 	{
-		$leftFields = $this->getSubqueryAnalyser($select->left)->analyse()->resultFields;
+		$leftFields = $this->getSubqueryAnalyser($select->left, true)->analyse()->resultFields;
 
 		if ($leftFields === null) {
 			throw new ShouldNotHappenException('Subquery fields are null, this should not happen.');
 		}
 
-		$rightFields = $this->getSubqueryAnalyser($select->right)->analyse()->resultFields;
+		$rightFields = $this->getSubqueryAnalyser($select->right, true)->analyse()->resultFields;
 
 		if ($rightFields === null) {
 			throw new ShouldNotHappenException('Subquery fields are null, this should not happen.');
@@ -1568,7 +1568,7 @@ final class AnalyserState
 		return $node->getStartPosition()->findSubstringToEndPosition($this->query, $node->getEndPosition());
 	}
 
-	private function getSubqueryAnalyser(SelectQuery $subquery): self
+	private function getSubqueryAnalyser(SelectQuery $subquery, bool $canReferenceGrandParent = false): self
 	{
 		$other = new self(
 			$this->dbReflection,
@@ -1577,7 +1577,7 @@ final class AnalyserState
 			$subquery,
 			/** query is used for {@see getNodeContent()} and positions in $subquery are relative to the whole query */
 			$this->query,
-			new ColumnResolver($this->dbReflection, $this->columnResolver),
+			new ColumnResolver($this->dbReflection, $this->columnResolver, $canReferenceGrandParent),
 		);
 		// phpcs:disable SlevomatCodingStandard.PHP.DisallowReference
 		$other->errors = &$this->errors;
