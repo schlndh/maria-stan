@@ -375,7 +375,11 @@ final class AnalyserState
 		$whereResult = $havingResult = null;
 
 		if ($select->where) {
-			$whereResult = $this->resolveExprType($select->where, AnalyserConditionTypeEnum::TRUTHY);
+			$whereResult = $this->resolveExprType(
+				$select->where,
+				AnalyserConditionTypeEnum::TRUTHY,
+				canReferenceGrandParent: true,
+			);
 			$this->columnResolver->addKnowledge($whereResult->knowledgeBase);
 		}
 
@@ -416,7 +420,7 @@ final class AnalyserState
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::GROUP_BY;
 
 		foreach ($select->groupBy->expressions ?? [] as $groupByExpr) {
-			$exprType = $this->resolveExprType($groupByExpr->expr);
+			$exprType = $this->resolveExprType($groupByExpr->expr, canReferenceGrandParent: true);
 
 			if ($exprType->column === null) {
 				continue;
@@ -427,13 +431,13 @@ final class AnalyserState
 
 		if ($select->having) {
 			$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::HAVING;
-			$havingResult = $this->resolveExprType($select->having);
+			$havingResult = $this->resolveExprType($select->having, canReferenceGrandParent: true);
 		}
 
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ORDER_BY;
 
 		foreach ($select->orderBy->expressions ?? [] as $orderByExpr) {
-			$this->resolveExprType($orderByExpr->expr);
+			$this->resolveExprType($orderByExpr->expr, canReferenceGrandParent: true);
 		}
 
 		if ($select->limit?->count !== null) {
@@ -778,7 +782,7 @@ final class AnalyserState
 		?AnalyserConditionTypeEnum $condition = null,
 		// false doesn't mean that the result set is empty, it may be empty.
 		bool $isNonEmptyAggResultSet = false,
-		bool $isSelectExpr = false,
+		bool $canReferenceGrandParent = false,
 	): ExprTypeResult {
 		// TODO: handle all expression types
 		switch ($expr::getExprType()) {
@@ -852,7 +856,7 @@ final class AnalyserState
 					$expr->timeQuantity,
 					$innerCondition,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 
 				return new ExprTypeResult(
@@ -886,7 +890,7 @@ final class AnalyserState
 					$expr->expression,
 					$innerCondition,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 
 				$type = match ($expr->operation) {
@@ -1001,13 +1005,13 @@ final class AnalyserState
 					$expr->left,
 					$innerConditionLeft,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 				$rightResult = $this->resolveExprType(
 					$expr->right,
 					$innerConditionRight,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 				$type = null;
 
@@ -1134,7 +1138,7 @@ final class AnalyserState
 				assert($expr instanceof Expr\Subquery);
 				// TODO: handle $condition
 				// TODO: handle $isNonEmptyAggResultSet
-				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query, $isSelectExpr);
+				$subqueryAnalyser = $this->getSubqueryAnalyser($expr->query, $canReferenceGrandParent);
 				$result = $subqueryAnalyser->analyse();
 				$canBeEmpty = ($result->rowCountRange->min ?? 0) === 0;
 
@@ -1194,7 +1198,11 @@ final class AnalyserState
 				}
 
 				// Make sure there are no errors on the left of IS.
-				$exprResult = $this->resolveExprType($expr->expression, $innerCondition, isSelectExpr: $isSelectExpr);
+				$exprResult = $this->resolveExprType(
+					$expr->expression,
+					$innerCondition,
+					canReferenceGrandParent: $canReferenceGrandParent,
+				);
 
 				return new ExprTypeResult(
 					new Schema\DbType\IntType(),
@@ -1207,7 +1215,12 @@ final class AnalyserState
 				// TODO: handle $condition
 				$isNullable = array_reduce(
 					array_map(
-						fn (Expr\Expr $e) => $this->resolveExprType($e, null, $isNonEmptyAggResultSet, $isSelectExpr),
+						fn (Expr\Expr $e) => $this->resolveExprType(
+							$e,
+							null,
+							$isNonEmptyAggResultSet,
+							$canReferenceGrandParent,
+						),
 						[$expr->expression, $expr->min, $expr->max],
 					),
 					static fn (bool $isNullable, ExprTypeResult $f) => $isNullable || $f->isNullable,
@@ -1241,7 +1254,7 @@ final class AnalyserState
 						$e,
 						$innerCondition,
 						$isNonEmptyAggResultSet,
-						$isSelectExpr,
+						$canReferenceGrandParent,
 					),
 					$expr->expressions,
 				);
@@ -1291,13 +1304,13 @@ final class AnalyserState
 					$expr->left,
 					$innerConditionLeft,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 				$rightResult = $this->resolveExprType(
 					$expr->right,
 					$innerConditionRight,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 				$rightType = $rightResult->type;
 
@@ -1345,13 +1358,18 @@ final class AnalyserState
 					$expr->expression,
 					null,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
-				$patternResult = $this->resolveExprType($expr->pattern, null, $isNonEmptyAggResultSet, $isSelectExpr);
+				$patternResult = $this->resolveExprType(
+					$expr->pattern,
+					null,
+					$isNonEmptyAggResultSet,
+					$canReferenceGrandParent,
+				);
 				// TODO: check for valid escape char expressions.
 				// For example "ESCAPE IF(0, 'a', 'b')" seems to work, but "ESCAPE IF(id = id, 'a', 'b')" doesn't.
 				$escapeCharResult = $expr->escapeChar !== null
-					? $this->resolveExprType($expr->escapeChar, isSelectExpr: $isSelectExpr)
+					? $this->resolveExprType($expr->escapeChar, canReferenceGrandParent: $canReferenceGrandParent)
 					: null;
 
 				if (
@@ -1424,7 +1442,7 @@ final class AnalyserState
 						$arg,
 						$innerCondition,
 						$isNonEmptyAggResultSet,
-						$isSelectExpr,
+						$canReferenceGrandParent,
 					);
 
 					if ($resolvedArg->type::getTypeEnum() === Schema\DbType\DbTypeEnum::TUPLE) {
@@ -1464,20 +1482,28 @@ final class AnalyserState
 
 				// TODO: handle $condition
 				if ($expr->compareValue) {
-					$field = $this->resolveExprType($expr->compareValue, null, $isNonEmptyAggResultSet, $isSelectExpr);
+					$field = $this->resolveExprType(
+						$expr->compareValue,
+						null,
+						$isNonEmptyAggResultSet,
+						$canReferenceGrandParent,
+					);
 					$this->checkNotTuple($field->type);
 				}
 
 				$subresults = [];
 
 				foreach ($expr->conditions as $caseCondition) {
-					$field = $this->resolveExprType($caseCondition->when, isSelectExpr: $isSelectExpr);
+					$field = $this->resolveExprType(
+						$caseCondition->when,
+						canReferenceGrandParent: $canReferenceGrandParent,
+					);
 					$this->checkNotTuple($field->type);
 					$subresults[] = $field = $this->resolveExprType(
 						$caseCondition->then,
 						null,
 						$isNonEmptyAggResultSet,
-						$isSelectExpr,
+						$canReferenceGrandParent,
 					);
 					$this->checkNotTuple($field->type);
 				}
@@ -1488,7 +1514,7 @@ final class AnalyserState
 						$expr->else,
 						null,
 						$isNonEmptyAggResultSet,
-						$isSelectExpr,
+						$canReferenceGrandParent,
 					);
 					$this->checkNotTuple($field->type);
 				}
@@ -1521,9 +1547,9 @@ final class AnalyserState
 				// TODO: handle $isNonEmptyAggResultSet
 				$this->runWithDifferentFieldBehavior(
 					ColumnResolverFieldBehaviorEnum::ASSIGNMENT,
-					fn () => $this->resolveExprType($expr->target, isSelectExpr: $isSelectExpr),
+					fn () => $this->resolveExprType($expr->target, canReferenceGrandParent: $canReferenceGrandParent),
 				);
-				$value = $this->resolveExprType($expr->expression, isSelectExpr: $isSelectExpr);
+				$value = $this->resolveExprType($expr->expression, canReferenceGrandParent: $canReferenceGrandParent);
 
 				return new ExprTypeResult($value->type, $value->isNullable);
 			case Expr\ExprTypeEnum::CAST_TYPE:
@@ -1537,7 +1563,7 @@ final class AnalyserState
 					$expr->expression,
 					$condition,
 					$isNonEmptyAggResultSet,
-					$isSelectExpr,
+					$canReferenceGrandParent,
 				);
 
 				return new ExprTypeResult(

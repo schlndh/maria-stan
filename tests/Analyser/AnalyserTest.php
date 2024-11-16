@@ -734,6 +734,22 @@ class AnalyserTest extends TestCase
 		yield 'use column from two levels up when in SELECT expression - COLLATE' => [
 			'query' => 'SELECT (SELECT (SELECT id) COLLATE "utf8mb4_unicode_ci") a FROM (SELECT 1 id) t',
 		];
+
+		yield 'use column from two levels up when in WHERE' => [
+			'query' => 'SELECT * FROM (SELECT 1 id) t WHERE 1 IN (SELECT 1 WHERE (SELECT id))',
+		];
+
+		yield 'use column from two levels up when in GROUP BY' => [
+			'query' => 'SELECT * FROM (SELECT 1 id) t GROUP BY 1 IN (SELECT 1 GROUP BY (SELECT id))',
+		];
+
+		yield 'use column from two levels up when in HAVING' => [
+			'query' => 'SELECT * FROM (SELECT 1 id) t HAVING 1 IN (SELECT 1 HAVING (SELECT id))',
+		];
+
+		yield 'use column from two levels up when in ORDER BY' => [
+			'query' => 'SELECT * FROM (SELECT 1 id) t ORDER BY 1 IN (SELECT 1 ORDER BY (SELECT id))',
+		];
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -2604,19 +2620,43 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		yield 'cannot use table alias from two levels up' => [
+		yield 'cannot use table alias from two levels up through FROM' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT t.a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a', 't'),
 			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 		];
 
-		yield 'cannot use column from two levels up' => [
+		yield 'cannot use column from two levels up through FROM' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
-		yield 'cannot use field alias from two levels up' => [
+		yield 'cannot use column from two levels up through FROM - WHERE' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 WHERE a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'cannot use column from two levels up through FROM - GROUP BY' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 GROUP BY a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'cannot use column from two levels up through FROM - HAVING' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 HAVING a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'cannot use column from two levels up through FROM - ORDER BY' => [
+			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 ORDER BY a) t2) FROM (SELECT 1 a) t',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'cannot use field alias from two levels up through FROM' => [
 			'query' => 'SELECT 1 a, (SELECT * FROM (SELECT a) t);',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
