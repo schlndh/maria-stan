@@ -23,6 +23,7 @@ use MariaStan\Schema\DbType\TupleType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MariaDbErrorCodes;
+use MariaStan\Util\MysqliUtil;
 use mysqli_result;
 use mysqli_sql_exception;
 use PHPUnit\Framework\TestCase;
@@ -206,15 +207,16 @@ class AnalyserTest extends TestCase
 				col_double DOUBLE NOT NULL,
 				col_datetime DATETIME NOT NULL,
 				col_enum ENUM('a', 'b', 'c') NOT NULL,
-				col_uuid UUID NOT NULL
+				col_uuid UUID NOT NULL,
+				col_unsigned INT UNSIGNED NOT NULL
 			);
 		");
 		$db->query("
 			INSERT INTO {$dataTypesTable}
-				(col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_uuid)
+				(col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_uuid, col_unsigned)
 			VALUES
-			    (1, 'aa', 111.11, 11.11, 1.1, NOW(), UUID()),
-			    (2, NULL, 222.22, 22.22, 2.2, NOW(), UUID())
+			    (1, 'aa', 111.11, 11.11, 1.1, NOW(), UUID(), 5),
+			    (2, NULL, 222.22, 22.22, 2.2, NOW(), UUID(), 7)
 		");
 
 		yield 'column - int' => [
@@ -249,20 +251,37 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT col_uuid FROM {$dataTypesTable}",
 		];
 
-		// TODO: fix missing types: ~ is unsigned 64b int, so it's too large for PHP.
-		// TODO: name of 2nd column contains comment: SELECT col_int, /*aaa*/ -col_int FROM mysqli_test_data_types
-		yield 'unary ops' => [
-			'query' => "
-				SELECT
-				    -col_int, +col_int, !col_int, ~col_int,
-				    -col_varchar_null, +col_varchar_null, !col_varchar_null, ~col_varchar_null,
-				    -col_decimal, +col_decimal, !col_decimal, ~col_decimal,
-				    -col_float, +col_float, !col_float, ~col_float,
-				    -col_double, +col_double, !col_double, ~col_double,
-				    -col_datetime, +col_datetime, !col_datetime, ~col_datetime
-				FROM {$dataTypesTable}
-			",
+		yield 'column - unsigned int' => [
+			'query' => "SELECT col_unsigned FROM {$dataTypesTable}",
 		];
+
+		$operators = ['-', '+', '!', '~', 'BINARY '];
+		$columns = [
+			'col_int',
+			'col_varchar_null',
+			'col_decimal',
+			'col_float',
+			'col_double',
+			'col_datetime',
+			'col_uuid',
+			'col_unsigned',
+		];
+
+		foreach ($operators as $operator) {
+			foreach ($columns as $column) {
+				// Illegal operations
+				// TODO: detect illegal operations on UUID columns
+				if ($column === 'col_uuid' && in_array($operator, ['-', '~', '!'], true)) {
+					continue;
+				}
+
+				yield "unary op: {$operator}{$column}" => [
+					'query' => "SELECT {$operator}{$column} FROM {$dataTypesTable}",
+				];
+			}
+		}
+
+		// TODO: name of 2nd column contains comment: SELECT col_int, /*aaa*/ -col_int FROM mysqli_test_data_types
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -498,7 +517,7 @@ class AnalyserTest extends TestCase
 	private static function provideValidOperatorTestData(): iterable
 	{
 		$operators = ['+', '-', '*', '/', '%', 'DIV'];
-		$values = ['1', '1.1', '1e1', '"a"', 'NULL'];
+		$values = ['1', '1.1', '1e1', '"a"', 'NULL', 'CAST(1 AS UNSIGNED INT)'];
 
 		foreach ($operators as $op) {
 			foreach ($values as $left) {
@@ -898,6 +917,7 @@ class AnalyserTest extends TestCase
 		$dataTypes = [
 			'null' => 'null',
 			'int' => '5',
+			'unsigned int' => 'CAST(5 AS UNSIGNED INT)',
 			'decimal' => '5.5',
 			'double' => '5.5e1',
 			'string' => '"aa"',
@@ -946,6 +966,7 @@ class AnalyserTest extends TestCase
 				'DOUBLE',
 				'FLOAT',
 				'INTEGER',
+				'UNSIGNED INTEGER',
 				'TIME',
 				'INTERVAL DAY_SECOND(5)',
 			];
@@ -995,6 +1016,9 @@ class AnalyserTest extends TestCase
 				= "SELECT REPLACE({$value1}, {$value1}, {$value1})";
 		}
 
+		$selects["IF(1, CAST(5 AS UNSIGNED INT), IF(0, 1, NULL))"]
+			= "SELECT IF(1, CAST(5 AS UNSIGNED INT), IF(0, 1, NULL))";
+
 		foreach ($selects as $label => $select) {
 			yield $label => [
 				'query' => $select,
@@ -1035,6 +1059,7 @@ class AnalyserTest extends TestCase
 			$dataTypes = [
 				'null' => 'null',
 				'int' => '5',
+				'unsigned int' => 'CAST(5 as UNSIGNED INT)',
 				'decimal' => '5.5',
 				'double' => '5.5e1',
 				'string' => '"aa"',
@@ -1447,7 +1472,7 @@ class AnalyserTest extends TestCase
 				$forceNullsForColumns[$field->name] = false;
 			}
 
-			$actualType = $this->mysqliTypeToDbTypeEnum($field->type);
+			$actualType = $this->mysqliTypeToDbTypeEnum($field->type, $field->flags);
 
 			// It seems that in some cases the type returned by the database does not propagate NULL in all cases.
 			// E.g. 1 + NULL is double for some reason. Let's allow the analyser to get away with null, but force
@@ -3617,12 +3642,14 @@ class AnalyserTest extends TestCase
 		return array_keys($result);
 	}
 
-	private function mysqliTypeToDbTypeEnum(int $type): DbTypeEnum
+	private function mysqliTypeToDbTypeEnum(int $type, int $flags): DbTypeEnum
 	{
 		return match ($type) {
 			MYSQLI_TYPE_DECIMAL, MYSQLI_TYPE_NEWDECIMAL => DbTypeEnum::DECIMAL,
 			MYSQLI_TYPE_TINY /* =  MYSQLI_TYPE_CHAR */, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_INT24, MYSQLI_TYPE_LONG,
-				MYSQLI_TYPE_LONGLONG => DbTypeEnum::INT,
+				MYSQLI_TYPE_LONGLONG => in_array('UNSIGNED', MysqliUtil::getFlagNames($flags), true)
+					? DbTypeEnum::UNSIGNED_INT
+					: DbTypeEnum::INT,
 			MYSQLI_TYPE_FLOAT, MYSQLI_TYPE_DOUBLE => DbTypeEnum::FLOAT,
 			MYSQLI_TYPE_TIMESTAMP, MYSQLI_TYPE_DATE, MYSQLI_TYPE_TIME, MYSQLI_TYPE_DATETIME, MYSQLI_TYPE_YEAR
 				=> DbTypeEnum::DATETIME,

@@ -10,6 +10,7 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\CodeTestCase;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\TestCaseHelper;
+use MariaStan\Util\MysqliUtil;
 use PHPUnit\Framework\TestCase;
 
 use function array_filter;
@@ -32,22 +33,6 @@ use function str_starts_with;
 use function substr;
 
 use const JSON_THROW_ON_ERROR;
-use const MYSQLI_AUTO_INCREMENT_FLAG;
-use const MYSQLI_BINARY_FLAG;
-use const MYSQLI_BLOB_FLAG;
-use const MYSQLI_ENUM_FLAG;
-use const MYSQLI_MULTIPLE_KEY_FLAG;
-use const MYSQLI_NO_DEFAULT_VALUE_FLAG;
-use const MYSQLI_NOT_NULL_FLAG;
-use const MYSQLI_NUM_FLAG;
-use const MYSQLI_ON_UPDATE_NOW_FLAG;
-use const MYSQLI_PART_KEY_FLAG;
-use const MYSQLI_PRI_KEY_FLAG;
-use const MYSQLI_SET_FLAG;
-use const MYSQLI_TIMESTAMP_FLAG;
-use const MYSQLI_UNIQUE_KEY_FLAG;
-use const MYSQLI_UNSIGNED_FLAG;
-use const MYSQLI_ZEROFILL_FLAG;
 
 class AnalyserGoldenTest extends TestCase
 {
@@ -189,24 +174,7 @@ class AnalyserGoldenTest extends TestCase
 
 			if ($property === 'flags') {
 				self::assertIsInt($val);
-				$val = self::dumpBitFlags($val, [
-					MYSQLI_NOT_NULL_FLAG => 'NOT_NULL',
-					MYSQLI_PRI_KEY_FLAG => 'PRIMARY_KEY',
-					MYSQLI_UNIQUE_KEY_FLAG => 'UNIQUE_KEY',
-					MYSQLI_MULTIPLE_KEY_FLAG => 'MULTIPLE_KEY',
-					MYSQLI_BLOB_FLAG => 'BLOB',
-					MYSQLI_UNSIGNED_FLAG => 'UNSIGNED',
-					MYSQLI_ZEROFILL_FLAG => 'ZEROFILL',
-					MYSQLI_ENUM_FLAG => 'ENUM',
-					MYSQLI_BINARY_FLAG => 'BINARY',
-					MYSQLI_AUTO_INCREMENT_FLAG => 'AUTO_INCREMENT',
-					MYSQLI_TIMESTAMP_FLAG => 'TIMESTAMP',
-					MYSQLI_SET_FLAG => 'SET',
-					MYSQLI_NO_DEFAULT_VALUE_FLAG => 'NO_DEFAULT_VALUE',
-					MYSQLI_ON_UPDATE_NOW_FLAG => 'ON_UPDATE_NOW',
-					MYSQLI_PART_KEY_FLAG => 'PART_KEY',
-					MYSQLI_NUM_FLAG => 'NUM',
-				]);
+				$val = MysqliUtil::getFlagNames($val);
 			} elseif ($property === 'type') {
 				self::assertIsInt($val);
 				$val = self::dumpMysqliFieldType($val);
@@ -218,23 +186,6 @@ class AnalyserGoldenTest extends TestCase
 		}
 
 		return array_filter($result, static fn (mixed $value) => $value !== null);
-	}
-
-	/**
-	 * @param array<int, string> $flags value => label
-	 * @return array<string> used flags
-	 */
-	private static function dumpBitFlags(int $value, array $flags): array
-	{
-		$result = [];
-
-		foreach ($flags as $flag => $label) {
-			if (($value & $flag) === $flag) {
-				$result[] = $label;
-			}
-		}
-
-		return $result;
 	}
 
 	private static function dumpData(mixed $data): mixed

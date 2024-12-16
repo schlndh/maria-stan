@@ -9,6 +9,9 @@ enum DbTypeEnum: string
 	/** @see IntType */
 	case INT = 'INT';
 
+	/** @see UnsignedIntType */
+	case UNSIGNED_INT = 'UNSIGNED_INT';
+
 	/** @see VarcharType */
 	case VARCHAR = 'VARCHAR';
 

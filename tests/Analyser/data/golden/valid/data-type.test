@@ -539,14 +539,75 @@ Array
 		)
 )
 -----
-SELECT
--col_int, +col_int, !col_int, ~col_int,
--col_varchar_null, +col_varchar_null, !col_varchar_null, ~col_varchar_null,
--col_decimal, +col_decimal, !col_decimal, ~col_decimal,
--col_float, +col_float, !col_float, ~col_float,
--col_double, +col_double, !col_double, ~col_double,
--col_datetime, +col_datetime, !col_datetime, ~col_datetime
-FROM analyser_test_data_types
+SELECT col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_unsigned
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_unsigned
+			[orgname] => col_unsigned
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 10
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					NO_DEFAULT_VALUE
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT -col_int FROM analyser_test_data_types
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -555,301 +616,6 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\QueryResultField
 				(
 					[name] => -col_int
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_int
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_int
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_int
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_int
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => -col_varchar_null
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\FloatType
-								(
-								)
-							[isNullable] => true
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_varchar_null
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\VarcharType
-								(
-								)
-							[isNullable] => true
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_varchar_null
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_varchar_null
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => true
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_varchar_null
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => true
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => -col_decimal
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\DecimalType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_decimal
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\DecimalType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_decimal
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_decimal
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_decimal
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => -col_float
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\FloatType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_float
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\FloatType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_float
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_float
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_float
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => -col_double
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\FloatType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_double
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\FloatType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_double
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_double
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_double
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => -col_datetime
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\DecimalType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => col_datetime
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\DateTimeType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => col_datetime
-									[tableName] => analyser_test_data_types
-									[tableAlias] => analyser_test_data_types
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => !col_datetime
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => ~col_datetime
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\IntType
@@ -877,46 +643,6 @@ MariaStan\Analyser\AnalyserResult
 						)
 					[name] => col_int
 				)
-			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test_data_types
-						)
-					[name] => col_varchar_null
-				)
-			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test_data_types
-						)
-					[name] => col_decimal
-				)
-			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test_data_types
-						)
-					[name] => col_float
-				)
-			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test_data_types
-						)
-					[name] => col_double
-				)
-			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test_data_types
-						)
-					[name] => col_datetime
-				)
 		)
 )
 #######
@@ -939,6 +665,413 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
+)
+-----
+SELECT -col_varchar_null FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_varchar_null
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_varchar_null
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_varchar_null
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 53
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT -col_decimal FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_decimal
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_decimal
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_decimal
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 13
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 2
+		)
+)
+-----
+SELECT -col_float FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_float
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_float
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_float
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 13
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT -col_double FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_double
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_double
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_double
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 23
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT -col_datetime FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_datetime
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_datetime
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_datetime
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 20
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT -col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => -col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => -col_unsigned
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONGLONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT +col_int FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_int
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_int
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_int] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_int
+				)
+		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => col_int
@@ -956,6 +1089,516 @@ Array
 			[type] => LONG
 			[decimals] => 0
 		)
+)
+-----
+SELECT +col_varchar_null FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_varchar_null
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_varchar_null
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_varchar_null
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_varchar_null
+			[orgname] => col_varchar_null
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 1020
+			[charsetnr] => 45
+			[flags] => Array
+				(
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT +col_decimal FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_decimal
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_decimal
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_decimal
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_decimal
+			[orgname] => col_decimal
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 12
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NO_DEFAULT_VALUE
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 2
+		)
+)
+-----
+SELECT +col_float FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_float
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_float
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_float
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_float
+			[orgname] => col_float
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 12
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NO_DEFAULT_VALUE
+					NUM
+				)
+			[type] => FLOAT
+			[decimals] => 31
+		)
+)
+-----
+SELECT +col_double FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_double
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_double
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_double
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_double
+			[orgname] => col_double
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 22
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NO_DEFAULT_VALUE
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT +col_datetime FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_datetime
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DateTimeType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_datetime
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_datetime
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_datetime
+			[orgname] => col_datetime
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 19
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NO_DEFAULT_VALUE
+				)
+			[type] => DATETIME
+			[decimals] => 0
+		)
+)
+-----
+SELECT +col_uuid FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_uuid
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_uuid
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_uuid] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_uuid
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_uuid
+			[orgname] => col_uuid
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 144
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					BINARY
+					NO_DEFAULT_VALUE
+				)
+			[type] => STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT +col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_unsigned
+									[tableName] => analyser_test_data_types
+									[tableAlias] => analyser_test_data_types
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => col_unsigned
+			[orgname] => col_unsigned
+			[table] => analyser_test_data_types
+			[orgtable] => analyser_test_data_types
+			[length] => 10
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					NO_DEFAULT_VALUE
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_int FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_int
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_int] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_int
+				)
+		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => !col_int
@@ -973,6 +1616,408 @@ Array
 			[type] => LONG
 			[decimals] => 0
 		)
+)
+-----
+SELECT !col_varchar_null FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_varchar_null
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_varchar_null
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_varchar_null
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_decimal FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_decimal
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_decimal
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_decimal
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_float FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_float
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_float
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_float
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_double FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_double
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_double
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_double
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_datetime FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_datetime
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_datetime
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_datetime
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT !col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => !col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => !col_unsigned
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					BINARY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT ~col_int FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => ~col_int
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_int] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_int
+				)
+		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_int
@@ -991,52 +2036,49 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
-	stdClass
+)
+-----
+SELECT ~col_varchar_null FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
 		(
-			[name] => -col_varchar_null
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 53
-			[charsetnr] => 63
-			[flags] => Array
+			MariaStan\Analyser\QueryResultField
 				(
-					BINARY
-					NUM
+					[name] => ~col_varchar_null
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => true
+						)
 				)
-			[type] => DOUBLE
-			[decimals] => 31
 		)
-	stdClass
+	[errors] => Array
 		(
-			[name] => col_varchar_null
-			[orgname] => col_varchar_null
-			[table] => analyser_test_data_types
-			[orgtable] => analyser_test_data_types
-			[length] => 1020
-			[charsetnr] => 45
-			[flags] => Array
-				(
-				)
-			[type] => VAR_STRING
-			[decimals] => 0
 		)
-	stdClass
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
 		(
-			[name] => !col_varchar_null
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					BINARY
-					NUM
+					[name] => analyser_test_data_types
 				)
-			[type] => LONG
-			[decimals] => 0
+			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_varchar_null
+				)
 		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_varchar_null
@@ -1054,55 +2096,49 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
-	stdClass
+)
+-----
+SELECT ~col_decimal FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
 		(
-			[name] => -col_decimal
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 13
-			[charsetnr] => 63
-			[flags] => Array
+			MariaStan\Analyser\QueryResultField
 				(
-					NOT_NULL
-					BINARY
+					[name] => ~col_decimal
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
 				)
-			[type] => NEWDECIMAL
-			[decimals] => 2
 		)
-	stdClass
+	[errors] => Array
 		(
-			[name] => col_decimal
-			[orgname] => col_decimal
-			[table] => analyser_test_data_types
-			[orgtable] => analyser_test_data_types
-			[length] => 12
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					NO_DEFAULT_VALUE
-				)
-			[type] => NEWDECIMAL
-			[decimals] => 2
 		)
-	stdClass
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
 		(
-			[name] => !col_decimal
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => analyser_test_data_types
 				)
-			[type] => LONG
-			[decimals] => 0
+			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_decimal
+				)
 		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_decimal
@@ -1121,57 +2157,49 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
-	stdClass
+)
+-----
+SELECT ~col_float FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
 		(
-			[name] => -col_float
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 13
-			[charsetnr] => 63
-			[flags] => Array
+			MariaStan\Analyser\QueryResultField
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => ~col_float
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
 				)
-			[type] => DOUBLE
-			[decimals] => 31
 		)
-	stdClass
+	[errors] => Array
 		(
-			[name] => col_float
-			[orgname] => col_float
-			[table] => analyser_test_data_types
-			[orgtable] => analyser_test_data_types
-			[length] => 12
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					NO_DEFAULT_VALUE
-					NUM
-				)
-			[type] => FLOAT
-			[decimals] => 31
 		)
-	stdClass
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
 		(
-			[name] => !col_float
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => analyser_test_data_types
 				)
-			[type] => LONG
-			[decimals] => 0
+			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_float
+				)
 		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_float
@@ -1190,57 +2218,49 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
-	stdClass
+)
+-----
+SELECT ~col_double FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
 		(
-			[name] => -col_double
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 23
-			[charsetnr] => 63
-			[flags] => Array
+			MariaStan\Analyser\QueryResultField
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => ~col_double
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
 				)
-			[type] => DOUBLE
-			[decimals] => 31
 		)
-	stdClass
+	[errors] => Array
 		(
-			[name] => col_double
-			[orgname] => col_double
-			[table] => analyser_test_data_types
-			[orgtable] => analyser_test_data_types
-			[length] => 22
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					NO_DEFAULT_VALUE
-					NUM
-				)
-			[type] => DOUBLE
-			[decimals] => 31
 		)
-	stdClass
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
 		(
-			[name] => !col_double
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => analyser_test_data_types
 				)
-			[type] => LONG
-			[decimals] => 0
+			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_double
+				)
 		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_double
@@ -1259,56 +2279,49 @@ Array
 			[type] => LONGLONG
 			[decimals] => 0
 		)
-	stdClass
+)
+-----
+SELECT ~col_datetime FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
 		(
-			[name] => -col_datetime
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 20
-			[charsetnr] => 63
-			[flags] => Array
+			MariaStan\Analyser\QueryResultField
 				(
-					NOT_NULL
-					BINARY
+					[name] => ~col_datetime
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
 				)
-			[type] => NEWDECIMAL
-			[decimals] => 0
 		)
-	stdClass
+	[errors] => Array
 		(
-			[name] => col_datetime
-			[orgname] => col_datetime
-			[table] => analyser_test_data_types
-			[orgtable] => analyser_test_data_types
-			[length] => 19
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					BINARY
-					NO_DEFAULT_VALUE
-				)
-			[type] => DATETIME
-			[decimals] => 0
 		)
-	stdClass
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
 		(
-			[name] => !col_datetime
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					NOT_NULL
-					BINARY
-					NUM
+					[name] => analyser_test_data_types
 				)
-			[type] => LONG
-			[decimals] => 0
+			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_datetime
+				)
 		)
+)
+#######
+Array
+(
 	stdClass
 		(
 			[name] => ~col_datetime
@@ -1325,6 +2338,531 @@ Array
 					NUM
 				)
 			[type] => LONGLONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT ~col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => ~col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => ~col_unsigned
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 21
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					BINARY
+					NUM
+				)
+			[type] => LONGLONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_int FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_int
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_int] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_int
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_int
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_varchar_null FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_varchar_null
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_varchar_null] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_varchar_null
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_varchar_null
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 1020
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_decimal FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_decimal
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_decimal] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_decimal
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_decimal
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 12
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_float FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_float
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_float] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_float
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_float
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 12
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_double FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_double
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_double] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_double
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_double
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 22
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_datetime FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_datetime
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_datetime] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_datetime
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_datetime
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 19
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_uuid FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_uuid
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_uuid] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_uuid
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_uuid
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 16
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT BINARY col_unsigned FROM analyser_test_data_types
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => BINARY col_unsigned
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_data_types
+				)
+			[col_unsigned] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_data_types
+						)
+					[name] => col_unsigned
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => BINARY col_unsigned
+			[orgname] =>
+			[table] =>
+			[orgtable] =>
+			[length] => 10
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					BINARY
+				)
+			[type] => VAR_STRING
 			[decimals] => 0
 		)
 )

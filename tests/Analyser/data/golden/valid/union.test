@@ -429,6 +429,51 @@ Array
 		)
 )
 -----
+SELECT null UNION SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NULL
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NULL
+			[orgname] => NULL
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT null UNION SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -704,6 +749,52 @@ Array
 		)
 )
 -----
+SELECT 5 UNION SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5
+			[orgname] => 5
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5 UNION SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -889,6 +980,330 @@ Array
 		)
 )
 -----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT null
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT 5.5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT 5.5e1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT "aa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) UNION SELECT NOW()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5.5 UNION SELECT null
 -----
 MariaStan\Analyser\AnalyserResult
@@ -935,6 +1350,52 @@ Array
 )
 -----
 SELECT 5.5 UNION SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5
+			[orgname] => 5.5
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT 5.5 UNION SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -1258,6 +1719,53 @@ Array
 		)
 )
 -----
+SELECT 5.5e1 UNION SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5e1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5e1
+			[orgname] => 5.5e1
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
 SELECT 5.5e1 UNION SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -1535,6 +2043,52 @@ Array
 		)
 )
 -----
+SELECT "aa" UNION SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => aa
+			[orgname] => aa
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT "aa" UNION SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -1766,6 +2320,52 @@ Array
 )
 -----
 SELECT NOW() UNION SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NOW()
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NOW()
+			[orgname] => NOW()
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT NOW() UNION SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -2596,6 +3196,51 @@ Array
 		)
 )
 -----
+SELECT null EXCEPT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NULL
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NULL
+			[orgname] => NULL
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT null EXCEPT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -2871,6 +3516,52 @@ Array
 		)
 )
 -----
+SELECT 5 EXCEPT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5
+			[orgname] => 5
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5 EXCEPT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -3056,6 +3747,330 @@ Array
 		)
 )
 -----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT null
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT 5.5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT 5.5e1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT "aa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) EXCEPT SELECT NOW()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5.5 EXCEPT SELECT null
 -----
 MariaStan\Analyser\AnalyserResult
@@ -3102,6 +4117,52 @@ Array
 )
 -----
 SELECT 5.5 EXCEPT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5
+			[orgname] => 5.5
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT 5.5 EXCEPT SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -3425,6 +4486,53 @@ Array
 		)
 )
 -----
+SELECT 5.5e1 EXCEPT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5e1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5e1
+			[orgname] => 5.5e1
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
 SELECT 5.5e1 EXCEPT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -3702,6 +4810,52 @@ Array
 		)
 )
 -----
+SELECT "aa" EXCEPT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => aa
+			[orgname] => aa
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT "aa" EXCEPT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -3933,6 +5087,52 @@ Array
 )
 -----
 SELECT NOW() EXCEPT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NOW()
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NOW()
+			[orgname] => NOW()
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT NOW() EXCEPT SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -4763,6 +5963,51 @@ Array
 		)
 )
 -----
+SELECT null INTERSECT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NULL
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NULL
+			[orgname] => NULL
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT null INTERSECT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -5038,6 +6283,52 @@ Array
 		)
 )
 -----
+SELECT 5 INTERSECT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5
+			[orgname] => 5
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5 INTERSECT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -5223,6 +6514,330 @@ Array
 		)
 )
 -----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT null
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 2
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 1
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					UNSIGNED
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT 5.5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT 5.5e1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT "aa"
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT CAST(5 as UNSIGNED INT) INTERSECT SELECT NOW()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => CAST(5 as UNSIGNED INT)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => CAST(5 as UNSIGNED INT)
+			[orgname] => CAST(5 as UNSIGNED INT)
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT 5.5 INTERSECT SELECT null
 -----
 MariaStan\Analyser\AnalyserResult
@@ -5269,6 +6884,52 @@ Array
 )
 -----
 SELECT 5.5 INTERSECT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\DecimalType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5
+			[orgname] => 5.5
+			[table] =>
+			[orgtable] =>
+			[length] => 4
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => NEWDECIMAL
+			[decimals] => 1
+		)
+)
+-----
+SELECT 5.5 INTERSECT SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -5592,6 +7253,53 @@ Array
 		)
 )
 -----
+SELECT 5.5e1 INTERSECT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => 5.5e1
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\FloatType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => 5.5e1
+			[orgname] => 5.5e1
+			[table] =>
+			[orgtable] =>
+			[length] => 5
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					NUM
+				)
+			[type] => DOUBLE
+			[decimals] => 31
+		)
+)
+-----
 SELECT 5.5e1 INTERSECT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -5869,6 +7577,52 @@ Array
 		)
 )
 -----
+SELECT "aa" INTERSECT SELECT CAST(5 as UNSIGNED INT)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => aa
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => aa
+			[orgname] => aa
+			[table] =>
+			[orgtable] =>
+			[length] => 8
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 SELECT "aa" INTERSECT SELECT 5.5
 -----
 MariaStan\Analyser\AnalyserResult
@@ -6100,6 +7854,52 @@ Array
 )
 -----
 SELECT NOW() INTERSECT SELECT 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => NOW()
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => false
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => NOW()
+			[orgname] => NOW()
+			[table] =>
+			[orgtable] =>
+			[length] => 76
+			[charsetnr] => 45
+			[flags] => Array
+				(
+					NOT_NULL
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
+SELECT NOW() INTERSECT SELECT CAST(5 as UNSIGNED INT)
 -----
 MariaStan\Analyser\AnalyserResult
 (

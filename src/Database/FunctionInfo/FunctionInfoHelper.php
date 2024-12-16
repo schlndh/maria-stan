@@ -70,6 +70,10 @@ abstract class FunctionInfoHelper
 			$leftType = $lt === DbTypeEnum::NULL
 				? $rightType
 				: $leftType;
+
+			if ($leftType::getTypeEnum() === DbTypeEnum::UNSIGNED_INT) {
+				$leftType = new DecimalType();
+			}
 		} elseif (isset($typesInvolved[DbTypeEnum::MIXED->value])) {
 			$leftType = new MixedType();
 		} elseif (isset($typesInvolved[DbTypeEnum::VARCHAR->value])) {
@@ -78,7 +82,10 @@ abstract class FunctionInfoHelper
 			$leftType = new VarcharType();
 		} elseif (isset($typesInvolved[DbTypeEnum::FLOAT->value])) {
 			$leftType = new FloatType();
-		} elseif (isset($typesInvolved[DbTypeEnum::DECIMAL->value])) {
+		} elseif (
+			isset($typesInvolved[DbTypeEnum::DECIMAL->value])
+			|| isset($typesInvolved[DbTypeEnum::UNSIGNED_INT->value])
+		) {
 			$leftType = new DecimalType();
 		} elseif (isset($typesInvolved[DbTypeEnum::INT->value])) {
 			$leftType = new IntType();

@@ -7,6 +7,7 @@ namespace MariaStan\Database\FunctionInfo;
 use MariaStan\Analyser\AnalyserConditionTypeEnum;
 use MariaStan\Analyser\ExprTypeResult;
 use MariaStan\Ast\Expr\CastType\CastTypeEnum;
+use MariaStan\Ast\Expr\CastType\IntegerCastType;
 use MariaStan\Ast\Expr\FunctionCall\Cast as CastFunctionCall;
 use MariaStan\Ast\Expr\FunctionCall\FunctionCall;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -15,6 +16,7 @@ use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\MixedType;
+use MariaStan\Schema\DbType\UnsignedIntType;
 use MariaStan\Schema\DbType\VarcharType;
 
 use function assert;
@@ -81,7 +83,11 @@ final class Cast implements FunctionInfo
 				$type = new FloatType();
 				break;
 			case CastTypeEnum::INTEGER:
-				$type = new IntType();
+				$castType = $functionCall->castType;
+				assert($castType instanceof IntegerCastType);
+				$type = $castType->isSigned
+					? new IntType()
+					: new UnsignedIntType();
 				break;
 			case CastTypeEnum::DAY_SECOND:
 				$type = new VarcharType();

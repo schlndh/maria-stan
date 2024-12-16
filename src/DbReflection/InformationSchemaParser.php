@@ -18,6 +18,7 @@ use MariaStan\Schema\DbType\DecimalType;
 use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
+use MariaStan\Schema\DbType\UnsignedIntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\ForeignKey;
 use MariaStan\Util\MariaDbErrorCodes;
@@ -200,7 +201,8 @@ class InformationSchemaParser
 	{
 		$origType = $type;
 		// get rid of unsigned etc
-		[$type] = explode(' ', $type);
+		$typeParts = explode(' ', $type);
+		$type = $typeParts[0];
 
 		// get rid of size
 		[$type] = explode('(', $type);
@@ -219,6 +221,10 @@ class InformationSchemaParser
 			case 'smallint':
 			case 'mediumint':
 			case 'bigint':
+				if (($typeParts[1] ?? null) === 'unsigned') {
+					return new UnsignedIntType();
+				}
+
 				return new IntType();
 			case 'decimal':
 				return new DecimalType();

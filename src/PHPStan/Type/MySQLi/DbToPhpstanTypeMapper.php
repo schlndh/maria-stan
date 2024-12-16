@@ -27,6 +27,7 @@ class DbToPhpstanTypeMapper
 	{
 		switch ($dbType::getTypeEnum()) {
 			case DbTypeEnum::INT:
+			case DbTypeEnum::UNSIGNED_INT:
 				return new IntegerType();
 			case DbTypeEnum::VARCHAR:
 			case DbTypeEnum::DATETIME:

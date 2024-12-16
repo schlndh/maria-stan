@@ -423,7 +423,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ AVG(a2.id)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => false
@@ -1687,7 +1687,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ AVG(a3.name)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => true
@@ -3009,7 +3009,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ MAX(a2.id)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => false
@@ -4269,7 +4269,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ MAX(a3.name)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => true
@@ -5588,7 +5588,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ MIN(a2.id)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => false
@@ -6848,7 +6848,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ MIN(a3.name)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => true
@@ -8160,7 +8160,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ SUM(a2.id)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => false
@@ -9422,7 +9422,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ SUM(a3.name)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => true
@@ -10742,7 +10742,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ GROUP_CONCAT(a2.id)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => false
@@ -12001,7 +12001,7 @@ MariaStan\Analyser\AnalyserResult
 					[name] => ~ GROUP_CONCAT(a3.name)
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
-							[type] => MariaStan\Schema\DbType\IntType
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
 								(
 								)
 							[isNullable] => true

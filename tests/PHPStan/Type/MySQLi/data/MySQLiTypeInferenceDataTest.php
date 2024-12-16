@@ -687,6 +687,17 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertGettype(['string'], $value);
 		}
+
+		$rows = $db->query('SELECT CAST(1 AS UNSIGNED INT)')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('int', $value);
+			}
+
+			$this->assertGettype(['integer'], $value);
+		}
 	}
 
 	public function testFetchRow(): void

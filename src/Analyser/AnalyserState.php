@@ -898,9 +898,11 @@ final class AnalyserState
 					Expr\UnaryOpTypeEnum::MINUS => match ($resolvedInnerExpr->type::getTypeEnum()) {
 						Schema\DbType\DbTypeEnum::INT, Schema\DbType\DbTypeEnum::DECIMAL => $resolvedInnerExpr->type,
 						Schema\DbType\DbTypeEnum::DATETIME => new Schema\DbType\DecimalType(),
+						Schema\DbType\DbTypeEnum::UNSIGNED_INT => new Schema\DbType\IntType(),
 						default => new Schema\DbType\FloatType(),
 					},
 					Expr\UnaryOpTypeEnum::BINARY => new Schema\DbType\VarcharType(),
+					Expr\UnaryOpTypeEnum::BITWISE_NOT => new Schema\DbType\UnsignedIntType(),
 					default => new Schema\DbType\IntType(),
 				};
 
@@ -1044,6 +1046,9 @@ final class AnalyserState
 						$lt->value => 1,
 						$rt->value => 1,
 					];
+					$getIntType = static fn () => isset($typesInvolved[Schema\DbType\DbTypeEnum::UNSIGNED_INT->value])
+						? new Schema\DbType\UnsignedIntType()
+						: new Schema\DbType\IntType();
 
 					if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
 						if (
@@ -1077,16 +1082,28 @@ final class AnalyserState
 						$type = new Schema\DbType\MixedType();
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->value])) {
 						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-							? new Schema\DbType\IntType()
+							? $getIntType()
 							: new Schema\DbType\FloatType();
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::FLOAT->value])) {
 						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-							? new Schema\DbType\IntType()
+							? $getIntType()
 							: new Schema\DbType\FloatType();
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DECIMAL->value])) {
 						$type = $expr->operation === Expr\BinaryOpTypeEnum::INT_DIVISION
-							? new Schema\DbType\IntType()
+							? $getIntType()
 							: new Schema\DbType\DecimalType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::UNSIGNED_INT->value])) {
+						$type = match ($expr->operation) {
+							Expr\BinaryOpTypeEnum::MODULO => match ($lt) {
+								Schema\DbType\DbTypeEnum::INT, Schema\DbType\DbTypeEnum::UNSIGNED_INT,
+								Schema\DbType\DbTypeEnum::DECIMAL, Schema\DbType\DbTypeEnum::FLOAT,
+								Schema\DbType\DbTypeEnum::NULL, Schema\DbType\DbTypeEnum::MIXED
+									=> $leftResult->type,
+								default => new Schema\DbType\FloatType(),
+							},
+							Expr\BinaryOpTypeEnum::DIVISION => new Schema\DbType\DecimalType(),
+							default => new Schema\DbType\UnsignedIntType(),
+						};
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
 						$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
 							? new Schema\DbType\DecimalType()

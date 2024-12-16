@@ -13,6 +13,7 @@ use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
 use MariaStan\Schema\DbType\EnumType;
 use MariaStan\Schema\DbType\IntType;
+use MariaStan\Schema\DbType\UnsignedIntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\ForeignKey;
 use MariaStan\TestCaseHelper;
@@ -148,9 +149,9 @@ class DbReflectionTest extends TestCase
 		$this->assertEquals([
 			'id' => new Column('id', new IntType(), false, null, true),
 			'name' => new Column('name', new VarcharType(), false),
-			'val_tinyint_u' => new Column('val_tinyint_u', new IntType(), false),
+			'val_tinyint_u' => new Column('val_tinyint_u', new UnsignedIntType(), false),
 			'val_tinyint_s' => new Column('val_tinyint_s', new IntType(), false),
-			'val_tinyint_z' => new Column('val_tinyint_z', new IntType(), false),
+			'val_tinyint_z' => new Column('val_tinyint_z', new UnsignedIntType(), false),
 			'val_smallint' => new Column('val_smallint', new IntType(), false),
 			'val_mediumint' => new Column('val_mediumint', new IntType(), false),
 			'val_bigint' => new Column('val_bigint', new IntType(), false),
