@@ -76,3 +76,9 @@ services:
 	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory
 	-
 		create: @functionInfoRegistryFactory::create()
+	-
+		class: MariaStan\PHPStan\MariaStanResultCacheMetaExtension
+		arguments:
+			dbReflection: @mariaDbReflection
+		tags:
+			- phpstan.resultCacheMetaExtension

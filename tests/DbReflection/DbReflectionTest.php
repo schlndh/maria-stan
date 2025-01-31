@@ -23,11 +23,15 @@ use RuntimeException;
 
 use function assert;
 use function fclose;
+use function file_put_contents;
 use function fwrite;
 use function is_resource;
 use function stream_get_meta_data;
 use function strtoupper;
+use function sys_get_temp_dir;
+use function tempnam;
 use function tmpfile;
+use function unlink;
 
 class DbReflectionTest extends TestCase
 {
@@ -239,6 +243,104 @@ class DbReflectionTest extends TestCase
 	{
 		$this->expectException(TableDoesNotExistException::class);
 		$reflection->findTableSchema('missing_table_123_abc');
+	}
+
+	public function testOnlineDbReflectionHash(): void
+	{
+		self::initDb();
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$parser = TestCaseHelper::createParser();
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$db->query('DROP TABLE IF EXISTS db_reflection_hash_test;');
+		$dbReflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
+		$prevHashes = [$dbReflection->getHash()];
+
+		$db->query('CREATE TABLE db_reflection_hash_test (id INT);');
+		$hash = $dbReflection->getHash();
+		$this->assertNotContains($hash, $prevHashes, 'New table');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test ADD COLUMN val INT;');
+		$hash = $dbReflection->getHash();
+		$this->assertNotContains($hash, $prevHashes, 'New column');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test MODIFY COLUMN val TINYINT;');
+		$hash = $dbReflection->getHash();
+		$this->assertNotContains($hash, $prevHashes, 'Modified column');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test ADD FOREIGN KEY (id) REFERENCES db_reflection_test (id)');
+		$hash = $dbReflection->getHash();
+		$this->assertNotContains($hash, $prevHashes, 'New foreign key');
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public static function provideReflectionsForHashTest(): iterable
+	{
+		self::initDb();
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$parser = TestCaseHelper::createParser();
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$onlineReflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
+
+		yield 'online' => [static fn () => $onlineReflection->getHash()];
+
+		yield 'file' => [
+			static function () use ($db, $informationSchemaParser): string {
+				$tmpFileName = tempnam(sys_get_temp_dir(), 'maria_stan_');
+
+				if ($tmpFileName === false) {
+					self::fail('Failed to create temp file.');
+				}
+
+				if (
+					file_put_contents(
+						$tmpFileName,
+						MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)),
+					) === false
+				) {
+					self::fail('Failed to write to temp file.');
+				}
+
+				try {
+					return (new MariaDbFileDbReflection($tmpFileName, $informationSchemaParser))->getHash();
+				} finally {
+					unlink($tmpFileName);
+				}
+			},
+		];
+	}
+
+	/**
+	 * @dataProvider provideReflectionsForHashTest
+	 * @param callable(): string $getCurrentHash
+	 */
+	public function testReflectionHash(callable $getCurrentHash): void
+	{
+		self::initDb();
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->query('DROP TABLE IF EXISTS db_reflection_hash_test;');
+		$prevHashes = [$getCurrentHash()];
+
+		$db->query('CREATE TABLE db_reflection_hash_test (id INT);');
+		$hash = $getCurrentHash();
+		$this->assertNotContains($hash, $prevHashes, 'New table');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test ADD COLUMN val INT;');
+		$hash = $getCurrentHash();
+		$this->assertNotContains($hash, $prevHashes, 'New column');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test MODIFY COLUMN val TINYINT;');
+		$hash = $getCurrentHash();
+		$this->assertNotContains($hash, $prevHashes, 'Modified column');
+		$prevHashes[] = $hash;
+
+		$db->query('ALTER TABLE db_reflection_hash_test ADD FOREIGN KEY (id) REFERENCES db_reflection_test (id)');
+		$hash = $getCurrentHash();
+		$this->assertNotContains($hash, $prevHashes, 'New foreign key');
 	}
 
 	private function assertStringDefaultValue(string $expected, Column $column): void

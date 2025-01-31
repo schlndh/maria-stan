@@ -11,6 +11,8 @@ use MariaStan\Util\MysqliUtil;
 use mysqli;
 use mysqli_sql_exception;
 
+use function hash;
+
 use const MYSQLI_ASSOC;
 
 class MariaDbOnlineDbReflection implements DbReflection
@@ -33,9 +35,11 @@ class MariaDbOnlineDbReflection implements DbReflection
 		}
 
 		try {
-			$stmt = $this->mysqli->prepare(
-				'SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
-			);
+			$stmt = $this->mysqli->prepare('
+				SELECT * FROM information_schema.COLUMNS
+				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+				ORDER BY ORDINAL_POSITION
+			');
 			$stmt->execute([$this->database, $table]);
 			/** @var array<array<string, scalar|null>> $tableCols */
 			$tableCols = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -45,6 +49,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 				JOIN information_schema.KEY_COLUMN_USAGE kcu
 					USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
 				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
+				ORDER BY CONSTRAINT_NAME, kcu.ORDINAL_POSITION
 			');
 			$stmt->execute([$this->database, $table]);
 			/** @var array<array<string, scalar|null>> $foreignKeys */
@@ -58,5 +63,10 @@ class MariaDbOnlineDbReflection implements DbReflection
 			$this->schemaParser->parseTableColumns($table, $tableCols),
 			$this->schemaParser->parseTableForeignKeys($foreignKeys),
 		);
+	}
+
+	public function getHash(): string
+	{
+		return hash('xxh128', MariaDbFileDbReflection::dumpSchema($this->mysqli, $this->database));
 	}
 }

@@ -9,6 +9,7 @@ use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\Schema\Table;
 
 use function file_get_contents;
+use function hash;
 use function is_array;
 use function serialize;
 use function unserialize;
@@ -85,6 +86,11 @@ class MariaDbFileDbReflection implements DbReflection
 		);
 	}
 
+	public function getHash(): string
+	{
+		return hash('xxh128', serialize($this->schemaDump));
+	}
+
 	public static function dumpSchema(\mysqli $db, string $database): string
 	{
 		$result = [
@@ -92,7 +98,11 @@ class MariaDbFileDbReflection implements DbReflection
 			'tables' => [],
 		];
 
-		$stmt = $db->prepare('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ?');
+		$stmt = $db->prepare('
+			SELECT * FROM information_schema.COLUMNS
+			WHERE TABLE_SCHEMA = ?
+			ORDER BY TABLE_NAME, ORDINAL_POSITION
+		');
 		$stmt->execute([$database]);
 		$columns = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);
 
@@ -106,6 +116,7 @@ class MariaDbFileDbReflection implements DbReflection
 			JOIN information_schema.KEY_COLUMN_USAGE kcu
 				USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
 			WHERE TABLE_SCHEMA = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
+			ORDER BY TABLE_NAME, CONSTRAINT_NAME, kcu.ORDINAL_POSITION
 		');
 		$stmt->execute([$database]);
 		$foreignKeys = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);

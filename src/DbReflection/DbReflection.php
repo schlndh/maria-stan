@@ -11,4 +11,11 @@ interface DbReflection
 {
 	/** @throws DbReflectionException */
 	public function findTableSchema(string $table): Table;
+
+	/**
+	 * Get DB reflection has. It should change when the underlying schema changes.
+	 *
+	 * @throws DbReflectionException
+	 */
+	public function getHash(): string;
 }
