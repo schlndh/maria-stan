@@ -49,6 +49,8 @@ class MariaDbOnlineDbReflection implements DbReflection
 				JOIN information_schema.KEY_COLUMN_USAGE kcu
 					USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
 				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
+					/* This happens when there is a FK and UNIQUE with same name. */
+					AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
 				ORDER BY CONSTRAINT_NAME, kcu.ORDINAL_POSITION
 			');
 			$stmt->execute([$this->database, $table]);

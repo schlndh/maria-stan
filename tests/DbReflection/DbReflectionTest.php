@@ -105,6 +105,12 @@ class DbReflectionTest extends TestCase
 			CREATE OR REPLACE TABLE db_reflection_test_foreign_keys (
 				id INT NOT NULL,
 				name_2 VARCHAR(255) NOT NULL,
+				/*
+					Edge-case: UNIQUE and FK can have the same name. This results in 2 rows in KEY_COLUMN_USAGE,
+					one where POSITION_IN_UNIQUE_CONSTRAINT, REFERENCED_TABLE_SCHEMA, ... are NULL
+					and another one where they aren't.
+				*/
+				CONSTRAINT db_reflection_test_fk_id UNIQUE(id),
 				CONSTRAINT db_reflection_test_fk_id FOREIGN KEY (id) REFERENCES db_reflection_test (id)
 					ON DELETE CASCADE ON UPDATE CASCADE,
 				CONSTRAINT db_reflection_test_fk_id_name FOREIGN KEY (id, name_2)
