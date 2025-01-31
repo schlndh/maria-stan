@@ -3,11 +3,11 @@
 MariaStan is a static analysis tool for MariaDB queries. Its primary purpose is to serve as a basis for
 [PHPStan](https://phpstan.org/) extensions.
 
-**Current status** (24. 04. 2024):
+**Current status** (31. 01. 2025):
 
 MariaStan is very much incomplete. It covers probably ~90% of use-cases in a large code-base where I use it
 (hundreds of tables, thousands of queries). As a result there is not much activity. But it is actively maintained in
-the sense that if something breaks for me it will probably get fixed.
+the sense that if something breaks for me, it will probably get fixed.
 
 If you try to use it in your project, you are likely to run into use-cases which are not implemented
 (e.g. syntax/functions which my project doesn't use). If that happens, you should be prepared to fix things for yourself
@@ -15,7 +15,7 @@ If you try to use it in your project, you are likely to run into use-cases which
 
 There is no backwards-compatibility promise on anything, and there are no releases - I just use master.
 
-MariaStan is tested with MariaDB 10.11 and PHP 8.1-8.3.
+MariaStan is tested with MariaDB 10.11 and PHP 8.1-8.4.
 
 ## Installation
 
@@ -117,12 +117,10 @@ Here is a list of features that you could implement into your own PHPStan extens
 - Column type overrides: You can override the type of a column (e.g. because the table is "static") and even propagate it
   automatically via foreign keys.
 - Custom PHPDoc types: e.g. [MySQLiTableAssocRowType](https://github.com/schlndh/maria-stan/blob/master/src/PHPStan/Type/MySQLi/MySQLiTableAssocRowType.php).
+- PHPStan result cache is invalidated when DB schema changes via [ResultCacheMetaExtension](https://phpstan.org/developing-extensions/result-cache-meta-extensions).
 
 ## Limitations
 
-- There is currently no cache-invalidation implemented for PHPStan. It is not clear if such a thing is even easily
- possible. See [this discussion](https://github.com/phpstan/phpstan/discussions/5690). However, that only matters
- for schema changes (i.e. if you change a query in a PHP file PHPStan will invalidate it automatically).
 - There is no support for query builders. The analyser expects a query as a string on the input.
 - The query has to be fully known statically. If you have a code like this:
     ```php
