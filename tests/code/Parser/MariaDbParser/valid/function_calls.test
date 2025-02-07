@@ -6546,3 +6546,109 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT LEAST(1, 2), GREATEST(1, 2)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => LEAST
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => GREATEST
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT LEAST(1, 2, 3), GREATEST(1, 2, 3)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => LEAST
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => GREATEST
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 1
+										)
+									[1] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 2
+										)
+									[2] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 3
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

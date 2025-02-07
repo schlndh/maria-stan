@@ -988,6 +988,8 @@ class AnalyserTest extends TestCase
 				$selects["COALESCE({$label1}, {$label2}, int)"] = "SELECT COALESCE(NULL, {$value1}, {$value2}, 9)";
 				$selects["ROUND({$label1}, {$label2})"] = "SELECT ROUND({$value1}, {$value2})";
 				$selects["CONCAT({$label1}, {$label2})"] = "SELECT CONCAT({$value1}, {$value2})";
+				$selects["LEAST({$label1}, {$label2})"] = "SELECT LEAST({$value1}, {$value2})";
+				$selects["GREATEST({$label1}, {$label2})"] = "SELECT GREATEST({$value1}, {$value2})";
 			}
 
 			$selects["TRIM({$label1})"] = "SELECT TRIM({$value1})";
@@ -1002,6 +1004,8 @@ class AnalyserTest extends TestCase
 			$selects["UPPER({$label1})"] = "SELECT UPPER({$value1})";
 			$selects["UCASE({$label1})"] = "SELECT UCASE({$value1})";
 			$selects["ABS({$label1})"] = "SELECT ABS({$value1})";
+			$selects["LEAST({$label1}, {$label1}, {$label1})"] = "SELECT LEAST({$value1}, {$value1}, {$value1})";
+			$selects["GREATEST({$label1}, {$label1}, {$label1})"] = "SELECT GREATEST({$value1}, {$value1}, {$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
@@ -1735,6 +1739,11 @@ class AnalyserTest extends TestCase
 			'ABS(col_int) IS NOT NULL',
 			'ABS(col_int)',
 			'NOT ABS(col_int)',
+			'LEAST(col_int, col_vchar) IS NOT NULL',
+			// TODO: Enable this after 10.11.8. https://jira.mariadb.org/browse/MDEV-21034
+			//'LEAST(col_int, col_vchar)',
+			'NOT LEAST(col_int, col_vchar)',
+			'GREATEST(col_int, col_vchar) IS NULL',
 		];
 
 		foreach (['COALESCE', 'IFNULL', 'NVL'] as $coalesceFn) {
