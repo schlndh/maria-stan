@@ -1001,6 +1001,7 @@ class AnalyserTest extends TestCase
 			$selects["LCASE({$label1})"] = "SELECT LCASE({$value1})";
 			$selects["UPPER({$label1})"] = "SELECT UPPER({$value1})";
 			$selects["UCASE({$label1})"] = "SELECT UCASE({$value1})";
+			$selects["ABS({$label1})"] = "SELECT ABS({$value1})";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.
@@ -1730,6 +1731,10 @@ class AnalyserTest extends TestCase
 			'UCASE(col_vchar) IS NOT NULL',
 			'YEAR(col_vchar) IS NOT NULL',
 			'YEAR(col_vchar) IS NULL',
+			'ABS(col_int) IS NULL',
+			'ABS(col_int) IS NOT NULL',
+			'ABS(col_int)',
+			'NOT ABS(col_int)',
 		];
 
 		foreach (['COALESCE', 'IFNULL', 'NVL'] as $coalesceFn) {

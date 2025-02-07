@@ -1329,3 +1329,17 @@ MariaStan\Parser\Exception\ParserException
 Function REPLACE takes 3 arguments, got 4.
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 'd')' at line 1
+-----
+SELECT ABS()
+-----
+MariaStan\Parser\Exception\ParserException
+Function ABS takes 1 argument, got 0.
+#####
+1582: Incorrect parameter count in the call to native function 'ABS'
+-----
+SELECT ABS(1, 2)
+-----
+MariaStan\Parser\Exception\ParserException
+Function ABS takes 1 argument, got 2.
+#####
+1582: Incorrect parameter count in the call to native function 'ABS'

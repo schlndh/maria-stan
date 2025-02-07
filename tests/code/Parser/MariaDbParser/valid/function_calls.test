@@ -6516,3 +6516,33 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT ABS(-1)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ABS
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\UnaryOp
+										(
+											[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::MINUS
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
