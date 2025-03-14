@@ -59,15 +59,19 @@ class MySQLiTypeInferenceDataTest extends TestCase
 				col_double DOUBLE NOT NULL,
 				col_datetime DATETIME NOT NULL,
 				col_enum ENUM('a', 'b', 'c') NOT NULL,
-				col_uuid UUID NOT NULL
+				col_uuid UUID NOT NULL,
+				col_text TEXT NOT NULL,
+				col_blob BLOB NOT NULL,
+				col_varbinary VARBINARY(10) NOT NULL
 			);
 		");
-		$db->query("
+		$db->query(/** @lang MariaDB */"
 			INSERT INTO {$dataTypesTable}
-			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum, col_uuid)
+			    (col_int, col_varchar_null, col_decimal, col_float, col_double, col_datetime, col_enum, col_uuid,
+			     col_text, col_blob, col_varbinary)
 			VALUES
-				(1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a', UUID()),
-			    (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b', UUID())
+				(1, 'aa', 111.11, 11.11, 1.1, NOW(), 'a', UUID(), 'text', '\xA0\xA1', '\xA0\xA1'),
+			    (2, NULL, 222.22, 22.22, 2.2, NOW(), 'b', UUID(), 'text', '\xA0\xA1', '\xA0\xA1')
 		");
 
 		$db->query('
@@ -678,6 +682,39 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		}
 
 		$rows = $db->query('SELECT col_uuid FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('string', $value);
+			}
+
+			$this->assertGettype(['string'], $value);
+		}
+
+		$rows = $db->query('SELECT col_text FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('string', $value);
+			}
+
+			$this->assertGettype(['string'], $value);
+		}
+
+		$rows = $db->query('SELECT col_blob FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
+		$col = array_column($rows, 0);
+
+		foreach ($col as $value) {
+			if (function_exists('assertType')) {
+				assertType('string', $value);
+			}
+
+			$this->assertGettype(['string'], $value);
+		}
+
+		$rows = $db->query('SELECT col_varbinary FROM mysqli_test_data_types')->fetch_all(MYSQLI_NUM);
 		$col = array_column($rows, 0);
 
 		foreach ($col as $value) {

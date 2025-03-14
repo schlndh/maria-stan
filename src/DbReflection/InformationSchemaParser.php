@@ -208,13 +208,20 @@ class InformationSchemaParser
 		[$type] = explode('(', $type);
 
 		switch ($type) {
+			// TODO: handle INET4/6, SET
 			case 'varchar':
 			case 'tinytext':
 			case 'text':
 			case 'mediumtext':
 			case 'longtext':
+			case 'tinyblob':
+			case 'blob':
+			case 'mediumblob':
+			case 'longblob':
 			case 'char':
 			case 'uuid':
+			case 'binary':
+			case 'varbinary':
 				return new VarcharType();
 			case 'int':
 			case 'tinyint':

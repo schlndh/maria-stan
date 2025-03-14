@@ -71,6 +71,10 @@ class DbReflectionTest extends TestCase
 				val_text TEXT NOT NULL,
 				val_mediumtext MEDIUMTEXT NOT NULL,
 				val_longtext LONGTEXT NOT NULL,
+				val_tinyblob TINYBLOB NOT NULL,
+				val_blob BLOB NOT NULL,
+				val_mediumblob MEDIUMBLOB NOT NULL,
+				val_longblob LONGBLOB NOT NULL,
 				val_char CHAR(5) NOT NULL,
 				val_date DATE NOT NULL,
 				val_time TIME NOT NULL,
@@ -80,6 +84,8 @@ class DbReflectionTest extends TestCase
 				val_enum ENUM('a', 'b', 'c') NOT NULL,
 				val_default INT NOT NULL DEFAULT (ABS(val_mediumint) + 5),
 				val_uuid UUID NOT NULL,
+				val_binary BINARY(10) NOT NULL,
+				val_varbinary VARBINARY(10) NOT NULL,
 				UNIQUE (id, name)
 			);
 		");
@@ -169,6 +175,10 @@ class DbReflectionTest extends TestCase
 			'val_text' => new Column('val_text', new VarcharType(), false),
 			'val_mediumtext' => new Column('val_mediumtext', new VarcharType(), false),
 			'val_longtext' => new Column('val_longtext', new VarcharType(), false),
+			'val_tinyblob' => new Column('val_tinyblob', new VarcharType(), false),
+			'val_blob' => new Column('val_blob', new VarcharType(), false),
+			'val_mediumblob' => new Column('val_mediumblob', new VarcharType(), false),
+			'val_longblob' => new Column('val_longblob', new VarcharType(), false),
 			'val_char' => new Column('val_char', new VarcharType(), false),
 			'val_date' => new Column('val_date', new DateTimeType(), false),
 			'val_time' => new Column('val_time', new DateTimeType(), false),
@@ -178,6 +188,8 @@ class DbReflectionTest extends TestCase
 			'val_enum' => new Column('val_enum', new EnumType(['a', 'b', 'c']), false),
 			'val_default' => new Column('val_default', new IntType(), false, $valDefaultExpr),
 			'val_uuid' => new Column('val_uuid', new VarcharType(), false),
+			'val_binary' => new Column('val_binary', new VarcharType(), false),
+			'val_varbinary' => new Column('val_varbinary', new VarcharType(), false),
 		], $schema->columns);
 	}
 
