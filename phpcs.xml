@@ -67,6 +67,8 @@
 		<exclude name="SlevomatCodingStandard.PHP.UselessParentheses"/>
 		<!-- I'm using public readonly extensively and currently there's no way to enable just public readonly -->
 		<exclude name="SlevomatCodingStandard.Classes.ForbiddenPublicProperty" />
+		<!-- deprecated sniff -->
+		<exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
