@@ -80,21 +80,21 @@ Unexpected token: DISTINCT after: SELECT ABS(
 SELECT AVG(id) OVER (ORDER BY id ROWS UNBOUNDED FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got FOLLOWING after: ORDER BY id ROWS UNBOUNDED
+Expected one of PRECEDING, got FOLLOWING after: ORDER BY id ROWS UNBOUNDED
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS 1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got FOLLOWING after: ORDER BY id ROWS 1
+Expected one of PRECEDING, got FOLLOWING after: ORDER BY id ROWS 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS 1+1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got '+' after: ORDER BY id ROWS 1
+Expected one of PRECEDING, got '+' after: ORDER BY id ROWS 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
@@ -114,22 +114,22 @@ Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: (OR
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING) FROM (SELECT 1 id) t
 -----
-MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND UNBOUNDED
+MariaStan\Parser\Exception\ParserException
+Unacceptable combination of window frame bound specifications: CURRENT ROW AND UNBOUNDED PRECEDING
 #####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND 1 PRECEDING) FROM (SELECT 1 id) t
 -----
-MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND 1
+MariaStan\Parser\Exception\ParserException
+Unacceptable combination of window frame bound specifications: CURRENT ROW AND 1 PRECEDING
 #####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id ROWS BETWEEN CURRENT ROW AND 1+1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
+Expected one of PRECEDING, FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
@@ -150,21 +150,21 @@ Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: ROW
 SELECT AVG(id) OVER (ORDER BY id RANGE UNBOUNDED FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got FOLLOWING after: ORDER BY id RANGE UNBOUNDED
+Expected one of PRECEDING, got FOLLOWING after: ORDER BY id RANGE UNBOUNDED
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE 1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got FOLLOWING after: ORDER BY id RANGE 1
+Expected one of PRECEDING, got FOLLOWING after: ORDER BY id RANGE 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE 1+1 PRECEDING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected PRECEDING, got '+' after: ORDER BY id RANGE 1
+Expected one of PRECEDING, got '+' after: ORDER BY id RANGE 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 PRECEDING) FROM (SELECT 1 id) t' at line 1
 -----
@@ -184,22 +184,22 @@ Expected one of CURRENT, UNBOUNDED, INT_LITERAL, TRUE, FALSE, got '-' after: (OR
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING) FROM (SELECT 1 id) t
 -----
-MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND UNBOUNDED
+MariaStan\Parser\Exception\ParserException
+Unacceptable combination of window frame bound specifications: CURRENT ROW AND UNBOUNDED PRECEDING
 #####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND 1 PRECEDING) FROM (SELECT 1 id) t
 -----
-MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got PRECEDING after: BETWEEN CURRENT ROW AND 1
+MariaStan\Parser\Exception\ParserException
+Unacceptable combination of window frame bound specifications: CURRENT ROW AND 1 PRECEDING
 #####
 4014: Unacceptable combination of window frame bound specifications
 -----
 SELECT AVG(id) OVER (ORDER BY id RANGE BETWEEN CURRENT ROW AND 1+1 FOLLOWING) FROM (SELECT 1 id) t
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
+Expected one of PRECEDING, FOLLOWING, got '+' after: BETWEEN CURRENT ROW AND 1
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+1 FOLLOWING) FROM (SELECT 1 id) t' at line 1
 -----
@@ -1371,3 +1371,31 @@ MariaStan\Parser\Exception\ParserException
 Function GREATEST takes at least 2 arguments, got 1.
 #####
 1582: Incorrect parameter count in the call to native function 'GREATEST'
+-----
+SELECT FIRST_VALUE(id) OVER (ORDER BY id PARTITION BY id) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected ')', got PARTITION after: OVER (ORDER BY id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'PARTITION BY id) FROM parser_test' at line 1
+-----
+SELECT FIRST_VALUE(id) OVER (RANGE UNBOUNDED PRECEDING) FROM parser_test
+-----
+MariaStan\Parser\Exception\ParserException
+RANGE-type frame requires ORDER BY clause with single sort key.
+#####
+4019: RANGE-type frame requires ORDER BY clause with single sort key
+-----
+SELECT FIRST_VALUE(id) OVER (ORDER BY name, id RANGE UNBOUNDED PRECEDING) FROM parser_test
+-----
+MariaStan\Parser\Exception\ParserException
+RANGE-type frame requires ORDER BY clause with single sort key.
+#####
+4019: RANGE-type frame requires ORDER BY clause with single sort key
+-----
+SELECT FIRST_VALUE(id) OVER (ROWS UNBOUNDED FOLLOWING) FROM parser_test
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of PRECEDING, got FOLLOWING after: ) OVER (ROWS UNBOUNDED
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM parser_test' at line 1

@@ -85,6 +85,7 @@ use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Ast\WhenThen;
 use MariaStan\Ast\WindowFrame;
 use MariaStan\Ast\WindowFrameBound;
+use MariaStan\Ast\WindowFrameBoundTypeEnum;
 use MariaStan\Ast\WindowFrameTypeEnum;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Parser\Exception\MissingSubqueryAliasException;
@@ -1807,13 +1808,32 @@ class MariaDbParserState
 
 		if ($frameTypeToken !== null) {
 			$frameType = WindowFrameTypeEnum::from($frameTypeToken->type->value);
+
+			if ($frameType === WindowFrameTypeEnum::RANGE && count($orderBy->expressions ?? []) !== 1) {
+				throw new ParserException('RANGE-type frame requires ORDER BY clause with single sort key.');
+			}
+
 			$hasUpperBound = $this->consumeToken(TokenTypeEnum::BETWEEN);
 			$upperBound = null;
-			$lowerBound = $this->parseWindowFrameBound(TokenTypeEnum::PRECEDING);
+			$allowedDirectionTypes = $hasUpperBound
+				? [TokenTypeEnum::PRECEDING, TokenTypeEnum::FOLLOWING]
+				: [TokenTypeEnum::PRECEDING];
+			$lowerBound = $this->parseWindowFrameBound(...$allowedDirectionTypes);
 
 			if ($hasUpperBound) {
 				$this->expectToken(TokenTypeEnum::AND);
-				$upperBound = $this->parseWindowFrameBound(TokenTypeEnum::FOLLOWING);
+				$upperBound = $this->parseWindowFrameBound(...$allowedDirectionTypes);
+
+				if (
+					$lowerBound->type === WindowFrameBoundTypeEnum::CURRENT_ROW && $upperBound->type->isPreceding()
+					|| $lowerBound->type->isFollowing() && $upperBound->type === WindowFrameBoundTypeEnum::CURRENT_ROW
+					// Surprisingly 1 FOLLOWING AND 1 PRECEDING is allowed.
+				) {
+					throw new ParserException(
+						'Unacceptable combination of window frame bound specifications: '
+							. $this->getContextPriorToTokenPosition(),
+					);
+				}
 			}
 
 			$windowFrame = new WindowFrame(
@@ -1837,7 +1857,7 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
-	private function parseWindowFrameBound(TokenTypeEnum $typeToken): WindowFrameBound
+	private function parseWindowFrameBound(TokenTypeEnum ...$allowedDirectionTokens): WindowFrameBound
 	{
 		$startPosition = $this->getCurrentToken()->position;
 		$boundStartToken = $this->expectAnyOfTokens(
@@ -1848,11 +1868,9 @@ class MariaDbParserState
 			TokenTypeEnum::FALSE,
 		);
 
-		if ($boundStartToken->type === TokenTypeEnum::CURRENT) {
-			$this->expectToken(TokenTypeEnum::ROW);
-		} else {
-			$this->expectToken($typeToken);
-		}
+		$boundEndTokenType = $boundStartToken->type === TokenTypeEnum::CURRENT
+			? $this->expectToken(TokenTypeEnum::ROW)->type
+			: $this->expectAnyOfTokens(...$allowedDirectionTokens)->type;
 
 		$endPosition = $this->getPreviousToken()->getEndPosition();
 		// Workaround for https://github.com/phpstan/phpstan/issues/9499
@@ -1860,7 +1878,11 @@ class MariaDbParserState
 
 		return match ($boundStartTokenType) {
 			TokenTypeEnum::CURRENT => WindowFrameBound::createCurrentRow($startPosition, $endPosition),
-			TokenTypeEnum::UNBOUNDED => WindowFrameBound::createUnbounded($startPosition, $endPosition),
+			TokenTypeEnum::UNBOUNDED => WindowFrameBound::createUnbounded(
+				$startPosition,
+				$endPosition,
+				$boundEndTokenType,
+			),
 			TokenTypeEnum::LITERAL_INT, TokenTypeEnum::TRUE, TokenTypeEnum::FALSE => WindowFrameBound::createExpression(
 				$startPosition,
 				$endPosition,
@@ -1871,10 +1893,11 @@ class MariaDbParserState
 					match ($boundStartTokenType) {
 						TokenTypeEnum::LITERAL_INT => (int) $boundStartToken->content,
 						TokenTypeEnum::TRUE => 1,
-						TokenTypeEnum::FALSE => 1,
+						TokenTypeEnum::FALSE => 0,
 					},
 					// phpcs:enable PSR2.Methods.FunctionCallSignature.Indent
 				),
+				$boundEndTokenType,
 			),
 			default => throw new ParserException('This should not happen'),
 		};

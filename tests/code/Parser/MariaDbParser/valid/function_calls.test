@@ -935,9 +935,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
 										)
 								)
 						)
@@ -975,9 +975,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1019,9 +1019,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1063,7 +1063,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
@@ -1103,13 +1103,13 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_FOLLOWING
 										)
 								)
 						)
@@ -1147,13 +1147,13 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1195,11 +1195,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
@@ -1232,9 +1232,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
 										)
 								)
 						)
@@ -1287,9 +1287,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
 										)
 								)
 						)
@@ -1313,9 +1313,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
 										)
 								)
 						)
@@ -1460,9 +1460,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
 										)
 								)
 						)
@@ -1500,9 +1500,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1544,9 +1544,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1588,7 +1588,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
@@ -1628,13 +1628,13 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_FOLLOWING
 										)
 								)
 						)
@@ -1672,13 +1672,13 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
-											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
 											[expression] => MariaStan\Ast\Expr\LiteralInt
 												(
 													[value] => 1
@@ -1720,11 +1720,11 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 							[frame] => MariaStan\Ast\WindowFrame
 								(
 									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
-									[preceding] => MariaStan\Ast\WindowFrameBound
+									[from] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
-									[following] => MariaStan\Ast\WindowFrameBound
+									[to] => MariaStan\Ast\WindowFrameBound
 										(
 											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
 										)
@@ -2579,6 +2579,62 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[isSqlCalcFoundRows] => false
 				)
 			[alias] => t
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT AVG(id) OVER (ROWS BETWEEN FALSE PRECEDING AND TRUE FOLLOWING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => AVG
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 0
+												)
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
 		)
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
@@ -6647,6 +6703,690 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 							[isDistinct] => false
 						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(1) OVER ()
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+									[isDistinct] => false
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (ORDER BY name) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => name
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id RANGE 1 PRECEDING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::RANGE
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 1
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND 3 FOLLOWING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 3
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND 3 PRECEDING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 3
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (ROWS BETWEEN 10 FOLLOWING AND 9 FOLLOWING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 10
+												)
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 9
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (ROWS BETWEEN 10 FOLLOWING AND 9 PRECEDING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_FOLLOWING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 10
+												)
+										)
+									[to] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::EXPRESSION_PRECEDING
+											[expression] => MariaStan\Ast\Expr\LiteralInt
+												(
+													[value] => 9
+												)
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (PARTITION BY name ORDER BY id ROWS CURRENT ROW) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[partitionBy] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[orderBy] => MariaStan\Ast\OrderBy
+								(
+									[expressions] => Array
+										(
+											[0] => MariaStan\Ast\ExprWithDirection
+												(
+													[expr] => MariaStan\Ast\Expr\Column
+														(
+															[name] => id
+														)
+													[direction] => MariaStan\Ast\DirectionEnum::ASC
+												)
+										)
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::CURRENT_ROW
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT FIRST_VALUE(id) OVER (ROWS UNBOUNDED PRECEDING) FROM parser_test
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\WindowFunctionCall
+						(
+							[functionCall] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+								(
+									[name] => FIRST_VALUE
+									[arguments] => Array
+										(
+											[0] => MariaStan\Ast\Expr\Column
+												(
+													[name] => id
+												)
+										)
+									[isDistinct] => false
+								)
+							[frame] => MariaStan\Ast\WindowFrame
+								(
+									[type] => MariaStan\Ast\WindowFrameTypeEnum::ROWS
+									[from] => MariaStan\Ast\WindowFrameBound
+										(
+											[type] => MariaStan\Ast\WindowFrameBoundTypeEnum::UNBOUNDED_PRECEDING
+										)
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => parser_test
+			[indexHints] => Array
+				(
 				)
 		)
 	[isDistinct] => false

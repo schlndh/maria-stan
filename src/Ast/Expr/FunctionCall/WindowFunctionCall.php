@@ -43,8 +43,8 @@ final class WindowFunctionCall extends BaseFunctionCall
 				$this->orderBy->expressions ?? [],
 			),
 			array_filter([
-				$this->frame?->preceding->expression,
-				$this->frame?->following?->expression,
+				$this->frame?->from->expression,
+				$this->frame?->to?->expression,
 			], static fn (mixed $v) => $v !== null),
 		);
 	}

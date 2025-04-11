@@ -128,6 +128,8 @@ class MariaDbParserTest extends TestCase
 					MariaDbErrorCodes::ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT,
 					// E.g. 'x' COLLATE CONCAT(...) returns this error instead of parser error.
 					MariaDbErrorCodes::ER_UNKNOWN_COLLATION,
+					// RANGE-type frame requires ORDER BY clause with single sort key
+					MariaDbErrorCodes::ER_RANGE_FRAME_NEEDS_SIMPLE_ORDERBY,
 				],
 				true,
 			)

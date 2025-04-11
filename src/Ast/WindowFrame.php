@@ -12,8 +12,8 @@ final class WindowFrame extends BaseNode
 		Position $startPosition,
 		Position $endPosition,
 		public readonly WindowFrameTypeEnum $type,
-		public readonly WindowFrameBound $preceding,
-		public readonly ?WindowFrameBound $following,
+		public readonly WindowFrameBound $from,
+		public readonly ?WindowFrameBound $to,
 	) {
 		parent::__construct($startPosition, $endPosition);
 	}
