@@ -6,12 +6,11 @@ includes:
 	- phpstan-baseline.neon
 parameters:
 	phpVersion: 80100
-	level: 9
+	level: 10
 	paths:
 		- src
 		- tests
 	treatPhpDocTypesAsCertain: false
-	checkImplicitMixed: true
 	checkBenevolentUnionTypes: true
 	excludePaths:
 		- tests/*/data/*
