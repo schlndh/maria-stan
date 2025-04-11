@@ -1469,7 +1469,7 @@ class AnalyserTest extends TestCase
 			$analyzedField = $result->resultFields[$i];
 			$analyzedExprType = $analyzedField->exprType;
 			$this->assertSame($analyzedField->name, $field->name);
-			$isFieldNullable = ! ($field->flags & MYSQLI_NOT_NULL_FLAG);
+			$isFieldNullable = ($field->flags & MYSQLI_NOT_NULL_FLAG) === 0;
 
 			if ($analyzedExprType->isNullable && ! $isFieldNullable) {
 				$unnecessaryNullableFields[] = $analyzedField->name;

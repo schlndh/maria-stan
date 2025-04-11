@@ -79,7 +79,7 @@ function fileNamesInDir(string $directory, string $fileExtension): iterable
 {
 	$directory = realpath($directory);
 
-	if (! $directory) {
+	if ($directory === false) {
 		throw new \RuntimeException("{$directory} doesn't exist");
 	}
 

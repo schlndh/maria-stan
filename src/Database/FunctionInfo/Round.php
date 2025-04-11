@@ -64,7 +64,7 @@ final class Round implements FunctionInfo
 	): ExprTypeResult {
 		$valueType = $argumentTypes[0];
 		$digitsType = $argumentTypes[1] ?? null;
-		$isNullable = $valueType->isNullable || $digitsType?->isNullable;
+		$isNullable = $valueType->isNullable || $digitsType?->isNullable === true;
 		$type = match ($valueType->type::getTypeEnum()) {
 			DbTypeEnum::VARCHAR => new FloatType(),
 			DbTypeEnum::DECIMAL => $digitsType?->type::getTypeEnum() === DbTypeEnum::NULL

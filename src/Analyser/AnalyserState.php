@@ -121,18 +121,7 @@ final class AnalyserState
 				$fields = $this->analyseDeleteQuery($this->queryAst);
 				break;
 			default:
-				return new AnalyserResult(
-					null,
-					[
-						new AnalyserError(
-							"Unsupported query: {$this->queryAst::getQueryType()->value}",
-							AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
-						),
-					],
-					null,
-					null,
-					null,
-				);
+				return $this->getUnsupportedQueryTypeResult();
 		}
 
 		$referencedSymbols = array_values($this->referencedTables);
@@ -374,7 +363,7 @@ final class AnalyserState
 
 		$whereResult = $havingResult = null;
 
-		if ($select->where) {
+		if ($select->where !== null) {
 			$whereResult = $this->resolveExprType(
 				$select->where,
 				AnalyserConditionTypeEnum::TRUTHY,
@@ -429,7 +418,7 @@ final class AnalyserState
 			$this->columnResolver->registerGroupByColumn($exprType->column);
 		}
 
-		if ($select->having) {
+		if ($select->having !== null) {
 			$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::HAVING;
 			$havingResult = $this->resolveExprType($select->having, canReferenceGrandParent: true);
 		}
@@ -1498,7 +1487,7 @@ final class AnalyserState
 				assert($expr instanceof Expr\CaseOp);
 
 				// TODO: handle $condition
-				if ($expr->compareValue) {
+				if ($expr->compareValue !== null) {
 					$field = $this->resolveExprType(
 						$expr->compareValue,
 						null,
@@ -1526,7 +1515,7 @@ final class AnalyserState
 				}
 
 				// TODO: CASE with no else may be nullable
-				if ($expr->else) {
+				if ($expr->else !== null) {
 					$subresults[] = $field = $this->resolveExprType(
 						$expr->else,
 						null,
@@ -1831,5 +1820,22 @@ final class AnalyserState
 				return $selectQuery->limit !== null || $this->hasLimitClause($selectQuery->left)
 					|| $this->hasLimitClause($selectQuery->right);
 		}
+	}
+
+	private function getUnsupportedQueryTypeResult(): AnalyserResult
+	{
+		// hide it from PHPStan so that it doesn't complain about $this->queryAst::getQueryType()->value being mixed.
+		return new AnalyserResult(
+			null,
+			[
+				new AnalyserError(
+					"Unsupported query: {$this->queryAst::getQueryType()->value}",
+					AnalyserErrorTypeEnum::MARIA_STAN_UNSUPPORTED_FEATURE,
+				),
+			],
+			null,
+			null,
+			null,
+		);
 	}
 }

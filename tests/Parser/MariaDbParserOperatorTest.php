@@ -131,9 +131,9 @@ class MariaDbParserOperatorTest extends TestCase
 					BinaryOpTypeEnum::INT_DIVISION => (int) ($left / $right),
 					BinaryOpTypeEnum::MULTIPLICATION => $left * $right,
 					BinaryOpTypeEnum::MODULO => $left % $right,
-					BinaryOpTypeEnum::LOGIC_AND => $left && $right ? 1 : 0,
-					BinaryOpTypeEnum::LOGIC_OR => $left || $right ? 1 : 0,
-					BinaryOpTypeEnum::LOGIC_XOR => ($left xor $right) ? 1 : 0,
+					BinaryOpTypeEnum::LOGIC_AND => ($left !== 0) && ($right !== 0) ? 1 : 0,
+					BinaryOpTypeEnum::LOGIC_OR => ($left !== 0) || ($right !== 0) ? 1 : 0,
+					BinaryOpTypeEnum::LOGIC_XOR => (($left !== 0) xor ($right !== 0)) ? 1 : 0,
 					BinaryOpTypeEnum::BITWISE_OR => ((int) $left) | ((int) $right),
 					BinaryOpTypeEnum::BITWISE_AND => ((int) $left) & ((int) $right),
 					BinaryOpTypeEnum::BITWISE_XOR => ((int) $left) ^ ((int) $right),
@@ -157,7 +157,7 @@ class MariaDbParserOperatorTest extends TestCase
 				return match ($expr->operation) {
 					UnaryOpTypeEnum::PLUS => $inner,
 					UnaryOpTypeEnum::MINUS => (-1) * $inner,
-					UnaryOpTypeEnum::LOGIC_NOT => $inner ? 0 : 1,
+					UnaryOpTypeEnum::LOGIC_NOT => $inner !== 0 ? 0 : 1,
 					UnaryOpTypeEnum::BITWISE_NOT => ~ ((int) $inner),
 					default => throw new RuntimeException("{$expr->operation->value} is not implemented yet."),
 				};

@@ -146,23 +146,23 @@ class MariaDbParserState
 		$query = null;
 
 		// It seems that only SELECT can be wrapped in top-level parentheses. INSERT, UPDATE, EXPLAIN, .. don't work.
-		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH, '(')) {
+		if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH, '(')) {
 			$this->position--;
 			$query = $this->parseSelectQuery();
 
 			if ($this->tokens[0]->content === '(' && $query::getSelectQueryType() === SelectQueryTypeEnum::WITH) {
 				throw new ParserException('Top-level WITH query cannot be wrapped in parentheses.');
 			}
-		} elseif ($this->acceptAnyOfTokenTypes(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE)) {
+		} elseif ($this->consumeAnyOfTokenTypes(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE)) {
 			$this->position--;
 			$query = $this->parseInsertOrReplaceQuery();
-		} elseif ($this->acceptToken(TokenTypeEnum::UPDATE)) {
+		} elseif ($this->consumeToken(TokenTypeEnum::UPDATE)) {
 			$this->position--;
 			$query = $this->parseUpdateQuery();
-		} elseif ($this->acceptToken(TokenTypeEnum::TRUNCATE)) {
+		} elseif ($this->consumeToken(TokenTypeEnum::TRUNCATE)) {
 			$this->position--;
 			$query = $this->parseTruncateQuery();
-		} elseif ($this->acceptToken(TokenTypeEnum::DELETE)) {
+		} elseif ($this->consumeToken(TokenTypeEnum::DELETE)) {
 			$this->position--;
 			$query = $this->parseDeleteQuery();
 		}
@@ -171,7 +171,7 @@ class MariaDbParserState
 			throw new UnsupportedQueryException('Unsupported query.');
 		}
 
-		while ($this->acceptToken(';')) {
+		while ($this->consumeToken(';')) {
 		}
 
 		$this->expectToken(TokenTypeEnum::END_OF_INPUT);
@@ -192,7 +192,7 @@ class MariaDbParserState
 	private function parseTruncateQuery(): TruncateQuery
 	{
 		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::TRUNCATE);
-		$this->acceptToken(TokenTypeEnum::TABLE);
+		$this->consumeToken(TokenTypeEnum::TABLE);
 		// TODO: database.table
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
@@ -210,7 +210,7 @@ class MariaDbParserState
 	private function parseUpdateQuery(): UpdateQuery
 	{
 		$startToken = $this->expectToken(TokenTypeEnum::UPDATE);
-		$ignoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$ignoreErrors = $this->consumeToken(TokenTypeEnum::IGNORE);
 		$table = $this->parseJoins();
 		$this->expectToken(TokenTypeEnum::SET);
 		$assignments = $this->parseListOfColumnAssignments();
@@ -218,7 +218,7 @@ class MariaDbParserState
 		$orderBy = $this->parseOrderBy();
 		$limit = null;
 
-		if ($this->acceptToken(TokenTypeEnum::LIMIT)) {
+		if ($this->consumeToken(TokenTypeEnum::LIMIT)) {
 			$limit = $this->parseLimitExpression();
 		}
 
@@ -238,7 +238,7 @@ class MariaDbParserState
 	private function parseDeleteQuery(): DeleteQuery
 	{
 		$startToken = $this->expectToken(TokenTypeEnum::DELETE);
-		$ignoreErrors = $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
+		$ignoreErrors = $this->consumeToken(TokenTypeEnum::IGNORE);
 		$tableNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$tablesToDelete = [];
 		$isMultiTableSyntax = false;
@@ -252,7 +252,7 @@ class MariaDbParserState
 			$tableName = $this->cleanIdentifier($tableNameToken->content);
 			$isMultiTableSyntax = false;
 
-			if ($this->acceptToken('.')) {
+			if ($this->consumeToken('.')) {
 				$this->expectToken('*');
 				$isMultiTableSyntax = true;
 			}
@@ -260,17 +260,17 @@ class MariaDbParserState
 			return [$tableName, $tableNameToken, $isMultiTableSyntax];
 		};
 
-		if ($this->acceptToken(TokenTypeEnum::FROM)) {
+		if ($this->consumeToken(TokenTypeEnum::FROM)) {
 			[$tableName, $tableNameToken, $isMultiTableSyntax] = $parseTableName();
 			$tablesToDelete[] = $tableName;
 
-			while ($this->acceptToken(',')) {
+			while ($this->consumeToken(',')) {
 				$isMultiTableSyntax = true;
 				$tablesToDelete[] = $parseTableName()[0];
 			}
 
 			if (! $isMultiTableSyntax) {
-				if (! $this->acceptToken(TokenTypeEnum::USING)) {
+				if (! $this->consumeToken(TokenTypeEnum::USING)) {
 					$tableReference = new Table(
 						$tableNameToken->position,
 						$tableNameToken->getEndPosition(),
@@ -287,7 +287,7 @@ class MariaDbParserState
 
 			do {
 				$tablesToDelete[] = $parseTableName()[0];
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$this->expectToken(TokenTypeEnum::FROM);
 		}
@@ -296,14 +296,14 @@ class MariaDbParserState
 			$tableReference = $this->parseJoins();
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::WHERE)) {
+		if ($this->consumeToken(TokenTypeEnum::WHERE)) {
 			$where = $this->parseExpression();
 		}
 
 		if (! $isMultiTableSyntax) {
 			$orderBy = $this->parseOrderBy();
 
-			if ($this->acceptToken(TokenTypeEnum::LIMIT)) {
+			if ($this->consumeToken(TokenTypeEnum::LIMIT)) {
 				$limit = $this->parseLimitExpression();
 			}
 		}
@@ -328,8 +328,8 @@ class MariaDbParserState
 	{
 		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::INSERT, TokenTypeEnum::REPLACE);
 		$ignoreErrors = $startToken->type === TokenTypeEnum::INSERT
-			&& $this->acceptToken(TokenTypeEnum::IGNORE) !== null;
-		$this->acceptToken(TokenTypeEnum::INTO);
+			&& $this->consumeToken(TokenTypeEnum::IGNORE);
+		$this->consumeToken(TokenTypeEnum::INTO);
 		// TODO: database.table
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
@@ -337,8 +337,8 @@ class MariaDbParserState
 		$columnListStartPosition = null;
 		$selectQuery = null;
 
-		if ($this->acceptToken('(')) {
-			if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::WITH, TokenTypeEnum::SELECT)) {
+		if ($this->consumeToken('(')) {
+			if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::WITH, TokenTypeEnum::SELECT)) {
 				$this->position -= 2;
 				$selectQuery = $this->parseSelectQuery();
 			} else {
@@ -347,18 +347,18 @@ class MariaDbParserState
 
 				do {
 					$columnList[] = $this->parseColumnIdentifier();
-				} while ($this->acceptToken(','));
+				} while ($this->consumeToken(','));
 
 				$this->expectToken(')');
 			}
 		}
 
-		if ($selectQuery === null && $this->acceptAnyOfTokenTypes('(', TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
+		if ($selectQuery === null && $this->consumeAnyOfTokenTypes('(', TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
 			// Reject '(WITH', but 'SELECT WITH' and 'WITH WITH' are not possible either.
 			if (
 				$columnList !== null
 				&& $this->getPreviousToken()->content === '('
-				&& $this->acceptToken(TokenTypeEnum::WITH)
+				&& $this->consumeToken(TokenTypeEnum::WITH)
 			) {
 				throw new UnexpectedTokenException(
 					"INSERT with column list can't have WITH SELECT in parentheses. After: "
@@ -377,7 +377,7 @@ class MariaDbParserState
 				$columnList,
 				$selectQuery,
 			);
-		} elseif ($columnList === null && $this->acceptToken(TokenTypeEnum::SET)) {
+		} elseif ($columnList === null && $this->consumeToken(TokenTypeEnum::SET)) {
 			$setBodyStart = $this->getPreviousToken()->position;
 			$assignment = $this->parseListOfColumnAssignments();
 			$insertBody = new SetInsertBody(
@@ -395,11 +395,11 @@ class MariaDbParserState
 
 				do {
 					$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
-				} while ($this->acceptToken(','));
+				} while ($this->consumeToken(','));
 
 				$this->expectToken(')');
 				$values[] = $row;
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$insertBody = new ValuesInsertBody(
 				$columnListStartPosition ?? $valuesStartPosition,
@@ -420,7 +420,7 @@ class MariaDbParserState
 
 		$onDuplicateKeyUpdate = null;
 
-		if ($this->acceptToken(TokenTypeEnum::ON)) {
+		if ($this->consumeToken(TokenTypeEnum::ON)) {
 			$this->expectToken(TokenTypeEnum::DUPLICATE);
 			$this->expectToken(TokenTypeEnum::KEY);
 			$this->expectToken(TokenTypeEnum::UPDATE);
@@ -461,7 +461,7 @@ class MariaDbParserState
 				$column,
 				$expr,
 			);
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		return $assignments;
 	}
@@ -475,7 +475,7 @@ class MariaDbParserState
 		bool $allowTableValueConstructor = false,
 	): SelectQuery {
 		// TODO: INTO OUTFILE/DUMPFILE/variable
-		if ($this->acceptToken('(')) {
+		if ($this->consumeToken('(')) {
 			$startPosition = $this->getPreviousToken()->position;
 			$left = $this->parseSelectQuery(allowTableValueConstructor: $allowTableValueConstructor);
 			$this->expectToken(')');
@@ -500,14 +500,14 @@ class MariaDbParserState
 					);
 				}
 			}
-		} elseif ($precedence === self::SELECT_PRECEDENCE_NORMAL && $this->acceptToken(TokenTypeEnum::WITH)) {
+		} elseif ($precedence === self::SELECT_PRECEDENCE_NORMAL && $this->consumeToken(TokenTypeEnum::WITH)) {
 			$startPosition = $this->getPreviousToken()->position;
-			$allowRecursive = $this->acceptToken(TokenTypeEnum::RECURSIVE) !== null;
+			$allowRecursive = $this->consumeToken(TokenTypeEnum::RECURSIVE);
 			$commonTableExpressions = [];
 
 			do {
 				$commonTableExpressions[] = $this->parseCommonTableExpression($allowRecursive);
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$selectQuery = $this->parseSelectQuery();
 			$selectQuery = $this->ensureSimpleCombinedOrTvcSelectQuery($selectQuery);
@@ -519,7 +519,7 @@ class MariaDbParserState
 				$selectQuery,
 				$allowRecursive,
 			);
-		} elseif ($allowTableValueConstructor && $this->acceptToken(TokenTypeEnum::VALUES)) {
+		} elseif ($allowTableValueConstructor && $this->consumeToken(TokenTypeEnum::VALUES)) {
 			$this->position -= 1;
 			$tvc = $this->parseTableValueConstructor();
 
@@ -534,7 +534,7 @@ class MariaDbParserState
 			$isSqlCalcFoundRows = null;
 
 			while (
-				$this->acceptAnyOfTokenTypes(
+				$this->consumeAnyOfTokenTypes(
 					TokenTypeEnum::ALL,
 					TokenTypeEnum::DISTINCT,
 					TokenTypeEnum::DISTINCTROW,
@@ -719,12 +719,12 @@ class MariaDbParserState
 		$fieldNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
 		$columnList = $restrictCycleColumnList = null;
 
-		if ($this->acceptToken('(')) {
+		if ($this->consumeToken('(')) {
 			$columnList = [];
 
 			do {
 				$columnList[] = $this->cleanIdentifier($this->expectAnyOfTokens(...$fieldNameTokens)->content);
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$this->expectToken(')');
 		}
@@ -735,14 +735,14 @@ class MariaDbParserState
 		$subquery = $this->ensureSimpleCombinedOrTvcSelectQuery($subquery);
 		$this->expectToken(')');
 
-		if ($allowRecursive && $this->acceptToken(TokenTypeEnum::CYCLE)) {
+		if ($allowRecursive && $this->consumeToken(TokenTypeEnum::CYCLE)) {
 			$restrictCycleColumnList = [];
 
 			do {
 				$restrictCycleColumnList[] = $this->cleanIdentifier(
 					$this->expectAnyOfTokens(...$fieldNameTokens)->content,
 				);
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$this->expectToken(TokenTypeEnum::RESTRICT);
 		}
@@ -763,7 +763,7 @@ class MariaDbParserState
 	 */
 	private function parseFrom(): ?TableReference
 	{
-		if (! $this->acceptToken(TokenTypeEnum::FROM)) {
+		if (! $this->consumeToken(TokenTypeEnum::FROM)) {
 			return null;
 		}
 
@@ -789,24 +789,24 @@ class MariaDbParserState
 			$positionBak = $this->position;
 
 			// TODO: NATURAL and STRAIGHT_JOIN
-			if ($this->acceptToken(',')) {
+			if ($this->consumeToken(',')) {
 				$joinType = JoinTypeEnum::CROSS_JOIN;
 				$joinPrecedence = self::JOIN_PRECEDENCE_COMMA;
-			} elseif ($this->acceptToken(TokenTypeEnum::CROSS)) {
+			} elseif ($this->consumeToken(TokenTypeEnum::CROSS)) {
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::CROSS_JOIN;
-			} elseif ($this->acceptToken(TokenTypeEnum::INNER)) {
+			} elseif ($this->consumeToken(TokenTypeEnum::INNER)) {
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::INNER_JOIN;
-			} elseif ($this->acceptToken(TokenTypeEnum::LEFT)) {
-				$this->acceptToken(TokenTypeEnum::OUTER);
+			} elseif ($this->consumeToken(TokenTypeEnum::LEFT)) {
+				$this->consumeToken(TokenTypeEnum::OUTER);
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::LEFT_OUTER_JOIN;
-			} elseif ($this->acceptToken(TokenTypeEnum::RIGHT)) {
-				$this->acceptToken(TokenTypeEnum::OUTER);
+			} elseif ($this->consumeToken(TokenTypeEnum::RIGHT)) {
+				$this->consumeToken(TokenTypeEnum::OUTER);
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::RIGHT_OUTER_JOIN;
-			} elseif ($this->acceptToken(TokenTypeEnum::JOIN)) {
+			} elseif ($this->consumeToken(TokenTypeEnum::JOIN)) {
 				$isUnclearJoin = true;
 			} else {
 				break;
@@ -827,7 +827,7 @@ class MariaDbParserState
 			$tokenPositionBak = $this->position;
 
 			if ($isUnclearJoin) {
-				$joinType = $this->acceptAnyOfTokenTypes(TokenTypeEnum::ON, TokenTypeEnum::USING)
+				$joinType = $this->consumeAnyOfTokenTypes(TokenTypeEnum::ON, TokenTypeEnum::USING)
 					? JoinTypeEnum::INNER_JOIN
 					: JoinTypeEnum::CROSS_JOIN;
 			}
@@ -857,7 +857,7 @@ class MariaDbParserState
 
 		do {
 			$columnList[] = $this->cleanIdentifier($this->expectAnyOfTokens(...$fieldNameTokens)->content);
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		$this->expectToken(')');
 
@@ -900,8 +900,8 @@ class MariaDbParserState
 	{
 		$startPosition = $this->getCurrentPosition();
 
-		if ($this->acceptToken('(')) {
-			if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
+		if ($this->consumeToken('(')) {
+			if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
 				$this->position -= 2;
 				$query = $this->parseSelectQuery();
 				$alias = $this->parseTableAlias();
@@ -914,7 +914,7 @@ class MariaDbParserState
 				);
 			}
 
-			if ($this->acceptToken(TokenTypeEnum::VALUES)) {
+			if ($this->consumeToken(TokenTypeEnum::VALUES)) {
 				$this->position -= 1;
 				$tvc = $this->parseTableValueConstructor();
 				$tvc = $this->tryParseTvcAlias($tvc);
@@ -982,11 +982,11 @@ class MariaDbParserState
 
 			do {
 				$row[] = $this->parseExpression();
-			} while ($this->acceptToken(','));
+			} while ($this->consumeToken(','));
 
 			$this->expectToken(')');
 			$values[] = $row;
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		return new TableValueConstructor(
 			$startPosition,
@@ -1020,7 +1020,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseWhere(): ?Expr
 	{
-		if (! $this->acceptToken(TokenTypeEnum::WHERE)) {
+		if (! $this->consumeToken(TokenTypeEnum::WHERE)) {
 			return null;
 		}
 
@@ -1030,7 +1030,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseHaving(): ?Expr
 	{
-		if (! $this->acceptToken(TokenTypeEnum::HAVING)) {
+		if (! $this->consumeToken(TokenTypeEnum::HAVING)) {
 			return null;
 		}
 
@@ -1046,7 +1046,7 @@ class MariaDbParserState
 	{
 		$result = [$this->parseSelectExpression()];
 
-		while ($this->acceptToken(',')) {
+		while ($this->consumeToken(',')) {
 			$result[] = $this->parseSelectExpression();
 		}
 
@@ -1061,7 +1061,7 @@ class MariaDbParserState
 	{
 		$startExpressionToken = $this->getCurrentToken();
 
-		if ($this->acceptToken('*')) {
+		if ($this->consumeToken('*')) {
 			return new AllColumns($startExpressionToken->position, $startExpressionToken->getEndPosition());
 		}
 
@@ -1069,7 +1069,7 @@ class MariaDbParserState
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$ident = $this->acceptAnyOfTokenTypes(...$tokenTypes);
 
-		if ($ident && $this->acceptToken('.') && $this->acceptToken('*')) {
+		if ($ident !== null && $this->consumeToken('.') && $this->consumeToken('*')) {
 			$prevToken = $this->getPreviousToken();
 
 			return new AllColumns(
@@ -1097,7 +1097,7 @@ class MariaDbParserState
 		$alias = null;
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
 
-		if ($this->acceptToken(TokenTypeEnum::AS)) {
+		if ($this->consumeToken(TokenTypeEnum::AS)) {
 			$alias = $this->expectAnyOfTokens(...$tokenTypes);
 		}
 
@@ -1117,7 +1117,7 @@ class MariaDbParserState
 		$alias = null;
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableAlias();
 
-		if ($this->acceptToken(TokenTypeEnum::AS)) {
+		if ($this->consumeToken(TokenTypeEnum::AS)) {
 			$alias = $this->expectAnyOfTokens(...$tokenTypes);
 		}
 
@@ -1134,7 +1134,7 @@ class MariaDbParserState
 	 */
 	private function parseExpressionListEndedByClosingParenthesis(): array
 	{
-		if ($this->acceptToken(')')) {
+		if ($this->consumeToken(')')) {
 			return [];
 		}
 
@@ -1142,7 +1142,7 @@ class MariaDbParserState
 
 		do {
 			$result[] = $this->parseExpression();
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		$this->expectToken(')');
 
@@ -1250,7 +1250,7 @@ class MariaDbParserState
 		static $precedence = null;
 		$escapeChar = null;
 
-		if ($this->acceptToken(TokenTypeEnum::ESCAPE)) {
+		if ($this->consumeToken(TokenTypeEnum::ESCAPE)) {
 			/** @phpstan-var int $precedence */
 			$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::LIKE) + 1;
 			$escapeChar = $this->parseExpression($precedence);
@@ -1264,7 +1264,7 @@ class MariaDbParserState
 	{
 		static $precedence = null;
 		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IS);
-		$isNot = $this->acceptToken(TokenTypeEnum::NOT) !== null;
+		$isNot = $this->consumeToken(TokenTypeEnum::NOT);
 
 		$testToken = $this->expectAnyOfTokens(
 			TokenTypeEnum::NULL,
@@ -1452,7 +1452,7 @@ class MariaDbParserState
 	{
 		$startPosition = $this->getPreviousToken()->position;
 
-		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
+		if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::SELECT, TokenTypeEnum::WITH)) {
 			$this->position--;
 			$query = $this->parseSelectQuery();
 			$this->expectToken(')');
@@ -1462,7 +1462,7 @@ class MariaDbParserState
 
 		$expressions = [$this->parseExpression()];
 
-		while ($this->acceptToken(',')) {
+		while ($this->consumeToken(',')) {
 			$expressions[] = $this->parseExpression();
 		}
 
@@ -1481,15 +1481,15 @@ class MariaDbParserState
 	{
 		$startPosition = $this->getCurrentPosition();
 
-		if ($this->acceptToken('(')) {
+		if ($this->consumeToken('(')) {
 			return $this->parseRestOfSubqueryOrTuple(false);
 		}
 
 		$identTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
 		$ident = $this->acceptAnyOfTokenTypes(...$identTokenTypes);
 
-		if ($ident) {
-			if ($this->acceptToken('(')) {
+		if ($ident !== null) {
+			if ($this->consumeToken('(')) {
 				$uppercaseFunctionName = strtoupper($ident->content);
 				$functionInfo = $this->functionInfoRegistry->findFunctionInfoByFunctionName($uppercaseFunctionName);
 				$functionCall = match ($uppercaseFunctionName) {
@@ -1513,7 +1513,7 @@ class MariaDbParserState
 						$uppercaseFunctionName,
 						$this->parser->getFunctionsThatSupportDistinct(),
 						true,
-					) && $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW);
+					) && $this->consumeAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW);
 					$arguments = $this->parseExpressionListEndedByClosingParenthesis();
 
 					if ($isDistinct && count($arguments) === 0) {
@@ -1532,7 +1532,7 @@ class MariaDbParserState
 					);
 				}
 
-				if (! $this->acceptToken(TokenTypeEnum::OVER)) {
+				if (! $this->consumeToken(TokenTypeEnum::OVER)) {
 					$functionInfo?->checkSyntaxErrors($functionCall);
 
 					return $functionCall;
@@ -1551,7 +1551,7 @@ class MariaDbParserState
 				return $functionCall;
 			}
 
-			if (! $this->acceptToken('.')) {
+			if (! $this->consumeToken('.')) {
 				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
 			}
 
@@ -1570,7 +1570,7 @@ class MariaDbParserState
 
 		$functionIdent = $this->acceptAnyOfTokenTypes(...$this->parser->getExplicitTokenTypesForFunctions());
 
-		if ($functionIdent) {
+		if ($functionIdent !== null) {
 			$uppercaseFunctionName = strtoupper($functionIdent->content);
 			$functionInfo = $this->functionInfoRegistry->findFunctionInfoByFunctionName($uppercaseFunctionName);
 
@@ -1595,7 +1595,7 @@ class MariaDbParserState
 				$this->parser->getFunctionsWhichCanBeCalledWithoutParentheses(),
 				true,
 			);
-			$hasParentheses = $this->acceptToken('(') !== null;
+			$hasParentheses = $this->consumeToken('(');
 			$arguments = $hasParentheses
 				? $this->parseExpressionListEndedByClosingParenthesis()
 				: [];
@@ -1619,7 +1619,7 @@ class MariaDbParserState
 
 		$positionalPlaceholderToken = $this->acceptToken('?');
 
-		if ($positionalPlaceholderToken) {
+		if ($positionalPlaceholderToken !== null) {
 			return new Placeholder(
 				$positionalPlaceholderToken->position,
 				$positionalPlaceholderToken->getEndPosition(),
@@ -1637,7 +1637,7 @@ class MariaDbParserState
 			TokenTypeEnum::BINARY,
 		);
 
-		if ($unaryOpToken) {
+		if ($unaryOpToken !== null) {
 			$unaryOp = $this->getUnaryOpFromToken($unaryOpToken);
 
 			if ($unaryOp === SpecialOpTypeEnum::INTERVAL) {
@@ -1675,25 +1675,25 @@ class MariaDbParserState
 
 		$literalInt = $this->acceptToken(TokenTypeEnum::LITERAL_INT);
 
-		if ($literalInt) {
+		if ($literalInt !== null) {
 			return new LiteralInt($startPosition, $literalInt->getEndPosition(), (int) $literalInt->content);
 		}
 
 		$literalFloat = $this->acceptToken(TokenTypeEnum::LITERAL_FLOAT);
 
-		if ($literalFloat) {
+		if ($literalFloat !== null) {
 			return new LiteralFloat($startPosition, $literalFloat->getEndPosition(), (float) $literalFloat->content);
 		}
 
 		$literalNull = $this->acceptToken(TokenTypeEnum::NULL);
 
-		if ($literalNull) {
+		if ($literalNull !== null) {
 			return new LiteralNull($startPosition, $literalNull->getEndPosition());
 		}
 
 		$literalString = $this->acceptToken(TokenTypeEnum::LITERAL_STRING);
 
-		if ($literalString) {
+		if ($literalString !== null) {
 			$nextLiteralString = $literalString;
 			$literalStringContent = '';
 			$firstConcatPart = null;
@@ -1720,7 +1720,7 @@ class MariaDbParserState
 			return $this->parseRestOfCaseOperator($case);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::EXISTS)) {
+		if ($this->consumeToken(TokenTypeEnum::EXISTS)) {
 			$this->expectToken('(');
 			$subquery = $this->parseSelectQuery();
 			$this->expectToken(')');
@@ -1742,7 +1742,7 @@ class MariaDbParserState
 			: $this->parseExpression();
 		$conditions = [];
 
-		while ($this->acceptToken(TokenTypeEnum::WHEN)) {
+		while ($this->consumeToken(TokenTypeEnum::WHEN)) {
 			$startPosition = $this->getPreviousToken()->position;
 			$when = $this->parseExpression();
 			$this->expectToken(TokenTypeEnum::THEN);
@@ -1754,7 +1754,7 @@ class MariaDbParserState
 			throw new UnexpectedTokenException('Expected WHEN after: ' . $this->getContextPriorToTokenPosition());
 		}
 
-		$else = $this->acceptToken(TokenTypeEnum::ELSE)
+		$else = $this->consumeToken(TokenTypeEnum::ELSE)
 			? $this->parseExpression()
 			: null;
 
@@ -1792,11 +1792,11 @@ class MariaDbParserState
 		$this->expectToken('(');
 		$partitionBy = null;
 
-		if ($this->acceptToken(TokenTypeEnum::PARTITION)) {
+		if ($this->consumeToken(TokenTypeEnum::PARTITION)) {
 			$this->expectToken(TokenTypeEnum::BY);
 			$partitionBy = [$this->parseExpression()];
 
-			while ($this->acceptToken(',')) {
+			while ($this->consumeToken(',')) {
 				$partitionBy[] = $this->parseExpression();
 			}
 		}
@@ -1805,9 +1805,9 @@ class MariaDbParserState
 		$windowFrame = null;
 		$frameTypeToken = $this->acceptAnyOfTokenTypes(TokenTypeEnum::ROWS, TokenTypeEnum::RANGE);
 
-		if ($frameTypeToken) {
+		if ($frameTypeToken !== null) {
 			$frameType = WindowFrameTypeEnum::from($frameTypeToken->type->value);
-			$hasUpperBound = $this->acceptToken(TokenTypeEnum::BETWEEN) !== null;
+			$hasUpperBound = $this->consumeToken(TokenTypeEnum::BETWEEN);
 			$upperBound = null;
 			$lowerBound = $this->parseWindowFrameBound(TokenTypeEnum::PRECEDING);
 
@@ -1883,7 +1883,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseRestOfCountFunctionCall(Position $startPosition): FunctionCall\Count
 	{
-		if ($this->acceptToken('*')) {
+		if ($this->consumeToken('*')) {
 			$this->expectToken(')');
 
 			return FunctionCall\Count::createCountAll(
@@ -1892,7 +1892,7 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW)) {
+		if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW)) {
 			$arguments = $this->parseExpressionListEndedByClosingParenthesis();
 
 			if (count($arguments) === 0) {
@@ -1941,7 +1941,7 @@ class MariaDbParserState
 		$firstArg = $this->parseExpression();
 		$this->expectToken(',');
 
-		if ($this->acceptToken(TokenTypeEnum::INTERVAL)) {
+		if ($this->consumeToken(TokenTypeEnum::INTERVAL)) {
 			$this->position--;
 			$secondArg = $this->parseUncheckedInterval();
 		} else {
@@ -1993,7 +1993,7 @@ class MariaDbParserState
 		$parseSingleOptionalIntParam = function () use ($parseIntParameter): ?int {
 			$param = null;
 
-			if ($this->acceptToken('(')) {
+			if ($this->consumeToken('(')) {
 				$param = $parseIntParameter();
 				$this->expectToken(')');
 			}
@@ -2001,22 +2001,22 @@ class MariaDbParserState
 			return $param;
 		};
 
-		if ($this->acceptToken(TokenTypeEnum::BINARY)) {
+		if ($this->consumeToken(TokenTypeEnum::BINARY)) {
 			$length = $parseSingleOptionalIntParam();
 
 			return new BinaryCastType($startPosition, $this->getPreviousToken()->getEndPosition(), $length);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::CHAR)) {
+		if ($this->consumeToken(TokenTypeEnum::CHAR)) {
 			$characterSet = $collation = null;
 			$length = $parseSingleOptionalIntParam();
 
-			if ($this->acceptToken(TokenTypeEnum::CHARACTER)) {
+			if ($this->consumeToken(TokenTypeEnum::CHARACTER)) {
 				$this->expectToken(TokenTypeEnum::SET);
 				$characterSet = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
 			}
 
-			if ($this->acceptToken(TokenTypeEnum::COLLATE)) {
+			if ($this->consumeToken(TokenTypeEnum::COLLATE)) {
 				$collation = $this->cleanIdentifier($this->expectToken(TokenTypeEnum::IDENTIFIER)->content);
 			}
 
@@ -2029,11 +2029,11 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::DATE)) {
+		if ($this->consumeToken(TokenTypeEnum::DATE)) {
 			return new DateCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::DATETIME)) {
+		if ($this->consumeToken(TokenTypeEnum::DATETIME)) {
 			$microsecondPrecision = $parseSingleOptionalIntParam();
 
 			return new DateTimeCastType(
@@ -2043,13 +2043,13 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::DECIMAL, TokenTypeEnum::DEC)) {
+		if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::DECIMAL, TokenTypeEnum::DEC)) {
 			$maxDigits = $maxDecimals = null;
 
-			if ($this->acceptToken('(')) {
+			if ($this->consumeToken('(')) {
 				$maxDigits = $parseIntParameter();
 
-				if ($this->acceptToken(',')) {
+				if ($this->consumeToken(',')) {
 					$maxDecimals = $parseIntParameter();
 				}
 
@@ -2064,11 +2064,11 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::DOUBLE)) {
+		if ($this->consumeToken(TokenTypeEnum::DOUBLE)) {
 			return new DoubleCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::FLOAT)) {
+		if ($this->consumeToken(TokenTypeEnum::FLOAT)) {
 			return new FloatCastType($startPosition, $this->getPreviousToken()->getEndPosition());
 		}
 
@@ -2083,7 +2083,7 @@ class MariaDbParserState
 			return new IntegerCastType($startPosition, $this->getPreviousToken()->getEndPosition(), $isSigned);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::TIME)) {
+		if ($this->consumeToken(TokenTypeEnum::TIME)) {
 			$microsecondPrecision = $parseSingleOptionalIntParam();
 
 			return new TimeCastType(
@@ -2093,7 +2093,7 @@ class MariaDbParserState
 			);
 		}
 
-		if ($this->acceptToken(TokenTypeEnum::INTERVAL)) {
+		if ($this->consumeToken(TokenTypeEnum::INTERVAL)) {
 			$this->expectToken(TokenTypeEnum::DAY_SECOND);
 			$this->expectToken('(');
 			$microsecondPrecision = $parseIntParameter();
@@ -2173,7 +2173,7 @@ class MariaDbParserState
 			? FunctionCall\TrimTypeEnum::from($trimTypeToken->type->value)
 			: FunctionCall\TrimTypeEnum::BOTH;
 
-		if ($trimTypeToken !== null && $this->acceptToken(TokenTypeEnum::FROM)) {
+		if ($trimTypeToken !== null && $this->consumeToken(TokenTypeEnum::FROM)) {
 			$remStr = null;
 			$str = $this->parseExpression();
 		} else {
@@ -2260,17 +2260,17 @@ class MariaDbParserState
 	private function parseRestOfGroupConcatFunctionCall(Token $functionIdent): FunctionCall\GroupConcat
 	{
 		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
-		$isDistinct = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW) !== null;
+		$isDistinct = $this->consumeAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW);
 		$expressions = [];
 
 		do {
 			$expressions[] = $this->parseExpression();
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		$orderBy = $this->parseOrderBy();
 		$separator = ',';
 
-		if ($this->acceptToken(TokenTypeEnum::SEPARATOR)) {
+		if ($this->consumeToken(TokenTypeEnum::SEPARATOR)) {
 			$separatorToken = $this->expectToken(TokenTypeEnum::LITERAL_STRING);
 			$separator = $this->cleanStringLiteral($separatorToken->content);
 		}
@@ -2294,7 +2294,7 @@ class MariaDbParserState
 	private function parseRestOfJsonArrayAggFunctionCall(Token $functionIdent): FunctionCall\JsonArrayAgg
 	{
 		$this->checkNoWhitespaceBeforeParenthesisForBuiltInFunction($functionIdent);
-		$isDistinct = $this->acceptAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW) !== null;
+		$isDistinct = $this->consumeAnyOfTokenTypes(TokenTypeEnum::DISTINCT, TokenTypeEnum::DISTINCTROW);
 		$expression = $this->parseExpression();
 		$orderBy = $this->parseOrderBy();
 
@@ -2335,7 +2335,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseGroupBy(): ?GroupBy
 	{
-		if (! $this->acceptToken(TokenTypeEnum::GROUP)) {
+		if (! $this->consumeToken(TokenTypeEnum::GROUP)) {
 			return null;
 		}
 
@@ -2344,7 +2344,7 @@ class MariaDbParserState
 		$expressions = $this->parseListOfExprWithDirection();
 		$isWithRollup = false;
 
-		if ($this->acceptToken(TokenTypeEnum::WITH)) {
+		if ($this->consumeToken(TokenTypeEnum::WITH)) {
 			$this->expectToken(TokenTypeEnum::ROLLUP);
 			$isWithRollup = true;
 		}
@@ -2360,7 +2360,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseOrderBy(): ?OrderBy
 	{
-		if (! $this->acceptToken(TokenTypeEnum::ORDER)) {
+		if (! $this->consumeToken(TokenTypeEnum::ORDER)) {
 			return null;
 		}
 
@@ -2392,18 +2392,18 @@ class MariaDbParserState
 				$expr,
 				$direction,
 			);
-		} while ($this->acceptToken(','));
+		} while ($this->consumeToken(','));
 
 		return $expressions;
 	}
 
 	private function parseDirectionOrDefaultAsc(): DirectionEnum
 	{
-		if ($this->acceptToken(TokenTypeEnum::DESC)) {
+		if ($this->consumeToken(TokenTypeEnum::DESC)) {
 			return DirectionEnum::DESC;
 		}
 
-		$this->acceptToken(TokenTypeEnum::ASC);
+		$this->consumeToken(TokenTypeEnum::ASC);
 
 		return DirectionEnum::ASC;
 	}
@@ -2411,7 +2411,7 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseLimit(): ?Limit
 	{
-		if (! $this->acceptToken(TokenTypeEnum::LIMIT)) {
+		if (! $this->consumeToken(TokenTypeEnum::LIMIT)) {
 			return null;
 		}
 
@@ -2420,10 +2420,10 @@ class MariaDbParserState
 		$count = $this->parseLimitExpression();
 		$offset = null;
 
-		if ($this->acceptToken(',')) {
+		if ($this->consumeToken(',')) {
 			$offset = $count;
 			$count = $this->parseLimitExpression();
-		} elseif ($this->acceptToken(TokenTypeEnum::OFFSET)) {
+		} elseif ($this->consumeToken(TokenTypeEnum::OFFSET)) {
 			$offset = $this->parseLimitExpression();
 		}
 
@@ -2454,11 +2454,11 @@ class MariaDbParserState
 	/** @throws ParserException */
 	private function parseSelectLock(): ?SelectLock
 	{
-		if ($this->acceptToken(TokenTypeEnum::FOR)) {
+		if ($this->consumeToken(TokenTypeEnum::FOR)) {
 			$startPosition = $this->getPreviousToken()->position;
 			$this->expectToken(TokenTypeEnum::UPDATE);
 			$type = SelectLockTypeEnum::UPDATE;
-		} elseif ($this->acceptToken(TokenTypeEnum::LOCK)) {
+		} elseif ($this->consumeToken(TokenTypeEnum::LOCK)) {
 			$startPosition = $this->getPreviousToken()->position;
 			$this->expectToken(TokenTypeEnum::IN);
 			$this->expectToken(TokenTypeEnum::SHARE);
@@ -2470,7 +2470,7 @@ class MariaDbParserState
 
 		$lockOption = $this->parseWaitNoWait();
 
-		if ($lockOption === null && $this->acceptToken(TokenTypeEnum::SKIP)) {
+		if ($lockOption === null && $this->consumeToken(TokenTypeEnum::SKIP)) {
 			$waitToken = $this->getPreviousToken();
 			$this->expectToken(TokenTypeEnum::LOCKED);
 			$lockOption = new SkipLocked($waitToken->position, $this->getPreviousToken()->getEndPosition());
@@ -2531,7 +2531,7 @@ class MariaDbParserState
 		$columnStartPosition = $this->getCurrentToken()->position;
 		$ident = $this->expectAnyOfTokens(...$identTokenTypes);
 
-		if (! $this->acceptToken('.')) {
+		if (! $this->consumeToken('.')) {
 			return new Column(
 				$columnStartPosition,
 				$ident->getEndPosition(),
@@ -2558,14 +2558,14 @@ class MariaDbParserState
 	{
 		$indexHints = [];
 
-		while ($this->acceptAnyOfTokenTypes(TokenTypeEnum::USE, TokenTypeEnum::FORCE, TokenTypeEnum::IGNORE)) {
+		while ($this->consumeAnyOfTokenTypes(TokenTypeEnum::USE, TokenTypeEnum::FORCE, TokenTypeEnum::IGNORE)) {
 			$indexHintStartToken = $this->getPreviousToken();
 			$indexHintType = IndexHintTypeEnum::from($indexHintStartToken->type->value);
 			$indexHintPurpose = null;
 			$this->expectToken(TokenTypeEnum::INDEX);
 
-			if ($this->acceptToken(TokenTypeEnum::FOR)) {
-				if ($this->acceptAnyOfTokenTypes(TokenTypeEnum::ORDER, TokenTypeEnum::GROUP)) {
+			if ($this->consumeToken(TokenTypeEnum::FOR)) {
+				if ($this->consumeAnyOfTokenTypes(TokenTypeEnum::ORDER, TokenTypeEnum::GROUP)) {
 					$indexHintPurposeToken = $this->getPreviousToken();
 					$this->expectToken(TokenTypeEnum::BY);
 				} else {
@@ -2583,7 +2583,7 @@ class MariaDbParserState
 			$this->expectToken('(');
 
 			// USE INDEX () works
-			if ($indexHintType === IndexHintTypeEnum::USE && $this->acceptToken(')')) {
+			if ($indexHintType === IndexHintTypeEnum::USE && $this->consumeToken(')')) {
 				$indexHintColumns = [];
 			} else {
 				$columnIdentTokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedFieldAlias();
@@ -2593,7 +2593,7 @@ class MariaDbParserState
 				do {
 					$columnToken = $this->expectAnyOfTokens(...$columnIdentTokenTypes);
 					$indexHintColumns[] = $this->cleanIdentifier($columnToken->content);
-				} while ($this->acceptToken(','));
+				} while ($this->consumeToken(','));
 
 				$this->expectToken(')');
 			}
@@ -2630,6 +2630,12 @@ class MariaDbParserState
 	private function getCurrentToken(): Token
 	{
 		return $this->tokens[$this->position] ?? throw new UnexpectedTokenException('Out of tokens');
+	}
+
+	/** @phpstan-impure */
+	private function consumeAnyOfTokenTypes(TokenTypeEnum|string ...$types): bool
+	{
+		return $this->acceptAnyOfTokenTypes(...$types) !== null;
 	}
 
 	/** @phpstan-impure */
@@ -2672,6 +2678,12 @@ class MariaDbParserState
 		}
 
 		return null;
+	}
+
+	/** @phpstan-impure */
+	private function consumeToken(TokenTypeEnum|string $type): bool
+	{
+		return $this->acceptToken($type) !== null;
 	}
 
 	/** @phpstan-impure */

@@ -69,7 +69,7 @@ final class QueryResultRowCountRange
 	{
 		if (
 			$whereResult === null
-			|| ($whereResult->knowledgeBase !== null && $whereResult->knowledgeBase->truthiness)
+			|| ($whereResult->knowledgeBase !== null && $whereResult->knowledgeBase->truthiness === true)
 		) {
 			return $this;
 		}

@@ -28,7 +28,7 @@ final class Position
 	{
 		$lines = substr_count($str, "\n");
 
-		if ($lines) {
+		if ($lines > 0) {
 			$newLinePos = strrpos($str, "\n");
 			// implied by if ($lines)
 			assert($newLinePos !== false);

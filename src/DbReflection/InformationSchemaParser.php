@@ -248,7 +248,7 @@ class InformationSchemaParser
 				$matches = [];
 
 				// TODO: Do this properly: the enum values themselves could contain "','".
-				if (preg_match("/enum\(([^\)]+)\)/i", $origType, $matches)) {
+				if (preg_match("/enum\(([^\)]+)\)/i", $origType, $matches) === 1) {
 					return new EnumType(explode("','", trim($matches[1], "'")));
 				}
 			// fall-through intentional: invalid enum type.
