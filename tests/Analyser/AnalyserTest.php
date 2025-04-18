@@ -1006,6 +1006,11 @@ class AnalyserTest extends TestCase
 			$selects["ABS({$label1})"] = "SELECT ABS({$value1})";
 			$selects["LEAST({$label1}, {$label1}, {$label1})"] = "SELECT LEAST({$value1}, {$value1}, {$value1})";
 			$selects["GREATEST({$label1}, {$label1}, {$label1})"] = "SELECT GREATEST({$value1}, {$value1}, {$value1})";
+			$selects["FIRST_VALUE({$label1})"] = "SELECT FIRST_VALUE({$value1}) OVER ()";
+			$selects["FIRST_VALUE({$label1}) with possibly empty row-set preceding"]
+				= "SELECT FIRST_VALUE({$value1}) OVER (ROWS BETWEEN 10 PRECEDING AND 9 PRECEDING)";
+			$selects["FIRST_VALUE({$label1}) with possibly empty row-set following"]
+				= "SELECT FIRST_VALUE({$value1}) OVER (ROWS BETWEEN 9 FOLLOWING AND UNBOUNDED FOLLOWING)";
 		}
 
 		// TODO: figure out the context in which the function is called and adjust the return type accordingly.

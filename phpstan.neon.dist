@@ -21,6 +21,7 @@ parameters:
 		uncheckedExceptionClasses:
 			- 'MariaStan\Ast\Exception\InvalidAstException'
 			- 'MariaStan\Ast\Exception\InvalidArgumentException'
+			- 'MariaStan\Parser\Exception\ShouldNotHappenException'
 			- 'MariaStan\PHPStan\Exception\InvalidArgumentException'
 			- 'InvalidArgumentException'
 			- 'ReflectionException'

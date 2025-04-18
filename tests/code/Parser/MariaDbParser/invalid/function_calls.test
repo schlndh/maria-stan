@@ -1399,3 +1399,24 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected one of PRECEDING, got FOLLOWING after: ) OVER (ROWS UNBOUNDED
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FOLLOWING) FROM parser_test' at line 1
+-----
+SELECT FIRST_VALUE(DISTINCT 1) OVER ()
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: DISTINCT after: SELECT FIRST_VALUE(
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DISTINCT 1) OVER ()' at line 1
+-----
+SELECT FIRST_VALUE() OVER () FROM parser_test
+-----
+MariaStan\Parser\Exception\ParserException
+Function FIRST_VALUE takes 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ') OVER () FROM parser_test' at line 1
+-----
+SELECT FIRST_VALUE(id) FROM parser_test
+-----
+MariaStan\Parser\Exception\ShouldNotHappenException
+Expected WindowFunctionCall for FIRST_VALUE, got MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM parser_test' at line 1

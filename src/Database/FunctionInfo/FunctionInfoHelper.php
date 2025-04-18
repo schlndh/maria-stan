@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MariaStan\Database\FunctionInfo;
 
+use MariaStan\Ast\WindowFrame;
+use MariaStan\Ast\WindowFrameBoundTypeEnum;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\DecimalType;
@@ -11,6 +13,8 @@ use MariaStan\Schema\DbType\FloatType;
 use MariaStan\Schema\DbType\IntType;
 use MariaStan\Schema\DbType\MixedType;
 use MariaStan\Schema\DbType\VarcharType;
+
+use function in_array;
 
 abstract class FunctionInfoHelper
 {
@@ -94,5 +98,19 @@ abstract class FunctionInfoHelper
 		}
 
 		return $leftType;
+	}
+
+	public static function canWindowFrameBeEmpty(?WindowFrame $windowFrame): bool
+	{
+		return ! (
+			$windowFrame?->to === null
+			// X FOLLOWING and CURRENT ROW is rejected by MariaDB
+			|| in_array(
+				WindowFrameBoundTypeEnum::CURRENT_ROW,
+				[$windowFrame->from->type, $windowFrame->to->type],
+				true,
+			)
+			|| ($windowFrame->from->type->isPreceding() && $windowFrame->to->type->isFollowing())
+		);
 	}
 }

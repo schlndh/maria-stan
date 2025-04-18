@@ -26,6 +26,7 @@ final class FunctionInfoRegistryFactory
 			new Date(),
 			new DateAddSub(),
 			new DateFormat(),
+			new FirstValue(),
 			new FoundRows(),
 			new GreatestLeast(),
 			new GroupConcat(),
