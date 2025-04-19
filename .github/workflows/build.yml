@@ -88,7 +88,7 @@ jobs:
           - "8.4"
     services:
       mariadb:
-        image: "mariadb:10.11.5-jammy"
+        image: "mariadb:10.11.11"
         env:
           MARIADB_ALLOW_EMPTY_PASSWORD: yes
           MARIADB_DATABASE: "mariastan_test"

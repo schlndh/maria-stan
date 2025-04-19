@@ -1603,7 +1603,7 @@ final class AnalyserState
 			case Expr\ExprTypeEnum::LITERAL_STRING:
 				assert($expr instanceof Expr\LiteralString);
 
-				return $expr->firstConcatPart;
+				return $expr->value;
 			default:
 				return $this->getNodeContent($expr);
 		}

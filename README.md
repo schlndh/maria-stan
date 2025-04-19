@@ -3,7 +3,7 @@
 MariaStan is a static analysis tool for MariaDB queries. Its primary purpose is to serve as a basis for
 [PHPStan](https://phpstan.org/) extensions.
 
-**Current status** (31. 01. 2025):
+**Current status** (19. 04. 2025):
 
 MariaStan is very much incomplete. It covers probably ~90% of use-cases in a large code-base where I use it
 (hundreds of tables, thousands of queries). As a result there is not much activity. But it is actively maintained in
@@ -15,7 +15,7 @@ If you try to use it in your project, you are likely to run into use-cases which
 
 There is no backwards-compatibility promise on anything, and there are no releases - I just use master.
 
-MariaStan is tested with MariaDB 10.11 and PHP 8.1-8.4.
+MariaStan is tested with MariaDB 10.11.11 and PHP 8.1-8.4.
 
 ## Installation
 

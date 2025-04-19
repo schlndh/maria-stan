@@ -102,7 +102,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_col' in 'where clause'
+1054: Unknown column 'missing_col' in 'WHERE'
 -----
 DELETE FROM analyser_test_truncate ORDER BY missing_col
 -----
@@ -129,7 +129,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_col' in 'order clause'
+1054: Unknown column 'missing_col' in 'ORDER BY'
 -----
 DELETE t1 FROM analyser_test_truncate t1, (SELECT * FROM missing_table) t2
 -----

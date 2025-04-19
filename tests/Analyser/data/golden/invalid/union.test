@@ -44,7 +44,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test UNION SELECT v.id FROM analyser_test
 -----
@@ -90,7 +90,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test
 UNION
@@ -139,7 +139,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT * FROM (SELECT 1 UNION SELECT 2, 3) t
 -----
@@ -253,7 +253,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'bb' in 'order clause'
+1054: Unknown column 'bb' in 'ORDER BY'
 -----
 SELECT id aa FROM analyser_test UNION SELECT 2 bb ORDER BY id
 -----
@@ -299,7 +299,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'id' in 'order clause'
+1054: Unknown column 'id' in 'ORDER BY'
 -----
 SELECT id FROM analyser_test
 UNION
@@ -348,7 +348,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER BY
 -----
 SELECT 1 UNION SELECT 2, 3
 -----
@@ -428,7 +428,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aa' in 'field list'
+1054: Unknown column 'aa' in 'SELECT'
 -----
 SELECT v.id FROM analyser_test EXCEPT SELECT id FROM analyser_test
 -----
@@ -474,7 +474,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test EXCEPT SELECT v.id FROM analyser_test
 -----
@@ -520,7 +520,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test
 EXCEPT
@@ -569,7 +569,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT * FROM (SELECT 1 EXCEPT SELECT 2, 3) t
 -----
@@ -683,7 +683,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'bb' in 'order clause'
+1054: Unknown column 'bb' in 'ORDER BY'
 -----
 SELECT id aa FROM analyser_test EXCEPT SELECT 2 bb ORDER BY id
 -----
@@ -729,7 +729,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'id' in 'order clause'
+1054: Unknown column 'id' in 'ORDER BY'
 -----
 SELECT id FROM analyser_test
 EXCEPT
@@ -778,7 +778,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER BY
 -----
 SELECT 1 EXCEPT SELECT 2, 3
 -----
@@ -858,7 +858,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aa' in 'field list'
+1054: Unknown column 'aa' in 'SELECT'
 -----
 SELECT v.id FROM analyser_test INTERSECT SELECT id FROM analyser_test
 -----
@@ -904,7 +904,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test INTERSECT SELECT v.id FROM analyser_test
 -----
@@ -950,7 +950,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT id FROM analyser_test
 INTERSECT
@@ -999,7 +999,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT * FROM (SELECT 1 INTERSECT SELECT 2, 3) t
 -----
@@ -1113,7 +1113,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'bb' in 'order clause'
+1054: Unknown column 'bb' in 'ORDER BY'
 -----
 SELECT id aa FROM analyser_test INTERSECT SELECT 2 bb ORDER BY id
 -----
@@ -1159,7 +1159,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'id' in 'order clause'
+1054: Unknown column 'id' in 'ORDER BY'
 -----
 SELECT id FROM analyser_test
 INTERSECT
@@ -1208,7 +1208,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER clause
+1250: Table 'analyser_test' from one of the SELECTs cannot be used in ORDER BY
 -----
 SELECT 1 INTERSECT SELECT 2, 3
 -----
@@ -1288,4 +1288,4 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aa' in 'field list'
+1054: Unknown column 'aa' in 'SELECT'

@@ -53,7 +53,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 INSERT INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)
 -----
@@ -96,7 +96,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 INSERT INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1
 -----
@@ -139,7 +139,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 INSERT INTO analyser_test SELECT * FROM missing_table
 -----
@@ -627,7 +627,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 REPLACE INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)
 -----
@@ -670,7 +670,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 REPLACE INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1
 -----
@@ -713,7 +713,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'INSERT INTO'
 -----
 REPLACE INTO analyser_test SELECT * FROM missing_table
 -----
@@ -1190,7 +1190,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_column' in 'field list'
+1054: Unknown column 'missing_column' in 'UPDATE'
 -----
 INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
 SELECT id, "abcd" FROM analyser_test
@@ -1239,7 +1239,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in field list is ambiguous
+1052: Column 'id' in UPDATE is ambiguous
 -----
 INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
 SELECT id, "abcd" FROM analyser_test
@@ -1288,7 +1288,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'analyser_test.id' in 'field list'
+1054: Unknown column 'analyser_test.id' in 'UPDATE'
 -----
 INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
 SELECT * FROM (SELECT 1 id, "abcd" name) t
@@ -1333,4 +1333,4 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 't.id' in 'field list'
+1054: Unknown column 't.id' in 'UPDATE'

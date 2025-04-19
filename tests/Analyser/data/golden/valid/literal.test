@@ -269,7 +269,7 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => a
+					[name] => abb
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -297,7 +297,7 @@ Array
 (
 	stdClass
 		(
-			[name] => a
+			[name] => abb
 			[orgname] =>
 			[table] =>
 			[orgtable] =>

@@ -1055,14 +1055,14 @@ SELECT DATE_FORMAT(NOW())
 MariaStan\Parser\Exception\ParserException
 Function DATE_FORMAT takes 2-3 arguments, got 1.
 #####
-1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+1582: Incorrect parameter count in the call to native function 'DATE_FORMAT'
 -----
 SELECT DATE_FORMAT(NOW(), '%Y-%m', 'en_US', 5)
 -----
 MariaStan\Parser\Exception\ParserException
 Function DATE_FORMAT takes 2-3 arguments, got 4.
 #####
-1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 5)' at line 1
+1582: Incorrect parameter count in the call to native function 'DATE_FORMAT'
 -----
 SELECT DATE()
 -----
@@ -1102,14 +1102,14 @@ Function IF takes 3 arguments, got 4.
 SELECT VALUE(5) FROM parser_test
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got INT_LITERAL after: SELECT VALUE(
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATABASE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SCHEMA, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got INT_LITERAL after: SELECT VALUE(
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5) FROM parser_test' at line 1
 -----
 SELECT VALUE(NULL) FROM parser_test
 -----
 MariaStan\Parser\Exception\UnexpectedTokenException
-Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got NULL after: SELECT VALUE(
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATABASE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SCHEMA, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got NULL after: SELECT VALUE(
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'NULL) FROM parser_test' at line 1
 -----
@@ -1160,7 +1160,7 @@ SELECT COALESCE()
 MariaStan\Parser\Exception\ParserException
 Function COALESCE takes at least 1 argument, got 0.
 #####
-1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+1582: Incorrect parameter count in the call to native function 'COALESCE'
 -----
 SELECT IFNULL(5)
 -----
@@ -1378,20 +1378,6 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected ')', got PARTITION after: OVER (ORDER BY id
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'PARTITION BY id) FROM parser_test' at line 1
------
-SELECT FIRST_VALUE(id) OVER (RANGE UNBOUNDED PRECEDING) FROM parser_test
------
-MariaStan\Parser\Exception\ParserException
-RANGE-type frame requires ORDER BY clause with single sort key.
-#####
-4019: RANGE-type frame requires ORDER BY clause with single sort key
------
-SELECT FIRST_VALUE(id) OVER (ORDER BY name, id RANGE UNBOUNDED PRECEDING) FROM parser_test
------
-MariaStan\Parser\Exception\ParserException
-RANGE-type frame requires ORDER BY clause with single sort key.
-#####
-4019: RANGE-type frame requires ORDER BY clause with single sort key
 -----
 SELECT FIRST_VALUE(id) OVER (ROWS UNBOUNDED FOLLOWING) FROM parser_test
 -----

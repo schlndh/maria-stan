@@ -47,7 +47,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT (SELECT aaa), 1 aaa
 -----
@@ -136,7 +136,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT * FROM analyser_test, analyser_test
 -----
@@ -651,4 +651,4 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'

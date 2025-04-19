@@ -1809,10 +1809,6 @@ class MariaDbParserState
 		if ($frameTypeToken !== null) {
 			$frameType = WindowFrameTypeEnum::from($frameTypeToken->type->value);
 
-			if ($frameType === WindowFrameTypeEnum::RANGE && count($orderBy->expressions ?? []) !== 1) {
-				throw new ParserException('RANGE-type frame requires ORDER BY clause with single sort key.');
-			}
-
 			$hasUpperBound = $this->consumeToken(TokenTypeEnum::BETWEEN);
 			$upperBound = null;
 			$allowedDirectionTypes = $hasUpperBound

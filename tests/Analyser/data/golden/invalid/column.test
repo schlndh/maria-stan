@@ -36,7 +36,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT (SELECT v.id FROM analyser_test)
 -----
@@ -79,7 +79,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v
 -----
@@ -176,7 +176,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT EXISTS (SELECT v.id FROM analyser_test)
 -----
@@ -219,7 +219,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT v.id IS NULL FROM analyser_test
 -----
@@ -257,7 +257,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT v.id LIKE "a" FROM analyser_test
 -----
@@ -295,7 +295,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT "a" LIKE v.id FROM analyser_test
 -----
@@ -333,7 +333,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 WITH tbl AS (SELECT aaa FROM analyser_test) SELECT * FROM tbl
 -----
@@ -378,7 +378,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT id FROM analyser_test a, analyser_test b
 -----
@@ -416,7 +416,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in field list is ambiguous
+1052: Column 'id' in SELECT is ambiguous
 -----
 SELECT * FROM analyser_test WHERE v.id
 -----
@@ -495,7 +495,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'where clause'
+1054: Unknown column 'v.id' in 'WHERE'
 -----
 SELECT 1+1 aaa FROM analyser_test WHERE aaa
 -----
@@ -533,7 +533,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'where clause'
+1054: Unknown column 'aaa' in 'WHERE'
 -----
 SELECT * FROM analyser_test GROUP BY v.id
 -----
@@ -612,7 +612,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'group statement'
+1054: Unknown column 'v.id' in 'GROUP BY'
 -----
 SELECT a.id, b.id FROM analyser_test a, analyser_test b GROUP BY id
 -----
@@ -683,7 +683,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in group statement is ambiguous
+1052: Column 'id' in GROUP BY is ambiguous
 -----
 SELECT a.id, b.name id FROM analyser_test a, analyser_test b GROUP BY id
 -----
@@ -762,7 +762,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in group statement is ambiguous
+1052: Column 'id' in GROUP BY is ambiguous
 -----
 SELECT *, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id
 -----
@@ -888,7 +888,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in group statement is ambiguous
+1052: Column 'id' in GROUP BY is ambiguous
 -----
 SELECT a.id, b.id, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id
 -----
@@ -970,7 +970,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in group statement is ambiguous
+1052: Column 'id' in GROUP BY is ambiguous
 -----
 SELECT *, 1+1 id FROM analyser_test GROUP BY id
 -----
@@ -1428,7 +1428,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'having clause'
+1054: Unknown column 'v.id' in 'HAVING'
 -----
 SELECT AVG(v.id) FROM analyser_test
 -----
@@ -1471,7 +1471,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT 1 FROM analyser_test GROUP BY id HAVING name
 -----
@@ -1517,7 +1517,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'name' in 'having clause'
+1054: Unknown column 'name' in 'HAVING'
 -----
 SELECT 1+1 aaa FROM analyser_test HAVING (SELECT COUNT(name)) AND name
 -----
@@ -1563,7 +1563,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'name' in 'having clause'
+1054: Unknown column 'name' in 'HAVING'
 -----
 SELECT COUNT(name) FROM analyser_test HAVING name
 -----
@@ -1614,7 +1614,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'name' in 'having clause'
+1054: Unknown column 'name' in 'HAVING'
 -----
 SELECT id FROM analyser_test HAVING CAST(name AS INT)
 -----
@@ -1667,7 +1667,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'name' in 'having clause'
+1054: Unknown column 'name' in 'HAVING'
 -----
 SELECT * FROM analyser_test ORDER BY v.id
 -----
@@ -1746,7 +1746,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'order clause'
+1054: Unknown column 'v.id' in 'ORDER BY'
 -----
 SELECT "2022-08-27" - INTERVAL v.id DAY FROM analyser_test
 -----
@@ -1784,7 +1784,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'v.id' in 'field list'
+1054: Unknown column 'v.id' in 'SELECT'
 -----
 SELECT * FROM analyser_test JOIN aaabbbccc
 -----
@@ -2024,7 +2024,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'b.aaa' in 'on clause'
+1054: Unknown column 'b.aaa' in 'ON'
 -----
 SELECT * FROM analyser_test a JOIN analyser_test b ON b.id = c.id JOIN analyser_test c
 -----
@@ -2175,7 +2175,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'c.id' in 'on clause'
+1054: Unknown column 'c.id' in 'ON'
 -----
 SELECT * FROM analyser_test a, analyser_test b JOIN analyser_test c ON a.id = c.id
 -----
@@ -2326,7 +2326,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a.id' in 'on clause'
+1054: Unknown column 'a.id' in 'ON'
 -----
 SELECT * FROM (SELECT 1 aa) a, (SELECT 2 bb) b JOIN (SELECT 1 aa, 2 bb) c USING (aa)
 -----
@@ -2349,7 +2349,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aa' in 'from clause'
+1054: Unknown column 'aa' in 'FROM'
 -----
 SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (bb)
 -----
@@ -2372,7 +2372,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'bb' in 'from clause'
+1054: Unknown column 'bb' in 'FROM'
 -----
 SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (aa)
 -----
@@ -2395,7 +2395,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aa' in 'from clause'
+1054: Unknown column 'aa' in 'FROM'
 -----
 SELECT * FROM analyser_test a JOIN analyser_test b JOIN analyser_test c USING (id)
 -----
@@ -2422,7 +2422,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in from clause is ambiguous
+1052: Column 'id' in FROM is ambiguous
 -----
 SELECT * FROM
 (SELECT 3 cc, 2 bb, 5 ee) tm
@@ -2453,7 +2453,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'cc' in from clause is ambiguous
+1052: Column 'cc' in FROM is ambiguous
 -----
 SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = id
 -----
@@ -2568,7 +2568,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in on clause is ambiguous
+1052: Column 'id' in ON is ambiguous
 -----
 SELECT AVG(id) FROM analyser_test a, analyser_test b
 -----
@@ -2611,7 +2611,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1052: Column 'id' in field list is ambiguous
+1052: Column 'id' in SELECT is ambiguous
 -----
 SELECT (id, name) = (id, aaa) FROM analyser_test
 -----
@@ -2665,7 +2665,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT CASE aaa WHEN 1 THEN 1 END FROM analyser_test
 -----
@@ -2703,7 +2703,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT CASE 1 WHEN aaa THEN 1 END FROM analyser_test
 -----
@@ -2741,7 +2741,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT CASE 1 WHEN 1 THEN aaa END FROM analyser_test
 -----
@@ -2779,7 +2779,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT CASE 1 WHEN 1 THEN 1 ELSE aaa END FROM analyser_test
 -----
@@ -2817,7 +2817,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT aaa COLLATE utf8mb4_unicode_ci FROM analyser_test
 -----
@@ -2855,7 +2855,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'aaa' in 'field list'
+1054: Unknown column 'aaa' in 'SELECT'
 -----
 SELECT t.*, (SELECT * FROM (SELECT t.a) t2) FROM (SELECT 1 a) t
 -----
@@ -2907,7 +2907,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1109: Unknown table 't' in field list
+1109: Unknown table 't' in SELECT
 -----
 SELECT t.*, (SELECT * FROM (SELECT a) t2) FROM (SELECT 1 a) t
 -----
@@ -2959,7 +2959,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'field list'
+1054: Unknown column 'a' in 'SELECT'
 -----
 SELECT t.*, (SELECT * FROM (SELECT 1 WHERE a) t2) FROM (SELECT 1 a) t
 -----
@@ -3011,7 +3011,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'where clause'
+1054: Unknown column 'a' in 'WHERE'
 -----
 SELECT t.*, (SELECT * FROM (SELECT 1 GROUP BY a) t2) FROM (SELECT 1 a) t
 -----
@@ -3063,7 +3063,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'group statement'
+1054: Unknown column 'a' in 'GROUP BY'
 -----
 SELECT t.*, (SELECT * FROM (SELECT 1 HAVING a) t2) FROM (SELECT 1 a) t
 -----
@@ -3115,7 +3115,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'having clause'
+1054: Unknown column 'a' in 'HAVING'
 -----
 SELECT t.*, (SELECT * FROM (SELECT 1 ORDER BY a) t2) FROM (SELECT 1 a) t
 -----
@@ -3167,7 +3167,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'order clause'
+1054: Unknown column 'a' in 'ORDER BY'
 -----
 SELECT 1 a, (SELECT * FROM (SELECT a) t);
 -----
@@ -3217,4 +3217,4 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'a' in 'field list'
+1054: Unknown column 'a' in 'SELECT'
