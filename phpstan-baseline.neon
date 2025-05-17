@@ -29,3 +29,33 @@ parameters:
 			identifier: function.strict
 			count: 1
 			path: tests/Parser/MariaDbParserOperatorTest.php
+
+		-
+			message: '#^Call to method handle\(\) of internal class PHPUnit\\TextUI\\XmlConfiguration\\PhpHandler from outside its root namespace PHPUnit\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/updateTests.php
+
+		-
+			message: '#^Call to method load\(\) of internal class PHPUnit\\TextUI\\XmlConfiguration\\Loader from outside its root namespace PHPUnit\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/updateTests.php
+
+		-
+			message: '#^Call to method php\(\) of internal class PHPUnit\\TextUI\\XmlConfiguration\\Configuration from outside its root namespace PHPUnit\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/updateTests.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\TextUI\\XmlConfiguration\\Loader\.$#'
+			identifier: new.internalClass
+			count: 1
+			path: tests/updateTests.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\TextUI\\XmlConfiguration\\PhpHandler\.$#'
+			identifier: new.internalClass
+			count: 1
+			path: tests/updateTests.php
