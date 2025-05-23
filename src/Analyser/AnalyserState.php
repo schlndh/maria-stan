@@ -1038,23 +1038,22 @@ final class AnalyserState
 					$getIntType = static fn () => isset($typesInvolved[Schema\DbType\DbTypeEnum::UNSIGNED_INT->value])
 						? new Schema\DbType\UnsignedIntType()
 						: new Schema\DbType\IntType();
+					$isComparisonOperator = in_array(
+						$expr->operation,
+						[
+							Expr\BinaryOpTypeEnum::EQUAL,
+							Expr\BinaryOpTypeEnum::NOT_EQUAL,
+							Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL,
+							Expr\BinaryOpTypeEnum::GREATER,
+							Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
+							Expr\BinaryOpTypeEnum::LOWER,
+							Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
+						],
+						true,
+					);
 
 					if (isset($typesInvolved[Schema\DbType\DbTypeEnum::TUPLE->value])) {
-						if (
-							! in_array(
-								$expr->operation,
-								[
-									Expr\BinaryOpTypeEnum::EQUAL,
-									Expr\BinaryOpTypeEnum::NOT_EQUAL,
-									Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL,
-									Expr\BinaryOpTypeEnum::GREATER,
-									Expr\BinaryOpTypeEnum::GREATER_OR_EQUAL,
-									Expr\BinaryOpTypeEnum::LOWER,
-									Expr\BinaryOpTypeEnum::LOWER_OR_EQUAL,
-								],
-								true,
-							)
-						) {
+						if (! $isComparisonOperator) {
 							$this->errors[] = AnalyserErrorBuilder::createInvalidBinaryOpUsageError(
 								$expr->operation,
 								$lt,
@@ -1065,8 +1064,13 @@ final class AnalyserState
 							$this->checkSameTypeShape($leftResult->type, $rightResult->type);
 							$type = new Schema\DbType\IntType();
 						}
-					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])) {
+					} elseif (
+						isset($typesInvolved[Schema\DbType\DbTypeEnum::NULL->value])
+						&& $expr->operation !== Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL
+					) {
 						$type = new Schema\DbType\NullType();
+					} elseif ($isComparisonOperator) {
+						$type = new Schema\DbType\IntType();
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::MIXED->value])) {
 						$type = new Schema\DbType\MixedType();
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::VARCHAR->value])) {
@@ -1088,18 +1092,29 @@ final class AnalyserState
 								Schema\DbType\DbTypeEnum::DECIMAL, Schema\DbType\DbTypeEnum::FLOAT,
 								Schema\DbType\DbTypeEnum::NULL, Schema\DbType\DbTypeEnum::MIXED
 									=> $leftResult->type,
+								Schema\DbType\DbTypeEnum::DATETIME => new Schema\DbType\IntType(),
 								default => new Schema\DbType\FloatType(),
 							},
 							Expr\BinaryOpTypeEnum::DIVISION => new Schema\DbType\DecimalType(),
-							default => new Schema\DbType\UnsignedIntType(),
+							default => isset($typesInvolved[Schema\DbType\DbTypeEnum::DATETIME->value])
+								&& $expr->operation !== Expr\BinaryOpTypeEnum::INT_DIVISION
+								? new Schema\DbType\IntType()
+								: new Schema\DbType\UnsignedIntType(),
 						};
 					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::INT->value])) {
 						$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
 							? new Schema\DbType\DecimalType()
 							: new Schema\DbType\IntType();
+					} elseif (isset($typesInvolved[Schema\DbType\DbTypeEnum::DATETIME->value])) {
+						$type = $expr->operation === Expr\BinaryOpTypeEnum::DIVISION
+							? new Schema\DbType\DecimalType()
+							: $getIntType();
 					}
 
-					$isNullable = $leftResult->isNullable || $rightResult->isNullable
+					$isNullable = (
+						($leftResult->isNullable || $rightResult->isNullable)
+						&& $expr->operation !== Expr\BinaryOpTypeEnum::NULL_SAFE_EQUAL
+					)
 						// It can be division by 0 in which case MariaDB returns null.
 						|| in_array($expr->operation, [
 							Expr\BinaryOpTypeEnum::DIVISION,

@@ -516,13 +516,18 @@ class AnalyserTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	private static function provideValidOperatorTestData(): iterable
 	{
-		$operators = ['+', '-', '*', '/', '%', 'DIV'];
-		$values = ['1', '1.1', '1e1', '"a"', 'NULL', 'CAST(1 AS UNSIGNED INT)'];
+		$operators = ['+', '-', '*', '/', '%', 'DIV', '<', '='];
+		$values = ['1', '1.1', '1e1', '"a"', 'NULL', 'CAST(1 AS UNSIGNED INT)', 'NOW()'];
 
 		foreach ($operators as $op) {
 			foreach ($values as $left) {
 				foreach ($values as $right) {
 					$expr = "{$left} {$op} {$right}";
+
+					// NB: BIGINT value is out of range in 'current_timestamp() * current_timestamp()'
+					if ($expr === 'NOW() * NOW()') {
+						continue;
+					}
 
 					yield "operator {$expr}" => [
 						'query' => "SELECT {$expr}",
@@ -1855,6 +1860,17 @@ class AnalyserTest extends TestCase
 					SELECT * FROM analyser_test_nullability_1 t1, analyser_test_nullability_1 t2
 					WHERE {$op}
 				",
+			];
+		}
+
+		$operations = [
+			'1 = NULL',
+			'1 <=> NULL',
+		];
+
+		foreach ($operations as $op) {
+			yield "SELECT {$op}" => [
+				'query' => "SELECT {$op}",
 			];
 		}
 	}
