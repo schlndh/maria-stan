@@ -8,6 +8,7 @@ use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Exception\InvalidAstException;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\OrderBy;
+use MariaStan\Ast\Query\TableReference\TableName;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Parser\Position;
 
@@ -15,7 +16,7 @@ use function count;
 
 final class DeleteQuery extends BaseNode implements Query
 {
-	/** @param non-empty-array<string> $tablesToDelete */
+	/** @param non-empty-array<TableName> $tablesToDelete */
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,

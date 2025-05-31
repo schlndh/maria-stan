@@ -1,0 +1,15 @@
+Multi DB
+-----
+SELECT information_schema.*.* FROM information_schema.COLUMNS
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '.' after: SELECT information_schema.*
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '.* FROM information_schema.COLUMNS' at line 1
+-----
+SELECT * FROM information_schema.COLUMNS.COLUMN_NAME
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got '.' after: * FROM information_schema.COLUMNS
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '.COLUMN_NAME' at line 1

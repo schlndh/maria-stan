@@ -73,6 +73,7 @@ use MariaStan\Ast\Query\TableReference\IndexHintTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
 use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Table;
+use MariaStan\Ast\Query\TableReference\TableName;
 use MariaStan\Ast\Query\TableReference\TableReference;
 use MariaStan\Ast\Query\TableReference\TableReferenceTypeEnum;
 use MariaStan\Ast\Query\TableReference\TableValueConstructor;
@@ -95,9 +96,11 @@ use MariaStan\Parser\Exception\UnexpectedTokenException;
 use MariaStan\Parser\Exception\UnsupportedQueryException;
 
 use function array_map;
+use function array_reverse;
 use function assert;
 use function chr;
 use function count;
+use function end;
 use function implode;
 use function in_array;
 use function is_int;
@@ -194,9 +197,7 @@ class MariaDbParserState
 	{
 		$startToken = $this->expectAnyOfTokens(TokenTypeEnum::TRUNCATE);
 		$this->consumeToken(TokenTypeEnum::TABLE);
-		// TODO: database.table
-		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
-		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
+		$tableName = $this->parseTableName();
 		$wait = $this->parseWaitNoWait();
 
 		return new TruncateQuery(
@@ -204,6 +205,28 @@ class MariaDbParserState
 			$this->getPreviousToken()->getEndPosition(),
 			$tableName,
 			$wait,
+		);
+	}
+
+	/** @throws ParserException */
+	private function parseTableName(): TableName
+	{
+		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
+		$idents = [$this->expectAnyOfTokens(...$tokenTypes)];
+
+		if ($this->consumeToken('.')) {
+			$idents[] = $this->expectAnyOfTokens(
+				...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(),
+			);
+		}
+
+		$idents = array_reverse($idents);
+
+		return new TableName(
+			end($idents)->position,
+			$this->getPreviousToken()->getEndPosition(),
+			$this->cleanIdentifier($idents[0]->content),
+			isset($idents[1]) ? $this->cleanIdentifier($idents[1]->content) : null,
 		);
 	}
 
@@ -248,21 +271,37 @@ class MariaDbParserState
 		$limit = null;
 		$tableReference = null;
 		$parseTableName = function () use ($tableNameTokens): array {
-			// TODO: database.table
-			$tableNameToken = $this->expectAnyOfTokens(...$tableNameTokens);
-			$tableName = $this->cleanIdentifier($tableNameToken->content);
+			$idents = [$this->expectAnyOfTokens(...$tableNameTokens)];
 			$isMultiTableSyntax = false;
 
 			if ($this->consumeToken('.')) {
-				$this->expectToken('*');
-				$isMultiTableSyntax = true;
+				if (! $this->consumeToken('*')) {
+					$idents[] = $this->expectAnyOfTokens(
+						...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(),
+					);
+
+					if ($this->consumeToken('.')) {
+						$this->expectToken('*');
+						$isMultiTableSyntax = true;
+					}
+				} else {
+					$isMultiTableSyntax = true;
+				}
 			}
 
-			return [$tableName, $tableNameToken, $isMultiTableSyntax];
+			$idents = array_reverse($idents);
+			$tableName = new TableName(
+				end($idents)->position,
+				$idents[0]->getEndPosition(),
+				$this->cleanIdentifier($idents[0]->content),
+				isset($idents[1]) ? $this->cleanIdentifier($idents[1]->content) : null,
+			);
+
+			return [$tableName, $isMultiTableSyntax];
 		};
 
 		if ($this->consumeToken(TokenTypeEnum::FROM)) {
-			[$tableName, $tableNameToken, $isMultiTableSyntax] = $parseTableName();
+			[$tableName, $isMultiTableSyntax] = $parseTableName();
 			$tablesToDelete[] = $tableName;
 
 			while ($this->consumeToken(',')) {
@@ -273,8 +312,8 @@ class MariaDbParserState
 			if (! $isMultiTableSyntax) {
 				if (! $this->consumeToken(TokenTypeEnum::USING)) {
 					$tableReference = new Table(
-						$tableNameToken->position,
-						$tableNameToken->getEndPosition(),
+						$tableName->getStartPosition(),
+						$tableName->getEndPosition(),
 						$tableName,
 					);
 				} else {
@@ -331,9 +370,7 @@ class MariaDbParserState
 		$ignoreErrors = $startToken->type === TokenTypeEnum::INSERT
 			&& $this->consumeToken(TokenTypeEnum::IGNORE);
 		$this->consumeToken(TokenTypeEnum::INTO);
-		// TODO: database.table
-		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
-		$tableName = $this->cleanIdentifier($this->expectAnyOfTokens(...$tokenTypes)->content);
+		$tableName = $this->parseTableName();
 		$columnList = null;
 		$columnListStartPosition = null;
 		$selectQuery = null;
@@ -955,15 +992,14 @@ class MariaDbParserState
 			return $result;
 		}
 
-		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
-		$table = $this->expectAnyOfTokens(...$tokenTypes);
+		$tableName = $this->parseTableName();
 		$alias = $this->parseTableAlias();
 		$indexHints = $this->parseIndexHints();
 
 		return new Table(
-			$table->position,
+			$tableName->getStartPosition(),
 			$this->getPreviousToken()->getEndPosition(),
-			$this->cleanIdentifier($table->content),
+			$tableName,
 			$alias,
 			$indexHints,
 		);
@@ -1070,14 +1106,39 @@ class MariaDbParserState
 		$tokenTypes = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$ident = $this->acceptAnyOfTokenTypes(...$tokenTypes);
 
-		if ($ident !== null && $this->consumeToken('.') && $this->consumeToken('*')) {
-			$prevToken = $this->getPreviousToken();
+		if ($ident !== null && $this->consumeToken('.')) {
+			if ($this->consumeToken('*')) {
+				return new AllColumns(
+					$startExpressionToken->position,
+					$this->getPreviousToken()->getEndPosition(),
+					new TableName(
+						$ident->position,
+						$ident->getEndPosition(),
+						$this->cleanIdentifier($ident->content),
+						null,
+					),
+				);
+			}
 
-			return new AllColumns(
-				$startExpressionToken->position,
-				$prevToken->getEndPosition(),
-				$this->cleanIdentifier($ident->content),
+			$dbIdent = $ident;
+			$ident = $this->acceptAnyOfTokenTypes(
+				...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(),
 			);
+
+			if ($ident !== null && $this->consumeToken('.') && $this->consumeToken('*')) {
+				return new AllColumns(
+					$startExpressionToken->position,
+					$this->getPreviousToken()->getEndPosition(),
+					new TableName(
+						$ident->position,
+						$ident->getEndPosition(),
+						$this->cleanIdentifier($ident->content),
+						$this->cleanIdentifier($dbIdent->content),
+					),
+				);
+			}
+
+			unset($dbIdent);
 		}
 
 		unset($ident);
@@ -1552,20 +1613,32 @@ class MariaDbParserState
 				return $functionCall;
 			}
 
-			if (! $this->consumeToken('.')) {
-				return new Column($startPosition, $ident->getEndPosition(), $this->cleanIdentifier($ident->content));
+			$idents = [$ident];
+
+			if ($this->consumeToken('.')) {
+				$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
+				$idents[] = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+
+				if ($this->consumeToken('.')) {
+					$idents[] = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+				}
 			}
 
-			$tableIdent = $ident;
-			$ident = $this->expectAnyOfTokens(
-				...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot(),
-			);
+			$idents = array_reverse($idents);
+			$tableName = isset($idents[1])
+				? new TableName(
+					end($idents)->position,
+					$idents[1]->getEndPosition(),
+					$this->cleanIdentifier($idents[1]->content),
+					isset($idents[2]) ? $this->cleanIdentifier($idents[2]->content) : null,
+				)
+				: null;
 
 			return new Column(
 				$startPosition,
-				$ident->getEndPosition(),
-				$this->cleanIdentifier($ident->content),
-				$this->cleanIdentifier($tableIdent->content),
+				$this->getPreviousToken()->getEndPosition(),
+				$this->cleanIdentifier($idents[0]->content),
+				$tableName,
 			);
 		}
 
@@ -2548,24 +2621,31 @@ class MariaDbParserState
 		$identTokenTypesAfterDot = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedIdentifierAfterDot();
 
 		$columnStartPosition = $this->getCurrentToken()->position;
-		$ident = $this->expectAnyOfTokens(...$identTokenTypes);
+		$idents = [$this->expectAnyOfTokens(...$identTokenTypes)];
 
-		if (! $this->consumeToken('.')) {
-			return new Column(
-				$columnStartPosition,
-				$ident->getEndPosition(),
-				$this->cleanIdentifier($ident->content),
-			);
+		if ($this->consumeToken('.')) {
+			$idents[] = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+
+			if ($this->consumeToken('.')) {
+				$idents[] = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+			}
 		}
 
-		$tableIdent = $ident;
-		$ident = $this->expectAnyOfTokens(...$identTokenTypesAfterDot);
+		$idents = array_reverse($idents);
+		$tableName = isset($idents[1])
+			? new TableName(
+				end($idents)->position,
+				$idents[1]->getEndPosition(),
+				$this->cleanIdentifier($idents[1]->content),
+				isset($idents[2]) ? $this->cleanIdentifier($idents[2]->content) : null,
+			)
+			: null;
 
 		return new Column(
 			$columnStartPosition,
-			$ident->getEndPosition(),
-			$this->cleanIdentifier($ident->content),
-			$this->cleanIdentifier($tableIdent->content),
+			$this->getPreviousToken()->getEndPosition(),
+			$this->cleanIdentifier($idents[0]->content),
+			$tableName,
 		);
 	}
 

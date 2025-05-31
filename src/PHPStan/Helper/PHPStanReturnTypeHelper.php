@@ -385,7 +385,7 @@ class PHPStanReturnTypeHelper
 					);
 				}
 
-				$conflictingType = $this->columnTypeOverrides[$expr->tableName][$expr->name] ?? null;
+				$conflictingType = $this->columnTypeOverrides[$expr->tableName->name][$expr->name] ?? null;
 
 				if ($conflictingType !== null) {
 					throw new InvalidArgumentException(
@@ -396,7 +396,7 @@ class PHPStanReturnTypeHelper
 
 				// I add null, so that it can be intersected with nullable columns
 				// (e.g. WHERE col IS NULL, LEFT JOIN, ...)
-				$this->columnTypeOverrides[$expr->tableName][$expr->name] = TypeCombinator::addNull($type);
+				$this->columnTypeOverrides[$expr->tableName->name][$expr->name] = TypeCombinator::addNull($type);
 			}
 		}
 

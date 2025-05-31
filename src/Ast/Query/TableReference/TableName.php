@@ -2,25 +2,20 @@
 
 declare(strict_types=1);
 
-namespace MariaStan\Ast\Expr;
+namespace MariaStan\Ast\Query\TableReference;
 
 use MariaStan\Ast\BaseNode;
-use MariaStan\Ast\Query\TableReference\TableName;
 use MariaStan\Parser\Position;
 
-final class Column extends BaseNode implements Expr
+final class TableName extends BaseNode
 {
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
 		public readonly string $name,
-		public readonly ?TableName $tableName = null,
+		// TODO: consider datbaseName during analysis
+		public readonly ?string $databaseName = null,
 	) {
 		parent::__construct($startPosition, $endPosition);
-	}
-
-	public static function getExprType(): ExprTypeEnum
-	{
-		return ExprTypeEnum::COLUMN;
 	}
 }

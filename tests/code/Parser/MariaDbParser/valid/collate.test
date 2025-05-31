@@ -162,7 +162,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -192,7 +195,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -222,7 +228,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -263,7 +272,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -333,7 +345,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -364,7 +379,10 @@ INSERT INTO parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -394,7 +412,10 @@ REPLACE INTO parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
 -----
 MariaStan\Ast\Query\ReplaceQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array

@@ -572,7 +572,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => parser_test
+													[name] => MariaStan\Ast\Query\TableReference\TableName
+														(
+															[name] => parser_test
+														)
 													[indexHints] => Array
 														(
 														)
@@ -640,7 +643,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => parser_test
+																	[name] => MariaStan\Ast\Query\TableReference\TableName
+																		(
+																			[name] => parser_test
+																		)
 																	[indexHints] => Array
 																		(
 																		)
@@ -672,7 +678,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => parser_test
+																	[name] => MariaStan\Ast\Query\TableReference\TableName
+																		(
+																			[name] => parser_test
+																		)
 																	[indexHints] => Array
 																		(
 																		)
@@ -853,7 +862,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => parser_test
+													[name] => MariaStan\Ast\Query\TableReference\TableName
+														(
+															[name] => parser_test
+														)
 													[indexHints] => Array
 														(
 														)
@@ -903,7 +915,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 																)
 															[from] => MariaStan\Ast\Query\TableReference\Table
 																(
-																	[name] => parser_test
+																	[name] => MariaStan\Ast\Query\TableReference\TableName
+																		(
+																			[name] => parser_test
+																		)
 																	[indexHints] => Array
 																		(
 																		)
@@ -1936,7 +1951,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)

@@ -13,7 +13,7 @@ final class Table extends BaseNode implements TableReference
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
-		public readonly string $name,
+		public readonly TableName $name,
 		public readonly ?string $alias = null,
 		public readonly array $indexHints = [],
 	) {

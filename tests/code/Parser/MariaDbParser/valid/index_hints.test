@@ -12,7 +12,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -42,7 +45,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -72,7 +78,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -102,7 +111,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -132,7 +144,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -162,7 +177,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -193,7 +211,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -232,7 +253,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -277,7 +301,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test_index
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_index
+						)
 					[alias] => t1
 					[indexHints] => Array
 						(
@@ -285,7 +312,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test_index
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_index
+						)
 					[alias] => t2
 					[indexHints] => Array
 						(
@@ -332,7 +362,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 			[leftTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test_index
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_index
+						)
 					[alias] => t1
 					[indexHints] => Array
 						(
@@ -340,7 +373,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test_index
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_index
+						)
 					[alias] => t2
 					[indexHints] => Array
 						(
@@ -381,7 +417,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -411,7 +450,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -441,7 +483,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -471,7 +516,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -503,7 +551,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		)
 	[from] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[alias] => t
 			[indexHints] => Array
 				(
@@ -528,7 +579,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[indexHints] => Array
 				(
 					[0] => MariaStan\Ast\Query\TableReference\IndexHint
@@ -566,11 +620,17 @@ MariaStan\Ast\Query\DeleteQuery
 (
 	[tablesToDelete] => Array
 		(
-			[0] => t2
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t2
+				)
 		)
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test_index
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
 			[alias] => t2
 			[indexHints] => Array
 				(

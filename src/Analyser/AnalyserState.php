@@ -393,7 +393,7 @@ final class AnalyserState
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
-					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName);
+					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName?->name);
 
 					foreach ($allFields as $field) {
 						$this->columnResolver->registerField($field, true);
@@ -464,16 +464,17 @@ final class AnalyserState
 				$columnResolver = clone $columnResolver;
 
 				try {
-					$tableType = $columnResolver->registerTable($fromClause->name, $fromClause->alias);
+					$tableType = $columnResolver->registerTable($fromClause->name->name, $fromClause->alias);
 
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
-						$this->referencedTables[$fromClause->name] ??= new ReferencedSymbol\Table($fromClause->name);
+						$this->referencedTables[$fromClause->name->name]
+							??= new ReferencedSymbol\Table($fromClause->name->name);
 					}
 				} catch (AnalyserException | DbReflectionException $e) {
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->alias ?? $fromClause->name], $columnResolver];
+				return [[$fromClause->alias ?? $fromClause->name->name], $columnResolver];
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
 				$columnResolver = clone $columnResolver;
@@ -548,7 +549,7 @@ final class AnalyserState
 
 			// don't report missing tables to delete if the table reference is not parsed successfully
 			foreach ($query->tablesToDelete as $table) {
-				if ($this->columnResolver->hasTableForDelete($table)) {
+				if ($this->columnResolver->hasTableForDelete($table->name)) {
 					continue;
 				}
 
@@ -557,12 +558,12 @@ final class AnalyserState
 					$query->table instanceof Table
 					&& $query->table->alias === null
 					&& count($query->tablesToDelete) === 1
-					&& $query->table->name === $table
+					&& $query->table->name->name === $table->name
 				) {
 					continue;
 				}
 
-				$this->errors[] = AnalyserErrorBuilder::createTableDoesntExistError($table);
+				$this->errors[] = AnalyserErrorBuilder::createTableDoesntExistError($table->name);
 			}
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
@@ -631,7 +632,7 @@ final class AnalyserState
 			$this->errors[] = $e->toAnalyserError();
 		}
 
-		$tableSchema = $this->columnResolver->findTableSchema($query->tableName);
+		$tableSchema = $this->columnResolver->findTableSchema($query->tableName->name);
 		$setColumnNames = [];
 		$onDuplicateKeyAnalyser = $this;
 
@@ -759,7 +760,7 @@ final class AnalyserState
 	private function analyseTruncateQuery(TruncateQuery $query): void
 	{
 		try {
-			$this->dbReflection->findTableSchema($query->tableName);
+			$this->dbReflection->findTableSchema($query->tableName->name);
 		} catch (DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
@@ -781,7 +782,7 @@ final class AnalyserState
 				try {
 					$resolvedColumn = $this->columnResolver->resolveColumn(
 						$expr->name,
-						$expr->tableName,
+						$expr->tableName?->name,
 						$this->fieldBehavior,
 						$condition,
 					);

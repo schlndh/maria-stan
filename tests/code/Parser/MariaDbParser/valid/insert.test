@@ -4,7 +4,10 @@ INSERT INTO parser_test (name) VALUE ('aa'), ('bb')
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[columnList] => Array
@@ -41,7 +44,10 @@ INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa')
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[columnList] => Array
@@ -77,7 +83,10 @@ INSERT parser_test (id, name) VALUES (DEFAULT, 'aa')
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[columnList] => Array
@@ -113,7 +122,10 @@ INSERT parser_test VALUES (DEFAULT, 'aa')
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[values] => Array
@@ -138,7 +150,10 @@ INSERT IGNORE INTO parser_test (name) VALUE ('aa')
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[columnList] => Array
@@ -169,7 +184,10 @@ SELECT * FROM tbl
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -214,7 +232,10 @@ MariaStan\Ast\Query\InsertQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -233,7 +254,10 @@ INSERT INTO parser_test (name)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -268,7 +292,10 @@ INSERT INTO parser_test (name)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -324,7 +351,10 @@ SELECT 'a' FOR UPDATE
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -363,7 +393,10 @@ SELECT name FROM parser_test
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -387,7 +420,10 @@ MariaStan\Ast\Query\InsertQuery
 						)
 					[from] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => parser_test
+							[name] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
 							[indexHints] => Array
 								(
 								)
@@ -404,7 +440,10 @@ INSERT INTO parser_test
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
@@ -439,7 +478,10 @@ INSERT INTO parser_test
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
@@ -474,7 +516,10 @@ INSERT INTO parser_test
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[selectQuery] => MariaStan\Ast\Query\SelectQuery\WithSelectQuery
@@ -519,7 +564,10 @@ MariaStan\Ast\Query\InsertQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -538,7 +586,10 @@ SET id = DEFAULT, name = CONCAT("a", "b")
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -588,7 +639,10 @@ SET id := DEFAULT, name := CONCAT("a", "b")
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -638,7 +692,10 @@ SET name = "name" = "a"
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -675,7 +732,10 @@ ON DUPLICATE KEY UPDATE id = id
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -728,7 +788,10 @@ ON DUPLICATE KEY UPDATE id = VALUES(id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -789,7 +852,10 @@ ON DUPLICATE KEY UPDATE id = VALUES (id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -850,7 +916,10 @@ ON DUPLICATE KEY UPDATE id = VALUE(id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -911,7 +980,10 @@ ON DUPLICATE KEY UPDATE id = VALUE (id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -972,7 +1044,10 @@ ON DUPLICATE KEY UPDATE id = VALUE (id) + 999
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -1041,7 +1116,10 @@ ON DUPLICATE KEY UPDATE id = ABS(VALUE(id))
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -1110,7 +1188,10 @@ ON DUPLICATE KEY UPDATE id = ABS(VALUES(id))
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
 		(
 			[assignments] => Array
@@ -1179,7 +1260,10 @@ ON DUPLICATE KEY UPDATE id = VALUE(id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
 		(
 			[columnList] => Array
@@ -1240,7 +1324,10 @@ ON DUPLICATE KEY UPDATE id = VALUE(id)
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -1309,7 +1396,10 @@ ON DUPLICATE KEY UPDATE id = (SELECT VALUE(id))
 -----
 MariaStan\Ast\Query\InsertQuery
 (
-	[tableName] => parser_test
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
 	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
 		(
 			[columnList] => Array
@@ -1379,6 +1469,42 @@ MariaStan\Ast\Query\InsertQuery
 										)
 									[isDistinct] => false
 									[isSqlCalcFoundRows] => false
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+)
+-----
+INSERT INTO parser_test (parser_test.name) VALUE ('aa')
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
 								)
 						)
 				)

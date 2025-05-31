@@ -1,4 +1,4 @@
-WITH
+UPDATE
 -----
 UPDATE parser_test SET name = "aaa" WHERE id = 1 ORDER BY id + 1 LIMIT 5
 -----
@@ -6,7 +6,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -73,7 +76,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -136,7 +142,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -176,7 +185,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -227,7 +239,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -272,7 +287,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -299,7 +317,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -328,7 +349,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -357,7 +381,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -369,7 +396,10 @@ MariaStan\Ast\Query\UpdateQuery
 					[target] => MariaStan\Ast\Expr\Column
 						(
 							[name] => name
-							[tableName] => parser_test
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
 						)
 					[expression] => MariaStan\Ast\Expr\LiteralString
 						(
@@ -387,7 +417,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[alias] => t
 			[indexHints] => Array
 				(
@@ -400,7 +433,10 @@ MariaStan\Ast\Query\UpdateQuery
 					[target] => MariaStan\Ast\Expr\Column
 						(
 							[name] => name
-							[tableName] => t
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t
+								)
 						)
 					[expression] => MariaStan\Ast\Expr\LiteralString
 						(
@@ -431,7 +467,10 @@ MariaStan\Ast\Query\UpdateQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => parser_test
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => parser_test
+										)
 									[indexHints] => Array
 										(
 										)
@@ -443,7 +482,10 @@ MariaStan\Ast\Query\UpdateQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
 					[alias] => t2
 					[indexHints] => Array
 						(
@@ -457,7 +499,10 @@ MariaStan\Ast\Query\UpdateQuery
 					[target] => MariaStan\Ast\Expr\Column
 						(
 							[name] => name
-							[tableName] => t2
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t2
+								)
 						)
 					[expression] => MariaStan\Ast\Expr\LiteralString
 						(
@@ -488,7 +533,10 @@ MariaStan\Ast\Query\UpdateQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => parser_test
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => parser_test
+										)
 									[indexHints] => Array
 										(
 										)
@@ -500,7 +548,10 @@ MariaStan\Ast\Query\UpdateQuery
 				)
 			[rightTable] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => parser_test
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
 					[alias] => t2
 					[indexHints] => Array
 						(
@@ -512,12 +563,18 @@ MariaStan\Ast\Query\UpdateQuery
 					[left] => MariaStan\Ast\Expr\Column
 						(
 							[name] => id
-							[tableName] => t
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t
+								)
 						)
 					[right] => MariaStan\Ast\Expr\Column
 						(
 							[name] => id
-							[tableName] => t2
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t2
+								)
 						)
 				)
 		)
@@ -528,7 +585,10 @@ MariaStan\Ast\Query\UpdateQuery
 					[target] => MariaStan\Ast\Expr\Column
 						(
 							[name] => name
-							[tableName] => t2
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t2
+								)
 						)
 					[expression] => MariaStan\Ast\Expr\LiteralString
 						(
@@ -546,7 +606,10 @@ MariaStan\Ast\Query\UpdateQuery
 (
 	[table] => MariaStan\Ast\Query\TableReference\Table
 		(
-			[name] => parser_test
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
 			[indexHints] => Array
 				(
 				)
@@ -594,6 +657,42 @@ MariaStan\Ast\Query\UpdateQuery
 	[limit] => MariaStan\Ast\Expr\Placeholder
 		(
 			[name] => 4
+		)
+	[ignoreErrors] => false
+)
+-----
+UPDATE parser_test SET parser_test.name = "aaa"
+-----
+MariaStan\Ast\Query\UpdateQuery
+(
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[assignments] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
+						)
+					[expression] => MariaStan\Ast\Expr\LiteralString
+						(
+							[value] => aaa
+							[firstConcatPart] => aaa
+						)
+				)
 		)
 	[ignoreErrors] => false
 )

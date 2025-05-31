@@ -38,7 +38,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -99,7 +102,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -159,7 +165,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 					[leftTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => tbl
+							[name] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => tbl
+								)
 							[indexHints] => Array
 								(
 								)
@@ -201,7 +210,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => tbl
+													[name] => MariaStan\Ast\Query\TableReference\TableName
+														(
+															[name] => tbl
+														)
 													[indexHints] => Array
 														(
 														)
@@ -258,7 +270,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -309,7 +324,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 										)
 									[from] => MariaStan\Ast\Query\TableReference\Table
 										(
-											[name] => tbl
+											[name] => MariaStan\Ast\Query\TableReference\TableName
+												(
+													[name] => tbl
+												)
 											[indexHints] => Array
 												(
 												)
@@ -335,7 +353,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -388,7 +409,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 										)
 									[from] => MariaStan\Ast\Query\TableReference\Table
 										(
-											[name] => tbl
+											[name] => MariaStan\Ast\Query\TableReference\TableName
+												(
+													[name] => tbl
+												)
 											[indexHints] => Array
 												(
 												)
@@ -416,7 +440,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -441,7 +468,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 										)
 									[from] => MariaStan\Ast\Query\TableReference\Table
 										(
-											[name] => tbl2
+											[name] => MariaStan\Ast\Query\TableReference\TableName
+												(
+													[name] => tbl2
+												)
 											[indexHints] => Array
 												(
 												)
@@ -459,7 +489,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 										)
 									[from] => MariaStan\Ast\Query\TableReference\Table
 										(
-											[name] => tbl3
+											[name] => MariaStan\Ast\Query\TableReference\TableName
+												(
+													[name] => tbl3
+												)
 											[indexHints] => Array
 												(
 												)
@@ -481,7 +514,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl3
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl3
+						)
 					[indexHints] => Array
 						(
 						)
@@ -544,7 +580,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -630,14 +669,20 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 					[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
 					[leftTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => tbl
+							[name] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => tbl
+								)
 							[indexHints] => Array
 								(
 								)
 						)
 					[rightTable] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => tbl2
+							[name] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => tbl2
+								)
 							[indexHints] => Array
 								(
 								)
@@ -687,7 +732,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -718,7 +766,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => parser_test
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => parser_test
+										)
 									[indexHints] => Array
 										(
 										)
@@ -743,7 +794,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)
@@ -801,7 +855,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -819,7 +876,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 								)
 							[from] => MariaStan\Ast\Query\TableReference\Table
 								(
-									[name] => tbl
+									[name] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => tbl
+										)
 									[indexHints] => Array
 										(
 										)
@@ -839,7 +899,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 						)
 					[from] => MariaStan\Ast\Query\TableReference\Table
 						(
-							[name] => tbl
+							[name] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => tbl
+								)
 							[indexHints] => Array
 								(
 								)
@@ -899,7 +962,10 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 												)
 											[from] => MariaStan\Ast\Query\TableReference\Table
 												(
-													[name] => tbl
+													[name] => MariaStan\Ast\Query\TableReference\TableName
+														(
+															[name] => tbl
+														)
 													[indexHints] => Array
 														(
 														)
@@ -966,7 +1032,10 @@ MariaStan\Ast\Query\SelectQuery\WithSelectQuery
 				)
 			[from] => MariaStan\Ast\Query\TableReference\Table
 				(
-					[name] => tbl
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => tbl
+						)
 					[indexHints] => Array
 						(
 						)

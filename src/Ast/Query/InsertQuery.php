@@ -7,6 +7,7 @@ namespace MariaStan\Ast\Query;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Ast\Expr\Assignment;
 use MariaStan\Ast\Query\InsertBody\InsertBody;
+use MariaStan\Ast\Query\TableReference\TableName;
 use MariaStan\Parser\Position;
 
 final class InsertQuery extends BaseNode implements Query
@@ -15,7 +16,7 @@ final class InsertQuery extends BaseNode implements Query
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
-		public readonly string $tableName,
+		public readonly TableName $tableName,
 		public readonly InsertBody $insertBody,
 		public readonly ?array $onDuplicateKeyUpdate = null,
 		public readonly bool $ignoreErrors = false,

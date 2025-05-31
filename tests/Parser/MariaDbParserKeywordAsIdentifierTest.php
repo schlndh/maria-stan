@@ -154,7 +154,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		$from = $parserResult->from;
 		$this->assertNotNull($from);
 		$this->assertInstanceOf(Table::class, $from);
-		$this->assertSame($dbField->orgtable, $from->name);
+		$this->assertSame($dbField->orgtable, $from->name->name);
 		$this->assertSame($dbField->table, $from->alias);
 	}
 
@@ -240,6 +240,8 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 	{
 		$cases = TokenTypeEnum::cases();
 		$i = 1;
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$dbName = (string) $db->query('SELECT DATABASE()')->fetch_column();
 
 		// Too many keys specified; max 64 keys allowed
 		foreach (array_chunk($cases, 60) as $chunk) {
@@ -255,7 +257,6 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 			$columnSql = implode(",\n", $columns);
 			$indexSql = implode(",\n", $indices);
-			$db = TestCaseHelper::getDefaultSharedConnection();
 			$db->query("
 				CREATE OR REPLACE TABLE {$tableName} (
 					{$columnSql},
@@ -270,6 +271,10 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 
 				yield "table.column - {$tokenType->value}" => [
 					'select' => "SELECT {$tableName}.{$tokenType->value} FROM {$tableName};",
+				];
+
+				yield "db.table.column - {$tokenType->value}" => [
+					'select' => "SELECT {$dbName}.{$tableName}.{$tokenType->value} FROM {$tableName};",
 				];
 
 				yield "JOIN USING - {$tokenType->value}" => [
