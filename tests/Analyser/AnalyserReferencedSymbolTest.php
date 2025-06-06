@@ -7,9 +7,6 @@ namespace MariaStan\Analyser;
 use MariaStan\Analyser\ReferencedSymbol\ReferencedSymbol;
 use MariaStan\Analyser\ReferencedSymbol\Table;
 use MariaStan\Analyser\ReferencedSymbol\TableColumn;
-use MariaStan\DbReflection\InformationSchemaParser;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
-use MariaStan\Parser\MariaDbParser;
 use MariaStan\TestCaseHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -199,19 +196,8 @@ class AnalyserReferencedSymbolTest extends TestCase
 	 */
 	public function testValid(string $query, ?array $expectedReferencedSymbols): void
 	{
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 		$this->assertEqualsCanonicalizing($expectedReferencedSymbols, $result->referencedSymbols);
-	}
-
-	private function createAnalyser(): Analyser
-	{
-		$db = TestCaseHelper::getDefaultSharedConnection();
-		$functionInfoRegistry = TestCaseHelper::createFunctionInfoRegistry();
-		$parser = new MariaDbParser($functionInfoRegistry);
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-
-		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}
 }

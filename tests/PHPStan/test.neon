@@ -1,11 +1,12 @@
 parameters:
 	maria-stan:
+		reflection:
+			defaultDatabase: %env.testdb_dbname%
 		db:
 			host: %env.testdb_host%
 			port: int(%env.testdb_port%)
 			user: %env.testdb_user%
 			password: %env.testdb_password%
-			database: %env.testdb_dbname%
 	universalObjectCratesClasses:
 		- MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate
 

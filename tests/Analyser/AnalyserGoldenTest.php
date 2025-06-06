@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Analyser;
 
 use MariaStan\Analyser\PlaceholderTypeProvider\VarcharPlaceholderTypeProvider;
-use MariaStan\DbReflection\InformationSchemaParser;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\CodeTestCase;
-use MariaStan\Parser\MariaDbParser;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
 use PHPUnit\Framework\TestCase;
@@ -104,7 +101,7 @@ class AnalyserGoldenTest extends TestCase
 	public static function getTestOutput(string $query, array $params = []): string
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = self::createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query, new VarcharPlaceholderTypeProvider());
 		$db->begin_transaction();
 
@@ -141,17 +138,6 @@ class AnalyserGoldenTest extends TestCase
 				$dbData,
 			],
 		));
-	}
-
-	private static function createAnalyser(): Analyser
-	{
-		$db = TestCaseHelper::getDefaultSharedConnection();
-		$functionInfoRegistry = TestCaseHelper::createFunctionInfoRegistry();
-		$parser = new MariaDbParser($functionInfoRegistry);
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-
-		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}
 
 	/** @return array<string, mixed> */

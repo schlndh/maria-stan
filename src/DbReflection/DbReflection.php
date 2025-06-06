@@ -12,6 +12,15 @@ interface DbReflection
 	/** @throws DbReflectionException */
 	public function findTableSchema(string $table): Table;
 
+	/** @throws DbReflectionException */
+	public function findViewDefinition(string $view): string;
+
+	/**
+	 * @return array<string, array<string, string>> DB name => view name => definition
+	 * @throws DbReflectionException
+	 */
+	public function getViewDefinitions(): array;
+
 	/**
 	 * Get DB reflection has. It should change when the underlying schema changes.
 	 *

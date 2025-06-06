@@ -4,9 +4,10 @@ includes:
 parameters:
 	level: 9
 	maria-stan:
+		reflection:
+			defaultDatabase: 'maria-stan-example-mysqli'
 		db:
 			host: 127.0.0.1
 			port: 13306
 			user: 'root'
 			password: 'root'
-			database: 'maria-stan-example-mysqli'

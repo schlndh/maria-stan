@@ -1,14 +1,17 @@
- ------ ---------------------------------------------------------------------------------- 
-  Line   run.php                                                                           
- ------ ---------------------------------------------------------------------------------- 
-  28     Dumped type: array<int, array{id: int, name: string, type:                        
-         'elementary'|'secondary'|'university'}>                                           
-  42     Dumped type: array<int, array{name: string, average_no_classes: numeric-string}>  
-  55     Dumped type: array<int, array{id: int, name?: string, type?:                      
-         'elementary'|'secondary'|'university'}>                                           
-  59     Table 'non_existent_table' doesn't exist                                          
-  67     The used SELECT statements have a different number of columns: 3 vs 2.            
- ------ ---------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------ 
+  Line   run.php                                                                 
+ ------ ------------------------------------------------------------------------ 
+  28     Dumped type: array<int, array{id: int, name: string, type:              
+         'elementary'|'secondary'|'university'}>                                 
+  42     Dumped type: array<int, array{name: string, average_no_classes:         
+         numeric-string}>                                                        
+  55     Dumped type: array<int, array{id: int, name?: string, type?:            
+         'elementary'|'secondary'|'university'}>                                 
+  59     Table 'non_existent_table' doesn't exist                                
+         🪪 mariaStan.unknownTable                                               
+  67     The used SELECT statements have a different number of columns: 3 vs 2.  
+         🪪 mariaStan.columnMismatch                                             
+ ------ ------------------------------------------------------------------------ 
 
 
  [ERROR] Found 5 errors                                                                       

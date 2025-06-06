@@ -6,9 +6,9 @@ parameters:
 			port: 3306
 			user: ''
 			password: ''
-			database: ''
 		reflection:
 			file:
+			defaultDatabase: ''
 		columnTypeOverrides: []
 parametersSchema:
 	maria-stan: structure([
@@ -18,9 +18,10 @@ parametersSchema:
 			port: int()
 			user: string()
 			password: string()
-			database: string()
 		])
 		reflection: structure([
+			# Default database for resolving table names.
+			defaultDatabase: string()
 			# Schema dump for file DB reflection.
 			file: anyOf(string(), null)
 		])
@@ -44,7 +45,6 @@ services:
 			hostname: %maria-stan.db.host%
 			username: %maria-stan.db.user%
 			password: %maria-stan.db.password%
-			database: %maria-stan.db.database%
 			port: %maria-stan.db.port%
 		setup:
 			- options(::constant(MYSQLI_OPT_INT_AND_FLOAT_NATIVE), 1)
@@ -56,11 +56,13 @@ services:
 		autowired: false
 		arguments:
 			dumpFile: %maria-stan.reflection.file%
+			defaultDatabase: %maria-stan.reflection.defaultDatabase%
 	mariaDbOnlineDbReflection:
 		class: MariaStan\DbReflection\MariaDbOnlineDbReflection
 		autowired: false
 		arguments:
 			mysqli: @mariaStanDb
+			defaultDatabase: %maria-stan.reflection.defaultDatabase%
 	mariaDbReflection: @mariaDbOnlineDbReflection
 	-
 		class: MariaStan\Analyser\Analyser

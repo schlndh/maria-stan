@@ -3,7 +3,7 @@
 MariaStan is a static analysis tool for MariaDB queries. Its primary purpose is to serve as a basis for
 [PHPStan](https://phpstan.org/) extensions.
 
-**Current status** (19. 04. 2025):
+**Current status** (06. 06. 2025):
 
 MariaStan is very much incomplete. It covers probably ~90% of use-cases in a large code-base where I use it
 (hundreds of tables, thousands of queries). As a result there is not much activity. But it is actively maintained in
@@ -25,8 +25,6 @@ to your `phpstan.neon`:
 ```neon
 includes:
     - ./vendor/schlndh/maria-stan/extension.neon
-
-
 ```
 
 ## Configuration
@@ -37,13 +35,14 @@ You'll need to add the following configuration to your `phpstan.neon` and set pr
 ```neon
 parameters: 
     maria-stan:
+        # Change these to match your database
+        reflection:
+            defaultDatabase: 'database'
         db:
-            # Change these to match your database
             host: 127.0.0.1
             port: 3306
             user: 'root'
             password: ''
-            database: 'db'
 ```
 
 MariaStan needs access to a database to fetch the schema for query analysis. It only reads table schema and does not
@@ -72,6 +71,7 @@ Then add the following to your `phpstan.neon`:
 parameters:
     maria-stan:
         reflection:
+            defaultDatabase: 'database'
             file: %rootDir%/../../../maria-stan-schema.dump
 services:
     mariaDbReflection: @mariaDbFileDbReflection

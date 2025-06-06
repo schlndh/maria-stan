@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Method MariaStan\\DbReflection\\MariaDbOnlineDbReflection\:\:getViewDefinitions\(\) should return array\<string, array\<string, string\>\> but returns array\<array\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/DbReflection/MariaDbOnlineDbReflection.php
+
+		-
 			message: '#^Doing instanceof PHPStan\\Type\\Constant\\ConstantStringType is error\-prone and deprecated\. Use Type\:\:getConstantStrings\(\) instead\.$#'
 			identifier: phpstanApi.instanceofType
 			count: 1

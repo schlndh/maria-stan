@@ -11,9 +11,6 @@ use MariaStan\Analyser\PlaceholderTypeProvider\VarcharPlaceholderTypeProvider;
 use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Placeholder;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
-use MariaStan\DbReflection\InformationSchemaParser;
-use MariaStan\DbReflection\MariaDbOnlineDbReflection;
-use MariaStan\Parser\MariaDbParser;
 use MariaStan\Schema\DbType\DbType;
 use MariaStan\Schema\DbType\DbTypeEnum;
 use MariaStan\Schema\DbType\EnumType;
@@ -1413,7 +1410,7 @@ class AnalyserTest extends TestCase
 	public function testValid(string $query, array $params = [], array $explicitFieldTypes = []): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query, new VarcharPlaceholderTypeProvider());
 		$isUnhanhledExpressionTypeError = static fn (AnalyserError $e) => str_starts_with(
 			$e->message,
@@ -2172,7 +2169,7 @@ class AnalyserTest extends TestCase
 	public function testValidNullability(string $query, array $params = []): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query, new VarcharPlaceholderTypeProvider());
 
 		$this->assertSame(count($params), $result->positionalPlaceholderCount);
@@ -3348,7 +3345,7 @@ class AnalyserTest extends TestCase
 	public function testInvalid(string $query, AnalyserError|array $error, ?int $dbErrorCode): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 
 		if (! is_array($error)) {
@@ -3439,7 +3436,7 @@ class AnalyserTest extends TestCase
 	public function testPositionalPlaceholderCount(string $query, int $expectedCount): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 		$this->assertCount(
 			0,
@@ -3553,7 +3550,7 @@ class AnalyserTest extends TestCase
 		array $params = [],
 	): void {
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query);
 		$this->assertEquals($expectedRange, $result->rowCountRange);
 		$db->begin_transaction();
@@ -3599,7 +3596,7 @@ class AnalyserTest extends TestCase
 	public function testPlaceholderTypeProvider(): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
-		$analyser = $this->createAnalyser();
+		$analyser = TestCaseHelper::createAnalyser();
 		$query = 'SELECT ?, ?, ?';
 		$params = array_fill(0, 3, 1);
 		$paramTypeString = 'ids';
@@ -3702,17 +3699,6 @@ class AnalyserTest extends TestCase
 		$types = array_fill(0, $count, new IntType());
 
 		return new TupleType($types, false);
-	}
-
-	private function createAnalyser(): Analyser
-	{
-		$db = TestCaseHelper::getDefaultSharedConnection();
-		$functionInfoRegistry = TestCaseHelper::createFunctionInfoRegistry();
-		$parser = new MariaDbParser($functionInfoRegistry);
-		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
-
-		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}
 
 	private function getFieldNameForErrorMessage(QueryResultField $field): string

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
+use MariaStan\TestCaseHelper;
 use MariaStan\Testing\MariaStanRuleTestCase;
 use mysqli;
 
 use function array_map;
-use function assert;
 use function basename;
 use function dirname;
 use function file_get_contents;
@@ -47,8 +47,7 @@ abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 
 	public function getTestOutput(string $file): string
 	{
-		$mysqli = self::getContainer()->getService('mariaStanDb');
-		assert($mysqli instanceof mysqli);
+		$mysqli = TestCaseHelper::getDefaultSharedConnection();
 		$this->initData($mysqli);
 		$errors = $this->gatherAnalyserErrors([$file]);
 

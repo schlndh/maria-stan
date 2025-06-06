@@ -2,6 +2,7 @@ parameters:
 	maria-stan:
 		reflection:
 			file: %rootDir%/../../../tests/PHPStan/Type/MySQLi/schema.dump
+			defaultDatabase: %env.testdb_dbname%
 	universalObjectCratesClasses:
 		- MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate
 services:

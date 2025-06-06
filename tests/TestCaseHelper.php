@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace MariaStan;
 
+use MariaStan\Analyser\Analyser;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory;
+use MariaStan\DbReflection\InformationSchemaParser;
+use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
+use MariaStan\Util\MysqliUtil;
 use mysqli;
 use mysqli_sql_exception;
 
@@ -60,6 +64,18 @@ abstract class TestCaseHelper
 	public static function createParser(): MariaDbParser
 	{
 		return new MariaDbParser(self::createFunctionInfoRegistry());
+	}
+
+	public static function createAnalyser(): Analyser
+	{
+		$db = self::getDefaultSharedConnection();
+		$dbName = MysqliUtil::getDatabaseName($db);
+		$functionInfoRegistry = self::createFunctionInfoRegistry();
+		$parser = new MariaDbParser($functionInfoRegistry);
+		$informationSchemaParser = new InformationSchemaParser($parser);
+		$reflection = new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser);
+
+		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}
 
 	private static function getConfigValue(string $prefix, string $property): string

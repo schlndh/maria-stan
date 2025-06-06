@@ -8,6 +8,8 @@ use MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
+use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
+use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -125,6 +127,11 @@ class DbReflectionTest extends TestCase
 			);
 		");
 
+		$db->query('
+			CREATE OR REPLACE VIEW db_reflection_test_view AS
+			SELECT * FROM db_reflection_test;
+		');
+
 		self::$dumpFile = tmpfile() ?: throw new RuntimeException('tmpfile() failed!');
 		fwrite(self::$dumpFile, MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)));
 	}
@@ -134,20 +141,21 @@ class DbReflectionTest extends TestCase
 	{
 		self::initDb();
 		$db = TestCaseHelper::getDefaultSharedConnection();
+		$dbName = MysqliUtil::getDatabaseName($db);
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
 
-		yield 'online' => [new MariaDbOnlineDbReflection($db, $informationSchemaParser)];
+		yield 'online' => [new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser)];
 
 		assert(self::$dumpFile !== null);
 		$meta_data = stream_get_meta_data(self::$dumpFile);
 		self::assertArrayHasKey('uri', $meta_data);
 		$filename = $meta_data["uri"];
 
-		yield 'file - current' => [new MariaDbFileDbReflection($filename, $informationSchemaParser)];
+		yield 'file - current' => [new MariaDbFileDbReflection($filename, $dbName, $informationSchemaParser)];
 
-		yield 'file - v2' => [
-			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v2.bin', $informationSchemaParser),
+		yield 'file - v3' => [
+			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v3.bin', $dbName, $informationSchemaParser),
 		];
 	}
 
@@ -263,6 +271,27 @@ class DbReflectionTest extends TestCase
 		$reflection->findTableSchema('missing_table_123_abc');
 	}
 
+	/** @dataProvider provideDbReflections */
+	public function testView(DbReflection $reflection): void
+	{
+		$definition = $reflection->findViewDefinition('db_reflection_test_view');
+		$parser = TestCaseHelper::createParser();
+		$parsedQuery = $parser->parseSingleQuery($definition);
+		$this->assertInstanceOf(SimpleSelectQuery::class, $parsedQuery);
+		$table = $parsedQuery->from;
+		$this->assertInstanceOf(Table::class, $table);
+		$this->assertSame('db_reflection_test', $table->name->name);
+
+		$allViews = $reflection->getViewDefinitions();
+		$hasTestView = false;
+
+		foreach ($allViews as $views) {
+			$hasTestView = $hasTestView || isset($views['db_reflection_test_view']);
+		}
+
+		$this->assertTrue($hasTestView, 'db_reflection_test_view was not found among all views.');
+	}
+
 	public function testOnlineDbReflectionHash(): void
 	{
 		self::initDb();
@@ -270,7 +299,7 @@ class DbReflectionTest extends TestCase
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
 		$db->query('DROP TABLE IF EXISTS db_reflection_hash_test;');
-		$dbReflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
+		$dbReflection = new MariaDbOnlineDbReflection($db, MysqliUtil::getDatabaseName($db), $informationSchemaParser);
 		$prevHashes = [$dbReflection->getHash()];
 
 		$db->query('CREATE TABLE db_reflection_hash_test (id INT);');
@@ -298,31 +327,27 @@ class DbReflectionTest extends TestCase
 	{
 		self::initDb();
 		$db = TestCaseHelper::getDefaultSharedConnection();
+		$dbName = MysqliUtil::getDatabaseName($db);
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
-		$onlineReflection = new MariaDbOnlineDbReflection($db, $informationSchemaParser);
+		$onlineReflection = new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser);
 
 		yield 'online' => [static fn () => $onlineReflection->getHash()];
 
 		yield 'file' => [
-			static function () use ($db, $informationSchemaParser): string {
+			static function () use ($db, $dbName, $informationSchemaParser): string {
 				$tmpFileName = tempnam(sys_get_temp_dir(), 'maria_stan_');
 
 				if ($tmpFileName === false) {
 					self::fail('Failed to create temp file.');
 				}
 
-				if (
-					file_put_contents(
-						$tmpFileName,
-						MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)),
-					) === false
-				) {
+				if (file_put_contents($tmpFileName, MariaDbFileDbReflection::dumpSchema($db, $dbName)) === false) {
 					self::fail('Failed to write to temp file.');
 				}
 
 				try {
-					return (new MariaDbFileDbReflection($tmpFileName, $informationSchemaParser))->getHash();
+					return (new MariaDbFileDbReflection($tmpFileName, $dbName, $informationSchemaParser))->getHash();
 				} finally {
 					unlink($tmpFileName);
 				}
