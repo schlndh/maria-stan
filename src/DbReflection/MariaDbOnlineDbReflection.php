@@ -69,11 +69,11 @@ class MariaDbOnlineDbReflection implements DbReflection
 		);
 	}
 
-	public function findViewDefinition(string $view): string
+	public function findViewDefinition(string $view, ?string $database = null): string
 	{
-		return $this->getViewDefinitions()[$this->defaultDatabase][$view]
+		return $this->getViewDefinitions()[$database ?? $this->defaultDatabase][$view]
 			?? throw new ViewDoesNotExistException(
-				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($view),
+				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($view, $database),
 				MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 			);
 	}

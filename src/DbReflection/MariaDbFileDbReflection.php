@@ -113,11 +113,11 @@ class MariaDbFileDbReflection implements DbReflection
 		);
 	}
 
-	public function findViewDefinition(string $view): string
+	public function findViewDefinition(string $view, ?string $database = null): string
 	{
-		return $this->schemaDump['databases'][$this->defaultDatabase]['views'][$view]['definition']
+		return $this->schemaDump['databases'][$database ?? $this->defaultDatabase]['views'][$view]['definition']
 			?? throw new ViewDoesNotExistException(
-				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($view),
+				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($view, $database),
 				MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 			);
 	}

@@ -6,7 +6,6 @@ namespace MariaStan\PHPStan\Helper\MySQLi;
 
 use InvalidArgumentException;
 use MariaStan\Analyser\Analyser;
-use MariaStan\Analyser\AnalyserError;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
@@ -91,10 +90,7 @@ final class PHPStanMySQLiHelper
 			array_merge(
 				$errors,
 				...array_map(
-					static fn (AnalyserResult $r) => array_map(static fn (AnalyserError $e) => new MariaStanError(
-						$e->message,
-						$e->type->value,
-					), $r->errors),
+					static fn (AnalyserResult $r) => MariaStanError::arrayFromAnalyserErrors($r->errors),
 					$analyserResults,
 				),
 			),

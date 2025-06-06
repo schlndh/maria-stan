@@ -13,7 +13,7 @@ interface DbReflection
 	public function findTableSchema(string $table): Table;
 
 	/** @throws DbReflectionException */
-	public function findViewDefinition(string $view): string;
+	public function findViewDefinition(string $view, ?string $database = null): string;
 
 	/**
 	 * @return array<string, array<string, string>> DB name => view name => definition

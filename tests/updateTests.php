@@ -8,7 +8,8 @@ use MariaStan\Analyser\AnalyserGoldenTest;
 use MariaStan\Parser\CodeTestParser;
 use MariaStan\Parser\MariaDbLexerTest;
 use MariaStan\Parser\MariaDbParserTest;
-use MariaStan\PHPStan\Rules\MySQLi\BaseRuleTestCase;
+use MariaStan\PHPStan\Rules\BaseRuleTestCase;
+use MariaStan\PHPStan\Rules\CheckViewRuleTest;
 use MariaStan\PHPStan\Rules\MySQLi\MySQLiRuleTest;
 use MariaStan\PHPStan\Rules\MySQLi\MySQLiWrapperRuleTest;
 use PHPUnit\TextUI\XmlConfiguration\Loader;
@@ -130,7 +131,7 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	file_put_contents($fileName, $newCode);
 }
 
-$ruleTests = [new MySQLiRuleTest(), new MySQLiWrapperRuleTest()];
+$ruleTests = [new MySQLiRuleTest(), new MySQLiWrapperRuleTest(), new CheckViewRuleTest()];
 
 foreach ($ruleTests as $ruleTest) {
 	foreach ($ruleTest->getTestInputFiles() as $fileName) {

@@ -84,3 +84,9 @@ services:
 			dbReflection: @mariaDbReflection
 		tags:
 			- phpstan.resultCacheMetaExtension
+	-
+		class: MariaStan\PHPStan\Rules\CheckViewRule
+		arguments:
+			dbReflection: @mariaDbReflection
+		tags:
+			- phpstan.rules.rule

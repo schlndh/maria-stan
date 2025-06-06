@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MariaStan\PHPStan\Rules\MySQLi;
+namespace MariaStan\PHPStan\Rules;
 
 use MariaStan\TestCaseHelper;
 use MariaStan\Testing\MariaStanRuleTestCase;
@@ -90,8 +90,8 @@ abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 	public static function getAdditionalConfigFiles(): array
 	{
 		return [
-			__DIR__ . '/../../../../extension.mysqli.neon',
-			__DIR__ . '/../../test.neon',
+			__DIR__ . '/../../../extension.mysqli.neon',
+			__DIR__ . '/../test.neon',
 		];
 	}
 }

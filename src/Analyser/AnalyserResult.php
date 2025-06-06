@@ -10,7 +10,7 @@ final class AnalyserResult
 {
 	/**
 	 * @param ?array<QueryResultField> $resultFields fields in the order they are returned by query, null = no analysis
-	 * @param array<AnalyserError> $errors
+	 * @param list<AnalyserError> $errors
 	 * @param ?array<ReferencedSymbol> $referencedSymbols null = no analysis
 	 */
 	public function __construct(

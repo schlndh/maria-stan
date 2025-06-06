@@ -118,6 +118,7 @@ Here is a list of features that you could implement into your own PHPStan extens
   automatically via foreign keys.
 - Custom PHPDoc types: e.g. [MySQLiTableAssocRowType](https://github.com/schlndh/maria-stan/blob/master/src/PHPStan/Type/MySQLi/MySQLiTableAssocRowType.php).
 - PHPStan result cache is invalidated when DB schema changes via [ResultCacheMetaExtension](https://phpstan.org/developing-extensions/result-cache-meta-extensions).
+- Check views by placing `MariaStan\\PHPStan\\checkView` or `MariaStan\\PHPStan\\checkAllViews` in a PHP file that PHPStan analyses. These calls should not be executed, because you probably have MariaStan installed as a dev dependency.
 
 ## Limitations
 

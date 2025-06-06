@@ -34,8 +34,12 @@ class AnalyserErrorBuilder
 		);
 	}
 
-	public static function createTableDoesntExistErrorMessage(string $table): string
+	public static function createTableDoesntExistErrorMessage(string $table, ?string $database = null): string
 	{
+		if ($database !== null) {
+			$table = $database . '.' . $table;
+		}
+
 		return "Table '{$table}' doesn't exist";
 	}
 

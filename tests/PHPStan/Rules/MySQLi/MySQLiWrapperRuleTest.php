@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules\MySQLi;
 
+use MariaStan\PHPStan\Rules\BaseRuleTestCase;
 use MariaStan\PHPStan\Rules\MySQLi\data\MySQLiWrapperRuleInvalidDataTest;
 use MariaStan\PHPStan\Rules\MySQLi\data\MySQLiWrapperRuleValidDataTest;
 use mysqli;

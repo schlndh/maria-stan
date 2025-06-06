@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Helper;
 
+use MariaStan\Analyser\AnalyserError;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
@@ -35,6 +36,18 @@ final class MariaStanError
 	public static function arrayToPHPStanRuleErrors(array $errors): array
 	{
 		return array_map(static fn (self $e) => $e->toPHPStanRuleError(), $errors);
+	}
+
+	/**
+	 * @param list<AnalyserError> $analyserErrors
+	 * @return list<self>
+	 */
+	public static function arrayFromAnalyserErrors(array $analyserErrors): array
+	{
+		return array_map(static fn (AnalyserError $e) => new self(
+			$e->message,
+			$e->type->value,
+		), $analyserErrors);
 	}
 
 	/**

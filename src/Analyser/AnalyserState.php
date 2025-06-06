@@ -66,7 +66,7 @@ use function strtoupper;
 
 final class AnalyserState
 {
-	/** @var array<AnalyserError> */
+	/** @var list<AnalyserError> */
 	private array $errors = [];
 	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
