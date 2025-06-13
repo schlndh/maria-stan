@@ -132,8 +132,19 @@ class DbReflectionTest extends TestCase
 			SELECT * FROM db_reflection_test;
 		');
 
+		$secondDbName = TestCaseHelper::getSecondDbName();
+		$secondDbNameQuoted = MysqliUtil::quoteIdentifier($secondDbName);
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbNameQuoted}.db_reflection_test (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+			);
+		");
+
 		self::$dumpFile = tmpfile() ?: throw new RuntimeException('tmpfile() failed!');
-		fwrite(self::$dumpFile, MariaDbFileDbReflection::dumpSchema($db, MysqliUtil::getDatabaseName($db)));
+		fwrite(
+			self::$dumpFile,
+			MariaDbFileDbReflection::dumpSchema($db, [TestCaseHelper::getDefaultDbName(), $secondDbName]),
+		);
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -199,6 +210,8 @@ class DbReflectionTest extends TestCase
 			'val_binary' => new Column('val_binary', new VarcharType(), false),
 			'val_varbinary' => new Column('val_varbinary', new VarcharType(), false),
 		], $schema->columns);
+		$fqnSchema = $reflection->findTableSchema($tableName, TestCaseHelper::getDefaultDbName());
+		$this->assertEquals($schema, $fqnSchema, 'Schemas with and without DB name differ.');
 	}
 
 	/** @dataProvider provideDbReflections */
@@ -221,6 +234,17 @@ class DbReflectionTest extends TestCase
 		$this->assertIntDefaultValue(0, $schema->columns['int_default_string']);
 
 		$this->assertFnCallDefaultValue('ROUND', $schema->columns['fn_call_default']);
+	}
+
+	/** @dataProvider provideDbReflections */
+	public function testSeconDb(DbReflection $reflection): void
+	{
+		$tableName = 'db_reflection_test';
+		$schema = $reflection->findTableSchema($tableName, TestCaseHelper::getSecondDbName());
+		$this->assertSame($tableName, $schema->name);
+		$this->assertEquals($schema->columns, [
+			'id' => new Column('id', new IntType(), false, null, true),
+		]);
 	}
 
 	/** @return iterable<string, array<mixed>> */

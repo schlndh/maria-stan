@@ -11,10 +11,13 @@ use MariaStan\DbReflection\Exception\ViewDoesNotExistException;
 use MariaStan\Schema\Table;
 use MariaStan\Util\MariaDbErrorCodes;
 
+use function array_column;
+use function array_fill_keys;
 use function array_map;
 use function file_get_contents;
 use function hash;
 use function is_array;
+use function is_string;
 use function serialize;
 use function unserialize;
 
@@ -76,10 +79,15 @@ class MariaDbFileDbReflection implements DbReflection
 		$this->schemaDump = $dump;
 	}
 
-	/** @throws DbReflectionException */
-	public function findTableSchema(string $table): Table
+	public function getDefaultDatabase(): string
 	{
-		$tableDump = $this->schemaDump['databases'][$this->defaultDatabase]['tables'][$table] ?? [];
+		return $this->defaultDatabase;
+	}
+
+	/** @throws DbReflectionException */
+	public function findTableSchema(string $table, ?string $database = null): Table
+	{
+		$tableDump = $this->schemaDump['databases'][$database ?? $this->defaultDatabase]['tables'][$table] ?? [];
 
 		if (! is_array($tableDump)) {
 			throw new UnexpectedValueException(
@@ -136,59 +144,67 @@ class MariaDbFileDbReflection implements DbReflection
 		return hash('xxh128', serialize($this->schemaDump));
 	}
 
-	public static function dumpSchema(\mysqli $db, string $database): string
+	/** @param string|array<string>|null $databases null = all */
+	public static function dumpSchema(\mysqli $db, string|array|null $databases): string
 	{
+		if (is_string($databases)) {
+			$databases = [$databases];
+		} elseif ($databases === null) {
+			$result = $db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+			$databases = array_column($result->fetch_all(), 0);
+		}
+
 		$result = [
 			'__version' => self::DUMP_VERSION,
-			'databases' => [
-				$database => [
-					'tables' => [],
-					'views' => [],
-				],
-			],
+			'databases' => array_fill_keys($databases, [
+				'tables' => [],
+				'views' => [],
+			]),
 		];
 
-		$stmt = $db->prepare('
-			SELECT * FROM information_schema.COLUMNS
-			WHERE TABLE_SCHEMA = ?
-			ORDER BY TABLE_NAME, ORDINAL_POSITION
-		');
-		$stmt->execute([$database]);
-		$columns = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);
+		foreach ($databases as $database) {
+			$stmt = $db->prepare('
+				SELECT * FROM information_schema.COLUMNS
+				WHERE TABLE_SCHEMA = ?
+				ORDER BY TABLE_NAME, ORDINAL_POSITION
+			');
+			$stmt->execute([$database]);
+			$columns = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-		/** @var array<string, scalar|null> $col */
-		foreach ($columns as $col) {
-			$result['databases'][$database]['tables'][$col['TABLE_NAME']]['columns'][] = $col;
-		}
+			/** @var array<string, scalar|null> $col */
+			foreach ($columns as $col) {
+				$result['databases'][$database]['tables'][$col['TABLE_NAME']]['columns'][] = $col;
+			}
 
-		$stmt = $db->prepare('
-			SELECT * FROM information_schema.TABLE_CONSTRAINTS tc
-			JOIN information_schema.KEY_COLUMN_USAGE kcu
-				USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
-			WHERE TABLE_SCHEMA = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
-				/* This happens when there is a FK and UNIQUE with same name. */
-				AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
-			ORDER BY TABLE_NAME, CONSTRAINT_NAME, kcu.ORDINAL_POSITION
-		');
-		$stmt->execute([$database]);
-		$foreignKeys = $stmt->get_result()->fetch_all(\MYSQLI_ASSOC);
+			$stmt = $db->prepare('
+				SELECT * FROM information_schema.TABLE_CONSTRAINTS tc
+				JOIN information_schema.KEY_COLUMN_USAGE kcu
+					USING (CONSTRAINT_SCHEMA, CONSTRAINT_NAME, TABLE_SCHEMA, TABLE_NAME)
+				WHERE TABLE_SCHEMA = ? AND tc.CONSTRAINT_TYPE = "FOREIGN KEY"
+					/* This happens when there is a FK and UNIQUE with same name. */
+					AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+				ORDER BY TABLE_NAME, CONSTRAINT_NAME, kcu.ORDINAL_POSITION
+			');
+			$stmt->execute([$database]);
+			$foreignKeys = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-		/** @var array<string, scalar|null> $fk */
-		foreach ($foreignKeys as $fk) {
-			$result['databases'][$database]['tables'][$fk['TABLE_NAME']]['foreign_keys'][] = $fk;
-		}
+			/** @var array<string, scalar|null> $fk */
+			foreach ($foreignKeys as $fk) {
+				$result['databases'][$database]['tables'][$fk['TABLE_NAME']]['foreign_keys'][] = $fk;
+			}
 
-		$stmt = $db->prepare('
-			SELECT TABLE_SCHEMA, TABLE_NAME, VIEW_DEFINITION
-			FROM information_schema.VIEWS
-			WHERE TABLE_SCHEMA = ?
-		');
-		$stmt->execute([$database]);
-		$views = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+			$stmt = $db->prepare('
+				SELECT TABLE_SCHEMA, TABLE_NAME, VIEW_DEFINITION
+				FROM information_schema.VIEWS
+				WHERE TABLE_SCHEMA = ?
+			');
+			$stmt->execute([$database]);
+			$views = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-		foreach ($views as $view) {
-			$result['databases'][$view['TABLE_SCHEMA']]['views'][$view['TABLE_NAME']]
-				= ['definition' => $view['VIEW_DEFINITION']];
+			foreach ($views as $view) {
+				$result['databases'][$view['TABLE_SCHEMA']]['views'][$view['TABLE_NAME']]
+					= ['definition' => $view['VIEW_DEFINITION']];
+			}
 		}
 
 		return serialize($result);

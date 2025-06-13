@@ -9,8 +9,11 @@ use MariaStan\Schema\Table;
 
 interface DbReflection
 {
+	/** @phpstan-pure */
+	public function getDefaultDatabase(): string;
+
 	/** @throws DbReflectionException */
-	public function findTableSchema(string $table): Table;
+	public function findTableSchema(string $table, ?string $database = null): Table;
 
 	/** @throws DbReflectionException */
 	public function findViewDefinition(string $view, ?string $database = null): string;

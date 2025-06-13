@@ -19,7 +19,7 @@ use const MYSQLI_ASSOC;
 
 class MariaDbOnlineDbReflection implements DbReflection
 {
-	/** @var array<string, Table> table name => schema */
+	/** @var array<string, array<string, Table>> database => table name => schema */
 	private array $parsedSchemas = [];
 
 	public function __construct(
@@ -29,11 +29,18 @@ class MariaDbOnlineDbReflection implements DbReflection
 	) {
 	}
 
-	/** @throws DbReflectionException */
-	public function findTableSchema(string $table): Table
+	public function getDefaultDatabase(): string
 	{
-		if (isset($this->parsedSchemas[$table])) {
-			return $this->parsedSchemas[$table];
+		return $this->defaultDatabase;
+	}
+
+	/** @throws DbReflectionException */
+	public function findTableSchema(string $table, ?string $database = null): Table
+	{
+		$database ??= $this->defaultDatabase;
+
+		if (isset($this->parsedSchemas[$database][$table])) {
+			return $this->parsedSchemas[$database][$table];
 		}
 
 		try {
@@ -42,7 +49,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 				WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
 				ORDER BY ORDINAL_POSITION
 			');
-			$stmt->execute([$this->defaultDatabase, $table]);
+			$stmt->execute([$database, $table]);
 			/** @var array<array<string, scalar|null>> $tableCols */
 			$tableCols = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -55,14 +62,14 @@ class MariaDbOnlineDbReflection implements DbReflection
 					AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
 				ORDER BY CONSTRAINT_NAME, kcu.ORDINAL_POSITION
 			');
-			$stmt->execute([$this->defaultDatabase, $table]);
+			$stmt->execute([$database, $table]);
 			/** @var array<array<string, scalar|null>> $foreignKeys */
 			$foreignKeys = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 		} catch (mysqli_sql_exception $e) {
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
 		}
 
-		return $this->parsedSchemas[$table] = new Table(
+		return $this->parsedSchemas[$database][$table] = new Table(
 			$table,
 			$this->schemaParser->parseTableColumns($table, $tableCols),
 			$this->schemaParser->parseTableForeignKeys($foreignKeys),
@@ -98,6 +105,6 @@ class MariaDbOnlineDbReflection implements DbReflection
 
 	public function getHash(): string
 	{
-		return hash('xxh128', MariaDbFileDbReflection::dumpSchema($this->mysqli, $this->defaultDatabase));
+		return hash('xxh128', MariaDbFileDbReflection::dumpSchema($this->mysqli, null));
 	}
 }

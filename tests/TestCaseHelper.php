@@ -21,12 +21,24 @@ use function mysqli_report;
 
 abstract class TestCaseHelper
 {
+	private const DEFAULT_CONFIG_PREFIX = 'testdb_';
+
 	/** @var array<string, mysqli> */
 	private static array $connections = [];
 
 	public static function getDefaultSharedConnection(): mysqli
 	{
-		return self::getSharedConnection('testdb_');
+		return self::getSharedConnection(self::DEFAULT_CONFIG_PREFIX);
+	}
+
+	public static function getDefaultDbName(): string
+	{
+		return self::getConfigValue(self::DEFAULT_CONFIG_PREFIX, 'dbname');
+	}
+
+	public static function getSecondDbName(): string
+	{
+		return self::getConfigValue(self::DEFAULT_CONFIG_PREFIX, 'dbname_2');
 	}
 
 	public static function getSharedConnection(string $prefix): mysqli
