@@ -12,7 +12,6 @@ use MariaStan\DbReflection\MariaDbOnlineDbReflection;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Util\MysqliUtil;
 use mysqli;
-use mysqli_sql_exception;
 
 use function is_string;
 use function mysqli_report;
@@ -57,13 +56,11 @@ abstract class TestCaseHelper
 		$mysqli->set_opt(\MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
 		$mysqli->set_charset('utf8mb4');
 		mysqli_report(\MYSQLI_REPORT_ERROR | \MYSQLI_REPORT_STRICT);
-		$dbName = self::getConfigValue($prefix, 'dbname');
-
-		try {
-			$mysqli->query('USE ' . $dbName);
-		} catch (mysqli_sql_exception) {
-			$mysqli->query('CREATE DATABASE ' . $dbName);
-		}
+		$dbName = MysqliUtil::quoteIdentifier(self::getConfigValue($prefix, 'dbname'));
+		$mysqli->query('CREATE DATABASE IF NOT EXISTS ' . $dbName);
+		$mysqli->query('USE ' . $dbName);
+		$secondDbName = MysqliUtil::quoteIdentifier(self::getConfigValue($prefix, 'dbname_2'));
+		$mysqli->query('CREATE DATABASE IF NOT EXISTS ' . $secondDbName);
 
 		return self::$connections[$prefix] = $mysqli;
 	}
