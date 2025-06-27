@@ -153,11 +153,6 @@ class AnalyserGoldenTest extends TestCase
 				continue;
 			}
 
-			// The DB name is dynamic based on environment.
-			if ($property === 'db') {
-				continue;
-			}
-
 			if ($property === 'flags') {
 				self::assertIsInt($val);
 				$val = MysqliUtil::getFlagNames($val);

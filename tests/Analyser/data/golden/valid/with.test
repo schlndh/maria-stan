@@ -80,6 +80,7 @@ Array
 			[orgname] => id
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -99,6 +100,7 @@ Array
 			[orgname] => name
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -207,6 +209,7 @@ Array
 			[orgname] => id
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -226,6 +229,7 @@ Array
 			[orgname] => name
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -240,6 +244,7 @@ Array
 			[orgname] => aaa
 			[table] => tbl2
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -368,6 +373,7 @@ Array
 			[orgname] => id
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -387,6 +393,7 @@ Array
 			[orgname] => name
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -401,6 +408,7 @@ Array
 			[orgname] => id
 			[table] => tbl2
 			[orgtable] => tbl2
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -420,6 +428,7 @@ Array
 			[orgname] => name
 			[table] => tbl2
 			[orgtable] => tbl2
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -510,6 +519,7 @@ Array
 			[orgname] => aa
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -529,6 +539,7 @@ Array
 			[orgname] => bb
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -601,6 +612,7 @@ Array
 			[orgname] => id
 			[table] => aaa
 			[orgtable] => aaa
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -678,6 +690,7 @@ Array
 			[orgname] => id
 			[table] => tbl
 			[orgtable] => tbl
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -809,6 +822,7 @@ Array
 			[orgname] => id
 			[table] => aaa
 			[orgtable] => aaa
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -828,6 +842,7 @@ Array
 			[orgname] => name
 			[table] => aaa
 			[orgtable] => aaa
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -842,6 +857,7 @@ Array
 			[orgname] => id
 			[table] => bbb
 			[orgtable] => bbb
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -861,6 +877,7 @@ Array
 			[orgname] => name
 			[table] => bbb
 			[orgtable] => bbb
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -951,6 +968,7 @@ Array
 			[orgname] => id
 			[table] => bbb
 			[orgtable] => bbb
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -970,6 +988,7 @@ Array
 			[orgname] => name
 			[table] => bbb
 			[orgtable] => bbb
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1022,6 +1041,7 @@ Array
 			[orgname] => 1
 			[table] => analyser_test
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -1098,6 +1118,7 @@ Array
 			[orgname] => id
 			[table] => t
 			[orgtable] => t
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -1114,6 +1135,7 @@ Array
 			[orgname] => id
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array

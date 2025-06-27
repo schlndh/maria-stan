@@ -37,6 +37,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 	/** @throws DbReflectionException */
 	public function findTableSchema(string $table, ?string $database = null): Table
 	{
+		$origDatabase = $database;
 		$database ??= $this->defaultDatabase;
 
 		if (isset($this->parsedSchemas[$database][$table])) {
@@ -71,7 +72,8 @@ class MariaDbOnlineDbReflection implements DbReflection
 
 		return $this->parsedSchemas[$database][$table] = new Table(
 			$table,
-			$this->schemaParser->parseTableColumns($table, $tableCols),
+			$database,
+			$this->schemaParser->parseTableColumns($table, $tableCols, $origDatabase),
 			$this->schemaParser->parseTableForeignKeys($foreignKeys),
 		);
 	}

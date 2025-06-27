@@ -44,11 +44,11 @@ class InformationSchemaParser
 	 * @return non-empty-array<string, Column> name => column
 	 * @throws DbReflectionException
 	 */
-	public function parseTableColumns(string $table, array $tableCols): array
+	public function parseTableColumns(string $table, array $tableCols, ?string $database): array
 	{
 		if (count($tableCols) === 0) {
 			throw new TableDoesNotExistException(
-				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($table),
+				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($table, $database),
 				MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			);
 		}

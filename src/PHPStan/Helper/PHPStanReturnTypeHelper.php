@@ -385,6 +385,7 @@ class PHPStanReturnTypeHelper
 					);
 				}
 
+				// TODO: support multi-db
 				$conflictingType = $this->columnTypeOverrides[$expr->tableName->name][$expr->name] ?? null;
 
 				if ($conflictingType !== null) {

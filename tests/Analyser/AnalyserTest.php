@@ -119,6 +119,22 @@ class AnalyserTest extends TestCase
 			INSERT INTO analyser_test_enum (enum_abc, enum_ab, enum_bc) VALUES ('a', 'b', 'c');
 		");
 
+		$secondDbName = TestCaseHelper::getSecondDbName();
+		$secondDbName = MysqliUtil::quoteIdentifier($secondDbName);
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbName}.analyser_test (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				name VARCHAR(255) NULL
+			);
+		");
+
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbName}.analyser_only_other_db_test (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				name VARCHAR(255) NULL
+			);
+		");
+
 		yield 'misc' => static function (): iterable {
 			yield 'SELECT *' => [
 				'query' => "SELECT * FROM analyser_test",
@@ -152,6 +168,7 @@ class AnalyserTest extends TestCase
 		yield 'update' => self::provideValidUpdateTestData(...);
 		yield 'delete' => self::provideValidDeleteTestData(...);
 		yield 'table-value-constructor' => self::provideValidTableValueConstructorData(...);
+		yield 'multi-db' => self::provideValidMultiDbTestData(...);
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -1402,6 +1419,137 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private static function provideValidMultiDbTestData(): iterable
+	{
+		$dbName = TestCaseHelper::getDefaultDbName();
+		$dbName = MysqliUtil::quoteIdentifier($dbName);
+
+		$secondDbName = TestCaseHelper::getSecondDbName();
+		$secondDbName = MysqliUtil::quoteIdentifier($secondDbName);
+
+		yield 'SELECT - TABLE with DB name' => [
+			'query' => "SELECT * FROM {$secondDbName}.analyser_only_other_db_test",
+		];
+
+		yield 'SELECT - column name with DB name, but short table name' => [
+			'query' => "
+				SELECT {$dbName}.analyser_test.id
+				FROM analyser_test
+				WHERE {$dbName}.analyser_test.id > 5
+				GROUP BY {$dbName}.analyser_test.id
+				HAVING {$dbName}.analyser_test.id
+				ORDER BY {$dbName}.analyser_test.id
+			",
+		];
+
+		yield 'SELECT - from non-default DB: mid column names' => [
+			'query' => "
+				SELECT GROUP_CONCAT(analyser_only_other_db_test.name)
+				FROM {$secondDbName}.analyser_only_other_db_test
+				WHERE analyser_only_other_db_test.name = 'foo'
+				GROUP BY analyser_only_other_db_test.name
+				HAVING analyser_only_other_db_test.name
+				ORDER BY analyser_only_other_db_test.name
+			",
+		];
+
+		yield 'SELECT - from non-default DB: full column names' => [
+			'query' => "
+				SELECT GROUP_CONCAT({$secondDbName}.analyser_only_other_db_test.name)
+				FROM {$secondDbName}.analyser_only_other_db_test
+				WHERE {$secondDbName}.analyser_only_other_db_test.name = 'foo'
+				GROUP BY {$secondDbName}.analyser_only_other_db_test.name
+				HAVING {$secondDbName}.analyser_only_other_db_test.name
+				ORDER BY {$secondDbName}.analyser_only_other_db_test.name
+			",
+		];
+
+		yield 'SELECT - same table name + mid column name: this DB aliased' => [
+			'query' => "
+				SELECT analyser_test.name FROM analyser_test t
+				JOIN {$secondDbName}.analyser_test
+			",
+		];
+
+		yield 'SELECT - same table name + mid column name: other DB aliased' => [
+			'query' => "
+				SELECT analyser_test.name FROM analyser_test
+				JOIN {$secondDbName}.analyser_test t
+			",
+		];
+
+		yield 'SELECT - aliasing to table name from another DB' => [
+			'query' => "
+				SELECT analyser_only_other_db_test.name
+				FROM {$secondDbName}.analyser_only_other_db_test t
+				JOIN analyser_test analyser_only_other_db_test
+			",
+		];
+
+		yield 'SELECT - referencing aliased table with DB name' => [
+			'query' => "
+				SELECT  {$dbName}.analyser_only_other_db_test.name, {$secondDbName}.t.name
+				FROM {$secondDbName}.analyser_only_other_db_test t
+				JOIN analyser_test analyser_only_other_db_test
+			",
+		];
+
+		yield 'SELECT - table with same name from 2 DBs and a subquery' => [
+			'query' => "
+				SELECT {$dbName}.analyser_test.name
+				FROM (SELECT 1 name) analyser_test
+				JOIN analyser_test
+				JOIN {$secondDbName}.analyser_test
+			",
+		];
+
+		yield 'SELECT - using the same alias for tables in two different DBs and a subquery' => [
+			'query' => "
+				SELECT {$dbName}.t.name
+				FROM (SELECT 1 name) t
+				JOIN analyser_test t
+				JOIN {$secondDbName}.analyser_test t
+			",
+		];
+
+		yield 'INSERT - other DB' => [
+			'query' => "
+				INSERT INTO {$secondDbName}.analyser_only_other_db_test
+				SET name = 'foo'
+			",
+		];
+
+		yield 'REPLACE - other DB' => [
+			'query' => "
+				REPLACE INTO {$secondDbName}.analyser_only_other_db_test
+				SET name = 'bar'
+			",
+		];
+
+		yield 'DELETE - other DB' => [
+			'query' => "
+				DELETE FROM {$secondDbName}.analyser_only_other_db_test
+				WHERE name = 'bar'
+			",
+		];
+
+		yield 'DELETE - tbl vs DB1.tbl JOIN DB2.tbl t1' => [
+			'query' => "
+				DELETE analyser_test
+				FROM {$dbName}.analyser_test
+				JOIN {$secondDbName}.analyser_test t1
+				WHERE 0
+			",
+		];
+
+		yield 'TRUNCATE - other DB' => [
+			'query' => "
+				TRUNCATE TABLE {$secondDbName}.analyser_only_other_db_test
+			",
+		];
+	}
+
 	/**
 	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
@@ -2122,6 +2270,30 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<string, array<mixed>> */
+	private static function provideValidNullabilityMultiDbData(): iterable
+	{
+		$dbName = MysqliUtil::quoteIdentifier(TestCaseHelper::getDefaultDbName());
+		$secondDbName = MysqliUtil::quoteIdentifier(TestCaseHelper::getSecondDbName());
+
+		yield "default DB LEFT JOIN second DB" => [
+			'query' => "
+				SELECT *
+				FROM {$dbName}.analyser_test_nullability_1
+				LEFT JOIN {$secondDbName}.analyser_test_nullability_1 ON {$dbName}.analyser_test_nullability_1.id = 1
+			",
+		];
+
+		yield "default DB RIGHT JOIN second DB" => [
+			'query' => "
+				SELECT *
+				FROM {$dbName}.analyser_test_nullability_1
+				RIGHT JOIN {$secondDbName}.analyser_test_nullability_1
+				    ON {$secondDbName}.analyser_test_nullability_1.id = 1
+			",
+		];
+	}
+
 	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
 	public static function getValidNullabilityTestSets(): iterable
 	{
@@ -2147,11 +2319,25 @@ class AnalyserTest extends TestCase
 			VALUES (NULL), (0), (1)
 		');
 
+		$secondDbName = TestCaseHelper::getSecondDbName();
+		$secondDbName = MysqliUtil::quoteIdentifier($secondDbName);
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbName}.analyser_test_nullability_1 (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				col_vchar VARCHAR(255) NULL
+			);
+		");
+		$db->query("
+			INSERT INTO {$secondDbName}.analyser_test_nullability_1 (col_vchar)
+			VALUES (NULL), ('aa'), ('1'), ('2023-02-10 13:19:25'), ('18446744073709551615')
+		");
+
 		// To make sure that it works properly all nullable columns must return at least one NULL. If all values in the
 		// column are NULL, then the analyser must infer it as NULL type.
 		yield 'misc' => self::provideValidNullabilityMiscTestData(...);
 		yield 'operator' => self::provideValidNullabilityOperatorTestData(...);
 		yield 'group-by' => self::provideValidNullabilityGroupByTestData(...);
+		yield 'multi-db' => self::provideValidNullabilityMultiDbData(...);
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -2373,6 +2559,7 @@ class AnalyserTest extends TestCase
 		yield 'delete' => self::provideInvalidDeleteTestData(...);
 		yield 'table-value-constructor' => self::provideInvalidTableValueConstructorData(...);
 		yield 'unsupported-feature' => self::provideInvalidUnsupportedFeaturesData(...);
+		yield 'multi-db' => self::provideInvalidMultiDbData(...);
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -3336,6 +3523,204 @@ class AnalyserTest extends TestCase
 		//	'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
 		//	'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		//];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	private static function provideInvalidMultiDbData(): iterable
+	{
+		$dbName = TestCaseHelper::getDefaultDbName();
+		$dbNameQuoted = MysqliUtil::quoteIdentifier($dbName);
+
+		$secondDbName = TestCaseHelper::getSecondDbName();
+		$secondDbNameQuoted = MysqliUtil::quoteIdentifier($secondDbName);
+
+		yield 'SELECT - non-default DB, full column name vs aliased table - SELECT field' => [
+			'query' => "
+				SELECT GROUP_CONCAT({$secondDbNameQuoted}.analyser_only_other_db_test.name)
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - non-default DB, full column name vs aliased table - WHERE' => [
+			'query' => "
+				SELECT *
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+				WHERE {$secondDbNameQuoted}.analyser_only_other_db_test.name = 'foo'
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - non-default DB, full column name vs aliased table - GROUP BY' => [
+			'query' => "
+				SELECT *
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+				GROUP BY {$secondDbNameQuoted}.analyser_only_other_db_test.name
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - non-default DB, full column name vs aliased table - HAVING' => [
+			'query' => "
+				SELECT *
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+				HAVING {$secondDbNameQuoted}.analyser_only_other_db_test.name = 'foo'
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - non-default DB, full column name vs aliased table - ORDER BY' => [
+			'query' => "
+				SELECT *
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+				ORDER BY {$secondDbNameQuoted}.analyser_only_other_db_test.name
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - ambiguous table - default vs other DB' => [
+			'query' => "
+				SELECT analyser_test.name FROM analyser_test
+				JOIN {$secondDbNameQuoted}.analyser_test
+			",
+			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('name', 'analyser_test'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'SELECT - ambiguous column - other DB vs subquery' => [
+			'query' => "
+				SELECT analyser_test.name FROM (SELECT 1 name) analyser_test
+				JOIN {$secondDbNameQuoted}.analyser_test
+			",
+			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('name', 'analyser_test'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'SELECT - table from second DB which does not exist in default DB' => [
+			'query' => "
+				SELECT *
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t1
+				CROSS JOIN {$dbNameQuoted}.analyser_only_other_db_test t2
+			",
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_only_other_db_test', $dbName),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'SELECT - using DB name with CTE' => [
+			'query' => "
+				WITH foo_cte (id) AS (VALUES (1))
+				SELECT * FROM {$dbNameQuoted}.foo_cte
+			",
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('foo_cte', $dbName),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'SELECT - referencing field from another DB' => [
+			'query' => "
+				SELECT *
+				FROM analyser_test
+				WHERE {$secondDbNameQuoted}.analyser_test.id > 5
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'analyser_test', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - using FQN for table that was aliased to something else' => [
+			'query' => "
+				SELECT {$secondDbNameQuoted}.analyser_only_other_db_test.name
+				FROM {$secondDbNameQuoted}.analyser_only_other_db_test t
+				JOIN analyser_test analyser_only_other_db_test
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError(
+				'name',
+				'analyser_only_other_db_test',
+				$secondDbName,
+			),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - using DB name with subquery' => [
+			'query' => "
+				SELECT {$dbNameQuoted}.t.id
+				FROM (SELECT 1 id) t
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't', $dbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'SELECT - ambiguous columns with multi-' => [
+			'query' => "
+				SELECT {$dbNameQuoted}.t.id
+				FROM (SELECT 1 id) t
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't', $dbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		// analyser_test_truncate doesn't exist in the second DB
+		yield 'SELECT - missing table with DB name' => [
+			'query' => "SELECT * FROM {$secondDbNameQuoted}.analyser_test_truncate",
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'INSERT - missing table with DB name' => [
+			'query' => "INSERT INTO {$secondDbNameQuoted}.analyser_test_truncate SET name = 'x'",
+			'error' => [
+				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
+				AnalyserErrorBuilder::createUnknownColumnError('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'REPLACE - missing table with DB name' => [
+			'query' => "REPLACE INTO {$secondDbNameQuoted}.analyser_test_truncate SET name = 'x'",
+			'error' => [
+				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
+				AnalyserErrorBuilder::createUnknownColumnError('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'DELETE - missing table with DB name' => [
+			'query' => "DELETE FROM {$secondDbNameQuoted}.analyser_test_truncate WHERE name = 'x'",
+			'error' => [
+				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
+				AnalyserErrorBuilder::createUnknownColumnError('name'),
+			],
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'TRUNCATE - missing table with DB name' => [
+			'query' => "TRUNCATE TABLE {$secondDbNameQuoted}.analyser_test_truncate",
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
 	}
 
 	/**

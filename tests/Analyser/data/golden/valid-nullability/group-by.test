@@ -47,6 +47,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -112,6 +113,7 @@ Array
 			[orgname] => AVG(a2.id)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -169,6 +171,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -227,6 +230,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -285,6 +289,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -343,6 +348,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -401,6 +407,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -459,6 +466,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -519,6 +527,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -577,6 +586,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 24
 			[charsetnr] => 63
 			[flags] => Array
@@ -635,6 +645,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -694,6 +705,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -753,6 +765,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -812,6 +825,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -871,6 +885,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -930,6 +945,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -989,6 +1005,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -1048,6 +1065,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -1106,6 +1124,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -1164,6 +1183,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
@@ -1233,6 +1253,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1312,6 +1333,7 @@ Array
 			[orgname] => AVG(a3.name)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1381,6 +1403,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1451,6 +1474,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1521,6 +1545,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1591,6 +1616,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1661,6 +1687,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 24
 			[charsetnr] => 63
 			[flags] => Array
@@ -1731,6 +1758,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -1802,6 +1830,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -1871,6 +1900,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 26
 			[charsetnr] => 63
 			[flags] => Array
@@ -1940,6 +1970,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2010,6 +2041,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2080,6 +2112,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2150,6 +2183,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2220,6 +2254,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2290,6 +2325,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2360,6 +2396,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -2430,6 +2467,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -2500,6 +2538,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -2570,6 +2609,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -2628,6 +2668,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2693,6 +2734,7 @@ Array
 			[orgname] => MAX(a2.id)
 			[table] => t
 			[orgtable] => analyser_test
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2751,6 +2793,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -2810,6 +2853,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -2869,6 +2913,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -2928,6 +2973,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2986,6 +3032,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -3045,6 +3092,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -3105,6 +3153,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -3163,6 +3212,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 19
 			[charsetnr] => 63
 			[flags] => Array
@@ -3221,6 +3271,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3280,6 +3331,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3339,6 +3391,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3398,6 +3451,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3457,6 +3511,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3516,6 +3571,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3575,6 +3631,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -3634,6 +3691,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -3693,6 +3751,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -3752,6 +3811,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 44
 			[charsetnr] => 45
 			[flags] => Array
@@ -3820,6 +3880,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -3897,6 +3958,7 @@ Array
 			[orgname] => MAX(a3.name)
 			[table] => t
 			[orgtable] => analyser_test
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -3965,6 +4027,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -4035,6 +4098,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -4105,6 +4169,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -4175,6 +4240,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -4243,6 +4309,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 53
 			[charsetnr] => 63
 			[flags] => Array
@@ -4313,6 +4380,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -4384,6 +4452,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 63
 			[flags] => Array
@@ -4453,6 +4522,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 26
 			[charsetnr] => 63
 			[flags] => Array
@@ -4522,6 +4592,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4592,6 +4663,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4662,6 +4734,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4732,6 +4805,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4802,6 +4876,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4872,6 +4947,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -4942,6 +5018,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -5012,6 +5089,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -5082,6 +5160,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -5150,6 +5229,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -5207,6 +5287,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -5272,6 +5353,7 @@ Array
 			[orgname] => MIN(a2.id)
 			[table] => t
 			[orgtable] => analyser_test
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -5330,6 +5412,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -5389,6 +5472,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -5448,6 +5532,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -5507,6 +5592,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -5565,6 +5651,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 63
 			[flags] => Array
@@ -5624,6 +5711,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -5684,6 +5772,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -5742,6 +5831,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 19
 			[charsetnr] => 63
 			[flags] => Array
@@ -5800,6 +5890,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -5859,6 +5950,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -5918,6 +6010,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -5977,6 +6070,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -6036,6 +6130,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -6095,6 +6190,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -6154,6 +6250,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -6213,6 +6310,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -6272,6 +6370,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -6331,6 +6430,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 44
 			[charsetnr] => 45
 			[flags] => Array
@@ -6399,6 +6499,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -6476,6 +6577,7 @@ Array
 			[orgname] => MIN(a3.name)
 			[table] => t
 			[orgtable] => analyser_test
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -6544,6 +6646,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -6614,6 +6717,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -6684,6 +6788,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -6754,6 +6859,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -6822,6 +6928,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 53
 			[charsetnr] => 63
 			[flags] => Array
@@ -6892,6 +6999,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -6963,6 +7071,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 63
 			[flags] => Array
@@ -7032,6 +7141,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 26
 			[charsetnr] => 63
 			[flags] => Array
@@ -7101,6 +7211,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7171,6 +7282,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7241,6 +7353,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7311,6 +7424,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7381,6 +7495,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7451,6 +7566,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7521,6 +7637,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -7591,6 +7708,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -7661,6 +7779,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -7729,6 +7848,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -7786,6 +7906,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -7850,6 +7971,7 @@ Array
 			[orgname] => SUM(a2.id)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -7907,6 +8029,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 34
 			[charsetnr] => 63
 			[flags] => Array
@@ -7965,6 +8088,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 34
 			[charsetnr] => 63
 			[flags] => Array
@@ -8023,6 +8147,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 34
 			[charsetnr] => 63
 			[flags] => Array
@@ -8081,6 +8206,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -8138,6 +8264,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 34
 			[charsetnr] => 63
 			[flags] => Array
@@ -8196,6 +8323,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -8256,6 +8384,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -8314,6 +8443,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 19
 			[charsetnr] => 63
 			[flags] => Array
@@ -8372,6 +8502,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8431,6 +8562,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8490,6 +8622,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8549,6 +8682,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8608,6 +8742,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8667,6 +8802,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8726,6 +8862,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -8785,6 +8922,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -8843,6 +8981,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -8901,6 +9040,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 33
 			[charsetnr] => 63
 			[flags] => Array
@@ -8970,6 +9110,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9048,6 +9189,7 @@ Array
 			[orgname] => SUM(a3.name)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9117,6 +9259,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9187,6 +9330,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9257,6 +9401,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9327,6 +9472,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9396,6 +9542,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 24
 			[charsetnr] => 63
 			[flags] => Array
@@ -9466,6 +9613,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -9537,6 +9685,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -9606,6 +9755,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 26
 			[charsetnr] => 63
 			[flags] => Array
@@ -9675,6 +9825,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -9745,6 +9896,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -9815,6 +9967,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -9885,6 +10038,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -9955,6 +10109,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -10025,6 +10180,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -10095,6 +10251,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -10165,6 +10322,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -10235,6 +10393,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -10305,6 +10464,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -10363,6 +10523,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -10427,6 +10588,7 @@ Array
 			[orgname] => GROUP_CONCAT(a2.id)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 67108860
 			[charsetnr] => 45
 			[flags] => Array
@@ -10485,6 +10647,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -10544,6 +10707,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -10603,6 +10767,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -10662,6 +10827,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -10719,6 +10885,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 53
 			[charsetnr] => 63
 			[flags] => Array
@@ -10778,6 +10945,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -10838,6 +11006,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 4194304
 			[charsetnr] => 63
 			[flags] => Array
@@ -10896,6 +11065,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 19
 			[charsetnr] => 63
 			[flags] => Array
@@ -10954,6 +11124,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11013,6 +11184,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11072,6 +11244,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11131,6 +11304,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11190,6 +11364,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11249,6 +11424,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11308,6 +11484,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -11367,6 +11544,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -11426,6 +11604,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -11483,6 +11662,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -11551,6 +11731,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -11628,6 +11809,7 @@ Array
 			[orgname] => GROUP_CONCAT(a3.name)
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 67108860
 			[charsetnr] => 45
 			[flags] => Array
@@ -11697,6 +11879,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -11767,6 +11950,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -11837,6 +12021,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -11907,6 +12092,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -11975,6 +12161,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 53
 			[charsetnr] => 63
 			[flags] => Array
@@ -12045,6 +12232,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 21
 			[charsetnr] => 63
 			[flags] => Array
@@ -12116,6 +12304,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 4194304
 			[charsetnr] => 63
 			[flags] => Array
@@ -12185,6 +12374,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 19
 			[charsetnr] => 63
 			[flags] => Array
@@ -12254,6 +12444,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12324,6 +12515,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12394,6 +12586,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12464,6 +12657,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12534,6 +12728,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12604,6 +12799,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12674,6 +12870,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -12744,6 +12941,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -12814,6 +13012,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -12882,6 +13081,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -12939,6 +13139,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array
@@ -13007,6 +13208,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16777216
 			[charsetnr] => 45
 			[flags] => Array

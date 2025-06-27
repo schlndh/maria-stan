@@ -21,6 +21,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -39,6 +40,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -80,6 +82,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -99,6 +102,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -130,6 +134,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -148,6 +153,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -189,6 +195,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -208,6 +215,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -239,6 +247,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -257,6 +266,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -298,6 +308,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -317,6 +328,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -348,6 +360,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -366,6 +379,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -407,6 +421,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -426,6 +441,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -457,6 +473,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -475,6 +492,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -516,6 +534,7 @@ Array
 			[orgname] => id
 			[table] => t
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -535,6 +554,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -566,6 +586,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -599,6 +620,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -663,6 +685,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t
 			[orgtable] => t
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -695,6 +718,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -713,6 +737,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -731,6 +756,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -749,6 +775,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -790,6 +817,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -809,6 +837,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -823,6 +852,7 @@ Array
 			[orgname] => id
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -842,6 +872,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -875,6 +906,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -893,6 +925,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -911,6 +944,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -952,6 +986,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -971,6 +1006,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -985,6 +1021,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] =>
+			[db] =>
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -1016,6 +1053,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1034,6 +1072,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1086,6 +1125,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1105,6 +1145,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1119,6 +1160,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -1152,6 +1194,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1170,6 +1213,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1211,6 +1255,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1230,6 +1275,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1261,6 +1307,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1279,6 +1326,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1320,6 +1368,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1339,6 +1388,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1370,6 +1420,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1388,6 +1439,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1429,6 +1481,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1448,6 +1501,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1479,6 +1533,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1497,6 +1552,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1538,6 +1594,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1557,6 +1614,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1588,6 +1646,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1606,6 +1665,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1647,6 +1707,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1666,6 +1727,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1697,6 +1759,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1715,6 +1778,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1756,6 +1820,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1775,6 +1840,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1806,6 +1872,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1824,6 +1891,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1865,6 +1933,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1884,6 +1953,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1915,6 +1985,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1933,6 +2004,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1974,6 +2046,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1993,6 +2066,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2024,6 +2098,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2042,6 +2117,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2083,6 +2159,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2102,6 +2179,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2133,6 +2211,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2151,6 +2230,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2192,6 +2272,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2211,6 +2292,7 @@ Array
 			[orgname] => col_vchar
 			[table] => analyser_test_nullability_1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2243,6 +2325,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2261,6 +2344,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2279,6 +2363,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2297,6 +2382,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2338,6 +2424,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2357,6 +2444,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2371,6 +2459,7 @@ Array
 			[orgname] => id
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2390,6 +2479,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2422,6 +2512,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2440,6 +2531,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2458,6 +2550,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2476,6 +2569,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2517,6 +2611,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2536,6 +2631,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2550,6 +2646,7 @@ Array
 			[orgname] => id
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2568,6 +2665,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2600,6 +2698,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2618,6 +2717,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2636,6 +2736,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2654,6 +2755,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2695,6 +2797,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2713,6 +2816,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2727,6 +2831,7 @@ Array
 			[orgname] => id
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2746,6 +2851,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2781,6 +2887,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2799,6 +2906,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2817,6 +2925,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2835,6 +2944,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t2
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2853,6 +2963,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t3
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2871,6 +2982,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_nullability_1
 									[tableAlias] => t3
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2912,6 +3024,7 @@ Array
 			[orgname] => id
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2931,6 +3044,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t1
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2945,6 +3059,7 @@ Array
 			[orgname] => id
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2963,6 +3078,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t2
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -2977,6 +3093,7 @@ Array
 			[orgname] => id
 			[table] => t3
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -2995,6 +3112,7 @@ Array
 			[orgname] => col_vchar
 			[table] => t3
 			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array

@@ -120,6 +120,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => v
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -138,6 +139,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => v
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -439,6 +441,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -457,6 +460,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -556,6 +560,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -574,6 +579,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -635,6 +641,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -653,6 +660,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -706,6 +714,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -724,6 +733,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -785,6 +795,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -803,6 +814,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -821,6 +833,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -839,6 +852,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -911,6 +925,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -929,6 +944,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -993,6 +1009,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1011,6 +1028,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1068,6 +1086,7 @@ Array
 			[orgname] => id
 			[table] => analyser_test
 			[orgtable] => analyser_test
+			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -1087,6 +1106,7 @@ Array
 			[orgname] => name
 			[table] => analyser_test
 			[orgtable] => analyser_test
+			[db] => mariastan_test
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -1101,6 +1121,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 3
 			[charsetnr] => 63
 			[flags] => Array
@@ -1166,6 +1187,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -1206,6 +1228,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_data_types
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1252,6 +1275,7 @@ Array
 			[orgname] => col_enum
 			[table] => t1
 			[orgtable] => analyser_test_data_types
+			[db] => mariastan_test
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -1292,6 +1316,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test_data_types
 									[tableAlias] => t1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1338,6 +1363,7 @@ Array
 			[orgname] => col_enum
 			[table] => t1
 			[orgtable] => analyser_test_data_types
+			[db] => mariastan_test
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -1372,6 +1398,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1390,6 +1417,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1637,6 +1665,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1690,6 +1719,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1708,6 +1738,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1807,6 +1838,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1825,6 +1857,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1932,6 +1965,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1950,6 +1984,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1968,6 +2003,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -1986,6 +2022,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2047,6 +2084,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2065,6 +2103,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2083,6 +2122,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2101,6 +2141,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2119,6 +2160,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => c
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2137,6 +2179,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => c
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2198,6 +2241,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2216,6 +2260,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2234,6 +2279,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2252,6 +2298,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2270,6 +2317,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => c
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2288,6 +2336,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => c
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2476,6 +2525,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2494,6 +2544,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => a
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2512,6 +2563,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -2530,6 +2582,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => b
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)

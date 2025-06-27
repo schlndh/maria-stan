@@ -419,6 +419,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)
@@ -437,6 +438,7 @@ MariaStan\Analyser\AnalyserResult
 									[tableName] => analyser_test
 									[tableAlias] => analyser_test
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
 								)
 						)
 				)

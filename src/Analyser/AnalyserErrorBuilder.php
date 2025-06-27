@@ -14,15 +14,20 @@ use function assert;
 
 class AnalyserErrorBuilder
 {
-	public static function createUnknownColumnError(string $column, ?string $table = null): AnalyserError
-	{
-		$column = self::formatColumnName($column, $table);
+	public static function createUnknownColumnError(
+		string $column,
+		?string $table = null,
+		?string $database = null,
+	): AnalyserError {
+		$column = self::formatColumnName($column, $table, $database);
 
 		return new AnalyserError("Unknown column '{$column}'", AnalyserErrorTypeEnum::UNKNOWN_COLUMN);
 	}
 
-	public static function createNotUniqueTableAliasErrorMessage(string $table): string
+	public static function createNotUniqueTableAliasErrorMessage(string $table, ?string $database = null): string
 	{
+		$table = self::formatTableName($table, $database);
+
 		return "Not unique table/alias: '{$table}'";
 	}
 
@@ -36,17 +41,15 @@ class AnalyserErrorBuilder
 
 	public static function createTableDoesntExistErrorMessage(string $table, ?string $database = null): string
 	{
-		if ($database !== null) {
-			$table = $database . '.' . $table;
-		}
+		$table = self::formatTableName($table, $database);
 
 		return "Table '{$table}' doesn't exist";
 	}
 
-	public static function createTableDoesntExistError(string $table): AnalyserError
+	public static function createTableDoesntExistError(string $table, ?string $database = null): AnalyserError
 	{
 		return new AnalyserError(
-			self::createTableDoesntExistErrorMessage($table),
+			self::createTableDoesntExistErrorMessage($table, $database),
 			AnalyserErrorTypeEnum::UNKNOWN_TABLE,
 		);
 	}
@@ -209,10 +212,21 @@ class AnalyserErrorBuilder
 		return $type::getTypeEnum()->value;
 	}
 
-	private static function formatColumnName(string $column, ?string $table): string
+	private static function formatTableName(string $table, ?string $database = null): string
 	{
-		return $table === null
-			? $column
-			: "{$table}.{$column}";
+		return $database === null
+			? $table
+			: "{$database}.{$table}";
+	}
+
+	private static function formatColumnName(string $column, ?string $table, ?string $database = null): string
+	{
+		if ($table === null) {
+			return $column;
+		}
+
+		$table = self::formatTableName($table, $database);
+
+		return "{$table}.{$column}";
 	}
 }
