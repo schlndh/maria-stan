@@ -1618,6 +1618,7 @@ class AnalyserTest extends TestCase
 		$datetimeFields = [];
 		$mixedFieldErrors = [];
 		$this->assertNotNull($result->resultFields);
+		$incompleteTestErrors = [];
 
 		for ($i = 0; $i < count($fields); $i++) {
 			$field = $fields[$i];
@@ -1667,6 +1668,17 @@ class AnalyserTest extends TestCase
 
 				$this->assertSame($field->table, $column->tableAlias);
 				$this->assertSame($field->orgname, $column->name);
+
+				if ($field->db !== '' && $column->database !== null) {
+					$this->assertSame($field->db, $column->database);
+				} elseif ($field->db !== ($column->database ?? '')) {
+					$incompleteTestErrors[] = sprintf(
+						'Database mismatch for result field #%d. DB: "%s", analyser: "%s"',
+						$i,
+						$field->db,
+						$column->database ?? '',
+					);
+				}
 
 				if ($field->orgtable === '') {
 					$this->assertSame(ColumnInfoTableTypeEnum::SUBQUERY, $column->tableType);
@@ -1753,8 +1765,6 @@ class AnalyserTest extends TestCase
 			$type = $field->exprType->type;
 			$this->assertEquals($expectedType, $type);
 		}
-
-		$incompleteTestErrors = [];
 
 		// With bound params mysqli has the advantage of knowing the values, which we don't. So let's allow it to be
 		// nullable.
