@@ -474,9 +474,11 @@ final class AnalyserState
 					);
 
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
-						// TODO: database
 						$this->referencedTables[$fromClause->name->name]
-							??= new ReferencedSymbol\Table($fromClause->name->name);
+							??= new ReferencedSymbol\Table(
+								$fromClause->name->name,
+								$fromClause->name->databaseName ?? $this->dbReflection->getDefaultDatabase(),
+							);
 					}
 				} catch (AnalyserException | DbReflectionException $e) {
 					$this->errors[] = $e->toAnalyserError();

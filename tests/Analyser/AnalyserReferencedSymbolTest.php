@@ -34,7 +34,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 			'expected symbols' => [],
 		];
 
-		$table = new Table('analyser_referenced_symbol_test');
+		$table = new Table('analyser_referenced_symbol_test', TestCaseHelper::getDefaultDbName());
 
 		yield 'SELECT 1 FROM analyser_referenced_symbol_test' => [
 			'query' => 'SELECT 1 FROM analyser_referenced_symbol_test',

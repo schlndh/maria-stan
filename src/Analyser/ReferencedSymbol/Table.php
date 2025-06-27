@@ -6,7 +6,7 @@ namespace MariaStan\Analyser\ReferencedSymbol;
 
 final class Table implements ReferencedSymbol
 {
-	public function __construct(public readonly string $name)
+	public function __construct(public readonly string $name, public readonly string $database)
 	{
 	}
 
