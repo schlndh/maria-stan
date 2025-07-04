@@ -424,7 +424,7 @@ class PHPStanReturnTypeHelper
 				continue;
 			}
 
-			$override = $this->columnTypeOverrides[$database][$fk->referencedTableName]
+			$override = $this->columnTypeOverrides[$fk->referencedDatabaseName][$fk->referencedTableName]
 				[$fk->referencedColumnNames[$key]] ?? null;
 
 			if ($override !== null) {

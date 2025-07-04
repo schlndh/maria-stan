@@ -94,6 +94,8 @@ class InformationSchemaParser
 				?? throw new UnexpectedValueException('TABLE_NAME cannot be null');
 			$refTableName = $rows[1]['REFERENCED_TABLE_NAME']
 				?? throw new UnexpectedValueException('REFERENCED_TABLE_NAME cannot be null');
+			$refDbName = $rows[1]['REFERENCED_TABLE_SCHEMA']
+				?? throw new UnexpectedValueException('REFERENCED_TABLE_SCHEMA cannot be null');
 			$columnNames = [];
 			$refColumnNames = [];
 
@@ -124,11 +126,11 @@ class InformationSchemaParser
 					?? throw new UnexpectedValueException('REFERENCED_COLUMN_NAME cannot be null');
 			}
 
-			// TODO: references between two different databases are possible.
 			$result[$constraintName] = new ForeignKey(
 				$constraintName,
 				$tableName,
 				$columnNames,
+				$refDbName,
 				$refTableName,
 				$refColumnNames,
 			);

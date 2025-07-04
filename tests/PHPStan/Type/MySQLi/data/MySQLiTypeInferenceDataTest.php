@@ -102,6 +102,7 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		');
 
 		$db->query("INSERT INTO mysqli_test_column_overrides_fk_2 (id, constant_2) VALUES (1, 5), (2, 6)");
+		$dbNameQuoted = MysqliUtil::quoteIdentifier(TestCaseHelper::getDefaultDbName());
 		$secondDbNameQuoted = MysqliUtil::quoteIdentifier(TestCaseHelper::getSecondDbName());
 
 		$db->query("
@@ -111,6 +112,16 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		");
 
 		$db->query("INSERT INTO {$secondDbNameQuoted}.mysqli_test_column_overrides (id) VALUES (3), (4)");
+
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbNameQuoted}.mysqli_test_column_overrides_fk_2 (
+				id INT NOT NULL,
+				constant_2 INT NOT NULL,
+				FOREIGN KEY (constant_2, id) REFERENCES {$dbNameQuoted}.mysqli_test_column_overrides (constant, id)
+			);
+		");
+
+		$db->query("INSERT INTO mysqli_test_column_overrides_fk_2 (id, constant_2) VALUES (1, 5), (2, 6)");
 	}
 
 	public function testAssoc(): void
@@ -1140,6 +1151,17 @@ class MySQLiTypeInferenceDataTest extends TestCase
 			}
 
 			$this->assertTrue(in_array($row['id'], [3, 4], true));
+		}
+
+		$rows = $db->query('SELECT id FROM mariastan_test2.mysqli_test_column_overrides_fk_2')
+			->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('1|2', $row['id']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [1, 2], true));
 		}
 	}
 
