@@ -70,10 +70,13 @@ final class AnalyserState
 	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
 
-	/** @var array<string, ReferencedSymbol\Table> name => table */
+	/** @var array<string, array<string, ReferencedSymbol\Table>> database => name => table */
 	private array $referencedTables = [];
 
-	/** @var array<string, array<string, ReferencedSymbol\TableColumn>> table name => column name => column */
+	/**
+	 * @var array<string, array<string, array<string, ReferencedSymbol\TableColumn>>>
+	 *     database => table name => column name => column
+	 */
 	private array $referencedTableColumns = [];
 	private ColumnResolverFieldBehaviorEnum $fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private bool $hasAggregateFunctionCalls = false;
@@ -123,10 +126,16 @@ final class AnalyserState
 				return $this->getUnsupportedQueryTypeResult();
 		}
 
-		$referencedSymbols = array_values($this->referencedTables);
+		$referencedSymbols = [];
 
-		foreach ($this->referencedTableColumns as $columns) {
-			$referencedSymbols = array_merge($referencedSymbols, $columns);
+		foreach ($this->referencedTables as $tables) {
+			$referencedSymbols = array_merge($referencedSymbols, array_values($tables));
+		}
+
+		foreach ($this->referencedTableColumns as $tableColumns) {
+			foreach ($tableColumns as $columns) {
+				$referencedSymbols = array_merge($referencedSymbols, array_values($columns));
+			}
 		}
 
 		return new AnalyserResult(
@@ -477,11 +486,9 @@ final class AnalyserState
 					);
 
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
-						$this->referencedTables[$fromClause->name->name]
-							??= new ReferencedSymbol\Table(
-								$fromClause->name->name,
-								$fromClause->name->databaseName ?? $this->dbReflection->getDefaultDatabase(),
-							);
+						$database = $fromClause->name->databaseName ?? $this->dbReflection->getDefaultDatabase();
+						$this->referencedTables[$database][$fromClause->name->name]
+							??= new ReferencedSymbol\Table($fromClause->name->name, $database);
 					}
 				} catch (AnalyserException | DbReflectionException $e) {
 					$this->errors[] = $e->toAnalyserError();
@@ -1800,12 +1807,13 @@ final class AnalyserState
 			return;
 		}
 
-		$this->referencedTableColumns[$columnInfo->tableName][$columnInfo->name]
+		$database = $columnInfo->database ?? $this->dbReflection->getDefaultDatabase();
+		$this->referencedTableColumns[$database][$columnInfo->tableName][$columnInfo->name]
 			= new ReferencedSymbol\TableColumn(
-				$this->referencedTables[$columnInfo->tableName]
+				$this->referencedTables[$database][$columnInfo->tableName]
 					?? throw new ShouldNotHappenException(
 						"Referencing column {$columnInfo->name} of table "
-						. "{$columnInfo->tableName} which was not referenced.",
+						. "{$database}.{$columnInfo->tableName} which was not referenced.",
 					),
 				$columnInfo->name,
 			);
