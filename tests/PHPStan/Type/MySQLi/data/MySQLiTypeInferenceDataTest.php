@@ -7,6 +7,7 @@ namespace MariaStan\PHPStan\Type\MySQLi\data;
 use MariaStan\PHPStan\Type\MySQLi\CustomResultClass;
 use MariaStan\PHPStan\Type\MySQLi\CustomUniversalObjectCrate;
 use MariaStan\TestCaseHelper;
+use MariaStan\Util\MysqliUtil;
 use mysqli;
 use mysqli_result;
 use PHPUnit\Framework\TestCase;
@@ -101,6 +102,15 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		');
 
 		$db->query("INSERT INTO mysqli_test_column_overrides_fk_2 (id, constant_2) VALUES (1, 5), (2, 6)");
+		$secondDbNameQuoted = MysqliUtil::quoteIdentifier(TestCaseHelper::getSecondDbName());
+
+		$db->query("
+			CREATE OR REPLACE TABLE {$secondDbNameQuoted}.mysqli_test_column_overrides (
+				id INT NOT NULL PRIMARY KEY
+			);
+		");
+
+		$db->query("INSERT INTO {$secondDbNameQuoted}.mysqli_test_column_overrides (id) VALUES (3), (4)");
 	}
 
 	public function testAssoc(): void
@@ -1118,6 +1128,18 @@ class MySQLiTypeInferenceDataTest extends TestCase
 
 			$this->assertTrue(in_array($row['id'], [1, 2], true));
 			$this->assertTrue(in_array($row['constant_2'], [5, 6], true));
+		}
+
+		// The DB name has to be statically known here, otherwise PHPStan won't analyze the query
+		$rows = $db->query("SELECT id FROM mariastan_test2.mysqli_test_column_overrides")
+			->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('3|4', $row['id']);
+			}
+
+			$this->assertTrue(in_array($row['id'], [3, 4], true));
 		}
 	}
 

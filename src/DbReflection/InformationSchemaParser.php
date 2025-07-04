@@ -124,6 +124,7 @@ class InformationSchemaParser
 					?? throw new UnexpectedValueException('REFERENCED_COLUMN_NAME cannot be null');
 			}
 
+			// TODO: references between two different databases are possible.
 			$result[$constraintName] = new ForeignKey(
 				$constraintName,
 				$tableName,

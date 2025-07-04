@@ -43,7 +43,7 @@ class MariaDbFileDbReflection implements DbReflection
 	/** @var SchemaDump */
 	private readonly array $schemaDump;
 
-	/** @var array<string, Table> table name => schema */
+	/** @var array<string, array<string, Table>> database => table name => schema */
 	private array $parsedSchemas = [];
 
 	public function __construct(
@@ -116,7 +116,7 @@ class MariaDbFileDbReflection implements DbReflection
 			);
 		}
 
-		return $this->parsedSchemas[$table] ??= new Table(
+		return $this->parsedSchemas[$database][$table] ??= new Table(
 			$table,
 			$database,
 			$this->schemaParser->parseTableColumns($table, $cols, $origDatabase),
