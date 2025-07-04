@@ -788,6 +788,124 @@ Array
 		)
 )
 -----
+SELECT `mariastan_test2`.analyser_test.*
+FROM `mariastan_test`.analyser_test
+CROSS JOIN `mariastan_test2`.analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_test
+									[tableAlias] => analyser_test
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_test
+									[tableAlias] => analyser_test
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] => analyser_test
+			[orgtable] => analyser_test
+			[db] => mariastan_test2
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					PRIMARY_KEY
+					AUTO_INCREMENT
+					PART_KEY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => name
+			[orgname] => name
+			[table] => analyser_test
+			[orgtable] => analyser_test
+			[db] => mariastan_test2
+			[length] => 1020
+			[charsetnr] => 45
+			[flags] => Array
+				(
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+)
+-----
 INSERT INTO `mariastan_test2`.analyser_only_other_db_test
 SET name = 'foo'
 -----

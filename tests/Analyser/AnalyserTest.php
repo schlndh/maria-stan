@@ -1513,6 +1513,14 @@ class AnalyserTest extends TestCase
 			",
 		];
 
+		yield 'SELECT - db.table.*' => [
+			'query' => "
+				SELECT {$secondDbName}.analyser_test.*
+				FROM {$dbName}.analyser_test
+				CROSS JOIN {$secondDbName}.analyser_test
+			",
+		];
+
 		yield 'INSERT - other DB' => [
 			'query' => "
 				INSERT INTO {$secondDbName}.analyser_only_other_db_test

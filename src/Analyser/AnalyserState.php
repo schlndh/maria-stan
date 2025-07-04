@@ -392,7 +392,10 @@ final class AnalyserState
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
-					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName?->name);
+					$allFields = $this->columnResolver->resolveAllColumns(
+						$selectExpr->tableName?->name,
+						$selectExpr->tableName?->databaseName,
+					);
 
 					foreach ($allFields as $field) {
 						$this->columnResolver->registerField($field, true);
