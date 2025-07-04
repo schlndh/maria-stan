@@ -805,10 +805,16 @@ final class ColumnResolver
 
 		foreach (array_keys($duplicateAliases) as $alias) {
 			$duplicates = array_intersect_key($this->tablesByAlias[$alias], $other->tablesByAlias[$alias]);
+			$hasDbName = count($this->tablesByAlias[$alias]) > 1
+				|| count($other->tablesByAlias[$alias]) > 1;
 
 			if (count($duplicates) > 0) {
-				// TODO: When to include DB name?
-				throw new NotUniqueTableAliasException($alias/*, array_key_first($duplicates)*/);
+				throw new NotUniqueTableAliasException(
+					$alias,
+					$hasDbName
+						? array_key_first($duplicates)
+						: null,
+				);
 			}
 		}
 

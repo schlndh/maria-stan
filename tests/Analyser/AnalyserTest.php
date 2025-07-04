@@ -3699,6 +3699,17 @@ class AnalyserTest extends TestCase
 			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
+		yield 'SELECT - duplicate alias used in multiple DBs' => [
+			'query' => "
+				SELECT *
+				FROM {$dbNameQuoted}.analyser_test t1
+				CROSS JOIN {$secondDbNameQuoted}.analyser_test t1
+				CROSS JOIN {$secondDbNameQuoted}.analyser_test t1
+			",
+			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t1', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
 		yield 'INSERT - missing table with DB name' => [
 			'query' => "INSERT INTO {$secondDbNameQuoted}.analyser_test_truncate SET name = 'x'",
 			'error' => [

@@ -31,10 +31,10 @@ class AnalyserErrorBuilder
 		return "Not unique table/alias: '{$table}'";
 	}
 
-	public static function createNotUniqueTableAliasError(string $table): AnalyserError
+	public static function createNotUniqueTableAliasError(string $table, ?string $database = null): AnalyserError
 	{
 		return new AnalyserError(
-			self::createNotUniqueTableAliasErrorMessage($table),
+			self::createNotUniqueTableAliasErrorMessage($table, $database),
 			AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS,
 		);
 	}

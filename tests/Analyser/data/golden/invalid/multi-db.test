@@ -804,6 +804,37 @@ MariaStan\Analyser\AnalyserResult
 #######
 1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
 -----
+SELECT *
+FROM `mariastan_test`.analyser_test t1
+CROSS JOIN `mariastan_test2`.analyser_test t1
+CROSS JOIN `mariastan_test2`.analyser_test t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: 'mariastan_test2.t1'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1066: Not unique table/alias: 't1'
+-----
 INSERT INTO `mariastan_test2`.analyser_test_truncate SET name = 'x'
 -----
 MariaStan\Analyser\AnalyserResult
