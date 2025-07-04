@@ -13,7 +13,6 @@ final class TableName extends BaseNode
 		Position $startPosition,
 		Position $endPosition,
 		public readonly string $name,
-		// TODO: consider datbaseName during analysis
 		public readonly ?string $databaseName = null,
 	) {
 		parent::__construct($startPosition, $endPosition);
