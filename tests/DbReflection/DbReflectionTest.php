@@ -247,6 +247,39 @@ class DbReflectionTest extends TestCase
 		]);
 	}
 
+	public function testBugIncorrectMultiDbCachingWithFileReflection(): void
+	{
+		// There was a bug in file reflection. If a table was first successfully loaded from one database, and
+		// then from another (which doesn't exist), it would succeed because of incorrect caching.
+		$dumpFile = tmpfile() ?: throw new RuntimeException('tmpfile() failed!');
+		$meta_data = stream_get_meta_data($dumpFile);
+		self::assertArrayHasKey('uri', $meta_data);
+		$filename = $meta_data["uri"];
+
+		try {
+			fwrite(
+				$dumpFile,
+				MariaDbFileDbReflection::dumpSchema(
+					TestCaseHelper::getDefaultSharedConnection(),
+					[TestCaseHelper::getDefaultDbName()],
+				),
+			);
+			$tableName = 'db_reflection_test';
+			$parser = TestCaseHelper::createParser();
+			$informationSchemaParser = new InformationSchemaParser($parser);
+			$reflection = new MariaDbFileDbReflection(
+				$filename,
+				TestCaseHelper::getDefaultDbName(),
+				$informationSchemaParser,
+			);
+			$reflection->findTableSchema($tableName, TestCaseHelper::getDefaultDbName());
+			$this->expectException(TableDoesNotExistException::class);
+			$reflection->findTableSchema($tableName, TestCaseHelper::getSecondDbName());
+		} finally {
+			unlink($filename);
+		}
+	}
+
 	/** @return iterable<string, array<mixed>> */
 	public static function provideForeignKeyDbReflections(): iterable
 	{
@@ -269,6 +302,7 @@ class DbReflectionTest extends TestCase
 				'db_reflection_test_fk_id',
 				'db_reflection_test_foreign_keys',
 				['id'],
+				TestCaseHelper::getDefaultDbName(),
 				'db_reflection_test',
 				['id'],
 			),
@@ -281,6 +315,7 @@ class DbReflectionTest extends TestCase
 				'db_reflection_test_fk_id_name',
 				'db_reflection_test_foreign_keys',
 				['id', 'name_2'],
+				TestCaseHelper::getDefaultDbName(),
 				'db_reflection_test',
 				['id', 'name'],
 			),

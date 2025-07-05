@@ -1,6 +1,8 @@
-misc
+multi-db
 -----
-SELECT * FROM analyser_test
+SELECT *
+FROM `mariastan_test`.analyser_test_nullability_1
+LEFT JOIN `mariastan_test2`.analyser_test_nullability_1 ON `mariastan_test`.analyser_test_nullability_1.id = 1
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -18,8 +20,8 @@ MariaStan\Analyser\AnalyserResult
 							[column] => MariaStan\Analyser\ColumnInfo
 								(
 									[name] => id
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
 									[database] => mariastan_test
 								)
@@ -27,7 +29,7 @@ MariaStan\Analyser\AnalyserResult
 				)
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => name
+					[name] => col_vchar
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -36,11 +38,49 @@ MariaStan\Analyser\AnalyserResult
 							[isNullable] => true
 							[column] => MariaStan\Analyser\ColumnInfo
 								(
-									[name] => name
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
+									[name] => col_vchar
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
 									[database] => mariastan_test
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_vchar
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_vchar
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
 								)
 						)
 				)
@@ -53,14 +93,19 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					[name] => analyser_test
+					[name] => analyser_test_nullability_1
 					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_nullability_1
+					[database] => mariastan_test2
 				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
-							[name] => analyser_test
+							[name] => analyser_test_nullability_1
 							[database] => mariastan_test
 						)
 					[name] => id
@@ -69,10 +114,28 @@ MariaStan\Analyser\AnalyserResult
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
-							[name] => analyser_test
+							[name] => analyser_test_nullability_1
 							[database] => mariastan_test
 						)
-					[name] => name
+					[name] => col_vchar
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_nullability_1
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_nullability_1
+							[database] => mariastan_test2
+						)
+					[name] => col_vchar
 				)
 		)
 )
@@ -83,8 +146,8 @@ Array
 		(
 			[name] => id
 			[orgname] => id
-			[table] => analyser_test
-			[orgtable] => analyser_test
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
 			[db] => mariastan_test
 			[length] => 11
 			[charsetnr] => 63
@@ -101,11 +164,45 @@ Array
 		)
 	stdClass
 		(
-			[name] => name
-			[orgname] => name
-			[table] => analyser_test
-			[orgtable] => analyser_test
+			[name] => col_vchar
+			[orgname] => col_vchar
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
 			[db] => mariastan_test
+			[length] => 1020
+			[charsetnr] => 45
+			[flags] => Array
+				(
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test2
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					PRIMARY_KEY
+					AUTO_INCREMENT
+					PART_KEY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => col_vchar
+			[orgname] => col_vchar
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test2
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
@@ -116,7 +213,10 @@ Array
 		)
 )
 -----
-SELECT name, id FROM analyser_test
+SELECT *
+FROM `mariastan_test`.analyser_test_nullability_1
+RIGHT JOIN `mariastan_test2`.analyser_test_nullability_1
+ON `mariastan_test2`.analyser_test_nullability_1.id = 1
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -124,7 +224,26 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => name
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_vchar
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -133,9 +252,9 @@ MariaStan\Analyser\AnalyserResult
 							[isNullable] => true
 							[column] => MariaStan\Analyser\ColumnInfo
 								(
-									[name] => name
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
+									[name] => col_vchar
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
 									[database] => mariastan_test
 								)
@@ -153,10 +272,29 @@ MariaStan\Analyser\AnalyserResult
 							[column] => MariaStan\Analyser\ColumnInfo
 								(
 									[name] => id
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
 									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-									[database] => mariastan_test
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => col_vchar
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => col_vchar
+									[tableName] => analyser_test_nullability_1
+									[tableAlias] => analyser_test_nullability_1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
 								)
 						)
 				)
@@ -169,168 +307,37 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					[name] => analyser_test
+					[name] => analyser_test_nullability_1
 					[database] => mariastan_test
 				)
-			MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test
-							[database] => mariastan_test
-						)
-					[name] => name
-				)
-			MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test
-							[database] => mariastan_test
-						)
-					[name] => id
-				)
-		)
-)
-#######
-Array
-(
-	stdClass
-		(
-			[name] => name
-			[orgname] => name
-			[table] => analyser_test
-			[orgtable] => analyser_test
-			[db] => mariastan_test
-			[length] => 1020
-			[charsetnr] => 45
-			[flags] => Array
-				(
-				)
-			[type] => VAR_STRING
-			[decimals] => 0
-		)
-	stdClass
-		(
-			[name] => id
-			[orgname] => id
-			[table] => analyser_test
-			[orgtable] => analyser_test
-			[db] => mariastan_test
-			[length] => 11
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					PRIMARY_KEY
-					AUTO_INCREMENT
-					PART_KEY
-					NUM
-				)
-			[type] => LONG
-			[decimals] => 0
-		)
-)
------
-SELECT *, name, id FROM analyser_test
------
-MariaStan\Analyser\AnalyserResult
-(
-	[resultFields] => Array
-		(
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => id
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => id
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-									[database] => mariastan_test
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => name
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\VarcharType
-								(
-								)
-							[isNullable] => true
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => name
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-									[database] => mariastan_test
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => name
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\VarcharType
-								(
-								)
-							[isNullable] => true
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => name
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-									[database] => mariastan_test
-								)
-						)
-				)
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => id
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-							[column] => MariaStan\Analyser\ColumnInfo
-								(
-									[name] => id
-									[tableName] => analyser_test
-									[tableAlias] => analyser_test
-									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
-									[database] => mariastan_test
-								)
-						)
-				)
-		)
-	[errors] => Array
-		(
-		)
-	[positionalPlaceholderCount] => 0
-	[referencedSymbols] => Array
-		(
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
-					[name] => analyser_test
-					[database] => mariastan_test
+					[name] => analyser_test_nullability_1
+					[database] => mariastan_test2
 				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
-							[name] => analyser_test
+							[name] => analyser_test_nullability_1
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_nullability_1
+							[database] => mariastan_test2
+						)
+					[name] => col_vchar
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test_nullability_1
 							[database] => mariastan_test
 						)
 					[name] => id
@@ -339,10 +346,10 @@ MariaStan\Analyser\AnalyserResult
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
-							[name] => analyser_test
+							[name] => analyser_test_nullability_1
 							[database] => mariastan_test
 						)
-					[name] => name
+					[name] => col_vchar
 				)
 		)
 )
@@ -353,9 +360,43 @@ Array
 		(
 			[name] => id
 			[orgname] => id
-			[table] => analyser_test
-			[orgtable] => analyser_test
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
 			[db] => mariastan_test
+			[length] => 11
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					PRIMARY_KEY
+					AUTO_INCREMENT
+					PART_KEY
+					NUM
+				)
+			[type] => LONG
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => col_vchar
+			[orgname] => col_vchar
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test
+			[length] => 1020
+			[charsetnr] => 45
+			[flags] => Array
+				(
+				)
+			[type] => VAR_STRING
+			[decimals] => 0
+		)
+	stdClass
+		(
+			[name] => id
+			[orgname] => id
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test2
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -371,106 +412,17 @@ Array
 		)
 	stdClass
 		(
-			[name] => name
-			[orgname] => name
-			[table] => analyser_test
-			[orgtable] => analyser_test
-			[db] => mariastan_test
+			[name] => col_vchar
+			[orgname] => col_vchar
+			[table] => analyser_test_nullability_1
+			[orgtable] => analyser_test_nullability_1
+			[db] => mariastan_test2
 			[length] => 1020
 			[charsetnr] => 45
 			[flags] => Array
 				(
 				)
 			[type] => VAR_STRING
-			[decimals] => 0
-		)
-	stdClass
-		(
-			[name] => name
-			[orgname] => name
-			[table] => analyser_test
-			[orgtable] => analyser_test
-			[db] => mariastan_test
-			[length] => 1020
-			[charsetnr] => 45
-			[flags] => Array
-				(
-				)
-			[type] => VAR_STRING
-			[decimals] => 0
-		)
-	stdClass
-		(
-			[name] => id
-			[orgname] => id
-			[table] => analyser_test
-			[orgtable] => analyser_test
-			[db] => mariastan_test
-			[length] => 11
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					PRIMARY_KEY
-					AUTO_INCREMENT
-					PART_KEY
-					NUM
-				)
-			[type] => LONG
-			[decimals] => 0
-		)
-)
------
-SELECT 1 id
------
-MariaStan\Analyser\AnalyserResult
-(
-	[resultFields] => Array
-		(
-			MariaStan\Analyser\QueryResultField
-				(
-					[name] => id
-					[exprType] => MariaStan\Analyser\ExprTypeResult
-						(
-							[type] => MariaStan\Schema\DbType\IntType
-								(
-								)
-							[isNullable] => false
-						)
-				)
-		)
-	[errors] => Array
-		(
-		)
-	[positionalPlaceholderCount] => 0
-	[referencedSymbols] => Array
-		(
-		)
-	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
-		(
-			[min] => 1
-			[max] => 1
-		)
-)
-#######
-Array
-(
-	stdClass
-		(
-			[name] => id
-			[orgname] =>
-			[table] =>
-			[orgtable] =>
-			[db] =>
-			[length] => 1
-			[charsetnr] => 63
-			[flags] => Array
-				(
-					NOT_NULL
-					BINARY
-					NUM
-				)
-			[type] => LONG
 			[decimals] => 0
 		)
 )

@@ -35,16 +35,16 @@ use function reset;
 // rewrite it to make more sense.
 final class ColumnResolver
 {
-	/** @var array<string, string> $tablesByAlias alias => table name */
+	// This should be something that is not a valid DB name
+	private const SUBQUERY_DB = "\0SUBQUERY\0";
+
+	/** @var array<string, array<string, string>> $tablesByAlias alias => database w/ fallback => table name */
 	private array $tablesByAlias = [];
 
-	/** @var array<string, bool> name => true */
+	/** @var array<string, array<string, bool>> database w/ fallback => name => true */
 	private array $outerJoinedTableMap = [];
 
-	/** @var array<array{string, ?string}|array{null, string}> [[table, alias]] (for subquery table is null) */
-	private array $tableNamesInOrder = [];
-
-	/** @var array<string, Schema\Table> name => schema */
+	/** @var array<string, array<string, Schema\Table>> database => name => schema */
 	private array $tableSchemas = [];
 
 	/** @var array<string, Schema\Table> CTE name => schema */
@@ -53,20 +53,17 @@ final class ColumnResolver
 	/** @var array<string, array<string, QueryResultField>> subquery alias => name => field */
 	private array $subquerySchemas = [];
 
-	/** @var array<string, true> table => true */
-	private array $tablesWithoutAliasMap = [];
-
 	/** @var array<string, array<array{QueryResultField, ?bool}>> name => [[field, is column]] */
 	private array $fieldList = [];
 
-	/** @var array<array{column: string, table: string}> */
+	/** @var array<array{column: string, table: string, database: ?string}> */
 	private array $allColumns = [];
 
-	/** @var array<string, array<string, bool>> table/subquery alias => column name => true */
+	/**
+	 * @var array<string, array<string, array<string, bool>>>
+	 *     DB w/ fallback => table/subquery alias => column name => true
+	 */
 	private array $groupByColumns = [];
-
-	/** @var array<string, ColumnInfoTableTypeEnum> table name/CTE alias => type */
-	private array $tableTypeByName = [];
 
 	private ?Schema\Table $insertReplaceTargetTable = null;
 
@@ -80,53 +77,58 @@ final class ColumnResolver
 	) {
 	}
 
-	public function registerInsertReplaceTargetTable(Schema\Table $table): void
+	public function registerInsertReplaceTargetTable(Schema\Table $table, ?string $database): void
 	{
+		$database ??= $this->dbReflection->getDefaultDatabase();
 		$this->insertReplaceTargetTable = $table;
-		$this->registerColumnsForSchema($table->name, array_keys($table->columns));
-		$this->tableSchemas[$table->name] = $table;
-		$this->tableTypeByName[$table->name] = ColumnInfoTableTypeEnum::TABLE;
+		$this->registerColumnsForSchema($table->name, array_keys($table->columns), $database);
+		$this->tableSchemas[$database][$table->name] = $table;
 	}
 
 	/** @throws DbReflectionException | AnalyserException */
-	public function registerTable(string $table, ?string $alias = null): ColumnInfoTableTypeEnum
-	{
-		$this->tableNamesInOrder[] = [$table, $alias];
+	public function registerTable(
+		string $table,
+		?string $alias = null,
+		?string $database = null,
+	): ColumnInfoTableTypeEnum {
+		$origDatabase = $database;
+		$database ??= $this->dbReflection->getDefaultDatabase();
+		$alias ??= $table;
 
-		if ($alias !== null) {
-			if (isset($this->tablesByAlias[$alias])) {
-				throw new NotUniqueTableAliasException($alias);
-			}
-
-			$this->tablesByAlias[$alias] = $table;
-		} else {
-			if (isset($this->tablesWithoutAliasMap[$table])) {
-				throw new NotUniqueTableAliasException($table);
-			}
-
-			$this->tablesWithoutAliasMap[$table] = true;
+		if (isset($this->tablesByAlias[$alias][$database])) {
+			throw new NotUniqueTableAliasException($alias, $origDatabase);
 		}
 
-		$schema = $this->tableSchemas[$table] ?? null;
+		$schema = $this->tableSchemas[$database][$table] ?? null;
+		$schemaDatabase = $database;
 
-		if ($schema !== null) {
-			$type = $this->tableTypeByName[$table];
-		} else {
-			$schema = $this->findCteSchema($table);
+		if ($schema === null) {
+			// CTEs can't be used with DB prefix
+			$schema = $origDatabase === null
+				? $this->findCteSchema($table)
+				: null;
 
 			if ($schema !== null) {
 				$type = ColumnInfoTableTypeEnum::SUBQUERY;
+				$schemaDatabase = null;
 			} else {
-				$schema = $this->tableSchemas[$table] = $this->dbReflection->findTableSchema($table);
+				$schema = $this->tableSchemas[$database][$table]
+					= $this->dbReflection->findTableSchema($table, $origDatabase);
 				$type = ColumnInfoTableTypeEnum::TABLE;
+				$this->tableSchemas[$database][$table] ??= $schema;
 			}
+		} else {
+			$type = $this->getTableType($alias, $origDatabase);
+		}
 
-			$this->tableTypeByName[$table] ??= $type;
-			$this->tableSchemas[$table] ??= $schema;
+		if ($type === ColumnInfoTableTypeEnum::TABLE) {
+			$this->tablesByAlias[$alias][$database] = $table;
+		} else {
+			$this->tablesByAlias[$alias][self::SUBQUERY_DB] = $table;
 		}
 
 		$columnNames = array_map(static fn (Schema\Column $c) => $c->name, $schema->columns);
-		$this->registerColumnsForSchema($alias ?? $table, $columnNames);
+		$this->registerColumnsForSchema($alias, $columnNames, $schemaDatabase);
 
 		return $type;
 	}
@@ -142,14 +144,14 @@ final class ColumnResolver
 		}
 
 		$columns = $this->getColumnsFromFields($fields);
-		$this->cteSchemas[$name] = new Schema\Table($name, $columns);
+		$this->cteSchemas[$name] = new Schema\Table($name, null, $columns);
 	}
 
 	/** @param array<string> $columnNames */
-	private function registerColumnsForSchema(string $schemaName, array $columnNames): void
+	private function registerColumnsForSchema(string $schemaName, array $columnNames, ?string $database): void
 	{
 		foreach ($columnNames as $column) {
-			$this->allColumns[] = ['column' => $column, 'table' => $schemaName];
+			$this->allColumns[] = ['column' => $column, 'table' => $schemaName, 'database' => $database];
 		}
 	}
 
@@ -164,7 +166,6 @@ final class ColumnResolver
 			throw new NotUniqueTableAliasException($alias);
 		}
 
-		$this->tableNamesInOrder[] = [null, $alias];
 		$columnNames = [];
 		$uniqueFieldNameMap = [];
 
@@ -178,7 +179,7 @@ final class ColumnResolver
 				new ExprTypeResult(
 					$field->exprType->type,
 					$field->exprType->isNullable,
-					new ColumnInfo($field->name, $alias, $alias, ColumnInfoTableTypeEnum::SUBQUERY),
+					new ColumnInfo($field->name, $alias, $alias, ColumnInfoTableTypeEnum::SUBQUERY, null),
 				),
 			);
 			$uniqueFieldNameMap[$field->name] = true;
@@ -186,7 +187,7 @@ final class ColumnResolver
 			$this->subquerySchemas[$alias][$field->name] = $field;
 		}
 
-		$this->registerColumnsForSchema($alias, $columnNames);
+		$this->registerColumnsForSchema($alias, $columnNames, null);
 	}
 
 	/**
@@ -215,9 +216,15 @@ final class ColumnResolver
 		return $columns;
 	}
 
-	public function registerOuterJoinedTable(string $table): void
+	/** @throws AnalyserException */
+	private function registerOuterJoinedTable(string $table, ?string $database = null): void
 	{
-		$this->outerJoinedTableMap[$table] = true;
+		$type = $this->getTableType($table, $database);
+		$database = match ($type) {
+			ColumnInfoTableTypeEnum::TABLE => $database ?? $this->dbReflection->getDefaultDatabase(),
+			ColumnInfoTableTypeEnum::SUBQUERY => self::SUBQUERY_DB,
+		};
+		$this->outerJoinedTableMap[$database][$table] = true;
 	}
 
 	/** @param array<QueryResultField> $fields */
@@ -238,9 +245,10 @@ final class ColumnResolver
 		$this->fieldList[$field->name][] = [$field, $isColumn];
 	}
 
+	/** @throws AnalyserException */
 	public function registerGroupByColumn(ColumnInfo $column): void
 	{
-		$this->groupByColumns[$column->tableAlias][$column->name] = true;
+		$this->groupByColumns[$this->getColumnDatabaseWithFallback($column)][$column->tableAlias][$column->name] = true;
 	}
 
 	/**
@@ -250,10 +258,11 @@ final class ColumnResolver
 	public function resolveColumn(
 		string $column,
 		?string $table,
+		?string $database,
 		ColumnResolverFieldBehaviorEnum $fieldBehavior,
 		?AnalyserConditionTypeEnum $condition = null,
 	): ResultWithWarnings {
-		$resolvedColumn = $this->resolveColumnName($column, $table, $fieldBehavior);
+		$resolvedColumn = $this->resolveColumnName($column, $table, $database, $fieldBehavior);
 		$columnType = $this->getTypeForFullyQualifiedColumn($resolvedColumn->result, $fieldBehavior, $condition);
 
 		if (
@@ -302,11 +311,12 @@ final class ColumnResolver
 
 		assert($column instanceof TableFullyQualifiedColumn);
 		$columnInfo = $column->columnInfo;
+		$columnDbWithFallback = $this->getColumnDatabaseWithFallback($columnInfo);
 
 		if (
 			$fieldBehavior === ColumnResolverFieldBehaviorEnum::HAVING
 			&& $this->aggregateFunctionDepth === 0
-			&& ! isset($this->groupByColumns[$columnInfo->tableAlias][$columnInfo->name])
+			&& ! isset($this->groupByColumns[$columnDbWithFallback][$columnInfo->tableAlias][$columnInfo->name])
 		) {
 			$isColumnUsedInFieldList = false;
 
@@ -335,9 +345,13 @@ final class ColumnResolver
 			}
 		}
 
-		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name)
+		$exprType = $this->findColumnExprType($columnInfo->tableAlias, $columnInfo->name, $columnInfo->database)
 			?? throw AnalyserException::fromAnalyserError(
-				AnalyserErrorBuilder::createUnknownColumnError($columnInfo->name, $columnInfo->tableAlias),
+				AnalyserErrorBuilder::createUnknownColumnError(
+					$columnInfo->name,
+					$columnInfo->tableAlias,
+					$columnInfo->database,
+				),
 			);
 		$knowledgeBase = null;
 
@@ -370,6 +384,7 @@ final class ColumnResolver
 	private function resolveColumnName(
 		string $column,
 		?string $table,
+		?string $database,
 		ColumnResolverFieldBehaviorEnum $fieldBehavior,
 		bool $allowParentColumn = true,
 	): ResultWithWarnings {
@@ -377,9 +392,12 @@ final class ColumnResolver
 			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
 			&& $this->insertReplaceTargetTable !== null
 		) {
-			if ($table !== null && $table !== $this->insertReplaceTargetTable->name) {
+			if (
+				($table !== null && $table !== $this->insertReplaceTargetTable->name)
+				|| ($database !== null && $database !== $this->insertReplaceTargetTable->database)
+			) {
 				throw AnalyserException::fromAnalyserError(
-					AnalyserErrorBuilder::createAssignToReadonlyColumnError($column, $table),
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table, $database),
 				);
 			}
 
@@ -387,7 +405,7 @@ final class ColumnResolver
 
 			if ($columnSchema === null) {
 				throw AnalyserException::fromAnalyserError(
-					AnalyserErrorBuilder::createUnknownColumnError($column, $table),
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table, $database),
 				);
 			}
 
@@ -398,6 +416,7 @@ final class ColumnResolver
 						$this->insertReplaceTargetTable->name,
 						$this->insertReplaceTargetTable->name,
 						ColumnInfoTableTypeEnum::TABLE,
+						$this->insertReplaceTargetTable->database,
 					),
 				),
 				[],
@@ -420,7 +439,8 @@ final class ColumnResolver
 			$this->allColumns,
 			$table === null
 				? static fn (array $t) => $t['column'] === $column
-				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table,
+				: static fn (array $t) => $t['column'] === $column && $t['table'] === $table
+					&& ($database === null || $database === $t['database']),
 		);
 
 		if ($table === null) {
@@ -498,7 +518,7 @@ final class ColumnResolver
 				if ($candidateTable !== null) {
 					return new ResultWithWarnings(
 						new TableFullyQualifiedColumn(
-							$this->getColumnInfo($candidateTable, $column),
+							$this->getColumnInfo($candidateTable, $column, $database),
 						),
 						$warnings,
 					);
@@ -516,7 +536,7 @@ final class ColumnResolver
 			case 0:
 				if (! $allowParentColumn) {
 					throw AnalyserException::fromAnalyserError(
-						AnalyserErrorBuilder::createUnknownColumnError($column, $table),
+						AnalyserErrorBuilder::createUnknownColumnError($column, $table, $database),
 					);
 				}
 
@@ -530,6 +550,7 @@ final class ColumnResolver
 					$resolvedParentColumn = $this->parent?->resolveColumnName(
 						$column,
 						$table,
+						$database,
 						$fieldBehavior,
 						$this->canReferenceGrandParent,
 					);
@@ -566,11 +587,17 @@ final class ColumnResolver
 				}
 
 				throw AnalyserException::fromAnalyserError(
-					AnalyserErrorBuilder::createUnknownColumnError($column, $table),
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table, $database),
 				);
 			case 1:
 				return new ResultWithWarnings(
-					new TableFullyQualifiedColumn($this->getColumnInfo(reset($candidateTables)['table'], $column)),
+					new TableFullyQualifiedColumn(
+						$this->getColumnInfo(
+							reset($candidateTables)['table'],
+							$column,
+							reset($candidateTables)['database'],
+						),
+					),
 					[],
 				);
 			default:
@@ -581,23 +608,19 @@ final class ColumnResolver
 	}
 
 	/** @throws AnalyserException */
-	private function getColumnInfo(string $table, string $column): ColumnInfo
+	private function getColumnInfo(string $table, string $column, ?string $database): ColumnInfo
 	{
-		$tableName = $this->tablesByAlias[$table] ?? $table;
+		$database ??= $this->dbReflection->getDefaultDatabase();
+		$tableName = $this->tablesByAlias[$table][$database] ?? $table;
 
-		if (isset($this->tableSchemas[$tableName])) {
-			return new ColumnInfo(
-				$column,
-				$tableName,
-				$table,
-				isset($this->cteSchemas[$tableName])
-					? ColumnInfoTableTypeEnum::SUBQUERY
-					: ColumnInfoTableTypeEnum::TABLE,
-			);
+		if (isset($this->tableSchemas[$database][$tableName])) {
+			return new ColumnInfo($column, $tableName, $table, ColumnInfoTableTypeEnum::TABLE, $database);
 		}
 
-		if (isset($this->subquerySchemas[$table])) {
-			return new ColumnInfo($column, $tableName, $table, ColumnInfoTableTypeEnum::SUBQUERY);
+		$tableName = $this->tablesByAlias[$table][self::SUBQUERY_DB] ?? $table;
+
+		if (isset($this->subquerySchemas[$table]) || $this->findCteSchema($tableName) !== null) {
+			return new ColumnInfo($column, $tableName, $table, ColumnInfoTableTypeEnum::SUBQUERY, null);
 		}
 
 		throw new AnalyserException("Unhandled edge-case: can't find schema for {$tableName}.{$column}");
@@ -619,25 +642,15 @@ final class ColumnResolver
 	 * @return array<QueryResultField>
 	 * @throws AnalyserException
 	 */
-	public function resolveAllColumns(?string $table): array
+	public function resolveAllColumns(?string $table, ?string $database = null): array
 	{
 		$fields = [];
 
 		if ($table !== null) {
-			$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
-			$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
-
-			if ($tableSchema !== null) {
-				$columnNames = array_keys($tableSchema->columns);
-			} elseif (isset($this->subquerySchemas[$table])) {
-				$columnNames = array_keys($this->subquerySchemas[$table]);
-			} else {
-				// TODO: error if schema is not found
-				return [];
-			}
+			$columnNames = $this->findAllColumnNames($table, $database);
 
 			foreach ($columnNames as $column) {
-				$exprType = $this->findColumnExprType($table, $column);
+				$exprType = $this->findColumnExprType($table, $column, $database);
 
 				// This would have already been reported previously, so let's ignore it.
 				if ($exprType === null) {
@@ -647,8 +660,14 @@ final class ColumnResolver
 				$fields[] = new QueryResultField($column, $exprType);
 			}
 		} else {
-			foreach ($this->allColumns as ['column' => $column, 'table' => $columnTable]) {
-				$exprType = $this->findColumnExprType($columnTable, $column);
+			if ($database !== null) {
+				throw new ShouldNotHappenException('It should not be possible to specify database without table.');
+			}
+
+			unset($database);
+
+			foreach ($this->allColumns as ['column' => $column, 'table' => $columnTable, 'database' => $database]) {
+				$exprType = $this->findColumnExprType($columnTable, $column, $database);
 
 				// This would have already been reported previously, so let's ignore it.
 				if ($exprType === null) {
@@ -662,11 +681,56 @@ final class ColumnResolver
 		return $fields;
 	}
 
-	private function findColumnExprType(string $table, string $column): ?ExprTypeResult
+	/** @return list<string> */
+	private function findAllColumnNames(string $table, ?string $database): array
 	{
-		$isOuterTable = $this->outerJoinedTableMap[$table] ?? false;
-		$normalizedTableName = $this->tablesByAlias[$table] ?? $table;
-		$tableSchema = $this->tableSchemas[$normalizedTableName] ?? null;
+		$origDatabase = $database;
+		$database ??= $this->dbReflection->getDefaultDatabase();
+		$normalizedTableName = $this->tablesByAlias[$table][$database] ?? $table;
+		$tableSchema = $this->tableSchemas[$database][$normalizedTableName] ?? null;
+
+		if ($tableSchema !== null) {
+			return array_keys($tableSchema->columns);
+		}
+
+		if ($origDatabase !== null) {
+			// TODO: error if schema is not found
+			return [];
+		}
+
+		$normalizedTableName = $this->tablesByAlias[$table][self::SUBQUERY_DB] ?? $table;
+		$cteSchema = $this->findCteSchema($normalizedTableName);
+
+		if ($cteSchema !== null) {
+			return array_keys($cteSchema->columns);
+		}
+
+		if (isset($this->subquerySchemas[$table])) {
+			return array_keys($this->subquerySchemas[$table]);
+		}
+
+		// TODO: error if schema is not found
+		return [];
+	}
+
+	private function findColumnExprType(string $table, string $column, ?string $database): ?ExprTypeResult
+	{
+		$origDatabase = $database;
+		$database ??= $this->dbReflection->getDefaultDatabase();
+		$normalizedTableName = $this->tablesByAlias[$table][$database] ?? $table;
+		$tableSchema = $this->tableSchemas[$database][$normalizedTableName] ?? null;
+		$schemaDatabase = $database;
+		$tableType = ColumnInfoTableTypeEnum::TABLE;
+
+		if ($tableSchema === null && $origDatabase === null) {
+			$normalizedTableName = $this->tablesByAlias[$table][self::SUBQUERY_DB] ?? $table;
+			$tableSchema = $this->findCteSchema($normalizedTableName);
+			$schemaDatabase = null;
+			$tableType = ColumnInfoTableTypeEnum::SUBQUERY;
+			$database = self::SUBQUERY_DB;
+		}
+
+		$isOuterTable = $this->outerJoinedTableMap[$database][$table] ?? false;
 
 		if ($tableSchema !== null) {
 			$columnSchema = $tableSchema->columns[$column] ?? null;
@@ -694,7 +758,8 @@ final class ColumnResolver
 					$columnSchema->name,
 					$normalizedTableName,
 					$table,
-					$this->tableTypeByName[$normalizedTableName],
+					$tableType,
+					$schemaDatabase,
 				),
 			);
 		}
@@ -708,6 +773,28 @@ final class ColumnResolver
 		return null;
 	}
 
+	/** @throws AnalyserException */
+	private function getTableType(string $alias, ?string $database): ColumnInfoTableTypeEnum
+	{
+		if (isset($this->tablesByAlias[$alias][$database ?? $this->dbReflection->getDefaultDatabase()])) {
+			return ColumnInfoTableTypeEnum::TABLE;
+		}
+
+		if ($database === null) {
+			if (isset($this->subquerySchemas[$alias])) {
+				return ColumnInfoTableTypeEnum::SUBQUERY;
+			}
+
+			if ($this->findCteSchema($this->tablesByAlias[$alias][self::SUBQUERY_DB] ?? $alias) !== null) {
+				return ColumnInfoTableTypeEnum::SUBQUERY;
+			}
+		}
+
+		throw AnalyserException::fromAnalyserError(
+			AnalyserErrorBuilder::createTableDoesntExistError($alias, $database),
+		);
+	}
+
 	private function findCteSchema(string $name): ?Schema\Table
 	{
 		return $this->cteSchemas[$name] ?? $this->parent?->findCteSchema($name);
@@ -718,15 +805,56 @@ final class ColumnResolver
 	{
 		$duplicateAliases = array_intersect_key($this->tablesByAlias, $other->tablesByAlias);
 
-		if (count($duplicateAliases) > 0) {
-			throw new NotUniqueTableAliasException(array_key_first($duplicateAliases));
+		foreach (array_keys($duplicateAliases) as $alias) {
+			$duplicates = array_intersect_key($this->tablesByAlias[$alias], $other->tablesByAlias[$alias]);
+			$hasDbName = count($this->tablesByAlias[$alias]) > 1
+				|| count($other->tablesByAlias[$alias]) > 1;
+
+			if (count($duplicates) > 0) {
+				throw new NotUniqueTableAliasException(
+					$alias,
+					$hasDbName
+						? array_key_first($duplicates)
+						: null,
+				);
+			}
 		}
 
-		$this->tablesByAlias = array_merge($this->tablesByAlias, $other->tablesByAlias);
-		$this->outerJoinedTableMap = array_merge($this->outerJoinedTableMap, $other->outerJoinedTableMap);
-		$this->tableNamesInOrder = array_merge($this->tableNamesInOrder, $other->tableNamesInOrder);
-		$this->tableSchemas = array_merge($this->tableSchemas, $other->tableSchemas);
-		$this->tableTypeByName += $other->tableTypeByName;
+		// Register current tables as outer-joined, before adding tables from $other
+		if ($join->joinType === JoinTypeEnum::RIGHT_OUTER_JOIN) {
+			$this->registerAllTablesAsOuterJoin($this);
+		}
+
+		$newTablesByAlias = [];
+
+		foreach (array_keys($this->tablesByAlias + $other->tablesByAlias) as $alias) {
+			$newTablesByAlias[$alias] = array_merge(
+				$this->tablesByAlias[$alias] ?? [],
+				$other->tablesByAlias[$alias] ?? [],
+			);
+		}
+
+		$this->tablesByAlias = $newTablesByAlias;
+		$newOuterJoinedTableMap = [];
+
+		foreach (array_keys($this->outerJoinedTableMap + $other->outerJoinedTableMap) as $database) {
+			$newOuterJoinedTableMap[$database] = array_merge(
+				$this->outerJoinedTableMap[$database] ?? [],
+				$other->outerJoinedTableMap[$database] ?? [],
+			);
+		}
+
+		$this->outerJoinedTableMap = $newOuterJoinedTableMap;
+		$newTableSchemas = [];
+
+		foreach (array_keys($this->tableSchemas + $other->tableSchemas) as $database) {
+			$newTableSchemas[$database] = array_merge(
+				$this->tableSchemas[$database] ?? [],
+				$other->tableSchemas[$database] ?? [],
+			);
+		}
+
+		$this->tableSchemas = $newTableSchemas;
 
 		$duplicateSubqueries = array_intersect_key($this->subquerySchemas, $other->subquerySchemas);
 
@@ -735,14 +863,6 @@ final class ColumnResolver
 		}
 
 		$this->subquerySchemas = array_merge($this->subquerySchemas, $other->subquerySchemas);
-
-		$duplicateTables = array_intersect_key($this->tablesWithoutAliasMap, $other->tablesWithoutAliasMap);
-
-		if (count($duplicateTables) > 0) {
-			throw new NotUniqueTableAliasException(array_key_first($duplicateTables));
-		}
-
-		$this->tablesWithoutAliasMap = array_merge($this->tablesWithoutAliasMap, $other->tablesWithoutAliasMap);
 
 		if ($join->joinCondition instanceof UsingJoinCondition) {
 			$newAllColumns = [];
@@ -780,10 +900,28 @@ final class ColumnResolver
 			$this->allColumns = array_merge($this->allColumns, $other->allColumns);
 		}
 
+		if ($join->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
+			$this->registerAllTablesAsOuterJoin($other);
+		}
+
 		if ($this->knowledgeBase !== null && $other->knowledgeBase !== null) {
 			$this->knowledgeBase = $this->knowledgeBase->and($other->knowledgeBase);
 		} elseif ($this->knowledgeBase !== null) {
 			$this->knowledgeBase = $other->knowledgeBase;
+		}
+	}
+
+	/** @throws AnalyserException */
+	private function registerAllTablesAsOuterJoin(self $outerJoinedResolver): void
+	{
+		foreach ($outerJoinedResolver->tablesByAlias as $alias => $dbTables) {
+			foreach (array_keys($dbTables) as $database) {
+				$this->registerOuterJoinedTable($alias, $database);
+			}
+		}
+
+		foreach (array_keys($outerJoinedResolver->subquerySchemas) as $alias) {
+			$this->registerOuterJoinedTable($alias);
 		}
 	}
 
@@ -809,23 +947,41 @@ final class ColumnResolver
 		}
 	}
 
-	public function findTableSchema(string $tableName): ?Schema\Table
+	public function findTableSchema(string $tableName, ?string $database = null): ?Schema\Table
 	{
-		return $this->tableSchemas[$tableName] ?? null;
+		return $this->tableSchemas[$database ?? $this->dbReflection->getDefaultDatabase()][$tableName] ?? null;
 	}
 
 	/** @return array<string> */
 	public function getCollidingSubqueryAndTableAliases(): array
 	{
 		return array_keys(
-			array_intersect_key(array_merge($this->tablesByAlias, $this->tableSchemas), $this->subquerySchemas),
+			array_intersect_key(
+				$this->tablesByAlias,
+				$this->subquerySchemas,
+			),
 		);
 	}
 
-	public function hasTableForDelete(string $table): bool
+	public function hasTableForDelete(string $table, ?string $database = null): bool
 	{
-		return isset($this->tablesByAlias[$table])
-			|| (isset($this->tableSchemas[$table]) && ! in_array($table, $this->tablesByAlias, true));
+		$database ??= $this->dbReflection->getDefaultDatabase();
+
+		if (isset($this->tablesByAlias[$table][$database])) {
+			return true;
+		}
+
+		if (! isset($this->tableSchemas[$database][$table])) {
+			return false;
+		}
+
+		foreach ($this->tablesByAlias as $dbTables) {
+			if (($dbTables[$database] ?? null) === $table) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public function enterAggregateFunction(): void
@@ -856,5 +1012,15 @@ final class ColumnResolver
 		}
 
 		$this->knowledgeBase = $this->knowledgeBase->and($knowledgeBase);
+	}
+
+	/** @throws AnalyserException */
+	private function getColumnDatabaseWithFallback(ColumnInfo $column): string
+	{
+		return match ($column->tableType) {
+			ColumnInfoTableTypeEnum::SUBQUERY => self::SUBQUERY_DB,
+			ColumnInfoTableTypeEnum::TABLE => $column->database
+				?? throw new ShouldNotHappenException('Column\'s database is null'),
+		};
 	}
 }

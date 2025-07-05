@@ -61,6 +61,8 @@
 		<exclude name="SlevomatCodingStandard.Complexity.Cognitive"/>
 		<exclude name="SlevomatCodingStandard.Files.FileLength"/>
 		<exclude name="SlevomatCodingStandard.Classes.ClassLength"/>
+		<!-- Sometimes it's necessary to keep the line-length within limit. But the sniff doesn't allow this -->
+		<exclude name="SlevomatCodingStandard.Arrays.ArrayAccess.NoSpaceBetweenBrackets" />
 		<!-- It interferes with test data providers etc -->
 		<exclude name="SlevomatCodingStandard.Arrays.AlphabeticallySortedByKeys"/>
 		<!-- it's not safe, its fixes can have different semantics -->

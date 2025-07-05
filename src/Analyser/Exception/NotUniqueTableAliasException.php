@@ -11,10 +11,10 @@ use Throwable;
 
 class NotUniqueTableAliasException extends AnalyserException
 {
-	public function __construct(string $table, ?Throwable $previous = null)
+	public function __construct(string $table, ?string $database = null, ?Throwable $previous = null)
 	{
 		parent::__construct(
-			AnalyserErrorBuilder::createNotUniqueTableAliasErrorMessage($table),
+			AnalyserErrorBuilder::createNotUniqueTableAliasErrorMessage($table, $database),
 			AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS,
 			MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			$previous,

@@ -7,3 +7,6 @@ parameters:
 			-
 				column: mysqli_test_column_overrides.constant
 				type: \MariaStan\PHPStan\Type\MySQLi\TestConstants::*
+			-
+				column: mariastan_test2.mysqli_test_column_overrides.id
+				type: 3|4

@@ -41,7 +41,7 @@ use function reset;
 
 class PHPStanReturnTypeHelper
 {
-	/** @var array<string, array<string, Type|null>> table => column => type */
+	/** @var array<string, array<string, array<string, Type|null>>> database => table => column => type */
 	private array $columnTypeOverrides;
 
 	/** @var array<array{column: string, type: string}> */
@@ -385,7 +385,8 @@ class PHPStanReturnTypeHelper
 					);
 				}
 
-				$conflictingType = $this->columnTypeOverrides[$expr->tableName->name][$expr->name] ?? null;
+				$database = $expr->tableName->databaseName ?? $this->dbReflection->getDefaultDatabase();
+				$conflictingType = $this->columnTypeOverrides[$database][$expr->tableName->name][$expr->name] ?? null;
 
 				if ($conflictingType !== null) {
 					throw new InvalidArgumentException(
@@ -396,11 +397,13 @@ class PHPStanReturnTypeHelper
 
 				// I add null, so that it can be intersected with nullable columns
 				// (e.g. WHERE col IS NULL, LEFT JOIN, ...)
-				$this->columnTypeOverrides[$expr->tableName->name][$expr->name] = TypeCombinator::addNull($type);
+				$this->columnTypeOverrides[$database][$expr->tableName->name][$expr->name]
+					= TypeCombinator::addNull($type);
 			}
 		}
 
-		$override = $this->columnTypeOverrides[$column->tableName][$column->name] ?? false;
+		$database = $column->database ?? $this->dbReflection->getDefaultDatabase();
+		$override = $this->columnTypeOverrides[$database][$column->tableName][$column->name] ?? false;
 
 		if ($override !== false) {
 			return $override;
@@ -410,7 +413,7 @@ class PHPStanReturnTypeHelper
 		$table = null;
 
 		try {
-			$table = $this->dbReflection->findTableSchema($column->tableName);
+			$table = $this->dbReflection->findTableSchema($column->tableName, $database);
 		} catch (DbReflectionException) {
 		}
 
@@ -421,13 +424,14 @@ class PHPStanReturnTypeHelper
 				continue;
 			}
 
-			$override = $this->columnTypeOverrides[$fk->referencedTableName][$fk->referencedColumnNames[$key]] ?? null;
+			$override = $this->columnTypeOverrides[$fk->referencedDatabaseName][$fk->referencedTableName]
+				[$fk->referencedColumnNames[$key]] ?? null;
 
 			if ($override !== null) {
 				break;
 			}
 		}
 
-		return $this->columnTypeOverrides[$column->tableName][$column->name] = $override;
+		return $this->columnTypeOverrides[$database][$column->tableName][$column->name] = $override;
 	}
 }

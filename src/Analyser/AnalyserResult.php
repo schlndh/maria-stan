@@ -11,7 +11,7 @@ final class AnalyserResult
 	/**
 	 * @param ?array<QueryResultField> $resultFields fields in the order they are returned by query, null = no analysis
 	 * @param list<AnalyserError> $errors
-	 * @param ?array<ReferencedSymbol> $referencedSymbols null = no analysis
+	 * @param ?list<ReferencedSymbol> $referencedSymbols null = no analysis
 	 */
 	public function __construct(
 		public readonly ?array $resultFields,

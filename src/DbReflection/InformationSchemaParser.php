@@ -44,11 +44,11 @@ class InformationSchemaParser
 	 * @return non-empty-array<string, Column> name => column
 	 * @throws DbReflectionException
 	 */
-	public function parseTableColumns(string $table, array $tableCols): array
+	public function parseTableColumns(string $table, array $tableCols, ?string $database): array
 	{
 		if (count($tableCols) === 0) {
 			throw new TableDoesNotExistException(
-				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($table),
+				AnalyserErrorBuilder::createTableDoesntExistErrorMessage($table, $database),
 				MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			);
 		}
@@ -94,6 +94,8 @@ class InformationSchemaParser
 				?? throw new UnexpectedValueException('TABLE_NAME cannot be null');
 			$refTableName = $rows[1]['REFERENCED_TABLE_NAME']
 				?? throw new UnexpectedValueException('REFERENCED_TABLE_NAME cannot be null');
+			$refDbName = $rows[1]['REFERENCED_TABLE_SCHEMA']
+				?? throw new UnexpectedValueException('REFERENCED_TABLE_SCHEMA cannot be null');
 			$columnNames = [];
 			$refColumnNames = [];
 
@@ -128,6 +130,7 @@ class InformationSchemaParser
 				$constraintName,
 				$tableName,
 				$columnNames,
+				$refDbName,
 				$refTableName,
 				$refColumnNames,
 			);

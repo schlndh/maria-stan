@@ -26,7 +26,6 @@ use MariaStan\Ast\Query\SelectQuery\TableValueConstructorSelectQuery;
 use MariaStan\Ast\Query\SelectQuery\WithSelectQuery;
 use MariaStan\Ast\Query\SelectQueryCombinatorTypeEnum;
 use MariaStan\Ast\Query\TableReference\Join;
-use MariaStan\Ast\Query\TableReference\JoinTypeEnum;
 use MariaStan\Ast\Query\TableReference\Subquery;
 use MariaStan\Ast\Query\TableReference\Table;
 use MariaStan\Ast\Query\TableReference\TableReference;
@@ -71,10 +70,13 @@ final class AnalyserState
 	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
 
-	/** @var array<string, ReferencedSymbol\Table> name => table */
+	/** @var array<string, array<string, ReferencedSymbol\Table>> database => name => table */
 	private array $referencedTables = [];
 
-	/** @var array<string, array<string, ReferencedSymbol\TableColumn>> table name => column name => column */
+	/**
+	 * @var array<string, array<string, array<string, ReferencedSymbol\TableColumn>>>
+	 *     database => table name => column name => column
+	 */
 	private array $referencedTableColumns = [];
 	private ColumnResolverFieldBehaviorEnum $fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
 	private bool $hasAggregateFunctionCalls = false;
@@ -124,10 +126,16 @@ final class AnalyserState
 				return $this->getUnsupportedQueryTypeResult();
 		}
 
-		$referencedSymbols = array_values($this->referencedTables);
+		$referencedSymbols = [];
 
-		foreach ($this->referencedTableColumns as $columns) {
-			$referencedSymbols = array_merge($referencedSymbols, $columns);
+		foreach ($this->referencedTables as $tables) {
+			$referencedSymbols = array_merge($referencedSymbols, array_values($tables));
+		}
+
+		foreach ($this->referencedTableColumns as $tableColumns) {
+			foreach ($tableColumns as $columns) {
+				$referencedSymbols = array_merge($referencedSymbols, array_values($columns));
+			}
 		}
 
 		return new AnalyserResult(
@@ -355,7 +363,7 @@ final class AnalyserState
 
 		if ($fromClause !== null) {
 			try {
-				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver)[1];
+				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver);
 			} catch (AnalyserException | DbReflectionException $e) {
 				$this->errors[] = $e->toAnalyserError();
 			}
@@ -393,7 +401,10 @@ final class AnalyserState
 					break;
 				case SelectExprTypeEnum::ALL_COLUMNS:
 					assert($selectExpr instanceof AllColumns);
-					$allFields = $this->columnResolver->resolveAllColumns($selectExpr->tableName?->name);
+					$allFields = $this->columnResolver->resolveAllColumns(
+						$selectExpr->tableName?->name,
+						$selectExpr->tableName?->databaseName,
+					);
 
 					foreach ($allFields as $field) {
 						$this->columnResolver->registerField($field, true);
@@ -415,7 +426,11 @@ final class AnalyserState
 				continue;
 			}
 
-			$this->columnResolver->registerGroupByColumn($exprType->column);
+			try {
+				$this->columnResolver->registerGroupByColumn($exprType->column);
+			} catch (AnalyserException $e) {
+				$this->errors[] = $e->toAnalyserError();
+			}
 		}
 
 		if ($select->having !== null) {
@@ -452,11 +467,8 @@ final class AnalyserState
 		return [$fields, $rowCount];
 	}
 
-	/**
-	 * @return array{array<string>, ColumnResolver} [table names in order, column resolver]
-	 * @throws AnalyserException|DbReflectionException
-	 */
-	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): array
+	/** @throws AnalyserException|DbReflectionException */
+	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): ColumnResolver
 	{
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
@@ -464,17 +476,22 @@ final class AnalyserState
 				$columnResolver = clone $columnResolver;
 
 				try {
-					$tableType = $columnResolver->registerTable($fromClause->name->name, $fromClause->alias);
+					$tableType = $columnResolver->registerTable(
+						$fromClause->name->name,
+						$fromClause->alias,
+						$fromClause->name->databaseName,
+					);
 
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
-						$this->referencedTables[$fromClause->name->name]
-							??= new ReferencedSymbol\Table($fromClause->name->name);
+						$database = $fromClause->name->databaseName ?? $this->dbReflection->getDefaultDatabase();
+						$this->referencedTables[$database][$fromClause->name->name]
+							??= new ReferencedSymbol\Table($fromClause->name->name, $database);
 					}
 				} catch (AnalyserException | DbReflectionException $e) {
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->alias ?? $fromClause->name->name], $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
 				$columnResolver = clone $columnResolver;
@@ -489,11 +506,11 @@ final class AnalyserState
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->getAliasOrThrow()], $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
-				[$leftTables, $leftCr] = $this->analyseTableReference($fromClause->leftTable, $columnResolver);
-				[$rightTables, $rightCr] = $this->analyseTableReference($fromClause->rightTable, $columnResolver);
+				$leftCr = $this->analyseTableReference($fromClause->leftTable, $columnResolver);
+				$rightCr = $this->analyseTableReference($fromClause->rightTable, $columnResolver);
 				$leftCr->mergeAfterJoin($rightCr, $fromClause);
 				$columnResolver = $leftCr;
 				unset($leftCr, $rightCr);
@@ -510,19 +527,11 @@ final class AnalyserState
 
 				$this->columnResolver = $bakResolver;
 
-				if ($fromClause->joinType === JoinTypeEnum::LEFT_OUTER_JOIN) {
-					foreach ($rightTables as $rightTable) {
-						$columnResolver->registerOuterJoinedTable($rightTable);
-					}
-				} elseif ($fromClause->joinType === JoinTypeEnum::RIGHT_OUTER_JOIN) {
-					foreach ($leftTables as $leftTable) {
-						$columnResolver->registerOuterJoinedTable($leftTable);
-					}
-				} elseif ($onResult instanceof ExprTypeResult) {
+				if (! $fromClause->joinType->isOuterJoin() && $onResult instanceof ExprTypeResult) {
 					$columnResolver->addKnowledge($onResult->knowledgeBase);
 				}
 
-				return [array_merge($leftTables, $rightTables), $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::TABLE_VALUE_CONSTRUCTOR:
 				assert($fromClause instanceof TableValueConstructor);
 				$columnResolver = clone $columnResolver;
@@ -534,7 +543,7 @@ final class AnalyserState
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->getAliasOrThrow()], $columnResolver];
+				return $columnResolver;
 		}
 	}
 
@@ -545,11 +554,11 @@ final class AnalyserState
 	private function analyseDeleteQuery(DeleteQuery $query): array
 	{
 		try {
-			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver);
 
 			// don't report missing tables to delete if the table reference is not parsed successfully
 			foreach ($query->tablesToDelete as $table) {
-				if ($this->columnResolver->hasTableForDelete($table->name)) {
+				if ($this->columnResolver->hasTableForDelete($table->name, $table->databaseName)) {
 					continue;
 				}
 
@@ -559,11 +568,12 @@ final class AnalyserState
 					&& $query->table->alias === null
 					&& count($query->tablesToDelete) === 1
 					&& $query->table->name->name === $table->name
+					&& $query->table->name->databaseName === $table->databaseName
 				) {
 					continue;
 				}
 
-				$this->errors[] = AnalyserErrorBuilder::createTableDoesntExistError($table->name);
+				$this->errors[] = AnalyserErrorBuilder::createTableDoesntExistError($table->name, $table->databaseName);
 			}
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
@@ -593,7 +603,7 @@ final class AnalyserState
 	private function analyseUpdateQuery(UpdateQuery $query): void
 	{
 		try {
-			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver);
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
@@ -627,12 +637,12 @@ final class AnalyserState
 		$tableReferenceNode = new Table($mockPosition, $mockPosition, $query->tableName);
 
 		try {
-			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver);
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
 
-		$tableSchema = $this->columnResolver->findTableSchema($query->tableName->name);
+		$tableSchema = $this->columnResolver->findTableSchema($query->tableName->name, $query->tableName->databaseName);
 		$setColumnNames = [];
 		$onDuplicateKeyAnalyser = $this;
 
@@ -720,10 +730,13 @@ final class AnalyserState
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::ASSIGNMENT;
 
 		if ($tableSchema !== null) {
-			$this->columnResolver->registerInsertReplaceTargetTable($tableSchema);
+			$this->columnResolver->registerInsertReplaceTargetTable($tableSchema, $query->tableName->databaseName);
 
 			if ($this !== $onDuplicateKeyAnalyser) {
-				$onDuplicateKeyAnalyser->columnResolver->registerInsertReplaceTargetTable($tableSchema);
+				$onDuplicateKeyAnalyser->columnResolver->registerInsertReplaceTargetTable(
+					$tableSchema,
+					$query->tableName->databaseName,
+				);
 			}
 		}
 
@@ -760,7 +773,7 @@ final class AnalyserState
 	private function analyseTruncateQuery(TruncateQuery $query): void
 	{
 		try {
-			$this->dbReflection->findTableSchema($query->tableName->name);
+			$this->dbReflection->findTableSchema($query->tableName->name, $query->tableName->databaseName);
 		} catch (DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
@@ -783,6 +796,7 @@ final class AnalyserState
 					$resolvedColumn = $this->columnResolver->resolveColumn(
 						$expr->name,
 						$expr->tableName?->name,
+						$expr->tableName?->databaseName,
 						$this->fieldBehavior,
 						$condition,
 					);
@@ -1789,12 +1803,13 @@ final class AnalyserState
 			return;
 		}
 
-		$this->referencedTableColumns[$columnInfo->tableName][$columnInfo->name]
+		$database = $columnInfo->database ?? $this->dbReflection->getDefaultDatabase();
+		$this->referencedTableColumns[$database][$columnInfo->tableName][$columnInfo->name]
 			= new ReferencedSymbol\TableColumn(
-				$this->referencedTables[$columnInfo->tableName]
+				$this->referencedTables[$database][$columnInfo->tableName]
 					?? throw new ShouldNotHappenException(
 						"Referencing column {$columnInfo->name} of table "
-						. "{$columnInfo->tableName} which was not referenced.",
+						. "{$database}.{$columnInfo->tableName} which was not referenced.",
 					),
 				$columnInfo->name,
 			);

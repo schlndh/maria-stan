@@ -48,6 +48,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -101,6 +102,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -161,6 +163,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 0
 			[charsetnr] => 63
 			[flags] => Array
@@ -214,6 +217,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 17
 			[charsetnr] => 63
 			[flags] => Array
@@ -274,6 +278,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 16
 			[charsetnr] => 45
 			[flags] => Array
@@ -327,6 +332,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array
@@ -387,6 +393,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 12
 			[charsetnr] => 45
 			[flags] => Array
@@ -440,6 +447,7 @@ Array
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 23
 			[charsetnr] => 63
 			[flags] => Array

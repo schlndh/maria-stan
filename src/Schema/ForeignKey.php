@@ -14,6 +14,7 @@ final class ForeignKey
 		public readonly string $constraintName,
 		public readonly string $tableName,
 		public readonly array $columnNames,
+		public readonly string $referencedDatabaseName,
 		public readonly string $referencedTableName,
 		public readonly array $referencedColumnNames,
 	) {

@@ -1,0 +1,1060 @@
+multi-db
+-----
+SELECT GROUP_CONCAT(`mariastan_test2`.analyser_only_other_db_test.name)
+FROM `mariastan_test2`.analyser_only_other_db_test t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => GROUP_CONCAT(`mariastan_test2`.analyser_only_other_db_test.name)
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+		)
+	[rowCountRange] => MariaStan\Analyser\QueryResultRowCountRange
+		(
+			[min] => 1
+			[max] => 1
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'SELECT'
+-----
+SELECT *
+FROM `mariastan_test2`.analyser_only_other_db_test t
+WHERE `mariastan_test2`.analyser_only_other_db_test.name = 'foo'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'WHERE'
+-----
+SELECT *
+FROM `mariastan_test2`.analyser_only_other_db_test t
+GROUP BY `mariastan_test2`.analyser_only_other_db_test.name
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'GROUP BY'
+-----
+SELECT *
+FROM `mariastan_test2`.analyser_only_other_db_test t
+HAVING `mariastan_test2`.analyser_only_other_db_test.name = 'foo'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'HAVING'
+-----
+SELECT *
+FROM `mariastan_test2`.analyser_only_other_db_test t
+ORDER BY `mariastan_test2`.analyser_only_other_db_test.name
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'ORDER BY'
+-----
+SELECT analyser_test.name FROM analyser_test
+JOIN `mariastan_test2`.analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Ambiguous column 'analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::AMBIGUOUS_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test2
+				)
+		)
+)
+#######
+1052: Column 'analyser_test.name' in SELECT is ambiguous
+-----
+SELECT analyser_test.name FROM (SELECT 1 name) analyser_test
+JOIN `mariastan_test2`.analyser_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Ambiguous column 'analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::AMBIGUOUS_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test2
+				)
+		)
+)
+#######
+1052: Column 'analyser_test.name' in SELECT is ambiguous
+-----
+SELECT *
+FROM `mariastan_test2`.analyser_only_other_db_test t1
+CROSS JOIN `mariastan_test`.analyser_only_other_db_test t2
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_only_other_db_test
+									[tableAlias] => t1
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test2
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test.analyser_only_other_db_test' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_only_other_db_test
+							[database] => mariastan_test2
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1146: Table 'mariastan_test.analyser_only_other_db_test' doesn't exist
+-----
+WITH foo_cte (id) AS (VALUES (1))
+SELECT * FROM `mariastan_test`.foo_cte
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test.foo_cte' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.foo_cte' doesn't exist
+-----
+SELECT *
+FROM analyser_test
+WHERE `mariastan_test2`.analyser_test.id > 5
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\IntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => id
+									[tableName] => analyser_test
+									[tableAlias] => analyser_test
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\VarcharType
+								(
+								)
+							[isNullable] => true
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => name
+									[tableName] => analyser_test
+									[tableAlias] => analyser_test
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.id' in 'WHERE'
+-----
+SELECT `mariastan_test2`.analyser_only_other_db_test.name
+FROM `mariastan_test2`.analyser_only_other_db_test t
+JOIN analyser_test analyser_only_other_db_test
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => name
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_only_other_db_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test2
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_only_other_db_test.name' in 'SELECT'
+-----
+SELECT `mariastan_test`.t.id
+FROM (SELECT 1 id) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test.t.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1054: Unknown column 'mariastan_test.t.id' in 'SELECT'
+-----
+SELECT `mariastan_test`.t.id
+FROM (SELECT 1 id) t
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => id
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test.t.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1054: Unknown column 'mariastan_test.t.id' in 'SELECT'
+-----
+SELECT * FROM `mariastan_test2`.analyser_test_truncate
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+-----
+SELECT *
+FROM `mariastan_test`.analyser_test t1
+CROSS JOIN `mariastan_test2`.analyser_test t1
+CROSS JOIN `mariastan_test2`.analyser_test t1
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: 'mariastan_test2.t1'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test2
+				)
+		)
+)
+#######
+1066: Not unique table/alias: 't1'
+-----
+INSERT INTO `mariastan_test2`.analyser_test_truncate SET name = 'x'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+-----
+INSERT INTO analyser_test
+SET `mariastan_test2`.analyser_test.name = 'foo'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'INSERT INTO'
+-----
+INSERT INTO analyser_test
+VALUES (NULL, 'foo')
+ON DUPLICATE KEY UPDATE name = VALUE(`mariastan_test2`.analyser_test.name)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'SELECT'
+-----
+INSERT INTO analyser_test
+VALUES (NULL, 'foo')
+ON DUPLICATE KEY UPDATE `mariastan_test2`.analyser_test.name = VALUE(name)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'UPDATE'
+-----
+REPLACE INTO `mariastan_test2`.analyser_test_truncate SET name = 'x'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+-----
+DELETE FROM `mariastan_test2`.analyser_test_truncate WHERE name = 'x'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+-----
+TRUNCATE TABLE `mariastan_test2`.analyser_test_truncate
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'mariastan_test2.analyser_test_truncate' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist

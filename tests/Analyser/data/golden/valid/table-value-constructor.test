@@ -60,6 +60,7 @@ Array
 			[orgname] => 1
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -76,6 +77,7 @@ Array
 			[orgname] => 2
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -148,6 +150,7 @@ Array
 			[orgname] => a
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -164,6 +167,7 @@ Array
 			[orgname] => b
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -236,6 +240,7 @@ Array
 			[orgname] => a
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -251,6 +256,7 @@ Array
 			[orgname] => b
 			[table] => tbl
 			[orgtable] =>
+			[db] =>
 			[length] => 4
 			[charsetnr] => 45
 			[flags] => Array
@@ -321,6 +327,7 @@ Array
 			[orgname] => 1 + 1
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 3
 			[charsetnr] => 63
 			[flags] => Array
@@ -337,6 +344,7 @@ Array
 			[orgname] => 2
 			[table] => t
 			[orgtable] =>
+			[db] =>
 			[length] => 1
 			[charsetnr] => 63
 			[flags] => Array
@@ -384,15 +392,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
@@ -407,6 +417,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -423,6 +434,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -470,15 +482,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
@@ -493,6 +507,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -509,6 +524,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -556,15 +572,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
@@ -579,6 +597,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array
@@ -595,6 +614,7 @@ Array
 			[orgname] => id
 			[table] =>
 			[orgtable] =>
+			[db] =>
 			[length] => 11
 			[charsetnr] => 63
 			[flags] => Array

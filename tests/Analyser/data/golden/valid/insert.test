@@ -13,23 +13,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => name
 				)
@@ -56,6 +59,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -80,6 +84,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -104,6 +109,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -128,6 +134,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -149,15 +156,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -181,15 +190,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -213,15 +224,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -245,23 +258,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[name] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyser_test
+							[database] => mariastan_test
 						)
 					[name] => name
 				)
@@ -288,6 +304,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -312,6 +329,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -336,6 +354,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -360,6 +379,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
 		)
 )
@@ -381,15 +401,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -413,15 +435,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -445,15 +469,17 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -478,23 +504,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -519,23 +548,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -560,23 +592,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -603,23 +638,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 1
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -647,23 +685,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -689,29 +730,101 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[1] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
-				(
-					[table] => MariaStan\Analyser\ReferencedSymbol\Table
-						(
-							[name] => analyser_test
-						)
-					[name] => id
-				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+SELECT id, "abcd" FROM analyser_test
+ON DUPLICATE KEY UPDATE id = analyser_test.id
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyse_test_insert
+							[database] => mariastan_test
+						)
+					[name] => val_string_not_null_no_default
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
 				)
 		)
 )
@@ -735,23 +848,26 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
@@ -777,79 +893,89 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_null_no_default
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
-			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_null_default
 				)
-			[val_string_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_default
 				)
-			[val_enum_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_null_no_default
 				)
-			[val_enum_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_null_default
 				)
-			[val_enum_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_not_null_no_default
 				)
-			[val_enum_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_not_null_default
 				)
@@ -875,79 +1001,89 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
-			[0] => MariaStan\Analyser\ReferencedSymbol\Table
+			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
-			[id] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => id
 				)
-			[val_string_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_null_no_default
 				)
-			[val_string_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_no_default
 				)
-			[val_string_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_null_default
 				)
-			[val_string_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_string_not_null_default
 				)
-			[val_enum_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_null_no_default
 				)
-			[val_enum_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_null_default
 				)
-			[val_enum_not_null_no_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_not_null_no_default
 				)
-			[val_enum_not_null_default] => MariaStan\Analyser\ReferencedSymbol\TableColumn
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
 						(
 							[name] => analyse_test_insert
+							[database] => mariastan_test
 						)
 					[name] => val_enum_not_null_default
 				)

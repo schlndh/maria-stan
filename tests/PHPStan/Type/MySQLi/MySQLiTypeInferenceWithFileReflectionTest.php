@@ -7,7 +7,6 @@ namespace MariaStan\PHPStan\Type\MySQLi;
 use MariaStan\DbReflection\MariaDbFileDbReflection;
 use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
 use MariaStan\TestCaseHelper;
-use MariaStan\Util\MysqliUtil;
 use PHPStan\Testing\TypeInferenceTestCase;
 
 use function file_put_contents;
@@ -21,7 +20,10 @@ class MySQLiTypeInferenceWithFileReflectionTest extends TypeInferenceTestCase
 		MySQLiTypeInferenceDataTest::initData($mysqli);
 		file_put_contents(
 			__DIR__ . '/schema.dump',
-			MariaDbFileDbReflection::dumpSchema($mysqli, MysqliUtil::getDatabaseName($mysqli)),
+			MariaDbFileDbReflection::dumpSchema(
+				$mysqli,
+				[TestCaseHelper::getDefaultDbName(), TestCaseHelper::getSecondDbName()],
+			),
 		);
 
 		foreach (MySQLiTypeInferenceTest::getTestFiles() as $testFile) {

@@ -43,7 +43,7 @@ class MariaDbFileDbReflection implements DbReflection
 	/** @var SchemaDump */
 	private readonly array $schemaDump;
 
-	/** @var array<string, Table> table name => schema */
+	/** @var array<string, array<string, Table>> database => table name => schema */
 	private array $parsedSchemas = [];
 
 	public function __construct(
@@ -87,7 +87,9 @@ class MariaDbFileDbReflection implements DbReflection
 	/** @throws DbReflectionException */
 	public function findTableSchema(string $table, ?string $database = null): Table
 	{
-		$tableDump = $this->schemaDump['databases'][$database ?? $this->defaultDatabase]['tables'][$table] ?? [];
+		$origDatabase = $database;
+		$database ??= $this->defaultDatabase;
+		$tableDump = $this->schemaDump['databases'][$database]['tables'][$table] ?? [];
 
 		if (! is_array($tableDump)) {
 			throw new UnexpectedValueException(
@@ -114,9 +116,10 @@ class MariaDbFileDbReflection implements DbReflection
 			);
 		}
 
-		return $this->parsedSchemas[$table] ??= new Table(
+		return $this->parsedSchemas[$database][$table] ??= new Table(
 			$table,
-			$this->schemaParser->parseTableColumns($table, $cols),
+			$database,
+			$this->schemaParser->parseTableColumns($table, $cols, $origDatabase),
 			$this->schemaParser->parseTableForeignKeys($foreignKeys),
 		);
 	}

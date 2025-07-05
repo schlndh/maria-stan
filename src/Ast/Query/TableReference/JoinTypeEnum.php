@@ -10,4 +10,9 @@ enum JoinTypeEnum: string
 	case LEFT_OUTER_JOIN = 'LEFT_OUTER_JOIN';
 	case RIGHT_OUTER_JOIN = 'RIGHT_OUTER_JOIN';
 	case CROSS_JOIN = 'CROSS_JOIN';
+
+	public function isOuterJoin(): bool
+	{
+		return $this === self::LEFT_OUTER_JOIN || $this === self::RIGHT_OUTER_JOIN;
+	}
 }
