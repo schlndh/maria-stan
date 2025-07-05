@@ -873,6 +873,113 @@ MariaStan\Analyser\AnalyserResult
 #######
 1146: Table 'mariastan_test2.analyser_test_truncate' doesn't exist
 -----
+INSERT INTO analyser_test
+SET `mariastan_test2`.analyser_test.name = 'foo'
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'INSERT INTO'
+-----
+INSERT INTO analyser_test
+VALUES (NULL, 'foo')
+ON DUPLICATE KEY UPDATE name = VALUE(`mariastan_test2`.analyser_test.name)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'SELECT'
+-----
+INSERT INTO analyser_test
+VALUES (NULL, 'foo')
+ON DUPLICATE KEY UPDATE `mariastan_test2`.analyser_test.name = VALUE(name)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'mariastan_test2.analyser_test.name'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1054: Unknown column 'mariastan_test2.analyser_test.name' in 'UPDATE'
+-----
 REPLACE INTO `mariastan_test2`.analyser_test_truncate SET name = 'x'
 -----
 MariaStan\Analyser\AnalyserResult

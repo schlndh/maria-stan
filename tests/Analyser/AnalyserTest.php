@@ -1325,11 +1325,19 @@ class AnalyserTest extends TestCase
 			',
 		];
 
-		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - table' => [
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from INSERT - table' => [
 			'query' => '
 				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
 				SELECT id, "abcd" FROM analyser_test
 				ON DUPLICATE KEY UPDATE id = analyse_test_insert.id
+			',
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - table' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT id, "abcd" FROM analyser_test
+				ON DUPLICATE KEY UPDATE id = analyser_test.id
 			',
 		];
 
@@ -1525,6 +1533,29 @@ class AnalyserTest extends TestCase
 			'query' => "
 				INSERT INTO {$secondDbName}.analyser_only_other_db_test
 				SET name = 'foo'
+			",
+		];
+
+		yield 'INSERT - SET db.table.column' => [
+			'query' => "
+				INSERT INTO analyser_test
+				SET {$dbName}.analyser_test.name = 'foo'
+			",
+		];
+
+		yield 'INSERT - VALUE(db.table.column)' => [
+			'query' => "
+				INSERT INTO analyser_test
+				VALUES (NULL, 'foo')
+				ON DUPLICATE KEY UPDATE name = VALUE({$dbName}.analyser_test.name)
+			",
+		];
+
+		yield 'INSERT - ON DUPLICATE KEY UPDATE db.table.column' => [
+			'query' => "
+				INSERT INTO analyser_test
+				VALUES (NULL, 'foo')
+				ON DUPLICATE KEY UPDATE {$dbName}.analyser_test.name = VALUE(name)
 			",
 		];
 
@@ -3320,7 +3351,7 @@ class AnalyserTest extends TestCase
 				SELECT id, "abcd" FROM analyser_test
 				ON DUPLICATE KEY UPDATE analyser_test.id = 1
 			',
-			'error' => AnalyserErrorBuilder::createAssignToReadonlyColumnError('id', 'analyser_test'),
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'analyser_test'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
@@ -3330,7 +3361,7 @@ class AnalyserTest extends TestCase
 				SELECT * FROM (SELECT 1 id, "abcd" name) t
 				ON DUPLICATE KEY UPDATE t.id = 1
 			',
-			'error' => AnalyserErrorBuilder::createAssignToReadonlyColumnError('id', 't'),
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't'),
 			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 	}
@@ -3725,6 +3756,35 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createUnknownColumnError('name'),
 			],
 			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'INSERT - SET db.table.column - different DB' => [
+			'query' => "
+				INSERT INTO analyser_test
+				SET {$secondDbNameQuoted}.analyser_test.name = 'foo'
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'INSERT - VALUE(db.table.column) - different DB' => [
+			'query' => "
+				INSERT INTO analyser_test
+				VALUES (NULL, 'foo')
+				ON DUPLICATE KEY UPDATE name = VALUE({$secondDbNameQuoted}.analyser_test.name)
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+		];
+
+		yield 'INSERT - ON DUPLICATE KEY UPDATE db.table.column - different DB' => [
+			'query' => "
+				INSERT INTO analyser_test
+				VALUES (NULL, 'foo')
+				ON DUPLICATE KEY UPDATE {$secondDbNameQuoted}.analyser_test.name = VALUE(name)
+			",
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'REPLACE - missing table with DB name' => [

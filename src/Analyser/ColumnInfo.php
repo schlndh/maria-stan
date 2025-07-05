@@ -13,7 +13,6 @@ final class ColumnInfo
 		public readonly string $tableName,
 		public readonly string $tableAlias,
 		public readonly ColumnInfoTableTypeEnum $tableType,
-		// TODO: check that it's set everywhere
 		public readonly ?string $database,
 	) {
 		if ($this->tableType === ColumnInfoTableTypeEnum::SUBQUERY && $this->database !== null) {

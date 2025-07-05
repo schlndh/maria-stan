@@ -1334,8 +1334,8 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\AnalyserError
 				(
-					[message] => You cannot assign to 'analyser_test.id'.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::ASSIGN_TO_READONLY_COLUMN
+					[message] => Unknown column 'analyser_test.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1396,8 +1396,8 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\AnalyserError
 				(
-					[message] => You cannot assign to 't.id'.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::ASSIGN_TO_READONLY_COLUMN
+					[message] => Unknown column 't.id'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
 				)
 		)
 	[positionalPlaceholderCount] => 0

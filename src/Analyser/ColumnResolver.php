@@ -392,10 +392,12 @@ final class ColumnResolver
 			$fieldBehavior === ColumnResolverFieldBehaviorEnum::ASSIGNMENT
 			&& $this->insertReplaceTargetTable !== null
 		) {
-			// TODO: check DB name
-			if ($table !== null && $table !== $this->insertReplaceTargetTable->name) {
+			if (
+				($table !== null && $table !== $this->insertReplaceTargetTable->name)
+				|| ($database !== null && $database !== $this->insertReplaceTargetTable->database)
+			) {
 				throw AnalyserException::fromAnalyserError(
-					AnalyserErrorBuilder::createAssignToReadonlyColumnError($column, $table),
+					AnalyserErrorBuilder::createUnknownColumnError($column, $table, $database),
 				);
 			}
 
@@ -956,7 +958,6 @@ final class ColumnResolver
 		return array_keys(
 			array_intersect_key(
 				$this->tablesByAlias,
-				//array_merge($this->tablesByAlias, ...array_values($this->tableSchemas)),
 				$this->subquerySchemas,
 			),
 		);

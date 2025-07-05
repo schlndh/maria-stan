@@ -363,7 +363,7 @@ final class AnalyserState
 
 		if ($fromClause !== null) {
 			try {
-				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver)[1];
+				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver);
 			} catch (AnalyserException | DbReflectionException $e) {
 				$this->errors[] = $e->toAnalyserError();
 			}
@@ -467,11 +467,8 @@ final class AnalyserState
 		return [$fields, $rowCount];
 	}
 
-	/**
-	 * @return array{array<string>, ColumnResolver} [table names in order, column resolver]
-	 * @throws AnalyserException|DbReflectionException
-	 */
-	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): array
+	/** @throws AnalyserException|DbReflectionException */
+	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): ColumnResolver
 	{
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
@@ -494,8 +491,7 @@ final class AnalyserState
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				// TODO: are the tables names necessary anymore?
-				return [[$fromClause->alias ?? $fromClause->name->name], $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::SUBQUERY:
 				assert($fromClause instanceof Subquery);
 				$columnResolver = clone $columnResolver;
@@ -510,11 +506,11 @@ final class AnalyserState
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->getAliasOrThrow()], $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::JOIN:
 				assert($fromClause instanceof Join);
-				[$leftTables, $leftCr] = $this->analyseTableReference($fromClause->leftTable, $columnResolver);
-				[$rightTables, $rightCr] = $this->analyseTableReference($fromClause->rightTable, $columnResolver);
+				$leftCr = $this->analyseTableReference($fromClause->leftTable, $columnResolver);
+				$rightCr = $this->analyseTableReference($fromClause->rightTable, $columnResolver);
 				$leftCr->mergeAfterJoin($rightCr, $fromClause);
 				$columnResolver = $leftCr;
 				unset($leftCr, $rightCr);
@@ -535,7 +531,7 @@ final class AnalyserState
 					$columnResolver->addKnowledge($onResult->knowledgeBase);
 				}
 
-				return [array_merge($leftTables, $rightTables), $columnResolver];
+				return $columnResolver;
 			case TableReferenceTypeEnum::TABLE_VALUE_CONSTRUCTOR:
 				assert($fromClause instanceof TableValueConstructor);
 				$columnResolver = clone $columnResolver;
@@ -547,7 +543,7 @@ final class AnalyserState
 					$this->errors[] = $e->toAnalyserError();
 				}
 
-				return [[$fromClause->getAliasOrThrow()], $columnResolver];
+				return $columnResolver;
 		}
 	}
 
@@ -558,7 +554,7 @@ final class AnalyserState
 	private function analyseDeleteQuery(DeleteQuery $query): array
 	{
 		try {
-			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver);
 
 			// don't report missing tables to delete if the table reference is not parsed successfully
 			foreach ($query->tablesToDelete as $table) {
@@ -607,7 +603,7 @@ final class AnalyserState
 	private function analyseUpdateQuery(UpdateQuery $query): void
 	{
 		try {
-			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver);
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
@@ -641,7 +637,7 @@ final class AnalyserState
 		$tableReferenceNode = new Table($mockPosition, $mockPosition, $query->tableName);
 
 		try {
-			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver)[1];
+			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver);
 		} catch (AnalyserException | DbReflectionException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
