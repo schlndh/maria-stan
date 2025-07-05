@@ -3,7 +3,7 @@
 MariaStan is a static analysis tool for MariaDB queries. Its primary purpose is to serve as a basis for
 [PHPStan](https://phpstan.org/) extensions.
 
-**Current status** (06. 06. 2025):
+**Current status** (05. 07. 2025):
 
 MariaStan is very much incomplete. It covers probably ~90% of use-cases in a large code-base where I use it
 (hundreds of tables, thousands of queries). As a result there is not much activity. But it is actively maintained in
@@ -62,7 +62,7 @@ use MariaStan\DbReflection\MariaDbFileDbReflection;
 require_once __DIR__ . '/vendor/autoload.php';
 
 $mysqli = new mysqli('127.0.0.1', 'root', '');
-file_put_contents(__DIR__ . '/maria-stan-schema.dump', MariaDbFileDbReflection::dumpSchema($mysqli, 'database'));
+file_put_contents(__DIR__ . '/maria-stan-schema.dump', MariaDbFileDbReflection::dumpSchema($mysqli, ['database']));
 ```
 
 Then add the following to your `phpstan.neon`:
@@ -119,6 +119,7 @@ Here is a list of features that you could implement into your own PHPStan extens
 - Custom PHPDoc types: e.g. [MySQLiTableAssocRowType](https://github.com/schlndh/maria-stan/blob/master/src/PHPStan/Type/MySQLi/MySQLiTableAssocRowType.php).
 - PHPStan result cache is invalidated when DB schema changes via [ResultCacheMetaExtension](https://phpstan.org/developing-extensions/result-cache-meta-extensions).
 - Check views by placing `MariaStan\PHPStan\checkView` or `MariaStan\PHPStan\checkAllViews` in a PHP file that PHPStan analyses. These calls should not be executed, because you probably have MariaStan installed as a dev dependency.
+- MariaStan understands multi-database queries.
 
 ## Limitations
 
@@ -131,7 +132,6 @@ Here is a list of features that you could implement into your own PHPStan extens
     ```
   PHPStan will not be able to evaluate it statically and thus MariaStan has nothing to analyse.
 - There is no support for temporary tables.
-- There is no support for multiple databases.
 - The limitations above are the main ones long term. But besides them, everything is only partially implemented.
 
 ## Similar projects
