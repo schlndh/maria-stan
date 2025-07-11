@@ -73,6 +73,11 @@ class MySQLiRule implements Rule
 	{
 		// TODO: normalized arguments - this doesn't work with named arguments.
 		$args = $node->getArgs();
+
+		if (! isset($args[0])) {
+			return [];
+		}
+
 		$queryType = $scope->getType($args[0]->value);
 		$result = match ($methodName) {
 			'query' => $this->phpstanMysqliHelper->query($queryType),

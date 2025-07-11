@@ -45,6 +45,8 @@ class MySQLiRuleValidDataTest extends TestCase
 	public function testValid(): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->begin_transaction();
+		$db->rollback();
 
 		$stmt = $db->prepare('SELECT 1');
 		$stmt->execute();
