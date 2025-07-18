@@ -1165,7 +1165,32 @@ class MySQLiTypeInferenceDataTest extends TestCase
 		}
 	}
 
-	/** @param string|array<string> $allowedTypes */
+	public function testKeyTypes(): void
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+
+		$rows = $db->query('SELECT 1, 1 `2`')->fetch_all(MYSQLI_ASSOC);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('array{1, 2}', array_keys($row));
+			}
+
+			$this->assertSame([1, 2], array_keys($row));
+		}
+
+		$rows = $db->query('SELECT 2, 3 `3`')->fetch_all(MYSQLI_BOTH);
+
+		foreach ($rows as $row) {
+			if (function_exists('assertType')) {
+				assertType('array{0, 2, 1, 3}', array_keys($row));
+			}
+
+			$this->assertSame([0, 2, 1, 3], array_keys($row));
+		}
+	}
+
+		/** @param string|array<string> $allowedTypes */
 	private function assertGettype(string|array $allowedTypes, mixed $value): void
 	{
 		$type = gettype($value);

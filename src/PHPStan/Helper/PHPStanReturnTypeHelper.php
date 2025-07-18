@@ -33,6 +33,7 @@ use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_column;
+use function array_map;
 use function array_search;
 use function array_values;
 use function assert;
@@ -246,6 +247,9 @@ class PHPStanReturnTypeHelper
 			array_column($columns, 1),
 		);
 
+		/** @var list<ConstantIntegerType|ConstantStringType> $keyTypes */
+		$keyTypes = array_map(static fn ($t) => $t->toArrayKey(), $keyTypes);
+
 		return new ConstantArrayType($keyTypes, $valueTypes);
 	}
 
@@ -261,6 +265,8 @@ class PHPStanReturnTypeHelper
 
 		foreach ($columns as [$keyType, $valueType]) {
 			$combinedKeyTypes[] = new ConstantIntegerType($i);
+			$keyType = $keyType->toArrayKey();
+			assert($keyType instanceof ConstantIntegerType || $keyType instanceof ConstantStringType);
 			$combinedKeyTypes[] = $keyType;
 			$combinedValueTypes[] = $valueType;
 			$combinedValueTypes[] = $valueType;
