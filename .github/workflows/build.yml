@@ -32,8 +32,8 @@ jobs:
         uses: "actions/cache@v3"
         with:
           path: "${{ steps.composer-cache.outputs.dir }}"
-          key: "${{ runner.os }}-highest-composer-${{ hashFiles('**/composer.json') }}"
-          restore-keys: "${{ runner.os }}-composer-"
+          key: "${{ runner.os }}-composer-highest-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "${{ runner.os }}-composer-highest-"
 
       - name: "Install dependencies"
         run: "composer update --prefer-dist --no-interaction --no-progress"
@@ -64,8 +64,8 @@ jobs:
         uses: "actions/cache@v3"
         with:
           path: "${{ steps.composer-cache.outputs.dir }}"
-          key: "${{ runner.os }}-highest-composer-${{ hashFiles('**/composer.json') }}"
-          restore-keys: "${{ runner.os }}-composer-"
+          key: "${{ runner.os }}-composer-highest-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "${{ runner.os }}-composer-highest-"
 
       - name: "Install dependencies"
         run: "composer update --prefer-dist --no-interaction --no-progress"
@@ -119,8 +119,8 @@ jobs:
         uses: "actions/cache@v3"
         with:
           path: "${{ steps.composer-cache.outputs.dir }}"
-          key: "${{ runner.os }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.json') }}"
-          restore-keys: "${{ runner.os }}-composer-"
+          key: "${{ runner.os }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "${{ runner.os }}-composer-${{ matrix.dependencies }}-"
 
       - name: "Install lowest dependencies"
         if: ${{ matrix.dependencies == 'lowest' }}
