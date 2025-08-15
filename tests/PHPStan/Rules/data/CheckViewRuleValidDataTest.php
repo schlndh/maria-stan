@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Rules\data;
 
 use mysqli;
+use PHPUnit\Framework\TestCase;
 
 use function MariaStan\PHPStan\checkView;
 
-class CheckViewRuleValidDataTest
+class CheckViewRuleValidDataTest extends TestCase
 {
 	public static function initData(mysqli $db): void
 	{
@@ -31,8 +32,14 @@ class CheckViewRuleValidDataTest
 		");
 	}
 
-	public function testValid(): void
+	public function foo(): void
 	{
 		checkView('check_view_rule_ok_view');
+	}
+
+	public function test(): void
+	{
+		// make phpunit happy. This is class is not a real test case.
+		$this->expectNotToPerformAssertions();
 	}
 }

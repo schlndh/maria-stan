@@ -12,8 +12,8 @@ use MariaStan\PHPStan\Rules\BaseRuleTestCase;
 use MariaStan\PHPStan\Rules\CheckViewRuleTest;
 use MariaStan\PHPStan\Rules\MySQLi\MySQLiRuleTest;
 use MariaStan\PHPStan\Rules\MySQLi\MySQLiWrapperRuleTest;
+use PHPUnit\TextUI\Configuration\PhpHandler;
 use PHPUnit\TextUI\XmlConfiguration\Loader;
-use PHPUnit\TextUI\XmlConfiguration\PhpHandler;
 
 use function file_put_contents;
 use function json_encode;
@@ -67,7 +67,7 @@ foreach (AnalyserGoldenTest::getTestSets() as $directory => $dirData) {
 }
 
 $parserDir = __DIR__ . '/code/Parser/MariaDbParser';
-$codeParsingTest = new MariaDbParserTest();
+$codeParsingTest = new MariaDbParserTest('testParseValid');
 
 foreach (filesInDir($parserDir . '/valid', 'test') as $fileName => $code) {
 	if (strpos($code, '@@{') !== false) {
@@ -110,7 +110,7 @@ foreach (filesInDir($parserDir . '/invalid', 'test') as $fileName => $code) {
 }
 
 $dir = __DIR__ . '/code/Parser/MariaDbLexer';
-$codeParsingTest = new MariaDbLexerTest();
+$codeParsingTest = new MariaDbLexerTest('testParse');
 
 foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	if (strpos($code, '@@{') !== false) {
@@ -131,7 +131,7 @@ foreach (filesInDir($dir, 'test') as $fileName => $code) {
 	file_put_contents($fileName, $newCode);
 }
 
-$ruleTests = [new MySQLiRuleTest(), new MySQLiWrapperRuleTest(), new CheckViewRuleTest()];
+$ruleTests = [new MySQLiRuleTest('test'), new MySQLiWrapperRuleTest('test'), new CheckViewRuleTest('test')];
 
 foreach ($ruleTests as $ruleTest) {
 	foreach ($ruleTest->getTestInputFiles() as $fileName) {

@@ -1,4 +1,4 @@
-38: Error in view 'check_view_invalid_view': Unknown column 'mariastan_test.check_view_invalid_table.name'
-39: Error in view 'mariastan_test.check_view_invalid_view': Unknown column 'mariastan_test.check_view_invalid_table.name'
-40: Error in view 'view_that_doesnt_exist': Table 'view_that_doesnt_exist' doesn't exist
-41: Error in view 'db_that_doesnt_exist.check_view_invalid_view': Table 'db_that_doesnt_exist.check_view_invalid_view' doesn't exist
+39: Error in view 'check_view_invalid_view': Unknown column 'mariastan_test.check_view_invalid_table.name'
+40: Error in view 'mariastan_test.check_view_invalid_view': Unknown column 'mariastan_test.check_view_invalid_table.name'
+41: Error in view 'view_that_doesnt_exist': Table 'view_that_doesnt_exist' doesn't exist
+42: Error in view 'db_that_doesnt_exist.check_view_invalid_view': Table 'db_that_doesnt_exist.check_view_invalid_view' doesn't exist

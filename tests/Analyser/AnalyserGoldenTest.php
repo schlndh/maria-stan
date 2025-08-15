@@ -8,6 +8,7 @@ use MariaStan\Analyser\PlaceholderTypeProvider\VarcharPlaceholderTypeProvider;
 use MariaStan\Parser\CodeTestCase;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_filter;
@@ -38,12 +39,12 @@ class AnalyserGoldenTest extends TestCase
 	public const SUBFIELD_SEPARATOR = "\n#######\n";
 
 	/** @return iterable<string, array<mixed>> */
-	public function provideTestData(): iterable
+	public static function provideTestData(): iterable
 	{
 		return self::getTests(__DIR__ . '/data', 'test');
 	}
 
-	/** @dataProvider provideTestData */
+	#[DataProvider('provideTestData')]
 	public function test(string $name, string $code, string $expected): void
 	{
 		$parts = explode(self::SUBFIELD_SEPARATOR, $code);

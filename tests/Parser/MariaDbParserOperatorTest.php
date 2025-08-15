@@ -20,6 +20,7 @@ use MariaStan\Ast\Expr\UnaryOpTypeEnum;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\SelectExpr\RegularExpr;
 use MariaStan\TestCaseHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -70,7 +71,7 @@ class MariaDbParserOperatorTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestData */
+	#[DataProvider('provideTestData')]
 	public function test(string $select): void
 	{
 		$dbValue = $this->getValueFromSql($select);

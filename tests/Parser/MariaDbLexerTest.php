@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MariaStan\Parser;
 
 use MariaStan\Parser\Exception\LexerException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_map;
@@ -18,7 +19,7 @@ class MariaDbLexerTest extends TestCase
 {
 	use CodeTestCase;
 
-	/** @dataProvider provideTestParse */
+	#[DataProvider('provideTestParse')]
 	public function testParse(string $name, string $code, string $expected): void
 	{
 		$parser = $this->createLexer();
