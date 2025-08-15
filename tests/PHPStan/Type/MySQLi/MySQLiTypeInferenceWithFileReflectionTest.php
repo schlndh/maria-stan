@@ -8,6 +8,7 @@ use MariaStan\DbReflection\MariaDbFileDbReflection;
 use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
 use MariaStan\TestCaseHelper;
 use PHPStan\Testing\TypeInferenceTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 use function file_put_contents;
 
@@ -31,7 +32,7 @@ class MySQLiTypeInferenceWithFileReflectionTest extends TypeInferenceTestCase
 		}
 	}
 
-	/** @dataProvider dataFileAsserts */
+	#[DataProvider('dataFileAsserts')]
 	public function testFileAsserts(string $assertType, string $file, mixed ...$args): void
 	{
 		$this->assertFileAsserts($assertType, $file, ...$args);

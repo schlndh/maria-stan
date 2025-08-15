@@ -16,6 +16,7 @@ use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Parser\Exception\ParserException;
 use MariaStan\TestCaseHelper;
 use mysqli_sql_exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -51,7 +52,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestFieldAliasData */
+	#[DataProvider('provideTestFieldAliasData')]
 	public function testFieldAlias(string $select): void
 	{
 		$parserResult = null;
@@ -120,7 +121,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestTableAliasData */
+	#[DataProvider('provideTestTableAliasData')]
 	public function testTableAlias(string $select): void
 	{
 		$parserResult = null;
@@ -181,7 +182,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestCommonTableExpressionAliasData */
+	#[DataProvider('provideTestCommonTableExpressionAliasData')]
 	public function testCommonTableExpressionAlias(string $select): void
 	{
 		$parserResult = null;
@@ -296,7 +297,7 @@ class MariaDbParserKeywordAsIdentifierTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestColumnNameData */
+	#[DataProvider('provideTestColumnNameData')]
 	public function testColumnName(string $select): void
 	{
 		$parserResult = null;

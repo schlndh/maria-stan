@@ -8,6 +8,7 @@ use MariaStan\Analyser\ReferencedSymbol\ReferencedSymbol;
 use MariaStan\Analyser\ReferencedSymbol\Table;
 use MariaStan\Analyser\ReferencedSymbol\TableColumn;
 use MariaStan\TestCaseHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AnalyserReferencedSymbolTest extends TestCase
@@ -190,10 +191,8 @@ class AnalyserReferencedSymbolTest extends TestCase
 		];
 	}
 
-	/**
-	 * @dataProvider provideTestData
-	 * @param ?array<ReferencedSymbol> $expectedReferencedSymbols
-	 */
+	/** @param ?array<ReferencedSymbol> $expectedReferencedSymbols */
+	#[DataProvider('provideTestData')]
 	public function testValid(string $query, ?array $expectedReferencedSymbols): void
 	{
 		$analyser = TestCaseHelper::createAnalyser();

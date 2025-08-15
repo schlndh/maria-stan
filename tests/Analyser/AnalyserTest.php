@@ -23,6 +23,7 @@ use MariaStan\Util\MariaDbErrorCodes;
 use MariaStan\Util\MysqliUtil;
 use mysqli_result;
 use mysqli_sql_exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_fill;
@@ -1606,10 +1607,10 @@ class AnalyserTest extends TestCase
 	}
 
 	/**
-	 * @dataProvider provideValidTestData
 	 * @param array<scalar|null> $params
 	 * @param array<string, DbType> $explicitFieldTypes
 	 */
+	#[DataProvider('provideValidTestData')]
 	public function testValid(string $query, array $params = [], array $explicitFieldTypes = []): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -2413,10 +2414,8 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/**
-	 * @dataProvider provideValidNullabilityTestData
-	 * @param array<scalar|null> $params
-	 */
+	/** @param array<scalar|null> $params */
+	#[DataProvider('provideValidNullabilityTestData')]
 	public function testValidNullability(string $query, array $params = []): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -3868,10 +3867,8 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/**
-	 * @param AnalyserError|array<AnalyserError> $error
-	 * @dataProvider provideInvalidTestData
-	 */
+	/** @param AnalyserError|array<AnalyserError> $error */
+	#[DataProvider('provideInvalidTestData')]
 	public function testInvalid(string $query, AnalyserError|array $error, ?int $dbErrorCode): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -3962,7 +3959,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @dataProvider provideTestPositionPlaceholderCountData */
+	#[DataProvider('provideTestPositionPlaceholderCountData')]
 	public function testPositionalPlaceholderCount(string $query, int $expectedCount): void
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -4070,10 +4067,8 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/**
-	 * @dataProvider provideTestRowCountRangeData
-	 * @param array<scalar|null> $params
-	 */
+	/** @param array<scalar|null> $params */
+	#[DataProvider('provideTestRowCountRangeData')]
 	public function testRowCountRange(
 		string $query,
 		?QueryResultRowCountRange $expectedRange,

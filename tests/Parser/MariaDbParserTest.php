@@ -13,6 +13,7 @@ use MariaStan\Util\MariaDbErrorCodes;
 use mysqli;
 use mysqli_result;
 use mysqli_sql_exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use UnitEnum;
 
@@ -68,7 +69,7 @@ class MariaDbParserTest extends TestCase
 		$db->query("INSERT INTO parser_test_index (id, name, priority) VALUES (1, 'aa', 10), (2, NULL, 9)");
 	}
 
-	/** @dataProvider provideTestParseValidData */
+	#[DataProvider('provideTestParseValidData')]
 	public function testParseValid(string $name, string $code, string $expected): void
 	{
 		// Make sure the query doesn't throw an exception
@@ -96,7 +97,7 @@ class MariaDbParserTest extends TestCase
 		$this->assertSame($expected, $output, $name);
 	}
 
-	/** @dataProvider provideTestParseInvalidData */
+	#[DataProvider('provideTestParseInvalidData')]
 	public function testParseInvalid(string $name, string $code, string $expectedOutput): void
 	{
 		$parser = $this->createParser();

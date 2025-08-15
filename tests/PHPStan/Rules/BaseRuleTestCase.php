@@ -7,6 +7,7 @@ namespace MariaStan\PHPStan\Rules;
 use MariaStan\TestCaseHelper;
 use MariaStan\Testing\MariaStanRuleTestCase;
 use mysqli;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 use function array_map;
 use function basename;
@@ -73,7 +74,7 @@ abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 		}
 	}
 
-	/** @dataProvider provideTestData */
+	#[DataProvider('provideTestData')]
 	public function test(string $file, string $expectedOutput): void
 	{
 		$output = $this->getTestOutput($file);

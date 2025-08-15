@@ -9,6 +9,7 @@ use MariaStan\Ast\WindowFrame;
 use MariaStan\Ast\WindowFrameTypeEnum;
 use MariaStan\Database\FunctionInfo\FunctionInfoHelper;
 use MariaStan\TestCaseHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CanWindowFrameBeEmptyTest extends TestCase
@@ -42,7 +43,7 @@ class CanWindowFrameBeEmptyTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideTestData */
+	#[DataProvider('provideTestData')]
 	public function test(string $frameSql, bool $expectedResult): void
 	{
 		$frame = self::parseWindowFrame($frameSql);

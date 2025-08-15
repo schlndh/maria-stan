@@ -94,6 +94,7 @@
 			<property name="searchAnnotations" value="true"/>
 			<property name="namespacesRequiredToUse" type="array">
 				<element value="MariaStan" />
+				<element value="PHPUnit\Framework\Attributes" />
 			</property>
 			<property name="allowPartialUses" value="true"/>
 			<property name="allowFallbackGlobalFunctions" value="false"/>
@@ -208,6 +209,11 @@
 	<rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration">
 		<properties>
 			<property name="onlySingleLine" value="true" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Attributes.AttributesOrder">
+		<properties>
+			<property name="orderAlphabetically" value="true" />
 		</properties>
 	</rule>
 </ruleset>

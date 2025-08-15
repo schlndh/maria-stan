@@ -20,6 +20,7 @@ use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\ForeignKey;
 use MariaStan\TestCaseHelper;
 use MariaStan\Util\MysqliUtil;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -170,7 +171,7 @@ class DbReflectionTest extends TestCase
 		];
 	}
 
-	/** @dataProvider provideDbReflections */
+	#[DataProvider('provideDbReflections')]
 	public function test(DbReflection $reflection): void
 	{
 		$tableName = 'db_reflection_test';
@@ -214,7 +215,7 @@ class DbReflectionTest extends TestCase
 		$this->assertEquals($schema, $fqnSchema, 'Schemas with and without DB name differ.');
 	}
 
-	/** @dataProvider provideDbReflections */
+	#[DataProvider('provideDbReflections')]
 	public function testDefaultValues(DbReflection $reflection): void
 	{
 		$schema = $reflection->findTableSchema('db_reflection_test_default_values');
@@ -236,7 +237,7 @@ class DbReflectionTest extends TestCase
 		$this->assertFnCallDefaultValue('ROUND', $schema->columns['fn_call_default']);
 	}
 
-	/** @dataProvider provideDbReflections */
+	#[DataProvider('provideDbReflections')]
 	public function testSeconDb(DbReflection $reflection): void
 	{
 		$tableName = 'db_reflection_test';
@@ -292,7 +293,7 @@ class DbReflectionTest extends TestCase
 		}
 	}
 
-	/** @dataProvider provideForeignKeyDbReflections */
+	#[DataProvider('provideForeignKeyDbReflections')]
 	public function testForeignKeys(DbReflection $reflection): void
 	{
 		$schema = $reflection->findTableSchema('db_reflection_test_foreign_keys');
@@ -323,14 +324,14 @@ class DbReflectionTest extends TestCase
 		);
 	}
 
-	/** @dataProvider provideDbReflections */
+	#[DataProvider('provideDbReflections')]
 	public function testMissingTable(DbReflection $reflection): void
 	{
 		$this->expectException(TableDoesNotExistException::class);
 		$reflection->findTableSchema('missing_table_123_abc');
 	}
 
-	/** @dataProvider provideDbReflections */
+	#[DataProvider('provideDbReflections')]
 	public function testView(DbReflection $reflection): void
 	{
 		$definition = $reflection->findViewDefinition('db_reflection_test_view');
@@ -414,10 +415,8 @@ class DbReflectionTest extends TestCase
 		];
 	}
 
-	/**
-	 * @dataProvider provideReflectionsForHashTest
-	 * @param callable(): string $getCurrentHash
-	 */
+	/** @param callable(): string $getCurrentHash */
+	#[DataProvider('provideReflectionsForHashTest')]
 	public function testReflectionHash(callable $getCurrentHash): void
 	{
 		self::initDb();

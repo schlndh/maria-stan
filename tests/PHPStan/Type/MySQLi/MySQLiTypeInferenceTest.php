@@ -7,6 +7,7 @@ namespace MariaStan\PHPStan\Type\MySQLi;
 use MariaStan\PHPStan\Type\MySQLi\data\MySQLiTypeInferenceDataTest;
 use MariaStan\TestCaseHelper;
 use PHPStan\Testing\TypeInferenceTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 use const PHP_VERSION_ID;
 
@@ -35,7 +36,7 @@ class MySQLiTypeInferenceTest extends TypeInferenceTestCase
 		}
 	}
 
-	/** @dataProvider dataFileAsserts */
+	#[DataProvider('dataFileAsserts')]
 	public function testFileAsserts(string $assertType, string $file, mixed ...$args): void
 	{
 		$this->assertFileAsserts($assertType, $file, ...$args);
