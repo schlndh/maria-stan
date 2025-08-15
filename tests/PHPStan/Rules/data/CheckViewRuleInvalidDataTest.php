@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Rules\data;
 
 use mysqli;
+use PHPUnit\Framework\TestCase;
 
 use function MariaStan\PHPStan\checkAllViews;
 use function MariaStan\PHPStan\checkView;
 
-class CheckViewRuleInvalidDataTest
+class CheckViewRuleInvalidDataTest extends TestCase
 {
 	public static function initData(mysqli $db): void
 	{
@@ -33,11 +34,17 @@ class CheckViewRuleInvalidDataTest
 		$db->query("ALTER TABLE {$prefix}_table DROP COLUMN name");
 	}
 
-	public function test(): void
+	public function foo(): void
 	{
 		checkView('check_view_invalid_view');
 		checkAllViews();
 		checkView('view_that_doesnt_exist');
 		checkView('check_view_invalid_view', 'db_that_doesnt_exist');
+	}
+
+	public function test(): void
+	{
+		// make phpunit happy. This is class is not a real test case.
+		$this->expectNotToPerformAssertions();
 	}
 }
