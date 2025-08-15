@@ -1120,7 +1120,7 @@ class AnalyserTest extends TestCase
 		yield "UNION - same enum" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum UNION ALL SELECT enum_ab FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['a', 'b']),
 			],
 		];
@@ -1128,7 +1128,7 @@ class AnalyserTest extends TestCase
 		yield "UNION - different enums" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum UNION ALL SELECT enum_bc FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['a', 'b', 'c']),
 			],
 		];
@@ -1136,7 +1136,7 @@ class AnalyserTest extends TestCase
 		yield "INTERSECT - same enum" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum INTERSECT SELECT enum_ab FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['a', 'b']),
 			],
 		];
@@ -1144,7 +1144,7 @@ class AnalyserTest extends TestCase
 		yield "INTERSECT - different enums" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum INTERSECT SELECT enum_bc FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['b']),
 			],
 		];
@@ -1152,7 +1152,7 @@ class AnalyserTest extends TestCase
 		yield "EXCEPT - same enum" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum EXCEPT SELECT enum_ab FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['a', 'b']),
 			],
 		];
@@ -1160,7 +1160,7 @@ class AnalyserTest extends TestCase
 		yield "EXCEPT - different enums" => [
 			'query' => 'SELECT enum_ab FROM analyser_test_enum EXCEPT SELECT enum_bc FROM analyser_test_enum',
 			'params' => [],
-			'explicit field types' => [
+			'explicitFieldTypes' => [
 				'enum_ab' => new EnumType(['a', 'b']),
 			],
 		];
@@ -2520,97 +2520,97 @@ class AnalyserTest extends TestCase
 			yield 'usage of previous alias in field list' => [
 				'query' => 'SELECT 1+1 aaa, aaa + 1 FROM analyser_test',
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield 'subquery - forward reference to alias in field list' => [
 				'query' => 'SELECT (SELECT aaa), 1 aaa',
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-				'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_REFERENCE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_ILLEGAL_REFERENCE,
 			];
 
 			yield 'subquery - reference field alias in WHERE' => [
 				'query' => 'SELECT 1 aaa WHERE (SELECT aaa) = 1',
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield 'not unique table name in top-level query' => [
 				'query' => 'SELECT * FROM analyser_test, analyser_test',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique table alias in top-level query' => [
 				'query' => 'SELECT * FROM analyser_test t, analyser_test t',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique subquery alias' => [
 				'query' => 'SELECT * FROM (SELECT 1) t, (SELECT 1) t',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique table alias - nested JOIN' => [
 				'query' => 'SELECT * FROM (analyser_test a, analyser_test b) JOIN (analyser_test a, analyser_test c)',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('a'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique table - nested JOIN' => [
 				'query' => 'SELECT * FROM (analyser_test, (SELECT 1) b) JOIN (analyser_test, (SELECT 2) c)',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique table in subquery' => [
 				'query' => 'SELECT * FROM (SELECT 1 FROM analyser_test, analyser_test) t',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
-				'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 			];
 
 			yield 'not unique table alias in WITH' => [
 				'query' => 'WITH tbl AS (SELECT 1), tbl AS (SELECT 1) SELECT * FROM tbl',
 				'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('tbl'),
-				'DB error code' => MariaDbErrorCodes::ER_DUP_QUERY_NAME,
+				'dbErrorCode' => MariaDbErrorCodes::ER_DUP_QUERY_NAME,
 			];
 
 			yield 'duplicate column name in subquery' => [
 				'query' => 'SELECT * FROM (SELECT * FROM analyser_test a, analyser_test b) t',
 				'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
-				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+				'dbErrorCode' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
 			];
 
 			yield 'duplicate column name in WITH' => [
 				'query' => 'WITH analyser_test AS (SELECT 1, 1) SELECT * FROM analyser_test',
 				'error' => (new DuplicateFieldNameException('1'))->toAnalyserError(),
-				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+				'dbErrorCode' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
 			];
 
 			yield 'duplicate column name in WITH - explicit column list' => [
 				'query' => 'WITH tbl (id, id) AS (SELECT 1, 2) SELECT 1',
 				'error' => (new DuplicateFieldNameException('id'))->toAnalyserError(),
-				'DB error code' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
+				'dbErrorCode' => MariaDbErrorCodes::ER_DUP_FIELDNAME,
 			];
 
 			yield 'WITH - mismatched number of columns in column list' => [
 				'query' => 'WITH tbl (id, aa) AS (SELECT 1) SELECT * FROM tbl',
 				'error' => AnalyserErrorBuilder::createDifferentNumberOfWithColumnsError(2, 1),
-				'DB error code' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WITH_COL_WRONG_LIST,
 			];
 
 			yield "LIKE - multichar ESCAPE literal" => [
 				'query' => "SELECT 'a' LIKE 'b' ESCAPE 'cd'",
 				'error' => AnalyserErrorBuilder::createInvalidLikeEscapeMulticharError('cd'),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_ARGUMENTS,
 			];
 
 			yield 'bug - valid subquery should not clear errors from parent query' => [
 				'query' => 'SELECT v.id, (SELECT id FROM analyser_test LIMIT 1) aa FROM analyser_test',
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 		};
 
@@ -2640,111 +2640,111 @@ class AnalyserTest extends TestCase
 		yield 'unknown column in field list' => [
 			'query' => 'SELECT v.id FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in subquery in field list' => [
 			'query' => 'SELECT (SELECT v.id FROM analyser_test)',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in subquery in FROM' => [
 			'query' => 'SELECT * FROM (SELECT v.id FROM analyser_test) t JOIN analyser_test v',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in subquery in EXISTS' => [
 			'query' => 'SELECT EXISTS (SELECT v.id FROM analyser_test)',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in field list - IS' => [
 			'query' => 'SELECT v.id IS NULL FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in field list - LIKE - left' => [
 			'query' => 'SELECT v.id LIKE "a" FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in field list - LIKE - right' => [
 			'query' => 'SELECT "a" LIKE v.id FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in field list - WITH' => [
 			'query' => 'WITH tbl AS (SELECT aaa FROM analyser_test) SELECT * FROM tbl',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'ambiguous column in field list' => [
 			'query' => 'SELECT id FROM analyser_test a, analyser_test b',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'unknown column in WHERE' => [
 			'query' => 'SELECT * FROM analyser_test WHERE v.id',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'using field list alias in WHERE' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test WHERE aaa',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in GROUP BY' => [
 			'query' => 'SELECT * FROM analyser_test GROUP BY v.id',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'ambiguous column in GROUP BY' => [
 			'query' => 'SELECT a.id, b.id FROM analyser_test a, analyser_test b GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in GROUP BY - explicit alias' => [
 			'query' => 'SELECT a.id, b.name id FROM analyser_test a, analyser_test b GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in GROUP BY - *, expression alias' => [
 			'query' => 'SELECT *, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in GROUP BY - a.id, b.id, 1+1 id' => [
 			'query' => 'SELECT a.id, b.id, 1+1 id FROM analyser_test a, analyser_test b GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		// table wins, ambiguous
 		yield 'Warning: ambiguous column in GROUP BY - same alias in field list vs 1 table and *' => [
 			'query' => 'SELECT *, 1+1 id FROM analyser_test GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id', null, true),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		// table wins, ambiguous
 		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table' => [
 			'query' => 'SELECT 1 id FROM analyser_test t1 GROUP BY id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id', null, true),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		// table wins, ambiguous
@@ -2752,116 +2752,116 @@ class AnalyserTest extends TestCase
 			// col_enum happens to have the same value everywhere so it showcases how it works.
 			'query' => 'SELECT col_enum col_int FROM analyser_test_data_types t1 GROUP BY col_int',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('col_int', null, true),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'Warning: ambiguous column in GROUP BY - same alias in fields list vs 1 table - in function call' => [
 			'query' => 'SELECT col_enum col_int FROM analyser_test_data_types t1 GROUP BY ROUND(col_int)',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('col_int', null, true),
 			// MariaDB 10.6 doesn't report a warning here, but IMO it is still ambiguous.
-			'DB error code' => null,
+			'dbErrorCode' => null,
 		];
 
 		yield 'unknown column in HAVING' => [
 			'query' => 'SELECT * FROM analyser_test HAVING v.id',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column as function argument' => [
 			'query' => 'SELECT AVG(v.id) FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in HAVING - not in field list nor in GROUP BY nor aggregate' => [
 			'query' => 'SELECT 1 FROM analyser_test GROUP BY id HAVING name',
 			'error' => AnalyserErrorBuilder::createInvalidHavingColumnError('name'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in HAVING - aggregate in subquery, followed by unaggregated use' => [
 			'query' => 'SELECT 1+1 aaa FROM analyser_test HAVING (SELECT COUNT(name)) AND name',
 			'error' => AnalyserErrorBuilder::createInvalidHavingColumnError('name'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in HAVING - aggregate in SELECT, unaggregated use in HAVING' => [
 			'query' => 'SELECT COUNT(name) FROM analyser_test HAVING name',
 			'error' => AnalyserErrorBuilder::createInvalidHavingColumnError('name'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in HAVING - non-aggregate function' => [
 			'query' => 'SELECT id FROM analyser_test HAVING CAST(name AS INT)',
 			'error' => AnalyserErrorBuilder::createInvalidHavingColumnError('name'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in ORDER BY' => [
 			'query' => 'SELECT * FROM analyser_test ORDER BY v.id',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in INTERVAL' => [
 			'query' => 'SELECT "2022-08-27" - INTERVAL v.id DAY FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown table in JOIN' => [
 			'query' => 'SELECT * FROM analyser_test JOIN aaabbbccc',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('aaabbbccc'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'subquery - cannot use alias from outer query in FROM' => [
 			'query' => 'SELECT (SELECT id FROM t) FROM analyser_test t',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('t'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'unknown column in JOIN ... ON' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = b.aaa',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa', 'b'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in JOIN ... ON - referring to table joined later' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON b.id = c.id JOIN analyser_test c',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'c'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in JOIN ... ON - JOIN has higher precedence than comma' => [
 			'query' => 'SELECT * FROM analyser_test a, analyser_test b JOIN analyser_test c ON a.id = c.id ',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in JOIN ... USING - JOIN has higher precedence than comma' => [
 			'query' => 'SELECT * FROM (SELECT 1 aa) a, (SELECT 2 bb) b JOIN (SELECT 1 aa, 2 bb) c USING (aa)',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in JOIN ... USING - column exists only on one side - right' => [
 			'query' => 'SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (bb)',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('bb'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in JOIN ... USING - column exists only on one side - left' => [
 			'query' => 'SELECT * FROM (SELECT 1 aa) a JOIN (SELECT 2 bb) b using (aa)',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'ambiguous column in JOIN ... USING' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b JOIN analyser_test c USING (id)',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in JOIN ... USING - multiple' => [
@@ -2877,97 +2877,97 @@ class AnalyserTest extends TestCase
 				) USING (cc)
 			",
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('cc'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column in JOIN ... ON' => [
 			'query' => 'SELECT * FROM analyser_test a JOIN analyser_test b ON a.id = id',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'ambiguous column as function argument' => [
 			'query' => 'SELECT AVG(id) FROM analyser_test a, analyser_test b',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'unknown column in tuple' => [
 			'query' => 'SELECT (id, name) = (id, aaa) FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in CASE' => [
 			'query' => 'SELECT CASE aaa WHEN 1 THEN 1 END FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in CASE WHEN' => [
 			'query' => 'SELECT CASE 1 WHEN aaa THEN 1 END FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in CASE THEN' => [
 			'query' => 'SELECT CASE 1 WHEN 1 THEN aaa END FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in CASE ELSE' => [
 			'query' => 'SELECT CASE 1 WHEN 1 THEN 1 ELSE aaa END FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'unknown column in COLLATE' => [
 			'query' => 'SELECT aaa COLLATE utf8mb4_unicode_ci FROM analyser_test',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('aaa'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use table alias from two levels up through FROM' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT t.a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a', 't'),
-			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 		];
 
 		yield 'cannot use column from two levels up through FROM' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use column from two levels up through FROM - WHERE' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 WHERE a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use column from two levels up through FROM - GROUP BY' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 GROUP BY a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use column from two levels up through FROM - HAVING' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 HAVING a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use column from two levels up through FROM - ORDER BY' => [
 			'query' => 'SELECT t.*, (SELECT * FROM (SELECT 1 ORDER BY a) t2) FROM (SELECT 1 a) t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'cannot use field alias from two levels up through FROM' => [
 			'query' => 'SELECT 1 a, (SELECT * FROM (SELECT a) t);',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('a'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 	}
 
@@ -2980,7 +2980,7 @@ class AnalyserTest extends TestCase
 				self::createMockTuple(3),
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield 'tuple: single value vs multi-column SELECT' => [
@@ -2989,7 +2989,7 @@ class AnalyserTest extends TestCase
 				new IntType(),
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield 'tuple: flat tuple both on left and right with IN' => [
@@ -2998,7 +2998,7 @@ class AnalyserTest extends TestCase
 				self::createMockTuple(2),
 				new IntType(),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+			'dbErrorCode' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 		];
 
 		yield 'tuple: (tuple) IN (SELECT ..., SELECT ...)' => [
@@ -3008,7 +3008,7 @@ class AnalyserTest extends TestCase
 				self::createMockTuple(2),
 				new IntType(),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+			'dbErrorCode' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 		];
 
 		yield 'tuple: nested tuples with IN and missing parentheses on right' => [
@@ -3018,7 +3018,7 @@ class AnalyserTest extends TestCase
 				self::createMockTuple(2),
 				new IntType(),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+			'dbErrorCode' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 		];
 
 		$invalidOperators = [
@@ -3052,7 +3052,7 @@ class AnalyserTest extends TestCase
 						DbTypeEnum::TUPLE,
 						DbTypeEnum::TUPLE,
 					),
-					'DB error code' => $mariadbErrorCode,
+					'dbErrorCode' => $mariadbErrorCode,
 				];
 
 				yield "invalid operator with tuples - tuple {$invalidOperator} 1" => [
@@ -3062,7 +3062,7 @@ class AnalyserTest extends TestCase
 						DbTypeEnum::TUPLE,
 						DbTypeEnum::INT,
 					),
-					'DB error code' => $mariadbErrorCode,
+					'dbErrorCode' => $mariadbErrorCode,
 				];
 			}
 		}
@@ -3072,7 +3072,7 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - CASE tuple WHEN tuple" => [
@@ -3085,7 +3085,7 @@ class AnalyserTest extends TestCase
 					self::createMockTuple(2),
 				),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - CASE THEN" => [
@@ -3093,7 +3093,7 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - CASE ELSE" => [
@@ -3101,13 +3101,13 @@ class AnalyserTest extends TestCase
 			'error' => AnalyserErrorBuilder::createInvalidTupleUsageError(
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - LIKE" => [
 			'query' => "SELECT (id, name, 1) LIKE (1, 'aa') FROM analyser_test",
 			'error' => AnalyserErrorBuilder::createInvalidLikeUsageError(DbTypeEnum::TUPLE, DbTypeEnum::TUPLE),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - LIKE - tuple in escape char" => [
@@ -3117,13 +3117,13 @@ class AnalyserTest extends TestCase
 				DbTypeEnum::VARCHAR,
 				DbTypeEnum::TUPLE,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield "invalid operator with tuples - tuple LIKE 1" => [
 			'query' => "SELECT (id, name, 1) LIKE 1 FROM analyser_test",
 			'error' => AnalyserErrorBuilder::createInvalidLikeUsageError(DbTypeEnum::TUPLE, DbTypeEnum::INT),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 
 		yield 'tuple as function argument' => [
@@ -3133,7 +3133,7 @@ class AnalyserTest extends TestCase
 				1,
 				self::createMockTuple(2),
 			),
-			'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+			'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 		];
 	}
 
@@ -3146,13 +3146,13 @@ class AnalyserTest extends TestCase
 			yield "{$combinatorVal} - error in left query" => [
 				'query' => "SELECT v.id FROM analyser_test {$combinatorVal} SELECT id FROM analyser_test",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$combinatorVal} - error in right query" => [
 				'query' => "SELECT id FROM analyser_test {$combinatorVal} SELECT v.id FROM analyser_test",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$combinatorVal} - error in nested query" => [
@@ -3163,31 +3163,31 @@ class AnalyserTest extends TestCase
 					{$combinatorVal} SELECT 1
 				",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'v'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$combinatorVal} - error when used as subquery in FROM" => [
 				'query' => "SELECT * FROM (SELECT 1 {$combinatorVal} SELECT 2, 3) t",
 				'error' => AnalyserErrorBuilder::createDifferentNumberOfColumnsError(1, 2),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
 			];
 
 			yield "{$combinatorVal} - error when used as subquery expression" => [
 				'query' => "SELECT 1 IN (SELECT 1 {$combinatorVal} SELECT 2, 3)",
 				'error' => AnalyserErrorBuilder::createDifferentNumberOfColumnsError(1, 2),
-				'DB error code' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
+				'dbErrorCode' => MariaDbErrorCodes::ER_OPERAND_COLUMNS,
 			];
 
 			yield "{$combinatorVal} - cannot use column name from second query in ORDER BY" => [
 				'query' => "SELECT 1 aa {$combinatorVal} SELECT 2 bb ORDER BY bb",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('bb'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$combinatorVal} - cannot use original name of aliased column in ORDER BY" => [
 				'query' => "SELECT id aa FROM analyser_test {$combinatorVal} SELECT 2 bb ORDER BY id",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$combinatorVal} - cannot use table.column ORDER BY" => [
@@ -3198,19 +3198,19 @@ class AnalyserTest extends TestCase
 					ORDER BY analyser_test.id
 				",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'analyser_test'),
-				'DB error code' => MariaDbErrorCodes::ER_TABLENAME_NOT_ALLOWED_HERE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_TABLENAME_NOT_ALLOWED_HERE,
 			];
 
 			yield "{$combinatorVal} - different number of columns" => [
 				'query' => "SELECT 1 {$combinatorVal} SELECT 2, 3",
 				'error' => AnalyserErrorBuilder::createDifferentNumberOfColumnsError(1, 2),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_COLUMNS_IN_SELECT,
 			];
 
 			yield "{$combinatorVal} - cannot use columns from first query in second query" => [
 				'query' => "SELECT id aa FROM analyser_test {$combinatorVal} SELECT 2 + aa",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('aa'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 		}
 	}
@@ -3223,7 +3223,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 	}
 
@@ -3237,7 +3237,7 @@ class AnalyserTest extends TestCase
 					AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 					AnalyserErrorBuilder::createUnknownColumnError('col'),
 				],
-				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			];
 
 			yield "{$type} INTO missing_table ... RETURNING" => [
@@ -3246,7 +3246,7 @@ class AnalyserTest extends TestCase
 					AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 					AnalyserErrorBuilder::createUnknownColumnError('col'),
 				],
-				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			];
 
 			yield "{$type} INTO ... RETURNING missing_column" => [
@@ -3255,31 +3255,31 @@ class AnalyserTest extends TestCase
 					RETURNING missing_column
 				",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$type} INTO ... SET missing_column" => [
 				'query' => "{$type} INTO analyser_test SET missing_column = 'value'",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$type} INTO ... (missing_column) VALUES ..." => [
 				'query' => "{$type} INTO analyser_test (id, name, missing_column) VALUES (999, 'adasd', 1)",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$type} INTO ... (missing_column) SELECT ..." => [
 				'query' => "{$type} INTO analyser_test (id, name, missing_column) SELECT 999, 'adasd', 1",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+				'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 			];
 
 			yield "{$type} INTO ... SELECT - issue in SELECT" => [
 				'query' => "{$type} INTO analyser_test SELECT * FROM missing_table",
 				'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
-				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			];
 
 			yield "{$type} INTO ... VALUES - issue in tuple" => [
@@ -3288,25 +3288,25 @@ class AnalyserTest extends TestCase
 					new IntType(),
 					self::createMockTuple(2),
 				),
-				'DB error code' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
+				'dbErrorCode' => MariaDbErrorCodes::ER_ILLEGAL_PARAMETER_DATA_TYPES2_FOR_OPERATION,
 			];
 
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count" => [
 				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - in some tuples" => [
 				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - in multiple tuples" => [
 				'query' => "{$type} INTO analyser_test (id, name) VALUES (999), (998, 'aaa', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 1),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count + error in tuple" => [
@@ -3319,43 +3319,43 @@ class AnalyserTest extends TestCase
 					),
 					AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
 				],
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - implicit column list" => [
 				'query' => "{$type} INTO analyser_test VALUES (999, 'adasd', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) SELECT ... - mismatched column count" => [
 				'query' => "{$type} INTO analyser_test (name) SELECT 'adasd', 1",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(1, 2),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} INTO ... (columns, ...) SELECT ... - mismatched column count - implicit column list" => [
 				'query' => "{$type} INTO analyser_test SELECT 999, 'adasd', 1",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
-				'DB error code' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} ... VALUES - skip column without default value" => [
 				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
-				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 			];
 
 			yield "{$type} ... SET - skip column without default value" => [
 				'query' => "{$type} INTO analyse_test_insert SET val_string_null_default = 'aaa'",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
-				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 			];
 
 			yield "{$type} ... SELECT - skip column without default value" => [
 				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) SELECT 'aaa'",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
-				'DB error code' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 			];
 		}
 
@@ -3365,7 +3365,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE missing_column = 1
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - ambiguous column' => [
@@ -3375,7 +3375,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
 			',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - ambiguous column, same table' => [
@@ -3385,7 +3385,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
 			',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE - writing into the SELECT table' => [
@@ -3395,7 +3395,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE analyser_test.id = 1
 			',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE - writing into the SELECT subqeuery' => [
@@ -3405,7 +3405,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE t.id = 1
 			',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 	}
 
@@ -3418,7 +3418,7 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 				AnalyserErrorBuilder::createUnknownColumnError('col'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield "UPDATE ... SET missing_col = ..." => [
@@ -3426,7 +3426,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield "UPDATE ... SET ambiguous_col" => [
@@ -3434,7 +3434,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createAmbiguousColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield "UPDATE - not unique table/alias" => [
@@ -3443,7 +3443,7 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test'),
 				AnalyserErrorBuilder::createUnknownColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield "UPDATE - error in table reference subquery" => [
@@ -3451,7 +3451,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield "UPDATE - error in SET expression" => [
@@ -3459,7 +3459,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield "UPDATE - error in WHERE expression" => [
@@ -3467,7 +3467,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield "UPDATE - error in ORDER BY expression" => [
@@ -3475,7 +3475,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield "UPDATE - trying to update subquery" => [
@@ -3483,7 +3483,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createAssignToReadonlyColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
 		];
 
 		yield "UPDATE - trying to update subquery - with normal table as well" => [
@@ -3491,7 +3491,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createAssignToReadonlyColumnError('aaa'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UPDATABLE_TABLE,
 		];
 
 		yield "UPDATE - trying to update subquery - with normal table as well - ambiguous" => [
@@ -3499,7 +3499,7 @@ class AnalyserTest extends TestCase
 			'error' => [
 				AnalyserErrorBuilder::createAmbiguousColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 	}
 
@@ -3509,68 +3509,68 @@ class AnalyserTest extends TestCase
 		yield 'DELETE - missing table' => [
 			'query' => 'DELETE FROM missing_table',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'DELETE FROM missing_table RETURNING *' => [
 			'query' => 'DELETE FROM missing_table RETURNING *',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'DELETE ... RETURNING missing_column' => [
 			'query' => 'DELETE FROM analyser_test_truncate RETURNING missing_column',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'DELETE - wrong alias' => [
 			'query' => 'DELETE t_miss FROM analyser_test_truncate t1',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('t_miss'),
-			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 		];
 
 		yield 'DELETE - by table name despite alias' => [
 			'query' => 'DELETE analyser_test_truncate FROM analyser_test_truncate t1',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate'),
-			'DB error code' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 		];
 
 		yield 'DELETE - error in WHERE' => [
 			'query' => 'DELETE FROM analyser_test_truncate WHERE missing_col > 1',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'DELETE - error in ORDER BY' => [
 			'query' => 'DELETE FROM analyser_test_truncate ORDER BY missing_col',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_col'),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'DELETE - error in subquery' => [
 			'query' => 'DELETE t1 FROM analyser_test_truncate t1, (SELECT * FROM missing_table) t2',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		// having the same alias for table and subquery works in SELECT
 		yield 'DELETE - duplicate alias - subquery - alias' => [
 			'query' => 'DELETE t1 FROM analyser_test_truncate t1, (SELECT 1) t1',
 			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t1'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'DELETE - duplicate alias - subquery - table name' => [
 			'query' => 'DELETE analyser_test_truncate FROM analyser_test_truncate, (SELECT 1) analyser_test_truncate',
 			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('analyser_test_truncate'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'DELETE - duplicate alias - table' => [
 			'query' => 'DELETE t1 FROM analyser_test_truncate t1, analyser_test_truncate t1',
 			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t1'),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		// TODO: detect deleting non-tables
@@ -3582,13 +3582,13 @@ class AnalyserTest extends TestCase
 		yield 'TVC - different number of values' => [
 			'query' => 'WITH t AS (VALUES (1, 2), (3)) SELECT * FROM t',
 			'error' => AnalyserErrorBuilder::createTvcDifferentNumberOfValues(1, 2),
-			'DB error code' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_VALUES_IN_TVC,
+			'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_NUMBER_OF_VALUES_IN_TVC,
 		];
 
 		yield 'TVC - unknown column' => [
 			'query' => 'WITH t AS (VALUES (1, id)) SELECT * FROM t',
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id'),
-			'DB error code' => MariaDbErrorCodes::ER_FIELD_REFERENCE_IN_TVC,
+			'dbErrorCode' => MariaDbErrorCodes::ER_FIELD_REFERENCE_IN_TVC,
 		];
 	}
 
@@ -3598,13 +3598,13 @@ class AnalyserTest extends TestCase
 		yield 'LIMIT inside of IN - simple' => [
 			'query' => 'SELECT 1 IN (SELECT id FROM analyser_test LIMIT 10)',
 			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
-			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		];
 
 		yield 'LIMIT inside of IN - WITH ... SIMPLE' => [
 			'query' => 'SELECT 1 IN (WITH t AS (SELECT * FROM analyser_test) SELECT id FROM t LIMIT 10)',
 			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
-			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		];
 
 		yield 'LIMIT inside of IN - WITH ... UNION' => [
@@ -3612,20 +3612,20 @@ class AnalyserTest extends TestCase
 				WITH t AS (SELECT * FROM analyser_test) SELECT id FROM t UNION ALL SELECT id FROM t LIMIT 10
 			)',
 			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
-			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		];
 
 		yield 'LIMIT inside of IN - UNION top level LIMIT' => [
 			'query' => 'SELECT 1 IN (SELECT id FROM analyser_test UNION ALL SELECT id FROM analyser_test LIMIT 50)',
 			'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
-			'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		];
 
 		// TODO: fix this. Currently we're unable to parse the query.
 		//yield 'LIMIT inside of IN - UNION subquery LIMIT' => [
 		//	'query' => 'SELECT 1 IN ((SELECT id FROM analyser_test LIMIT 50) UNION ALL SELECT id FROM analyser_test)',
 		//	'error' => AnalyserErrorBuilder::createNoLimitInsideIn(),
-		//	'DB error code' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
+		//	'dbErrorCode' => MariaDbErrorCodes::ER_NOT_SUPPORTED_YET,
 		//];
 	}
 
@@ -3648,7 +3648,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - non-default DB, full column name vs aliased table - WHERE' => [
@@ -3662,7 +3662,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - non-default DB, full column name vs aliased table - GROUP BY' => [
@@ -3676,7 +3676,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - non-default DB, full column name vs aliased table - HAVING' => [
@@ -3690,7 +3690,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - non-default DB, full column name vs aliased table - ORDER BY' => [
@@ -3704,7 +3704,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - ambiguous table - default vs other DB' => [
@@ -3713,7 +3713,7 @@ class AnalyserTest extends TestCase
 				JOIN {$secondDbNameQuoted}.analyser_test
 			",
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('name', 'analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'SELECT - ambiguous column - other DB vs subquery' => [
@@ -3722,7 +3722,7 @@ class AnalyserTest extends TestCase
 				JOIN {$secondDbNameQuoted}.analyser_test
 			",
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('name', 'analyser_test'),
-			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
 		];
 
 		yield 'SELECT - table from second DB which does not exist in default DB' => [
@@ -3732,7 +3732,7 @@ class AnalyserTest extends TestCase
 				CROSS JOIN {$dbNameQuoted}.analyser_only_other_db_test t2
 			",
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_only_other_db_test', $dbName),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'SELECT - using DB name with CTE' => [
@@ -3741,7 +3741,7 @@ class AnalyserTest extends TestCase
 				SELECT * FROM {$dbNameQuoted}.foo_cte
 			",
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('foo_cte', $dbName),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'SELECT - referencing field from another DB' => [
@@ -3751,7 +3751,7 @@ class AnalyserTest extends TestCase
 				WHERE {$secondDbNameQuoted}.analyser_test.id > 5
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 'analyser_test', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - using FQN for table that was aliased to something else' => [
@@ -3765,7 +3765,7 @@ class AnalyserTest extends TestCase
 				'analyser_only_other_db_test',
 				$secondDbName,
 			),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - using DB name with subquery' => [
@@ -3774,7 +3774,7 @@ class AnalyserTest extends TestCase
 				FROM (SELECT 1 id) t
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't', $dbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'SELECT - ambiguous columns with multi-' => [
@@ -3783,14 +3783,14 @@ class AnalyserTest extends TestCase
 				FROM (SELECT 1 id) t
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('id', 't', $dbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		// analyser_test_truncate doesn't exist in the second DB
 		yield 'SELECT - missing table with DB name' => [
 			'query' => "SELECT * FROM {$secondDbNameQuoted}.analyser_test_truncate",
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'SELECT - duplicate alias used in multiple DBs' => [
@@ -3801,7 +3801,7 @@ class AnalyserTest extends TestCase
 				CROSS JOIN {$secondDbNameQuoted}.analyser_test t1
 			",
 			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('t1', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
 		];
 
 		yield 'INSERT - missing table with DB name' => [
@@ -3810,7 +3810,7 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
 				AnalyserErrorBuilder::createUnknownColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'INSERT - SET db.table.column - different DB' => [
@@ -3819,7 +3819,7 @@ class AnalyserTest extends TestCase
 				SET {$secondDbNameQuoted}.analyser_test.name = 'foo'
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'INSERT - VALUE(db.table.column) - different DB' => [
@@ -3829,7 +3829,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE name = VALUE({$secondDbNameQuoted}.analyser_test.name)
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'INSERT - ON DUPLICATE KEY UPDATE db.table.column - different DB' => [
@@ -3839,7 +3839,7 @@ class AnalyserTest extends TestCase
 				ON DUPLICATE KEY UPDATE {$secondDbNameQuoted}.analyser_test.name = VALUE(name)
 			",
 			'error' => AnalyserErrorBuilder::createUnknownColumnError('name', 'analyser_test', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			'dbErrorCode' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'REPLACE - missing table with DB name' => [
@@ -3848,7 +3848,7 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
 				AnalyserErrorBuilder::createUnknownColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'DELETE - missing table with DB name' => [
@@ -3857,13 +3857,13 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
 				AnalyserErrorBuilder::createUnknownColumnError('name'),
 			],
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 
 		yield 'TRUNCATE - missing table with DB name' => [
 			'query' => "TRUNCATE TABLE {$secondDbNameQuoted}.analyser_test_truncate",
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('analyser_test_truncate', $secondDbName),
-			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 		];
 	}
 
@@ -3910,52 +3910,52 @@ class AnalyserTest extends TestCase
 	{
 		yield 'no placeholders' => [
 			'query' => 'SELECT 1',
-			'expected count' => 0,
+			'expectedCount' => 0,
 		];
 
 		yield 'no placeholders - ? as string' => [
 			'query' => 'SELECT "?"',
-			'expected count' => 0,
+			'expectedCount' => 0,
 		];
 
 		yield 'placeholder in field list' => [
 			'query' => 'SELECT ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in subquery' => [
 			'query' => 'SELECT 0 FROM (SELECT ?, ? + ?) a',
-			'expected count' => 3,
+			'expectedCount' => 3,
 		];
 
 		yield 'placeholder in ON' => [
 			'query' => 'SELECT 0 FROM (SELECT 1) a JOIN (SELECT 2) b ON ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in WHERE' => [
 			'query' => 'SELECT 0 WHERE ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in GROUP BY' => [
 			'query' => 'SELECT 0 GROUP BY ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in HAVING' => [
 			'query' => 'SELECT 0 HAVING ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in ORDER BY' => [
 			'query' => 'SELECT 0 ORDER BY ?',
-			'expected count' => 1,
+			'expectedCount' => 1,
 		];
 
 		yield 'placeholder in LIMIT' => [
 			'query' => 'SELECT 0 LIMIT ?, ?',
-			'expected count' => 2,
+			'expectedCount' => 2,
 		];
 	}
 
@@ -4000,7 +4000,7 @@ class AnalyserTest extends TestCase
 		foreach ($singleRowQueries as $query) {
 			yield $query => [
 				'query' => $query,
-				'expected range' => QueryResultRowCountRange::createFixed(1),
+				'expectedRange' => QueryResultRowCountRange::createFixed(1),
 			];
 		}
 
@@ -4012,18 +4012,18 @@ class AnalyserTest extends TestCase
 		foreach ($uncertainSingleRowQueries as $query) {
 			yield $query => [
 				'query' => $query,
-				'expected range' => new QueryResultRowCountRange(0, 1),
+				'expectedRange' => new QueryResultRowCountRange(0, 1),
 			];
 		}
 
 		yield 'no FROM LIMIT 1, 2' => [
 			'query' => 'SELECT 1 LIMIT 1, 2',
-			'expected range' => QueryResultRowCountRange::createFixed(0),
+			'expectedRange' => QueryResultRowCountRange::createFixed(0),
 		];
 
 		yield 'no FROM LIMIT 0' => [
 			'query' => 'SELECT 1 LIMIT 0',
-			'expected range' => QueryResultRowCountRange::createFixed(0),
+			'expectedRange' => QueryResultRowCountRange::createFixed(0),
 		];
 
 		$uncertainFalseConds = [
@@ -4054,7 +4054,7 @@ class AnalyserTest extends TestCase
 			yield $query => [
 				'query' => $query,
 				// TODO: make this fixed 0 once the condition analysis improves
-				'expected range' => new QueryResultRowCountRange(0, 1),
+				'expectedRange' => new QueryResultRowCountRange(0, 1),
 			];
 
 			$query = "SELECT 1 WHERE NOT ({$cond})";
@@ -4062,7 +4062,7 @@ class AnalyserTest extends TestCase
 			yield $query => [
 				'query' => $query,
 				// TODO: make this fixed 1 once the condition analysis improves
-				'expected range' => new QueryResultRowCountRange(0, 1),
+				'expectedRange' => new QueryResultRowCountRange(0, 1),
 			];
 		}
 	}

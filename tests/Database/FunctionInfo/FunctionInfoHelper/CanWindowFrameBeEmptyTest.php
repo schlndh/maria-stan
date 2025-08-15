@@ -36,7 +36,7 @@ class CanWindowFrameBeEmptyTest extends TestCase
 		foreach (WindowFrameTypeEnum::cases() as $type) {
 			foreach ($frames as $frame => $expectedResult) {
 				yield $type->value . ' ' . $frame => [
-					'frame' => $type->value . ' ' . $frame,
+					'frameSql' => $type->value . ' ' . $frame,
 					'expectedResult' => $expectedResult,
 				];
 			}

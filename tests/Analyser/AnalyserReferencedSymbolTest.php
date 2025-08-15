@@ -27,24 +27,24 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'invalid query' => [
 			'query' => 'asdasasd',
-			'expected symbols' => null,
+			'expectedReferencedSymbols' => null,
 		];
 
 		yield 'SELECT 1' => [
 			'query' => 'SELECT 1',
-			'expected symbols' => [],
+			'expectedReferencedSymbols' => [],
 		];
 
 		$table = new Table('analyser_referenced_symbol_test', TestCaseHelper::getDefaultDbName());
 
 		yield 'SELECT 1 FROM analyser_referenced_symbol_test' => [
 			'query' => 'SELECT 1 FROM analyser_referenced_symbol_test',
-			'expected symbols' => [$table],
+			'expectedReferencedSymbols' => [$table],
 		];
 
 		yield 'SELECT id FROM analyser_referenced_symbol_test' => [
 			'query' => 'SELECT id FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -52,7 +52,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'SELECT * FROM analyser_referenced_symbol_test' => [
 			'query' => 'SELECT * FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
@@ -61,17 +61,17 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'SELECT * FROM CTE' => [
 			'query' => 'WITH t AS (SELECT 1) SELECT * FROM t',
-			'expected symbols' => [],
+			'expectedReferencedSymbols' => [],
 		];
 
 		yield 'reference table twice' => [
 			'query' => 'SELECT 1 FROM analyser_referenced_symbol_test, analyser_referenced_symbol_test',
-			'expected symbols' => [$table],
+			'expectedReferencedSymbols' => [$table],
 		];
 
 		yield 'reference column twice' => [
 			'query' => 'SELECT id, id FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -79,7 +79,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from parent query - field list' => [
 			'query' => 'SELECT (SELECT id) FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -87,7 +87,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from parent query - field list, semi-ambiguous' => [
 			'query' => 'SELECT 1 id, (SELECT id) FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -95,7 +95,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from parent query - WHERE ' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test WHERE (SELECT id) = 1',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -103,7 +103,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from table - GROUP BY - ambiguous' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test GROUP BY id = 1',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -111,7 +111,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from parent query - GROUP BY' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test GROUP BY (SELECT id) = 1',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -119,12 +119,12 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference column from field list - HAVING' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test HAVING id = 1',
-			'expected symbols' => [$table],
+			'expectedReferencedSymbols' => [$table],
 		];
 
 		yield 'reference column from parent query - HAVING' => [
 			'query' => 'SELECT 1 id FROM analyser_referenced_symbol_test HAVING (SELECT id) = 1',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -132,7 +132,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference field from parent query - HAVING (SELECT WHERE)' => [
 			'query' => 'SELECT "aa" id FROM analyser_referenced_symbol_test HAVING (SELECT 1 WHERE id = "aa") = 1',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -144,7 +144,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 				FROM analyser_referenced_symbol_test
 				HAVING (SELECT 1 FROM (SELECT 1 x UNION SELECT 2) t GROUP BY x = id) = 1
 			',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 			],
@@ -152,12 +152,12 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'reference field from parent query - HAVING (SELECT HAVING)' => [
 			'query' => 'SELECT "aa" id FROM analyser_referenced_symbol_test HAVING (SELECT 1 HAVING id = "aa") = 1',
-			'expected symbols' => [$table],
+			'expectedReferencedSymbols' => [$table],
 		];
 
 		yield 'SELECT * FROM (SELECT * FROM analyser_referenced_symbol_test) t' => [
 			'query' => 'SELECT * FROM (SELECT * FROM analyser_referenced_symbol_test) t',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
@@ -166,7 +166,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'detect valid table references even if invalid tables are referenced' => [
 			'query' => 'SELECT * FROM analyser_referenced_symbol_test, missing_table',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
@@ -175,7 +175,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'detect valid table references even if invalid tables are referenced - flipped' => [
 			'query' => 'SELECT * FROM missing_table, analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
@@ -184,7 +184,7 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		yield 'detect valid column references even if invalid columns are referenced' => [
 			'query' => 'SELECT aaa, name FROM analyser_referenced_symbol_test',
-			'expected symbols' => [
+			'expectedReferencedSymbols' => [
 				$table,
 				new TableColumn($table, 'name'),
 			],

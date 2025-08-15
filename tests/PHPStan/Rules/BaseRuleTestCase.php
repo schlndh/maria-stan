@@ -69,7 +69,7 @@ abstract class BaseRuleTestCase extends MariaStanRuleTestCase
 
 			yield basename($fileName) => [
 				'file' => $fileName,
-				'expected output' => $errors,
+				'expectedOutput' => $errors,
 			];
 		}
 	}
