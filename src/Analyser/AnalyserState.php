@@ -36,6 +36,7 @@ use MariaStan\Ast\Query\TruncateQuery;
 use MariaStan\Ast\Query\UpdateQuery;
 use MariaStan\Ast\SelectExpr\AllColumns;
 use MariaStan\Ast\SelectExpr\RegularExpr;
+use MariaStan\Ast\SelectExpr\SelectExpr;
 use MariaStan\Ast\SelectExpr\SelectExprTypeEnum;
 use MariaStan\Database\FunctionInfo\FunctionInfoHelper;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
@@ -380,43 +381,8 @@ final class AnalyserState
 			$this->columnResolver->addKnowledge($whereResult->knowledgeBase);
 		}
 
-		$fields = [];
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
-
-		foreach ($select->select as $selectExpr) {
-			switch ($selectExpr::getSelectExprType()) {
-				case SelectExprTypeEnum::REGULAR_EXPR:
-					assert($selectExpr instanceof RegularExpr);
-					$expr = $this->removeUnaryPlusPrefix($selectExpr->expr);
-					$resolvedExpr = $this->resolveExprType($expr, null, $select->groupBy !== null, true);
-					$resolvedField = new QueryResultField(
-						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($expr),
-						$resolvedExpr,
-					);
-					$fields[] = $resolvedField;
-					$this->columnResolver->registerField(
-						$resolvedField,
-						$selectExpr->expr::getExprType() === Expr\ExprTypeEnum::COLUMN,
-					);
-					break;
-				case SelectExprTypeEnum::ALL_COLUMNS:
-					assert($selectExpr instanceof AllColumns);
-					$allFields = $this->columnResolver->resolveAllColumns(
-						$selectExpr->tableName?->name,
-						$selectExpr->tableName?->databaseName,
-					);
-
-					foreach ($allFields as $field) {
-						$this->columnResolver->registerField($field, true);
-						$this->recordColumnReference($field->exprType->column);
-					}
-
-					$fields = array_merge($fields, $allFields);
-					unset($allFields);
-					break;
-			}
-		}
-
+		$fields = $this->analyseSelectExpressions($select->select, $select->groupBy !== null);
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::GROUP_BY;
 
 		foreach ($select->groupBy->expressions ?? [] as $groupByExpr) {
@@ -465,6 +431,52 @@ final class AnalyserState
 			->applyLimitClause($select->limit);
 
 		return [$fields, $rowCount];
+	}
+
+	/**
+	 * @param list<SelectExpr> $selectExpressions
+	 * @return list<QueryResultField>
+	 * @throws AnalyserException
+	 */
+	private function analyseSelectExpressions(array $selectExpressions, bool $isNonEmptyAggResultSet): array
+	{
+		$fields = [];
+
+		foreach ($selectExpressions as $selectExpr) {
+			switch ($selectExpr::getSelectExprType()) {
+				case SelectExprTypeEnum::REGULAR_EXPR:
+					assert($selectExpr instanceof RegularExpr);
+					$expr = $this->removeUnaryPlusPrefix($selectExpr->expr);
+					$resolvedExpr = $this->resolveExprType($expr, null, $isNonEmptyAggResultSet, true);
+					$resolvedField = new QueryResultField(
+						$selectExpr->alias ?? $this->getDefaultFieldNameForExpr($expr),
+						$resolvedExpr,
+					);
+					$fields[] = $resolvedField;
+					$this->columnResolver->registerField(
+						$resolvedField,
+						$selectExpr->expr::getExprType() === Expr\ExprTypeEnum::COLUMN,
+					);
+					break;
+				case SelectExprTypeEnum::ALL_COLUMNS:
+					assert($selectExpr instanceof AllColumns);
+					$allFields = $this->columnResolver->resolveAllColumns(
+						$selectExpr->tableName?->name,
+						$selectExpr->tableName?->databaseName,
+					);
+
+					foreach ($allFields as $field) {
+						$this->columnResolver->registerField($field, true);
+						$this->recordColumnReference($field->exprType->column);
+					}
+
+					$fields = array_merge($fields, $allFields);
+					unset($allFields);
+					break;
+			}
+		}
+
+		return $fields;
 	}
 
 	/** @throws AnalyserException|DbReflectionException */
@@ -595,8 +607,7 @@ final class AnalyserState
 			$this->resolveExprType($query->limit);
 		}
 
-		// TODO: DELETE ... RETURNING
-		return [];
+		return $this->analyseSelectExpressions($query->returning, false);
 	}
 
 	/** @throws AnalyserException */
@@ -764,9 +775,17 @@ final class AnalyserState
 			$this->errors[] = AnalyserErrorBuilder::createMissingValueForColumnError($name);
 		}
 
-		// TODO: INSERT ... ON DUPLICATE KEY
-		// TODO: INSERT ... RETURNING
-		return [];
+		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;
+
+		if ($query->returning === [] || $tableSchema === null) {
+			return [];
+		}
+
+		// Make sure that the RETURNING clause doesn't have access to any table other than the insert target.
+		$cleanAnalyser = $this->getSubqueryAnalyser($query);
+		$cleanAnalyser->columnResolver->registerInsertReplaceTargetTable($tableSchema, $tableSchema->database);
+
+		return $cleanAnalyser->analyseSelectExpressions($query->returning, false);
 	}
 
 	/** @throws AnalyserException */
@@ -1675,7 +1694,7 @@ final class AnalyserState
 		return $node->getStartPosition()->findSubstringToEndPosition($this->query, $node->getEndPosition());
 	}
 
-	private function getSubqueryAnalyser(SelectQuery $subquery, bool $canReferenceGrandParent = false): self
+	private function getSubqueryAnalyser(Query $subquery, bool $canReferenceGrandParent = false): self
 	{
 		$other = new self(
 			$this->dbReflection,

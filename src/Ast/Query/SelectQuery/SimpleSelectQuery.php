@@ -15,7 +15,7 @@ use MariaStan\Parser\Position;
 
 final class SimpleSelectQuery extends BaseSelectQuery
 {
-	/** @param non-empty-array<SelectExpr> $select */
+	/** @param non-empty-list<SelectExpr> $select */
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,

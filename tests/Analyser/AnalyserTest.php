@@ -1257,6 +1257,18 @@ class AnalyserTest extends TestCase
 				'query' => $type . ' INTO analyser_test SET id = 999, name = "abcd"',
 			];
 
+			yield "{$type} ... RETURNING *" => [
+				'query' => $type . ' INTO analyser_test SET name = "abcd" RETURNING *, CONCAT(name, "foo")',
+			];
+
+			yield "{$type} ... SELECT ... JOIN ... RETURNING *" => [
+				'query' => $type . ' INTO analyser_test (name)
+					SELECT t1.name
+					FROM analyser_test t1, analyser_test t2
+					RETURNING *
+				',
+			];
+
 			yield "{$type} ... VALUES, explicitly set id" => [
 				'query' => $type . ' INTO analyser_test VALUES (999, "abcd")',
 			];
@@ -1407,6 +1419,10 @@ class AnalyserTest extends TestCase
 	{
 		yield 'DELETE - single table' => [
 			'query' => 'DELETE FROM analyser_test_truncate WHERE id > 5 ORDER BY id, name DESC LIMIT 5',
+		];
+
+		yield 'DELETE ... RETURNING' => [
+			'query' => 'DELETE FROM analyser_test_truncate RETURNING *, CONCAT(name, "foo")',
 		];
 
 		yield 'DELETE - placeholders' => [
@@ -3225,6 +3241,24 @@ class AnalyserTest extends TestCase
 				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
 			];
 
+			yield "{$type} INTO missing_table ... RETURNING" => [
+				'query' => "{$type} INTO missing_table SET col = 'value' RETURNING *",
+				'error' => [
+					AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
+					AnalyserErrorBuilder::createUnknownColumnError('col'),
+				],
+				'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+			];
+
+			yield "{$type} INTO ... RETURNING missing_column" => [
+				'query' => "
+					{$type} INTO analyser_test (id, name) SELECT 999, 'adasd'
+					RETURNING missing_column
+				",
+				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
+				'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
+			];
+
 			yield "{$type} INTO ... SET missing_column" => [
 				'query' => "{$type} INTO analyser_test SET missing_column = 'value'",
 				'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
@@ -3339,6 +3373,16 @@ class AnalyserTest extends TestCase
 			'query' => '
 				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
 				SELECT id, "abcd" FROM analyser_test
+				ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
+			',
+			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
+			'DB error code' => MariaDbErrorCodes::ER_NON_UNIQ_ERROR,
+		];
+
+		yield 'INSERT ... ON DUPLICATE KEY UPDATE - reference column from SELECT - ambiguous column, same table' => [
+			'query' => '
+				INSERT INTO analyse_test_insert (id, val_string_not_null_no_default)
+				SELECT id, "abcd" FROM analyse_test_insert
 				ON DUPLICATE KEY UPDATE analyse_test_insert.id = id
 			',
 			'error' => AnalyserErrorBuilder::createAmbiguousColumnError('id'),
@@ -3467,6 +3511,18 @@ class AnalyserTest extends TestCase
 			'query' => 'DELETE FROM missing_table',
 			'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'DELETE FROM missing_table RETURNING *' => [
+			'query' => 'DELETE FROM missing_table RETURNING *',
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
+			'DB error code' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'DELETE ... RETURNING missing_column' => [
+			'query' => 'DELETE FROM analyser_test_truncate RETURNING missing_column',
+			'error' => AnalyserErrorBuilder::createUnknownColumnError('missing_column'),
+			'DB error code' => MariaDbErrorCodes::ER_BAD_FIELD_ERROR,
 		];
 
 		yield 'DELETE - wrong alias' => [

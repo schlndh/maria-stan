@@ -639,7 +639,7 @@ final class ColumnResolver
 	}
 
 	/**
-	 * @return array<QueryResultField>
+	 * @return list<QueryResultField>
 	 * @throws AnalyserException
 	 */
 	public function resolveAllColumns(?string $table, ?string $database = null): array

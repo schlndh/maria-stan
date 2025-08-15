@@ -23,6 +23,68 @@ MariaStan\Analyser\AnalyserResult
 #######
 1146: Table 'mariastan_test.missing_table' doesn't exist
 -----
+DELETE FROM missing_table RETURNING *
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'missing_table' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+DELETE FROM analyser_test_truncate RETURNING missing_column
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => missing_column
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\MixedType
+								(
+								)
+							[isNullable] => true
+						)
+				)
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Unknown column 'missing_column'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_COLUMN
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1054: Unknown column 'missing_column' in 'RETURNING'
+-----
 DELETE t_miss FROM analyser_test_truncate t1
 -----
 MariaStan\Analyser\AnalyserResult
