@@ -38,6 +38,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (id, name) VALUES (DEFAULT, 'aa')
@@ -77,6 +80,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT parser_test (id, name) VALUES (DEFAULT, 'aa')
@@ -116,6 +122,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT parser_test VALUES (DEFAULT, 'aa')
@@ -144,6 +153,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT IGNORE INTO parser_test (name) VALUE ('aa')
@@ -176,6 +188,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => true
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (name)
@@ -247,6 +262,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (name)
@@ -285,6 +303,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (name)
@@ -344,6 +365,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (name)
@@ -386,6 +410,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (name)
@@ -433,6 +460,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -471,6 +501,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -509,6 +542,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -579,6 +615,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -632,6 +671,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -685,6 +727,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -724,6 +769,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -780,6 +828,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -844,6 +895,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -908,6 +962,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -972,6 +1029,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -1036,6 +1096,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -1108,6 +1171,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -1180,6 +1246,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test
@@ -1252,6 +1321,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (id, name)
@@ -1316,6 +1388,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (id, name)
@@ -1388,6 +1463,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (id, name)
@@ -1474,6 +1552,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (parser_test.name) VALUE ('aa')
@@ -1510,4 +1591,250 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+INSERT INTO parser_test (name) VALUE ('aa'), ('bb') RETURNING id
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+					[1] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => bb
+									[firstConcatPart] => bb
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+						)
+				)
+		)
+)
+-----
+INSERT INTO parser_test SET name = 'aa'
+ON DUPLICATE KEY UPDATE name = VALUE(name)
+RETURNING *
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[onDuplicateKeyUpdate] => Array
+		(
+			[0] => MariaStan\Ast\Expr\Assignment
+				(
+					[target] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+					[expression] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => VALUE
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => name
+										)
+								)
+							[isDistinct] => false
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+)
+-----
+INSERT INTO parser_test SET name = 'aa'
+RETURNING parser_test.*
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SetInsertBody
+		(
+			[assignments] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Assignment
+						(
+							[target] => MariaStan\Ast\Expr\Column
+								(
+									[name] => name
+								)
+							[expression] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+					[tableName] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
+				)
+		)
+)
+-----
+INSERT INTO parser_test (name) SELECT * FROM (VALUES ('aa'), ('bb')) t RETURNING ABS(id) foo, parser_test.id + 1 bar
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+						)
+				)
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\AllColumns
+								(
+								)
+						)
+					[from] => MariaStan\Ast\Query\TableReference\TableValueConstructor
+						(
+							[values] => Array
+								(
+									[0] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => aa
+													[firstConcatPart] => aa
+												)
+										)
+									[1] => Array
+										(
+											[0] => MariaStan\Ast\Expr\LiteralString
+												(
+													[value] => bb
+													[firstConcatPart] => bb
+												)
+										)
+								)
+							[alias] => t
+						)
+					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
+						(
+							[name] => ABS
+							[arguments] => Array
+								(
+									[0] => MariaStan\Ast\Expr\Column
+										(
+											[name] => id
+										)
+								)
+							[isDistinct] => false
+						)
+					[alias] => foo
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+									[tableName] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => parser_test
+										)
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+					[alias] => bar
+				)
+		)
 )

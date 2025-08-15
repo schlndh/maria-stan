@@ -381,6 +381,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test (mariastan_test.parser_test.name) VALUE ('aa')
@@ -418,6 +421,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 INSERT INTO parser_test SET mariastan_test.parser_test.name = 'aa'
@@ -452,6 +458,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO mariastan_test.parser_test (name) VALUE ('aa')
@@ -483,6 +492,9 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -520,6 +532,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test SET mariastan_test.parser_test.name = 'aa'
@@ -552,6 +567,9 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -660,6 +678,9 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 DELETE mariastan_test.parser_test FROM mariastan_test.parser_test, mariastan_test.parser_test_truncate
@@ -701,6 +722,9 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 DELETE FROM mariastan_test.parser_test USING mariastan_test.parser_test
@@ -727,6 +751,9 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 DELETE FROM mariastan_test.parser_test.* USING mariastan_test.parser_test
@@ -753,6 +780,9 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 DELETE mariastan_test.parser_test FROM mariastan_test.parser_test
@@ -779,6 +809,9 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 DELETE mariastan_test.parser_test.* FROM mariastan_test.parser_test
@@ -805,4 +838,7 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )

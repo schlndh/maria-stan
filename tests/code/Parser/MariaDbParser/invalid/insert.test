@@ -138,3 +138,34 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got '+' after: KEY UPDATE id = DEFAULT
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '+ 1' at line 3
+-----
+INSERT INTO parser_test
+RETURNING *
+SET name = "aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got RETURNING after: INSERT INTO parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'RETURNING *
+SET name = "aa"' at line 2
+-----
+INSERT INTO parser_test
+SET name = "aa"
+RETURNING
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: END_OF_INPUT after: SET name = "aa"
+RETURNING
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3
+-----
+INSERT INTO parser_test
+SET name = "aa"
+RETURNING name
+ON DUPLICATE KEY UPDATE name = "bb"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ON after: name = "aa"
+RETURNING name
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ON DUPLICATE KEY UPDATE name = "bb"' at line 4

@@ -109,3 +109,23 @@ Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATABASE, DATE, DATETIM
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'IGNORE INTO parser_test
 SET id = 1, name = "Aa"' at line 1
+-----
+REPLACE INTO parser_test
+RETURNING name
+SET id = 1, name = "Aa"
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of VALUE, VALUES, got RETURNING after: REPLACE INTO parser_test
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'RETURNING name
+SET id = 1, name = "Aa"' at line 2
+-----
+REPLACE INTO parser_test
+SET id = 1, name = "Aa"
+RETURNING
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: END_OF_INPUT after: , name = "Aa"
+RETURNING
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3

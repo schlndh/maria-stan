@@ -406,6 +406,9 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test SET name = 'a' COLLATE `utf8mb4_unicode_ci`
@@ -437,5 +440,8 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )

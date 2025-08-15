@@ -650,4 +650,7 @@ MariaStan\Ast\Query\DeleteQuery
 			[value] => 0
 		)
 	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
 )

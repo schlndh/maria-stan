@@ -37,6 +37,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test (id, name) VALUES (DEFAULT, 'aa')
@@ -74,6 +77,9 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -113,6 +119,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE parser_test VALUES (DEFAULT, 'aa')
@@ -139,6 +148,9 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -210,6 +222,9 @@ MariaStan\Ast\Query\ReplaceQuery
 					[allowRecursive] => false
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test (name)
@@ -246,6 +261,9 @@ MariaStan\Ast\Query\ReplaceQuery
 					[isDistinct] => false
 					[isSqlCalcFoundRows] => false
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -305,6 +323,9 @@ MariaStan\Ast\Query\ReplaceQuery
 					[isDistinct] => true
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test (name)
@@ -345,6 +366,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 					[isSqlCalcFoundRows] => false
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -392,42 +416,8 @@ MariaStan\Ast\Query\ReplaceQuery
 					[isSqlCalcFoundRows] => false
 				)
 		)
-)
------
-REPLACE INTO parser_test
-(SELECT 999, 'aaa')
------
-MariaStan\Ast\Query\ReplaceQuery
-(
-	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+	[returning] => Array
 		(
-			[name] => parser_test
-		)
-	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
-		(
-			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
-				(
-					[select] => Array
-						(
-							[0] => MariaStan\Ast\SelectExpr\RegularExpr
-								(
-									[expr] => MariaStan\Ast\Expr\LiteralInt
-										(
-											[value] => 999
-										)
-								)
-							[1] => MariaStan\Ast\SelectExpr\RegularExpr
-								(
-									[expr] => MariaStan\Ast\Expr\LiteralString
-										(
-											[value] => aaa
-											[firstConcatPart] => aaa
-										)
-								)
-						)
-					[isDistinct] => false
-					[isSqlCalcFoundRows] => false
-				)
 		)
 )
 -----
@@ -465,6 +455,49 @@ MariaStan\Ast\Query\ReplaceQuery
 					[isDistinct] => false
 					[isSqlCalcFoundRows] => false
 				)
+		)
+	[returning] => Array
+		(
+		)
+)
+-----
+REPLACE INTO parser_test
+(SELECT 999, 'aaa')
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\SelectInsertBody
+		(
+			[selectQuery] => MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+				(
+					[select] => Array
+						(
+							[0] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralInt
+										(
+											[value] => 999
+										)
+								)
+							[1] => MariaStan\Ast\SelectExpr\RegularExpr
+								(
+									[expr] => MariaStan\Ast\Expr\LiteralString
+										(
+											[value] => aaa
+											[firstConcatPart] => aaa
+										)
+								)
+						)
+					[isDistinct] => false
+					[isSqlCalcFoundRows] => false
+				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -535,6 +568,9 @@ MariaStan\Ast\Query\ReplaceQuery
 					[allowRecursive] => false
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test
@@ -586,6 +622,9 @@ MariaStan\Ast\Query\ReplaceQuery
 								)
 						)
 				)
+		)
+	[returning] => Array
+		(
 		)
 )
 -----
@@ -639,6 +678,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test
@@ -677,6 +719,9 @@ MariaStan\Ast\Query\ReplaceQuery
 						)
 				)
 		)
+	[returning] => Array
+		(
+		)
 )
 -----
 REPLACE INTO parser_test (parser_test.name) VALUE ('aa')
@@ -709,6 +754,112 @@ MariaStan\Ast\Query\ReplaceQuery
 									[value] => aa
 									[firstConcatPart] => aa
 								)
+						)
+				)
+		)
+	[returning] => Array
+		(
+		)
+)
+-----
+REPLACE INTO parser_test (parser_test.name) VALUE ('aa')
+RETURNING *, 1+1
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+			[1] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\BinaryOp
+						(
+							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::PLUS
+							[left] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+							[right] => MariaStan\Ast\Expr\LiteralInt
+								(
+									[value] => 1
+								)
+						)
+				)
+		)
+)
+-----
+REPLACE INTO parser_test (parser_test.name) VALUE ('aa')
+RETURNING parser_test.*
+-----
+MariaStan\Ast\Query\ReplaceQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+					[0] => MariaStan\Ast\Expr\Column
+						(
+							[name] => name
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => parser_test
+								)
+						)
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+							[0] => MariaStan\Ast\Expr\LiteralString
+								(
+									[value] => aa
+									[firstConcatPart] => aa
+								)
+						)
+				)
+		)
+	[returning] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+					[tableName] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
 						)
 				)
 		)

@@ -340,15 +340,18 @@ class MariaDbParserState
 			$where = $this->parseExpression();
 		}
 
+		$returning = [];
+
 		if (! $isMultiTableSyntax) {
 			$orderBy = $this->parseOrderBy();
 
 			if ($this->consumeToken(TokenTypeEnum::LIMIT)) {
 				$limit = $this->parseLimitExpression();
 			}
+
+			$returning = $this->parseReturningClause();
 		}
 
-		// TODO: DELETE ... RETURNING
 		assert($tableReference !== null);
 
 		return new DeleteQuery(
@@ -360,6 +363,7 @@ class MariaDbParserState
 			$orderBy,
 			$limit,
 			$ignoreErrors,
+			$returning,
 		);
 	}
 
@@ -448,11 +452,14 @@ class MariaDbParserState
 		}
 
 		if ($startToken->type === TokenTypeEnum::REPLACE) {
+			$returning = $this->parseReturningClause();
+
 			return new ReplaceQuery(
 				$startToken->position,
 				$this->getPreviousToken()->getEndPosition(),
 				$tableName,
 				$insertBody,
+				$returning,
 			);
 		}
 
@@ -471,6 +478,8 @@ class MariaDbParserState
 			}
 		}
 
+		$returning = $this->parseReturningClause();
+
 		return new InsertQuery(
 			$startToken->position,
 			$this->getPreviousToken()->getEndPosition(),
@@ -478,7 +487,21 @@ class MariaDbParserState
 			$insertBody,
 			$onDuplicateKeyUpdate,
 			$ignoreErrors,
+			$returning,
 		);
+	}
+
+	/**
+	 * @return list<SelectExpr>
+	 * @throws ParserException
+	 */
+	private function parseReturningClause(): array
+	{
+		if (! $this->consumeToken(TokenTypeEnum::RETURNING)) {
+			return [];
+		}
+
+		return $this->parseSelectExpressionsList();
 	}
 
 	/**
@@ -1076,7 +1099,7 @@ class MariaDbParserState
 
 	/**
 	 * @phpstan-impure
-	 * @return non-empty-array<SelectExpr>
+	 * @return non-empty-list<SelectExpr>
 	 * @throws ParserException
 	 */
 	private function parseSelectExpressionsList(): array
