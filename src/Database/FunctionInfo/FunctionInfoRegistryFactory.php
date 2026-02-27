@@ -33,6 +33,7 @@ final class FunctionInfoRegistryFactory
 			new IfFunction(),
 			new LowerUpper(),
 			new MaxMin(),
+			new Month(),
 			new Now(),
 			new Replace(),
 			new Round(),

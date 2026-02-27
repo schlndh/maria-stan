@@ -969,6 +969,7 @@ class AnalyserTest extends TestCase
 			$selects["DATE_FORMAT({$label}, Y-m, null)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', null)";
 			$selects["DATE_FORMAT({$label}, Y-m, en_US)"] = "SELECT DATE_FORMAT({$value}, '%Y-%m', 'en_US')";
 			$selects["DATE({$label})"] = "SELECT DATE({$value})";
+			$selects["MONTH({$label})"] = "SELECT MONTH({$value})";
 			$selects["YEAR({$label})"] = "SELECT YEAR({$value})";
 			$selects["DATE_ADD({$label}, INTERVAL)"] = "SELECT DATE_ADD({$value}, INTERVAL 1 SECOND)";
 
@@ -1954,6 +1955,8 @@ class AnalyserTest extends TestCase
 			'NOT LCASE(col_vchar)',
 			'UPPER(col_vchar) IS NULL',
 			'UCASE(col_vchar) IS NOT NULL',
+			'MONTH(col_vchar) IS NOT NULL',
+			'MONTH(col_vchar) IS NULL',
 			'YEAR(col_vchar) IS NOT NULL',
 			'YEAR(col_vchar) IS NULL',
 			'ABS(col_int) IS NULL',

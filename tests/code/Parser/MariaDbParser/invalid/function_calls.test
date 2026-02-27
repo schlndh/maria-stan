@@ -1406,3 +1406,17 @@ MariaStan\Parser\Exception\ShouldNotHappenException
 Expected WindowFunctionCall for FIRST_VALUE, got MariaStan\Ast\Expr\FunctionCall\StandardFunctionCall
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM parser_test' at line 1
+-----
+SELECT MONTH()
+-----
+MariaStan\Parser\Exception\ParserException
+Function MONTH takes 1 argument, got 0.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
+-----
+SELECT MONTH(1, 2)
+-----
+MariaStan\Parser\Exception\ParserException
+Function MONTH takes 1 argument, got 2.
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 2)' at line 1
