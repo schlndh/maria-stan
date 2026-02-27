@@ -9,6 +9,7 @@ use MariaStan\Database\FunctionInfo\FunctionInfoRegistry;
 use MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory;
 use MariaStan\DbReflection\InformationSchemaParser;
 use MariaStan\DbReflection\MariaDbOnlineDbReflection;
+use MariaStan\DbReflection\SequenceEngineHandler;
 use MariaStan\Parser\MariaDbParser;
 use MariaStan\Util\MysqliUtil;
 use mysqli;
@@ -82,7 +83,8 @@ abstract class TestCaseHelper
 		$functionInfoRegistry = self::createFunctionInfoRegistry();
 		$parser = new MariaDbParser($functionInfoRegistry);
 		$informationSchemaParser = new InformationSchemaParser($parser);
-		$reflection = new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser);
+		$sequenceEngineHandler = new SequenceEngineHandler();
+		$reflection = new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser, $sequenceEngineHandler);
 
 		return new Analyser($parser, $reflection, $functionInfoRegistry);
 	}

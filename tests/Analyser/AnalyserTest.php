@@ -1249,6 +1249,20 @@ class AnalyserTest extends TestCase
 		yield "TRUNCATE TABLE" => [
 			'query' => 'TRUNCATE TABLE analyser_test_truncate',
 		];
+
+		$dbName = TestCaseHelper::getDefaultDbName();
+		$dbName = MysqliUtil::quoteIdentifier($dbName);
+		$sequences = [
+			'seq_1_to_10',
+			'seq_1_to_10_step_3',
+			"{$dbName}.seq_1_to_10_step_3",
+		];
+
+		foreach ($sequences as $sequence) {
+			yield "SEQUENCE engine: {$sequence}" => [
+				'query' => 'SELECT * FROM ' . $sequence,
+			];
+		}
 	}
 
 	/** @return iterable<string, array<mixed>> */
@@ -3227,6 +3241,14 @@ class AnalyserTest extends TestCase
 				AnalyserErrorBuilder::createTableDoesntExistError('missing_table'),
 			],
 			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		yield 'information_schema does not have sequences' => [
+			'query' => 'SELECT * FROM information_schema.seq_1_to_10',
+			'error' => [
+				AnalyserErrorBuilder::createTableDoesntExistError('seq_1_to_10', 'information_schema'),
+			],
+			'dbErrorCode' => MariaDbErrorCodes::ER_UNKNOWN_TABLE,
 		];
 	}
 

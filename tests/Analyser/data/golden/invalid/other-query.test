@@ -22,3 +22,26 @@ MariaStan\Analyser\AnalyserResult
 )
 #######
 1146: Table 'mariastan_test.missing_table' doesn't exist
+-----
+SELECT * FROM information_schema.seq_1_to_10
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table 'information_schema.seq_1_to_10' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1109: Unknown table 'seq_1_to_10' in information_schema

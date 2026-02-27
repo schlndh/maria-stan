@@ -19,3 +19,225 @@ MariaStan\Analyser\AnalyserResult
 Array
 (
 )
+-----
+SELECT * FROM seq_1_to_10
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => seq
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => seq
+									[tableName] => seq_1_to_10
+									[tableAlias] => seq_1_to_10
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => seq_1_to_10
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => seq_1_to_10
+							[database] => mariastan_test
+						)
+					[name] => seq
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => seq
+			[orgname] => seq
+			[table] => seq_1_to_10
+			[orgtable] => seq_1_to_10
+			[db] => mariastan_test
+			[length] => 20
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					PRIMARY_KEY
+					UNSIGNED
+					NO_DEFAULT_VALUE
+					PART_KEY
+					NUM
+				)
+			[type] => LONGLONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT * FROM seq_1_to_10_step_3
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => seq
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => seq
+									[tableName] => seq_1_to_10_step_3
+									[tableAlias] => seq_1_to_10_step_3
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => seq_1_to_10_step_3
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => seq_1_to_10_step_3
+							[database] => mariastan_test
+						)
+					[name] => seq
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => seq
+			[orgname] => seq
+			[table] => seq_1_to_10_step_3
+			[orgtable] => seq_1_to_10_step_3
+			[db] => mariastan_test
+			[length] => 20
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					PRIMARY_KEY
+					UNSIGNED
+					NO_DEFAULT_VALUE
+					PART_KEY
+					NUM
+				)
+			[type] => LONGLONG
+			[decimals] => 0
+		)
+)
+-----
+SELECT * FROM `mariastan_test`.seq_1_to_10_step_3
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+			MariaStan\Analyser\QueryResultField
+				(
+					[name] => seq
+					[exprType] => MariaStan\Analyser\ExprTypeResult
+						(
+							[type] => MariaStan\Schema\DbType\UnsignedIntType
+								(
+								)
+							[isNullable] => false
+							[column] => MariaStan\Analyser\ColumnInfo
+								(
+									[name] => seq
+									[tableName] => seq_1_to_10_step_3
+									[tableAlias] => seq_1_to_10_step_3
+									[tableType] => MariaStan\Analyser\ColumnInfoTableTypeEnum::TABLE
+									[database] => mariastan_test
+								)
+						)
+				)
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => seq_1_to_10_step_3
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => seq_1_to_10_step_3
+							[database] => mariastan_test
+						)
+					[name] => seq
+				)
+		)
+)
+#######
+Array
+(
+	stdClass
+		(
+			[name] => seq
+			[orgname] => seq
+			[table] => seq_1_to_10_step_3
+			[orgtable] => seq_1_to_10_step_3
+			[db] => mariastan_test
+			[length] => 20
+			[charsetnr] => 63
+			[flags] => Array
+				(
+					NOT_NULL
+					PRIMARY_KEY
+					UNSIGNED
+					NO_DEFAULT_VALUE
+					PART_KEY
+					NUM
+				)
+			[type] => LONGLONG
+			[decimals] => 0
+		)
+)

@@ -1,0 +1,170 @@
+SEQUENCE engine
+-----
+SELECT * FROM seq_1_to_10
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM seq_1_to_10_step_3
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10_step_3
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT seq FROM seq_1_to_10
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => seq
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT seq_1_to_10.* FROM seq_1_to_10
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+					[tableName] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => seq_1_to_10
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT seq_1_to_10.seq FROM seq_1_to_10
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => seq
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => seq_1_to_10
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10
+				)
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT t.seq FROM seq_1_to_10 t
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\RegularExpr
+				(
+					[expr] => MariaStan\Ast\Expr\Column
+						(
+							[name] => seq
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => t
+								)
+						)
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => seq_1_to_10
+				)
+			[alias] => t
+			[indexHints] => Array
+				(
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

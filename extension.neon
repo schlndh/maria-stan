@@ -51,6 +51,7 @@ services:
 			- set_charset('utf8mb4')
 	- MariaStan\Parser\MariaDbParser
 	- MariaStan\DbReflection\InformationSchemaParser
+	- MariaStan\DbReflection\SequenceEngineHandler
 	mariaDbFileDbReflection:
 		class: MariaStan\DbReflection\MariaDbFileDbReflection
 		autowired: false

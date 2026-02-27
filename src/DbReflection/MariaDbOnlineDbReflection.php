@@ -27,6 +27,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 		private readonly mysqli $mysqli,
 		private readonly string $defaultDatabase,
 		private readonly InformationSchemaParser $schemaParser,
+		private readonly SequenceEngineHandler $sequenceEngineHandler,
 	) {
 	}
 
@@ -40,6 +41,11 @@ class MariaDbOnlineDbReflection implements DbReflection
 	{
 		$origDatabase = $database;
 		$database ??= $this->defaultDatabase;
+		$sequence = $this->sequenceEngineHandler->handleSequenceTable($table, $database);
+
+		if ($sequence !== null) {
+			return $sequence;
+		}
 
 		if (isset($this->parsedSchemas[$database][$table])) {
 			return $this->parsedSchemas[$database][$table];

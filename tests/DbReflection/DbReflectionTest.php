@@ -10,6 +10,7 @@ use MariaStan\Ast\Expr\LiteralNull;
 use MariaStan\Ast\Expr\LiteralString;
 use MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery;
 use MariaStan\Ast\Query\TableReference\Table;
+use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\TableDoesNotExistException;
 use MariaStan\Schema\Column;
 use MariaStan\Schema\DbType\DateTimeType;
@@ -156,18 +157,34 @@ class DbReflectionTest extends TestCase
 		$dbName = MysqliUtil::getDatabaseName($db);
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
+		$sequenceEngineHandler = new SequenceEngineHandler();
 
-		yield 'online' => [new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser)];
+		yield 'online' => [new MariaDbOnlineDbReflection(
+			$db,
+			$dbName,
+			$informationSchemaParser,
+			$sequenceEngineHandler,
+		)];
 
 		assert(self::$dumpFile !== null);
 		$meta_data = stream_get_meta_data(self::$dumpFile);
 		self::assertArrayHasKey('uri', $meta_data);
 		$filename = $meta_data["uri"];
 
-		yield 'file - current' => [new MariaDbFileDbReflection($filename, $dbName, $informationSchemaParser)];
+		yield 'file - current' => [new MariaDbFileDbReflection(
+			$filename,
+			$dbName,
+			$informationSchemaParser,
+			$sequenceEngineHandler,
+		)];
 
 		yield 'file - v3' => [
-			new MariaDbFileDbReflection(__DIR__ . '/data/file-reflection.v3.bin', $dbName, $informationSchemaParser),
+			new MariaDbFileDbReflection(
+				__DIR__ . '/data/file-reflection.v3.bin',
+				$dbName,
+				$informationSchemaParser,
+				$sequenceEngineHandler,
+			),
 		];
 	}
 
@@ -268,10 +285,12 @@ class DbReflectionTest extends TestCase
 			$tableName = 'db_reflection_test';
 			$parser = TestCaseHelper::createParser();
 			$informationSchemaParser = new InformationSchemaParser($parser);
+			$sequenceEngineHandler = new SequenceEngineHandler();
 			$reflection = new MariaDbFileDbReflection(
 				$filename,
 				TestCaseHelper::getDefaultDbName(),
 				$informationSchemaParser,
+				$sequenceEngineHandler,
 			);
 			$reflection->findTableSchema($tableName, TestCaseHelper::getDefaultDbName());
 			$this->expectException(TableDoesNotExistException::class);
@@ -352,6 +371,45 @@ class DbReflectionTest extends TestCase
 		$this->assertTrue($hasTestView, 'db_reflection_test_view was not found among all views.');
 	}
 
+	#[DataProvider('provideDbReflections')]
+	public function testSequence(DbReflection $reflection): void
+	{
+		$validSequences = [
+			'seq_1_to_10',
+			'seq_1_to_10_step_3',
+			'seq_10_to_1',
+			'seq_10_to_1_step_50',
+			'seq_0001_to_00010_step_0001',
+		];
+
+		foreach ($validSequences as $validSequence) {
+			$schema = $reflection->findTableSchema($validSequence);
+			$this->assertSame($validSequence, $schema->name);
+			$this->assertEquals([
+				'seq' => new Column('seq', new UnsignedIntType(), false, null, false),
+			], $schema->columns);
+		}
+
+		$invalidSequences = [
+			'seq_',
+			'seq_a_to_10',
+			'seq_1_to_a',
+			'seq_1to10',
+			'seq_-1_to_10',
+			'seq_1_to_10_step_0',
+			'seq_1.1_to_10',
+			'seq__to_10',
+		];
+
+		foreach ($invalidSequences as $invalidSequence) {
+			try {
+				$reflection->findTableSchema($invalidSequence);
+				$this->fail("Invalid sequence {$invalidSequence} was found.");
+			} catch (DbReflectionException) {
+			}
+		}
+	}
+
 	public function testOnlineDbReflectionHash(): void
 	{
 		self::initDb();
@@ -359,7 +417,13 @@ class DbReflectionTest extends TestCase
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
 		$db->query('DROP TABLE IF EXISTS db_reflection_hash_test;');
-		$dbReflection = new MariaDbOnlineDbReflection($db, MysqliUtil::getDatabaseName($db), $informationSchemaParser);
+		$sequenceEngineHandler = new SequenceEngineHandler();
+		$dbReflection = new MariaDbOnlineDbReflection(
+			$db,
+			MysqliUtil::getDatabaseName($db),
+			$informationSchemaParser,
+			$sequenceEngineHandler,
+		);
 		$prevHashes = [$dbReflection->getHash()];
 
 		$db->query('CREATE TABLE db_reflection_hash_test (id INT);');
@@ -390,7 +454,13 @@ class DbReflectionTest extends TestCase
 		$dbName = MysqliUtil::getDatabaseName($db);
 		$parser = TestCaseHelper::createParser();
 		$informationSchemaParser = new InformationSchemaParser($parser);
-		$onlineReflection = new MariaDbOnlineDbReflection($db, $dbName, $informationSchemaParser);
+		$sequenceEngineHandler = new SequenceEngineHandler();
+		$onlineReflection = new MariaDbOnlineDbReflection(
+			$db,
+			$dbName,
+			$informationSchemaParser,
+			$sequenceEngineHandler,
+		);
 
 		yield 'online' => [static fn () => $onlineReflection->getHash()];
 
@@ -407,7 +477,12 @@ class DbReflectionTest extends TestCase
 				}
 
 				try {
-					return (new MariaDbFileDbReflection($tmpFileName, $dbName, $informationSchemaParser))->getHash();
+					return (new MariaDbFileDbReflection(
+						$tmpFileName,
+						$dbName,
+						$informationSchemaParser,
+						new SequenceEngineHandler(),
+					))->getHash();
 				} finally {
 					unlink($tmpFileName);
 				}

@@ -51,6 +51,7 @@ class MariaDbFileDbReflection implements DbReflection
 		string $dumpFile,
 		private readonly string $defaultDatabase,
 		private readonly InformationSchemaParser $schemaParser,
+		private readonly SequenceEngineHandler $sequenceEngineHandler,
 	) {
 		$contents = file_get_contents($dumpFile);
 
@@ -90,6 +91,12 @@ class MariaDbFileDbReflection implements DbReflection
 	{
 		$origDatabase = $database;
 		$database ??= $this->defaultDatabase;
+		$sequence = $this->sequenceEngineHandler->handleSequenceTable($table, $database);
+
+		if ($sequence !== null) {
+			return $sequence;
+		}
+
 		$tableDump = $this->schemaDump['databases'][$database]['tables'][$table] ?? [];
 
 		if (! is_array($tableDump)) {
