@@ -10,6 +10,7 @@ use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\DbReflection\Exception\ViewDoesNotExistException;
 use MariaStan\Schema\Table;
 use MariaStan\Util\MariaDbErrorCodes;
+use MariaStan\Util\TypeUtil;
 use mysqli;
 use mysqli_sql_exception;
 
@@ -99,7 +100,9 @@ class MariaDbOnlineDbReflection implements DbReflection
 		$result = [];
 
 		foreach ($views as $view) {
-			$result[$view['TABLE_SCHEMA']][$view['TABLE_NAME']] = $view['VIEW_DEFINITION'];
+			$schema = TypeUtil::getStringValue($view, 'TABLE_SCHEMA');
+			$table = TypeUtil::getStringValue($view, 'TABLE_NAME');
+			$result[$schema][$table] = TypeUtil::getStringValue($view, 'VIEW_DEFINITION');
 		}
 
 		return $result;

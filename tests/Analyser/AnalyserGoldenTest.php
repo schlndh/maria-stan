@@ -141,7 +141,7 @@ class AnalyserGoldenTest extends TestCase
 		));
 	}
 
-	/** @return array<string, mixed> */
+	/** @return array<mixed> */
 	private static function dumpMysqliField(\stdClass $field): array
 	{
 		$result = [

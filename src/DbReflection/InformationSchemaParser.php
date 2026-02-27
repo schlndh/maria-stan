@@ -22,9 +22,11 @@ use MariaStan\Schema\DbType\UnsignedIntType;
 use MariaStan\Schema\DbType\VarcharType;
 use MariaStan\Schema\ForeignKey;
 use MariaStan\Util\MariaDbErrorCodes;
+use MariaStan\Util\TypeUtil;
 
 use function array_combine;
 use function array_map;
+use function assert;
 use function count;
 use function explode;
 use function ksort;
@@ -78,7 +80,9 @@ class InformationSchemaParser
 		$rowsByConstraintName = [];
 
 		foreach ($foreignKeyRows as $row) {
-			$rowsByConstraintName[$row['CONSTRAINT_NAME']][$row['ORDINAL_POSITION']] = $row;
+			$name = TypeUtil::getStringValue($row, 'CONSTRAINT_NAME');
+			$position = TypeUtil::getIntValue($row, 'ORDINAL_POSITION');
+			$rowsByConstraintName[$name][$position] = $row;
 		}
 
 		$result = [];
@@ -88,14 +92,10 @@ class InformationSchemaParser
 		/** @phpstan-var array<array<string, string|null>> $rows */
 		foreach ($rowsByConstraintName as $rows) {
 			ksort($rows);
-			$constraintName = $rows[1]['CONSTRAINT_NAME']
-				?? throw new UnexpectedValueException('CONSTRAINT_NAME cannot be null');
-			$tableName = $rows[1]['TABLE_NAME']
-				?? throw new UnexpectedValueException('TABLE_NAME cannot be null');
-			$refTableName = $rows[1]['REFERENCED_TABLE_NAME']
-				?? throw new UnexpectedValueException('REFERENCED_TABLE_NAME cannot be null');
-			$refDbName = $rows[1]['REFERENCED_TABLE_SCHEMA']
-				?? throw new UnexpectedValueException('REFERENCED_TABLE_SCHEMA cannot be null');
+			$constraintName = TypeUtil::getStringValue($rows[1], 'CONSTRAINT_NAME');
+			$tableName = TypeUtil::getStringValue($rows[1], 'TABLE_NAME');
+			$refTableName = TypeUtil::getStringValue($rows[1], 'REFERENCED_TABLE_NAME');
+			$refDbName = TypeUtil::getStringValue($rows[1], 'REFERENCED_TABLE_SCHEMA');
 			$columnNames = [];
 			$refColumnNames = [];
 
@@ -120,12 +120,11 @@ class InformationSchemaParser
 					);
 				}
 
-				$columnNames[] = $row['COLUMN_NAME']
-					?? throw new UnexpectedValueException('COLUMN_NAME cannot be null');
-				$refColumnNames[] = $row['REFERENCED_COLUMN_NAME']
-					?? throw new UnexpectedValueException('REFERENCED_COLUMN_NAME cannot be null');
+				$columnNames[] = TypeUtil::getStringValue($row, 'COLUMN_NAME');
+				$refColumnNames[] = TypeUtil::getStringValue($row, 'REFERENCED_COLUMN_NAME');
 			}
 
+			assert($columnNames !== [] && $refColumnNames !== []);
 			$result[$constraintName] = new ForeignKey(
 				$constraintName,
 				$tableName,

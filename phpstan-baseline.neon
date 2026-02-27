@@ -1,67 +1,61 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method MariaStan\\DbReflection\\MariaDbOnlineDbReflection\:\:getViewDefinitions\(\) should return array\<string, array\<string, string\>\> but returns array\<array\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/DbReflection/MariaDbOnlineDbReflection.php
-
-		-
-			message: '#^Doing instanceof PHPStan\\Type\\Constant\\ConstantStringType is error\-prone and deprecated\. Use Type\:\:getConstantStrings\(\) instead\.$#'
+			rawMessage: 'Doing instanceof PHPStan\Type\Constant\ConstantStringType is error-prone and deprecated. Use Type::getConstantStrings() instead.'
 			identifier: phpstanApi.instanceofType
 			count: 2
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
 
 		-
-			message: '#^Accessing PHPStan\\Analyser\\Analyser\:\:class is not covered by backward compatibility promise\. The class might change in a minor PHPStan version\.$#'
+			rawMessage: Accessing PHPStan\Analyser\Analyser::class is not covered by backward compatibility promise. The class might change in a minor PHPStan version.
 			identifier: phpstanApi.classConstant
 			count: 1
 			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
 
 		-
-			message: '#^Calling PHPStan\\Analyser\\Analyser\:\:analyse\(\) is not covered by backward compatibility promise\. The method might change in a minor PHPStan version\.$#'
+			rawMessage: 'Calling PHPStan\Analyser\Analyser::analyse() is not covered by backward compatibility promise. The method might change in a minor PHPStan version.'
 			identifier: phpstanApi.method
 			count: 1
 			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
 
 		-
-			message: '#^Calling PHPStan\\Analyser\\AnalyserResult\:\:getErrors\(\) is not covered by backward compatibility promise\. The method might change in a minor PHPStan version\.$#'
+			rawMessage: 'Calling PHPStan\Analyser\AnalyserResult::getErrors() is not covered by backward compatibility promise. The method might change in a minor PHPStan version.'
 			identifier: phpstanApi.method
 			count: 1
 			path: tests/PHPStan/Integration/PHPStanIntegrationTest.php
 
 		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be true\.$#'
+			rawMessage: 'Call to function in_array() requires parameter #3 to be true.'
 			identifier: function.strict
 			count: 1
 			path: tests/Parser/MariaDbParserOperatorTest.php
 
 		-
-			message: '#^Call to method handle\(\) of internal class PHPUnit\\TextUI\\Configuration\\PhpHandler from outside its root namespace PHPUnit\.$#'
+			rawMessage: 'Call to method handle() of internal class PHPUnit\TextUI\Configuration\PhpHandler from outside its root namespace PHPUnit.'
 			identifier: method.internalClass
 			count: 1
 			path: tests/updateTests.php
 
 		-
-			message: '#^Call to method load\(\) of internal class PHPUnit\\TextUI\\XmlConfiguration\\Loader from outside its root namespace PHPUnit\.$#'
+			rawMessage: 'Call to method load() of internal class PHPUnit\TextUI\XmlConfiguration\Loader from outside its root namespace PHPUnit.'
 			identifier: method.internalClass
 			count: 1
 			path: tests/updateTests.php
 
 		-
-			message: '#^Call to method php\(\) of internal class PHPUnit\\TextUI\\XmlConfiguration\\Configuration from outside its root namespace PHPUnit\.$#'
+			rawMessage: 'Call to method php() of internal class PHPUnit\TextUI\XmlConfiguration\Configuration from outside its root namespace PHPUnit.'
 			identifier: method.internalClass
 			count: 1
 			path: tests/updateTests.php
 
 		-
-			message: '#^Instantiation of internal class PHPUnit\\TextUI\\Configuration\\PhpHandler\.$#'
+			rawMessage: Instantiation of internal class PHPUnit\TextUI\Configuration\PhpHandler.
 			identifier: new.internalClass
 			count: 1
 			path: tests/updateTests.php
 
 		-
-			message: '#^Instantiation of internal class PHPUnit\\TextUI\\XmlConfiguration\\Loader\.$#'
+			rawMessage: Instantiation of internal class PHPUnit\TextUI\XmlConfiguration\Loader.
 			identifier: new.internalClass
 			count: 1
 			path: tests/updateTests.php

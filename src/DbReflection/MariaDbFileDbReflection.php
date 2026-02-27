@@ -10,6 +10,7 @@ use MariaStan\DbReflection\Exception\UnexpectedValueException;
 use MariaStan\DbReflection\Exception\ViewDoesNotExistException;
 use MariaStan\Schema\Table;
 use MariaStan\Util\MariaDbErrorCodes;
+use MariaStan\Util\TypeUtil;
 
 use function array_column;
 use function array_fill_keys;
@@ -154,6 +155,7 @@ class MariaDbFileDbReflection implements DbReflection
 			$databases = [$databases];
 		} elseif ($databases === null) {
 			$result = $db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+			/** @var list<string> $databases */
 			$databases = array_column($result->fetch_all(), 0);
 		}
 
@@ -176,7 +178,8 @@ class MariaDbFileDbReflection implements DbReflection
 
 			/** @var array<string, scalar|null> $col */
 			foreach ($columns as $col) {
-				$result['databases'][$database]['tables'][$col['TABLE_NAME']]['columns'][] = $col;
+				$tableName = TypeUtil::getStringValue($col, 'TABLE_NAME');
+				$result['databases'][$database]['tables'][$tableName]['columns'][] = $col;
 			}
 
 			$stmt = $db->prepare('
@@ -193,7 +196,8 @@ class MariaDbFileDbReflection implements DbReflection
 
 			/** @var array<string, scalar|null> $fk */
 			foreach ($foreignKeys as $fk) {
-				$result['databases'][$database]['tables'][$fk['TABLE_NAME']]['foreign_keys'][] = $fk;
+				$tableName = TypeUtil::getStringValue($fk, 'TABLE_NAME');
+				$result['databases'][$database]['tables'][$tableName]['foreign_keys'][] = $fk;
 			}
 
 			$stmt = $db->prepare('
@@ -205,7 +209,9 @@ class MariaDbFileDbReflection implements DbReflection
 			$views = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 			foreach ($views as $view) {
-				$result['databases'][$view['TABLE_SCHEMA']]['views'][$view['TABLE_NAME']]
+				$schemaName = TypeUtil::getStringValue($view, 'TABLE_SCHEMA');
+				$tableName = TypeUtil::getStringValue($view, 'TABLE_NAME');
+				$result['databases'][$schemaName]['views'][$tableName]
 					= ['definition' => $view['VIEW_DEFINITION']];
 			}
 		}
