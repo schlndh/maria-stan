@@ -348,6 +348,10 @@ class AnalyserTest extends TestCase
 			'query' => "SELECT * FROM {$joinTableA} JOIN {$joinTableB} ON 1",
 		];
 
+		yield 'STRAIGHT_JOIN' => [
+			'query' => "SELECT * FROM {$joinTableA} STRAIGHT_JOIN {$joinTableB} ON 1",
+		];
+
 		yield 'LEFT OUTER JOIN - implicit, *' => [
 			'query' => "SELECT * FROM {$joinTableA} LEFT JOIN {$joinTableB} ON 1",
 		];
@@ -2195,6 +2199,13 @@ class AnalyserTest extends TestCase
 			'query' => '
 				SELECT * FROM analyser_test_nullability_1 t1
 				JOIN analyser_test_nullability_1 t2 ON t1.col_vchar = t2.col_vchar
+			',
+		];
+
+		yield 'STRAIGHT_JOIN' => [
+			'query' => '
+				SELECT * FROM analyser_test_nullability_1 t1
+				STRAIGHT_JOIN analyser_test_nullability_1 t2 ON t1.col_vchar = t2.col_vchar
 			',
 		];
 

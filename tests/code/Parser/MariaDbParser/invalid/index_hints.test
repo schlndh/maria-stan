@@ -101,3 +101,17 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected INDEX, got '(' after: SELECT * FROM parser_test_index USE
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(id)' at line 1
+-----
+SELECT * FROM parser_test_join_a a JOIN parser_test_join_a b ON a.id = b.id FORCE INDEX (PRIMARY)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got FORCE after: id = b.id
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FORCE INDEX (PRIMARY)' at line 1
+-----
+SELECT * FROM parser_test_join_a a JOIN parser_test_join_a b USING (id) FORCE INDEX (PRIMARY)
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got FORCE after: b USING (id)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FORCE INDEX (PRIMARY)' at line 1

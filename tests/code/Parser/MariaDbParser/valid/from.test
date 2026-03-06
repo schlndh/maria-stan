@@ -1321,3 +1321,148 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+SELECT * FROM parser_test_join_a STRAIGHT_JOIN parser_test_join_b
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_b
+						)
+					[indexHints] => Array
+						(
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test_join_a a STRAIGHT_JOIN parser_test_join_b b ON a.id = b.id
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => a
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_b
+						)
+					[alias] => b
+					[indexHints] => Array
+						(
+						)
+				)
+			[joinCondition] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => a
+								)
+						)
+					[right] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => b
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test_join_a a STRAIGHT_JOIN parser_test_join_b b USING (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => a
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_b
+						)
+					[alias] => b
+					[indexHints] => Array
+						(
+						)
+				)
+			[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
+				(
+					[columnNames] => Array
+						(
+							[0] => id
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

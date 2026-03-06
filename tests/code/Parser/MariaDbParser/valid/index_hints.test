@@ -654,3 +654,128 @@ MariaStan\Ast\Query\DeleteQuery
 		(
 		)
 )
+-----
+SELECT * FROM parser_test_join_a a JOIN parser_test_join_a b FORCE INDEX (PRIMARY) ON a.id = b.id
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => a
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => b
+					[indexHints] => Array
+						(
+							[0] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::FORCE
+									[columnNames] => Array
+										(
+											[0] => PRIMARY
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+						)
+				)
+			[joinCondition] => MariaStan\Ast\Expr\BinaryOp
+				(
+					[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::EQUAL
+					[left] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => a
+								)
+						)
+					[right] => MariaStan\Ast\Expr\Column
+						(
+							[name] => id
+							[tableName] => MariaStan\Ast\Query\TableReference\TableName
+								(
+									[name] => b
+								)
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)
+-----
+SELECT * FROM parser_test_join_a a JOIN parser_test_join_a b FORCE INDEX (PRIMARY) USING (id)
+-----
+MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
+(
+	[select] => Array
+		(
+			[0] => MariaStan\Ast\SelectExpr\AllColumns
+				(
+				)
+		)
+	[from] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::INNER_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => a
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test_join_a
+						)
+					[alias] => b
+					[indexHints] => Array
+						(
+							[0] => MariaStan\Ast\Query\TableReference\IndexHint
+								(
+									[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::FORCE
+									[columnNames] => Array
+										(
+											[0] => PRIMARY
+										)
+									[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+								)
+						)
+				)
+			[joinCondition] => MariaStan\Ast\Query\TableReference\UsingJoinCondition
+				(
+					[columnNames] => Array
+						(
+							[0] => id
+						)
+				)
+		)
+	[isDistinct] => false
+	[isSqlCalcFoundRows] => false
+)

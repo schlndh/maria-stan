@@ -10,6 +10,7 @@ enum JoinTypeEnum: string
 	case LEFT_OUTER_JOIN = 'LEFT_OUTER_JOIN';
 	case RIGHT_OUTER_JOIN = 'RIGHT_OUTER_JOIN';
 	case CROSS_JOIN = 'CROSS_JOIN';
+	case STRAIGHT_JOIN = 'STRAIGHT_JOIN';
 
 	public function isOuterJoin(): bool
 	{

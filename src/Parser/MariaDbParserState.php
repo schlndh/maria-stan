@@ -849,7 +849,7 @@ class MariaDbParserState
 			$joinPrecedence = self::JOIN_PRECEDENCE_EXPLICIT;
 			$positionBak = $this->position;
 
-			// TODO: NATURAL and STRAIGHT_JOIN
+			// TODO: NATURAL JOIN
 			if ($this->consumeToken(',')) {
 				$joinType = JoinTypeEnum::CROSS_JOIN;
 				$joinPrecedence = self::JOIN_PRECEDENCE_COMMA;
@@ -868,6 +868,9 @@ class MariaDbParserState
 				$this->expectToken(TokenTypeEnum::JOIN);
 				$joinType = JoinTypeEnum::RIGHT_OUTER_JOIN;
 			} elseif ($this->consumeToken(TokenTypeEnum::JOIN)) {
+				$isUnclearJoin = true;
+			} elseif ($this->consumeToken(TokenTypeEnum::STRAIGHT_JOIN)) {
+				$joinType = JoinTypeEnum::STRAIGHT_JOIN;
 				$isUnclearJoin = true;
 			} else {
 				break;
@@ -902,6 +905,7 @@ class MariaDbParserState
 					: $this->parseRestOfUsingJoinCondition();
 			}
 
+			assert($joinType !== null);
 			$leftTable = new Join($joinType, $leftTable, $rightTable, $joinCondition);
 		}
 
