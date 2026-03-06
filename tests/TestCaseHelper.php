@@ -48,7 +48,7 @@ abstract class TestCaseHelper
 		}
 
 		$mysqli = new mysqli(
-			// see phpunit.xml
+			// see phpunit.xml.dist
 			self::getConfigValue($prefix, 'host'),
 			self::getConfigValue($prefix, 'user'),
 			self::getConfigValue($prefix, 'password'),

@@ -4,3 +4,5 @@
 .tool-versions
 .phpunit.result.cache
 **/schema.dump
+compose.override.yaml
+phpunit.xml

@@ -11,7 +11,7 @@
 		<ini name="error_reporting" value="-1" />
 		<ini name="assert.exception" value="1" />
 
-		<!-- you can override these by editing them here, or creating a copy of the XML and passing it via `-c`, or
+		<!-- You can change it by copying the file to phpunit.xml and editing it there, or
 		 by setting the environment variables yourself (they're not overridden if they're already set). -->
 		<env name="testdb_host" value="127.0.0.1" />
 		<env name="testdb_port" value="3306"/>
