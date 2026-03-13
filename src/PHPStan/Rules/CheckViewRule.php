@@ -127,7 +127,7 @@ class CheckViewRule implements Rule
 		try {
 			$viewDefinition = $this->dbReflection->findViewDefinition($view, $dbName);
 			$analyserResult = $this->analyser->analyzeQuery($viewDefinition);
-		} catch (DbReflectionException | AnalyserException $e) {
+		} catch (AnalyserException | DbReflectionException $e) {
 			return self::createPHPStanErrorsFromAnalyserErrors([$e->toAnalyserError()], $view, $dbName);
 		}
 
