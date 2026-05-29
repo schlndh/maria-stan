@@ -8,8 +8,8 @@ final class Table
 {
 	/**
 	 * @param ?string $database NULL for CTE
-	 * @param non-empty-array<string, Column> $columns name => column
-	 * @param array<string, ForeignKey> $foreignKeys name => foreign key
+	 * @param non-empty-array<int|string, Column> $columns name => column
+	 * @param array<int|string, ForeignKey> $foreignKeys name => foreign key
 	 */
 	public function __construct(
 		public readonly string $name,

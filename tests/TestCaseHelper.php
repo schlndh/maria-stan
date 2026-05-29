@@ -23,7 +23,7 @@ abstract class TestCaseHelper
 {
 	private const DEFAULT_CONFIG_PREFIX = 'testdb_';
 
-	/** @var array<string, mysqli> */
+	/** @var array<int|string, mysqli> */
 	private static array $connections = [];
 
 	public static function getDefaultSharedConnection(): mysqli

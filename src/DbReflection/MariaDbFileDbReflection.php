@@ -44,7 +44,7 @@ class MariaDbFileDbReflection implements DbReflection
 	/** @var SchemaDump */
 	private readonly array $schemaDump;
 
-	/** @var array<string, array<string, Table>> database => table name => schema */
+	/** @var array<int|string, array<int|string, Table>> database => table name => schema */
 	private array $parsedSchemas = [];
 
 	public function __construct(

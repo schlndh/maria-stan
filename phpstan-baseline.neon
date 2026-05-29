@@ -1,10 +1,28 @@
 parameters:
 	ignoreErrors:
 		-
+			rawMessage: 'Property MariaStan\Database\FunctionInfo\FunctionInfoRegistry::$functionInfoMap (array<non-decimal-int-string, MariaStan\Database\FunctionInfo\FunctionInfo>) does not accept array<string, MariaStan\Database\FunctionInfo\FunctionInfo>.'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Database/FunctionInfo/FunctionInfoRegistry.php
+
+		-
 			rawMessage: 'Doing instanceof PHPStan\Type\Constant\ConstantStringType is error-prone and deprecated. Use Type::getConstantStrings() instead.'
 			identifier: phpstanApi.instanceofType
 			count: 2
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
+
+		-
+			rawMessage: 'Generator expects key type non-decimal-int-string, literal-string&non-falsy-string given.'
+			identifier: generator.keyType
+			count: 2
+			path: tests/Analyser/AnalyserTest.php
+
+		-
+			rawMessage: 'Generator expects key type non-decimal-int-string, non-falsy-string given.'
+			identifier: generator.keyType
+			count: 2
+			path: tests/Analyser/AnalyserTest.php
 
 		-
 			rawMessage: Accessing PHPStan\Analyser\Analyser::class is not covered by backward compatibility promise. The class might change in a minor PHPStan version.

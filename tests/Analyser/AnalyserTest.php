@@ -74,8 +74,9 @@ class AnalyserTest extends TestCase
 			MariaDbErrorCodes::ER_UNKNOWN_LOCALE,
 			MariaDbErrorCodes::ER_BAD_DATA,
 		];
+	private const INT_TABLE_NAME = 987465461;
 
-	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	/** @return iterable<non-decimal-int-string, callable(): iterable<non-decimal-int-string, array<mixed>>> set => fn(): [name => params] */
 	public static function getValidTestSets(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -118,6 +119,13 @@ class AnalyserTest extends TestCase
 		");
 		$db->query("
 			INSERT INTO analyser_test_enum (enum_abc, enum_ab, enum_bc) VALUES ('a', 'b', 'c');
+		");
+		$intTableName = MysqliUtil::quoteIdentifier((string) self::INT_TABLE_NAME);
+		$db->query("
+			CREATE OR REPLACE TABLE {$intTableName} (
+				`123` INT NOT NULL,
+				`456` INT NULL
+			);
 		");
 
 		$secondDbName = TestCaseHelper::getSecondDbName();
@@ -170,9 +178,10 @@ class AnalyserTest extends TestCase
 		yield 'delete' => self::provideValidDeleteTestData(...);
 		yield 'table-value-constructor' => self::provideValidTableValueConstructorData(...);
 		yield 'multi-db' => self::provideValidMultiDbTestData(...);
+		yield 'edge-cases' => self::provideValidEdgeCasesTestData(...);
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	public static function provideValidTestData(): iterable
 	{
 		foreach (self::getValidTestSets() as $testSet) {
@@ -180,7 +189,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidLiteralTestData(): iterable
 	{
 		yield 'literal - int' => [
@@ -208,7 +217,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidDataTypeTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -299,7 +308,7 @@ class AnalyserTest extends TestCase
 		// TODO: name of 2nd column contains comment: SELECT col_int, /*aaa*/ -col_int FROM mysqli_test_data_types
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidJoinTestData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -532,7 +541,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidOperatorTestData(): iterable
 	{
 		$operators = ['+', '-', '*', '/', '%', 'DIV', '<', '='];
@@ -649,7 +658,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidSubqueryTestData(): iterable
 	{
 		yield 'subquery as SELECT expression' => [
@@ -795,7 +804,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidGroupByHavingOrderTestData(): iterable
 	{
 		yield 'use alias from field list in GROUP BY' => [
@@ -902,7 +911,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidPlaceholderTestData(): iterable
 	{
 		$values = [
@@ -925,7 +934,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidFunctionCallTestData(): iterable
 	{
 		$tableName = 'analyser_test';
@@ -1061,7 +1070,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidUnionTestData(): iterable
 	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
@@ -1171,7 +1180,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidWithTestData(): iterable
 	{
 		yield "WITH" => [
@@ -1221,7 +1230,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidTableValueConstructorData(): iterable
 	{
 		yield 'TVC - simple WITH' => [
@@ -1245,9 +1254,13 @@ class AnalyserTest extends TestCase
 				'query' => "SELECT id, id FROM analyser_test {$combinator->value} VALUES (1, 1)",
 			];
 		}
+
+		yield 'TVC - integer column name' => [
+			'query' => "WITH tbl (`1`, `99`) AS (VALUES (1, 'a'), ('b', null)) SELECT * FROM tbl WHERE `99`",
+		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidOtherQueryTestData(): iterable
 	{
 		yield "TRUNCATE TABLE" => [
@@ -1269,7 +1282,65 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
+	private static function provideValidEdgeCasesTestData(): iterable
+	{
+		$intTableName = MysqliUtil::quoteIdentifier((string) self::INT_TABLE_NAME);
+
+		yield 'integer table name' => [
+			'query' => "SELECT * FROM {$intTableName}",
+		];
+
+		yield 'integer column name' => [
+			'query' => "SELECT `123` FROM {$intTableName} WHERE `123` IS NOT NULL",
+		];
+
+		yield 'integer column name in GROUP BY' => [
+			'query' => "SELECT * FROM {$intTableName} GROUP BY `123`",
+		];
+
+		yield 'integer column name in HAVING' => [
+			'query' => "SELECT * FROM {$intTableName} HAVING `123` > 1",
+		];
+
+		yield 'integer column name in ORDER BY' => [
+			'query' => "SELECT * FROM {$intTableName} ORDER BY `123`",
+		];
+
+		yield 'integer table alias' => [
+			'query' => "SELECT * FROM analyser_test `321`",
+		];
+
+		yield 'integer column alias' => [
+			'query' => "SELECT id `321` FROM analyser_test",
+		];
+
+		yield 'integer subquery alias' => [
+			'query' => "SELECT `321`.* FROM (SELECT * FROM analyser_test) `321`",
+		];
+
+		yield 'integer CTE alias' => [
+			'query' => "WITH `321` AS (SELECT * FROM analyser_test) SELECT * FROM `321`",
+		];
+
+		yield 'integer alias in outer JOIN' => [
+			'query' => "SELECT * FROM analyser_test test LEFT JOIN {$intTableName} ON test.id = {$intTableName}.`123`",
+		];
+
+		yield 'JOIN two subqueries with integer aliases' => [
+			'query' => "SELECT * FROM (SELECT 1 id) `1`, (SELECT 2 id) `2` WHERE `2`.id = 2",
+		];
+
+		yield 'DELETE FROM integer table name' => [
+			'query' => "DELETE FROM {$intTableName}",
+		];
+
+		yield 'DELETE FROM integer table alias' => [
+			'query' => "DELETE `123` FROM analyser_test `123`",
+		];
+	}
+
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidInsertTestData(): iterable
 	{
 		foreach (['INSERT', 'REPLACE'] as $type) {
@@ -1399,7 +1470,7 @@ class AnalyserTest extends TestCase
 		// TODO: DEFAULT expression
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidUpdateTestData(): iterable
 	{
 		yield 'UPDATE - single table' => [
@@ -1434,7 +1505,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidDeleteTestData(): iterable
 	{
 		yield 'DELETE - single table' => [
@@ -1463,7 +1534,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidMultiDbTestData(): iterable
 	{
 		$dbName = TestCaseHelper::getDefaultDbName();
@@ -1865,7 +1936,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidNullabilityOperatorTestData(): iterable
 	{
 		$operations = [
@@ -2107,7 +2178,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidNullabilityMiscTestData(): iterable
 	{
 		yield 'no WHERE' => [
@@ -2254,7 +2325,7 @@ class AnalyserTest extends TestCase
 		//];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidNullabilityGroupByTestData(): iterable
 	{
 		// TODO: add /, % and DIV once we can remove nullability for "/ 1" etc.
@@ -2364,7 +2435,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideValidNullabilityMultiDbData(): iterable
 	{
 		$dbName = MysqliUtil::quoteIdentifier(TestCaseHelper::getDefaultDbName());
@@ -2388,7 +2459,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	/** @return iterable<non-decimal-int-string, callable(): iterable<non-decimal-int-string, array<mixed>>> set => fn(): [name => params] */
 	public static function getValidNullabilityTestSets(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
@@ -2434,7 +2505,7 @@ class AnalyserTest extends TestCase
 		yield 'multi-db' => self::provideValidNullabilityMultiDbData(...);
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	public static function provideValidNullabilityTestData(): iterable
 	{
 		foreach (self::getValidNullabilityTestSets() as $testSet) {
@@ -2540,7 +2611,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, callable(): iterable<string, array<mixed>>> set => fn(): [name => params] */
+	/** @return iterable<non-decimal-int-string, callable(): iterable<non-decimal-int-string, array<mixed>>> set => fn(): [name => params] */
 	public static function getInvalidTestSets(): iterable
 	{
 		yield 'misc' => static function (): iterable {
@@ -2652,9 +2723,10 @@ class AnalyserTest extends TestCase
 		yield 'table-value-constructor' => self::provideInvalidTableValueConstructorData(...);
 		yield 'unsupported-feature' => self::provideInvalidUnsupportedFeaturesData(...);
 		yield 'multi-db' => self::provideInvalidMultiDbData(...);
+		yield 'edge-cases' => self::provideInvalidEdgeCasesData(...);
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	public static function provideInvalidTestData(): iterable
 	{
 		foreach (self::getInvalidTestSets() as $testSet) {
@@ -2662,7 +2734,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidColumnTestData(): iterable
 	{
 		yield 'unknown column in field list' => [
@@ -2999,7 +3071,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidTupleTestData(): iterable
 	{
 		yield 'tuple size does not match' => [
@@ -3165,7 +3237,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidUnionTestData(): iterable
 	{
 		foreach (SelectQueryCombinatorTypeEnum::cases() as $combinator) {
@@ -3243,7 +3315,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidOtherQueryTestData(): iterable
 	{
 		yield "TRUNCATE missing_table" => [
@@ -3263,7 +3335,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidInsertTestData(): iterable
 	{
 		foreach (['INSERT', 'REPLACE'] as $type) {
@@ -3445,7 +3517,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidUpdateTestData(): iterable
 	{
 		yield "UPDATE missing_table" => [
@@ -3539,7 +3611,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidDeleteTestData(): iterable
 	{
 		yield 'DELETE - missing table' => [
@@ -3612,7 +3684,7 @@ class AnalyserTest extends TestCase
 		// TODO: detect deleting non-tables
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidTableValueConstructorData(): iterable
 	{
 		yield 'TVC - different number of values' => [
@@ -3628,7 +3700,7 @@ class AnalyserTest extends TestCase
 		];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidUnsupportedFeaturesData(): iterable
 	{
 		yield 'LIMIT inside of IN - simple' => [
@@ -3665,7 +3737,7 @@ class AnalyserTest extends TestCase
 		//];
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	private static function provideInvalidMultiDbData(): iterable
 	{
 		$dbName = TestCaseHelper::getDefaultDbName();
@@ -3903,6 +3975,36 @@ class AnalyserTest extends TestCase
 		];
 	}
 
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
+	private static function provideInvalidEdgeCasesData(): iterable
+	{
+		yield 'conflicting integer table alias' => [
+			'query' => "SELECT * FROM analyser_test `123`, analyser_test `123`",
+			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('123'),
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'conflicting integer subquery alias' => [
+			'query' => "SELECT * FROM (SELECT 1) `123`, (SELECT 1) `123`",
+			'error' => AnalyserErrorBuilder::createNotUniqueTableAliasError('123'),
+			'dbErrorCode' => MariaDbErrorCodes::ER_NONUNIQ_TABLE,
+		];
+
+		yield 'SELECT FROM missing integer name table' => [
+			'query' => "SELECT * FROM `654897987`",
+			'error' => AnalyserErrorBuilder::createTableDoesntExistError('654897987'),
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_SUCH_TABLE,
+		];
+
+		$intNamedTable = MysqliUtil::quoteIdentifier((string) self::INT_TABLE_NAME);
+
+		yield 'missing integer-named column in INSERT' => [
+			'query' => "INSERT INTO {$intNamedTable} SET `456` = 7",
+			'error' => AnalyserErrorBuilder::createMissingValueForColumnError('123'),
+			'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+		];
+	}
+
 	/** @param AnalyserError|array<AnalyserError> $error */
 	#[DataProvider('provideInvalidTestData')]
 	public function testInvalid(string $query, AnalyserError|array $error, ?int $dbErrorCode): void
@@ -3941,7 +4043,7 @@ class AnalyserTest extends TestCase
 		}
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	public static function provideTestPositionPlaceholderCountData(): iterable
 	{
 		yield 'no placeholders' => [
@@ -4020,7 +4122,7 @@ class AnalyserTest extends TestCase
 		$this->assertSame($expectedCount, $result->positionalPlaceholderCount);
 	}
 
-	/** @return iterable<string, array<mixed>> */
+	/** @return iterable<non-decimal-int-string, array<mixed>> */
 	public static function provideTestRowCountRangeData(): iterable
 	{
 		$singleRowQueries = [
@@ -4222,7 +4324,7 @@ class AnalyserTest extends TestCase
 
 	/**
 	 * @param array<QueryResultField> $expectedFields
-	 * @return array<string> without duplicates, in the same order as returned by the query
+	 * @return array<int|string> without duplicates, in the same order as returned by the query
 	 */
 	private function getFieldKeys(array $expectedFields): array
 	{

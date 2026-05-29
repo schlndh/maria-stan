@@ -1,0 +1,112 @@
+edge-cases
+-----
+SELECT * FROM analyser_test `123`, analyser_test `123`
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: '123'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1066: Not unique table/alias: '123'
+-----
+SELECT * FROM (SELECT 1) `123`, (SELECT 1) `123`
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Not unique table/alias: '123'
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::NON_UNIQUE_TABLE_ALIAS
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1066: Not unique table/alias: '123'
+-----
+SELECT * FROM `654897987`
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Table '654897987' doesn't exist
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::UNKNOWN_TABLE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+		)
+)
+#######
+1146: Table 'mariastan_test.654897987' doesn't exist
+-----
+INSERT INTO `987465461` SET `456` = 7
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column 123 has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => 987465461
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => 987465461
+							[database] => mariastan_test
+						)
+					[name] => 456
+				)
+		)
+)
+#######
+1364: Field '123' doesn't have a default value

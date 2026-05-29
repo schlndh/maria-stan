@@ -71,11 +71,11 @@ final class AnalyserState
 	private ColumnResolver $columnResolver;
 	private int $positionalPlaceholderCount = 0;
 
-	/** @var array<string, array<string, ReferencedSymbol\Table>> database => name => table */
+	/** @var array<int|string, array<int|string, ReferencedSymbol\Table>> database => name => table */
 	private array $referencedTables = [];
 
 	/**
-	 * @var array<string, array<string, array<string, ReferencedSymbol\TableColumn>>>
+	 * @var array<int|string, array<int|string, array<int|string, ReferencedSymbol\TableColumn>>>
 	 *     database => table name => column name => column
 	 */
 	private array $referencedTableColumns = [];
@@ -592,7 +592,7 @@ final class AnalyserState
 		}
 
 		foreach ($this->columnResolver->getCollidingSubqueryAndTableAliases() as $alias) {
-			$this->errors[] = AnalyserErrorBuilder::createNotUniqueTableAliasError($alias);
+			$this->errors[] = AnalyserErrorBuilder::createNotUniqueTableAliasError((string) $alias);
 		}
 
 		if ($query->where !== null) {
@@ -772,7 +772,7 @@ final class AnalyserState
 				continue;
 			}
 
-			$this->errors[] = AnalyserErrorBuilder::createMissingValueForColumnError($name);
+			$this->errors[] = AnalyserErrorBuilder::createMissingValueForColumnError((string) $name);
 		}
 
 		$this->fieldBehavior = ColumnResolverFieldBehaviorEnum::FIELD_LIST;

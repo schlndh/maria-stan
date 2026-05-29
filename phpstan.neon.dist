@@ -12,6 +12,7 @@ parameters:
 		- tests
 	treatPhpDocTypesAsCertain: false
 	checkBenevolentUnionTypes: true
+	reportUnsafeArrayStringKeyCasting: prevent
 	excludePaths:
 		- tests/*/data/*
 		- examples

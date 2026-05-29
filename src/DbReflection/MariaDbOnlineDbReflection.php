@@ -20,7 +20,7 @@ use const MYSQLI_ASSOC;
 
 class MariaDbOnlineDbReflection implements DbReflection
 {
-	/** @var array<string, array<string, Table>> database => table name => schema */
+	/** @var array<int|string, array<int|string, Table>> database => table name => schema */
 	private array $parsedSchemas = [];
 
 	public function __construct(

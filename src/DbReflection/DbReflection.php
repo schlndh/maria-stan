@@ -19,7 +19,7 @@ interface DbReflection
 	public function findViewDefinition(string $view, ?string $database = null): string;
 
 	/**
-	 * @return array<string, array<string, string>> DB name => view name => definition
+	 * @return array<int|string, array<int|string, string>> DB name => view name => definition
 	 * @throws DbReflectionException
 	 */
 	public function getViewDefinitions(): array;

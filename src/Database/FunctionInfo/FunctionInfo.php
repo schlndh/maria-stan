@@ -13,7 +13,10 @@ use MariaStan\Parser\Exception\ParserException;
 
 interface FunctionInfo
 {
-	/** @return array<string> */
+	/**
+	 * @return array<string>
+	 * @phpstan-return array<non-decimal-int-string>
+	 */
 	public function getSupportedFunctionNames(): array;
 
 	public function getFunctionType(): FunctionTypeEnum;

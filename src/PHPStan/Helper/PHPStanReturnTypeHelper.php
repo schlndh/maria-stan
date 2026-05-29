@@ -42,7 +42,7 @@ use function reset;
 
 class PHPStanReturnTypeHelper
 {
-	/** @var array<string, array<string, array<string, Type|null>>> database => table => column => type */
+	/** @var array<int|string, array<int|string, array<int|string, Type|null>>> database => table => column => type */
 	private array $columnTypeOverrides;
 
 	/** @var array<array{column: string, type: string}> */

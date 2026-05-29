@@ -78,12 +78,14 @@ class CheckViewRule implements Rule
 		$errors = [];
 
 		foreach ($viewDefinitions as $database => $views) {
+			$database = (string) $database;
+
 			if (in_array($database, ['information_schema', 'mysql', 'performance_schema', 'sys'], true)) {
 				continue;
 			}
 
 			foreach (array_keys($views) as $view) {
-				$errors = array_merge($errors, $this->checkView($view, $database));
+				$errors = array_merge($errors, $this->checkView((string) $view, $database));
 			}
 		}
 

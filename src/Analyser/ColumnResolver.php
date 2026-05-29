@@ -30,6 +30,7 @@ use function assert;
 use function count;
 use function in_array;
 use function reset;
+use function strval;
 
 // TODO: This code is completely brute-forced to try to match MariaDB's behavior. Try to find the logic behind it and
 // rewrite it to make more sense.
@@ -38,29 +39,29 @@ final class ColumnResolver
 	// This should be something that is not a valid DB name
 	private const SUBQUERY_DB = "\0SUBQUERY\0";
 
-	/** @var array<string, array<string, string>> $tablesByAlias alias => database w/ fallback => table name */
+	/** @var array<int|string, array<int|string, string>> $tablesByAlias alias => database w/ fallback => table name */
 	private array $tablesByAlias = [];
 
-	/** @var array<string, array<string, bool>> database w/ fallback => name => true */
+	/** @var array<int|string, array<int|string, bool>> database w/ fallback => name => true */
 	private array $outerJoinedTableMap = [];
 
-	/** @var array<string, array<string, Schema\Table>> database => name => schema */
+	/** @var array<int|string, array<int|string, Schema\Table>> database => name => schema */
 	private array $tableSchemas = [];
 
-	/** @var array<string, Schema\Table> CTE name => schema */
+	/** @var array<int|string, Schema\Table> CTE name => schema */
 	private array $cteSchemas = [];
 
-	/** @var array<string, array<string, QueryResultField>> subquery alias => name => field */
+	/** @var array<int|string, array<int|string, QueryResultField>> subquery alias => name => field */
 	private array $subquerySchemas = [];
 
-	/** @var array<string, array<array{QueryResultField, ?bool}>> name => [[field, is column]] */
+	/** @var array<int|string, array<array{QueryResultField, ?bool}>> name => [[field, is column]] */
 	private array $fieldList = [];
 
 	/** @var array<array{column: string, table: string, database: ?string}> */
 	private array $allColumns = [];
 
 	/**
-	 * @var array<string, array<string, array<string, bool>>>
+	 * @var array<int|string, array<int|string, array<int|string, bool>>>
 	 *     DB w/ fallback => table/subquery alias => column name => true
 	 */
 	private array $groupByColumns = [];
@@ -81,7 +82,7 @@ final class ColumnResolver
 	{
 		$database ??= $this->dbReflection->getDefaultDatabase();
 		$this->insertReplaceTargetTable = $table;
-		$this->registerColumnsForSchema($table->name, array_keys($table->columns), $database);
+		$this->registerColumnsForSchema($table->name, array_map(strval(...), array_keys($table->columns)), $database);
 		$this->tableSchemas[$database][$table->name] = $table;
 	}
 
@@ -192,7 +193,7 @@ final class ColumnResolver
 
 	/**
 	 * @param non-empty-array<QueryResultField> $fields
-	 * @return non-empty-array<string, Schema\Column> name => column
+	 * @return non-empty-array<int|string, Schema\Column> name => column
 	 * @throws AnalyserException
 	 */
 	private function getColumnsFromFields(array $fields): array
@@ -690,7 +691,7 @@ final class ColumnResolver
 		$tableSchema = $this->tableSchemas[$database][$normalizedTableName] ?? null;
 
 		if ($tableSchema !== null) {
-			return array_keys($tableSchema->columns);
+			return array_map(strval(...), array_keys($tableSchema->columns));
 		}
 
 		if ($origDatabase !== null) {
@@ -702,11 +703,11 @@ final class ColumnResolver
 		$cteSchema = $this->findCteSchema($normalizedTableName);
 
 		if ($cteSchema !== null) {
-			return array_keys($cteSchema->columns);
+			return array_map(strval(...), array_keys($cteSchema->columns));
 		}
 
 		if (isset($this->subquerySchemas[$table])) {
-			return array_keys($this->subquerySchemas[$table]);
+			return array_map(strval(...), array_keys($this->subquerySchemas[$table]));
 		}
 
 		// TODO: error if schema is not found
@@ -812,9 +813,9 @@ final class ColumnResolver
 
 			if (count($duplicates) > 0) {
 				throw new NotUniqueTableAliasException(
-					$alias,
+					(string) $alias,
 					$hasDbName
-						? array_key_first($duplicates)
+						? (string) array_key_first($duplicates)
 						: null,
 				);
 			}
@@ -825,33 +826,30 @@ final class ColumnResolver
 			$this->registerAllTablesAsOuterJoin($this);
 		}
 
-		$newTablesByAlias = [];
+		$newTablesByAlias = $this->tablesByAlias;
 
-		foreach (array_keys($this->tablesByAlias + $other->tablesByAlias) as $alias) {
-			$newTablesByAlias[$alias] = array_merge(
-				$this->tablesByAlias[$alias] ?? [],
-				$other->tablesByAlias[$alias] ?? [],
-			);
+		foreach ($other->tablesByAlias as $alias => $dbTables) {
+			foreach ($dbTables as $database => $table) {
+				$newTablesByAlias[$alias][$database] = $table;
+			}
 		}
 
 		$this->tablesByAlias = $newTablesByAlias;
-		$newOuterJoinedTableMap = [];
+		$newOuterJoinedTableMap = $this->outerJoinedTableMap;
 
-		foreach (array_keys($this->outerJoinedTableMap + $other->outerJoinedTableMap) as $database) {
-			$newOuterJoinedTableMap[$database] = array_merge(
-				$this->outerJoinedTableMap[$database] ?? [],
-				$other->outerJoinedTableMap[$database] ?? [],
-			);
+		foreach ($other->outerJoinedTableMap as $database => $tableMap) {
+			foreach ($tableMap as $table => $isOuterJoined) {
+				$newOuterJoinedTableMap[$database][$table] = $isOuterJoined;
+			}
 		}
 
 		$this->outerJoinedTableMap = $newOuterJoinedTableMap;
-		$newTableSchemas = [];
+		$newTableSchemas = $this->tableSchemas;
 
-		foreach (array_keys($this->tableSchemas + $other->tableSchemas) as $database) {
-			$newTableSchemas[$database] = array_merge(
-				$this->tableSchemas[$database] ?? [],
-				$other->tableSchemas[$database] ?? [],
-			);
+		foreach ($other->tableSchemas as $database => $tables) {
+			foreach ($tables as $table => $schema) {
+				$newTableSchemas[$database][$table] = $schema;
+			}
 		}
 
 		$this->tableSchemas = $newTableSchemas;
@@ -859,10 +857,12 @@ final class ColumnResolver
 		$duplicateSubqueries = array_intersect_key($this->subquerySchemas, $other->subquerySchemas);
 
 		if (count($duplicateSubqueries) > 0) {
-			throw new NotUniqueTableAliasException(array_key_first($duplicateSubqueries));
+			throw new NotUniqueTableAliasException((string) array_key_first($duplicateSubqueries));
 		}
 
-		$this->subquerySchemas = array_merge($this->subquerySchemas, $other->subquerySchemas);
+		foreach ($other->subquerySchemas as $alias => $schema) {
+			$this->subquerySchemas[$alias] = $schema;
+		}
 
 		if ($join->joinCondition instanceof UsingJoinCondition) {
 			$newAllColumns = [];
@@ -916,12 +916,12 @@ final class ColumnResolver
 	{
 		foreach ($outerJoinedResolver->tablesByAlias as $alias => $dbTables) {
 			foreach (array_keys($dbTables) as $database) {
-				$this->registerOuterJoinedTable($alias, $database);
+				$this->registerOuterJoinedTable((string) $alias, (string) $database);
 			}
 		}
 
 		foreach (array_keys($outerJoinedResolver->subquerySchemas) as $alias) {
-			$this->registerOuterJoinedTable($alias);
+			$this->registerOuterJoinedTable((string) $alias);
 		}
 	}
 
@@ -952,15 +952,15 @@ final class ColumnResolver
 		return $this->tableSchemas[$database ?? $this->dbReflection->getDefaultDatabase()][$tableName] ?? null;
 	}
 
-	/** @return array<string> */
+	/** @return list<string> */
 	public function getCollidingSubqueryAndTableAliases(): array
 	{
-		return array_keys(
+		return array_map(strval(...), array_keys(
 			array_intersect_key(
 				$this->tablesByAlias,
 				$this->subquerySchemas,
 			),
-		);
+		));
 	}
 
 	public function hasTableForDelete(string $table, ?string $database = null): bool
@@ -976,7 +976,7 @@ final class ColumnResolver
 		}
 
 		foreach ($this->tablesByAlias as $dbTables) {
-			if (($dbTables[$database] ?? null) === $table) {
+			if ((string) ($dbTables[$database] ?? null) === $table) {
 				return false;
 			}
 		}

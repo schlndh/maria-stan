@@ -7,7 +7,7 @@ namespace MariaStan\Analyser;
 final class AnalyserKnowledgeBase
 {
 	/**
-	 * @param array<string, array<string, bool>> $columnNullability table alias => column name => nullability
+	 * @param array<int|string, array<int|string, bool>> $columnNullability table alias => column name => nullability
 	 *    (true = always NULL, false = never NULL)
 	 * @param bool|null $truthiness (true = always true, false = always false, null => unknown)
 	 */
