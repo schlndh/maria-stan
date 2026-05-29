@@ -71,6 +71,7 @@ class MariaDbParser
 			TokenTypeEnum::IGNORE_SERVER_IDS,
 			TokenTypeEnum::LOCKED,
 			TokenTypeEnum::MASTER_HEARTBEAT_PERIOD,
+			TokenTypeEnum::MASTER_SSL_VERIFY_SERVER_CERT,
 			TokenTypeEnum::MODE,
 			TokenTypeEnum::NO,
 			TokenTypeEnum::NOWAIT,
