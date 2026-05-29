@@ -779,3 +779,111 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 	[isDistinct] => false
 	[isSqlCalcFoundRows] => false
 )
+-----
+DELETE FROM parser_test_index USE INDEX (id)
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE parser_test_index FROM parser_test_index USE INDEX (id)
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE FROM parser_test_index USING parser_test_index USE INDEX (id)
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test_index
+				)
+			[indexHints] => Array
+				(
+					[0] => MariaStan\Ast\Query\TableReference\IndexHint
+						(
+							[type] => MariaStan\Ast\Query\TableReference\IndexHintTypeEnum::USE
+							[columnNames] => Array
+								(
+									[0] => id
+								)
+							[purpose] => MariaStan\Ast\Query\TableReference\IndexHintPurposeEnum::JOIN
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)

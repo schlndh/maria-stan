@@ -47,15 +47,6 @@ Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATABASE, DATE, DATETIM
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')' at line 1
 -----
-DELETE FROM parser_test_index USE INDEX (id)
-WHERE 0
------
-MariaStan\Parser\Exception\UnexpectedTokenException
-Expected END_OF_INPUT, got USE after: DELETE FROM parser_test_index
-#####
-1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id)
-WHERE 0' at line 1
------
 INSERT INTO parser_test_index USE INDEX (id)
 SET id = 999, name = NULL, priority = 7
 -----
@@ -115,3 +106,31 @@ MariaStan\Parser\Exception\UnexpectedTokenException
 Expected END_OF_INPUT, got FORCE after: b USING (id)
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FORCE INDEX (PRIMARY)' at line 1
+-----
+DELETE FROM parser_test_index.* USE INDEX (id) USING parser_test_index
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected USING, got USE after: DELETE FROM parser_test_index.*
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id) USING parser_test_index' at line 1
+-----
+DELETE FROM parser_test_index USE INDEX (id), t USING parser_test_index, parser_test t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ',' after: USE INDEX (id)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' t USING parser_test_index, parser_test t' at line 1
+-----
+DELETE FROM parser_test_index USE INDEX (id), t USING parser_test_index, parser_test t
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected END_OF_INPUT, got ',' after: USE INDEX (id)
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' t USING parser_test_index, parser_test t' at line 1
+-----
+DELETE parser_test_index.* USE INDEX (id) FROM parser_test_index
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected FROM, got USE after: DELETE parser_test_index.*
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'USE INDEX (id) FROM parser_test_index' at line 1

@@ -315,6 +315,7 @@ class MariaDbParserState
 						$tableName->getStartPosition(),
 						$tableName->getEndPosition(),
 						$tableName,
+						indexHints: $this->parseIndexHints(),
 					);
 				} else {
 					$isMultiTableSyntax = true;
