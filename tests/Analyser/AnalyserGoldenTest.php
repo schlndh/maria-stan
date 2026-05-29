@@ -52,7 +52,7 @@ class AnalyserGoldenTest extends TestCase
 		$params = [];
 
 		if (isset($parts[1])) {
-			$rawParams = json_decode($parts[1], true, JSON_THROW_ON_ERROR);
+			$rawParams = json_decode($parts[1], true, flags: JSON_THROW_ON_ERROR);
 			$this->assertIsArray($rawParams);
 
 			foreach ($rawParams as $value) {
