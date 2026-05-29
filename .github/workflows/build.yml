@@ -22,7 +22,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           coverage: "none"
-          php-version: "8.4"
+          php-version: "8.5"
 
       - name: "Get composer cache directory"
         id: "composer-cache"
@@ -54,7 +54,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           coverage: "none"
-          php-version: "8.4"
+          php-version: "8.5"
 
       - name: "Get composer cache directory"
         id: "composer-cache"
@@ -89,7 +89,7 @@ jobs:
           - "8.5"
     services:
       mariadb:
-        image: "mariadb:10.11.11"
+        image: "mariadb:11.8.6"
         env:
           MARIADB_ALLOW_EMPTY_PASSWORD: yes
           MARIADB_DATABASE: "mariastan_test"
