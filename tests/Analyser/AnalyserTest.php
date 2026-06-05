@@ -2410,13 +2410,8 @@ class AnalyserTest extends TestCase
 					'query' => sprintf($queryTemplate, "CASE 1 WHEN 1 THEN {$expr} END"),
 				];
 
-				// AVG and SUM generate result in binary charset, so we can't use utf8mb4_... with them.
-				$collation = in_array($fn, ['AVG', 'SUM'], true)
-					? '`binary`'
-					: '`utf8mb4_unicode_ci`';
-
 				yield "{$labelPrefix} COLLATE GROUP BY" => [
-					'query' => sprintf($queryTemplate, "{$expr} COLLATE {$collation}"),
+					'query' => sprintf($queryTemplate, "{$expr} COLLATE `utf8mb4_unicode_ci`"),
 				];
 			}
 		}

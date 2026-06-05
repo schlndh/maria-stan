@@ -1174,7 +1174,7 @@ Array
 		)
 )
 -----
-SELECT AVG(a2.id) COLLATE `binary` FROM analyser_test a1, analyser_test a2 GROUP BY a1.id
+SELECT AVG(a2.id) COLLATE `utf8mb4_unicode_ci` FROM analyser_test a1, analyser_test a2 GROUP BY a1.id
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -1182,7 +1182,7 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => AVG(a2.id) COLLATE `binary`
+					[name] => AVG(a2.id) COLLATE `utf8mb4_unicode_ci`
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -1219,16 +1219,15 @@ Array
 (
 	stdClass
 		(
-			[name] => AVG(a2.id) COLLATE `binary`
+			[name] => AVG(a2.id) COLLATE `utf8mb4_unicode_ci`
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 16
-			[charsetnr] => 63
+			[length] => 64
+			[charsetnr] => 45
 			[flags] => Array
 				(
-					BINARY
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -2648,7 +2647,7 @@ Array
 		)
 )
 -----
-SELECT AVG(a3.name) COLLATE `binary`
+SELECT AVG(a3.name) COLLATE `utf8mb4_unicode_ci`
 FROM (SELECT a1.* FROM analyser_test a1, analyser_test a2) t
 JOIN analyser_test a3 ON a3.id = t.id
 GROUP BY a3.id
@@ -2659,7 +2658,7 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => AVG(a3.name) COLLATE `binary`
+					[name] => AVG(a3.name) COLLATE `utf8mb4_unicode_ci`
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -2705,16 +2704,15 @@ Array
 (
 	stdClass
 		(
-			[name] => AVG(a3.name) COLLATE `binary`
+			[name] => AVG(a3.name) COLLATE `utf8mb4_unicode_ci`
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 23
-			[charsetnr] => 63
+			[length] => 92
+			[charsetnr] => 45
 			[flags] => Array
 				(
-					BINARY
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -9331,7 +9329,7 @@ Array
 		)
 )
 -----
-SELECT SUM(a2.id) COLLATE `binary` FROM analyser_test a1, analyser_test a2 GROUP BY a1.id
+SELECT SUM(a2.id) COLLATE `utf8mb4_unicode_ci` FROM analyser_test a1, analyser_test a2 GROUP BY a1.id
 -----
 MariaStan\Analyser\AnalyserResult
 (
@@ -9339,7 +9337,7 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => SUM(a2.id) COLLATE `binary`
+					[name] => SUM(a2.id) COLLATE `utf8mb4_unicode_ci`
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -9376,16 +9374,15 @@ Array
 (
 	stdClass
 		(
-			[name] => SUM(a2.id) COLLATE `binary`
+			[name] => SUM(a2.id) COLLATE `utf8mb4_unicode_ci`
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 33
-			[charsetnr] => 63
+			[length] => 132
+			[charsetnr] => 45
 			[flags] => Array
 				(
-					BINARY
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -10803,7 +10800,7 @@ Array
 		)
 )
 -----
-SELECT SUM(a3.name) COLLATE `binary`
+SELECT SUM(a3.name) COLLATE `utf8mb4_unicode_ci`
 FROM (SELECT a1.* FROM analyser_test a1, analyser_test a2) t
 JOIN analyser_test a3 ON a3.id = t.id
 GROUP BY a3.id
@@ -10814,7 +10811,7 @@ MariaStan\Analyser\AnalyserResult
 		(
 			MariaStan\Analyser\QueryResultField
 				(
-					[name] => SUM(a3.name) COLLATE `binary`
+					[name] => SUM(a3.name) COLLATE `utf8mb4_unicode_ci`
 					[exprType] => MariaStan\Analyser\ExprTypeResult
 						(
 							[type] => MariaStan\Schema\DbType\VarcharType
@@ -10860,16 +10857,15 @@ Array
 (
 	stdClass
 		(
-			[name] => SUM(a3.name) COLLATE `binary`
+			[name] => SUM(a3.name) COLLATE `utf8mb4_unicode_ci`
 			[orgname] =>
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 23
-			[charsetnr] => 63
+			[length] => 92
+			[charsetnr] => 45
 			[flags] => Array
 				(
-					BINARY
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
