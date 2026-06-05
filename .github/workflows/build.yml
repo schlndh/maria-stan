@@ -97,7 +97,7 @@ jobs:
         command: >-
           --innodb-use-native-aio=0
         options: >-
-          --health-cmd "mysqladmin ping --silent"
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
         ports:
           - "3306:3306"
 
