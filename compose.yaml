@@ -8,6 +8,10 @@ services:
         environment:
             MARIADB_ROOT_PASSWORD: root
             MARIADB_DATABASE: "mariastan_test"
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+        command:
+            - --innodb-use-native-aio=0
 
     adminer:
         image: adminer
