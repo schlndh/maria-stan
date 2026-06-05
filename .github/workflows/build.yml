@@ -94,7 +94,8 @@ jobs:
           MARIADB_ALLOW_EMPTY_PASSWORD: yes
           MARIADB_DATABASE: "mariastan_test"
           MARIADB_ROOT_PASSWORD: "root"
-
+        command: >-
+          --innodb-use-native-aio=0
         options: >-
           --health-cmd "mysqladmin ping --silent"
         ports:
