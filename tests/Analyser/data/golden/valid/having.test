@@ -304,7 +304,7 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 1
+			[length] => 2
 			[charsetnr] => 63
 			[flags] => Array
 				(
@@ -420,7 +420,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -741,7 +741,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -903,7 +903,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -935,7 +935,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1258,7 +1258,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1326,7 +1326,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1394,7 +1394,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1462,7 +1462,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1530,7 +1530,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1609,7 +1609,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1623,7 +1623,7 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 1
+			[length] => 2
 			[charsetnr] => 63
 			[flags] => Array
 				(
@@ -1918,7 +1918,7 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 1
+			[length] => 2
 			[charsetnr] => 63
 			[flags] => Array
 				(

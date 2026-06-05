@@ -1410,7 +1410,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1466,7 +1466,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -1532,7 +1532,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2048,7 +2048,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2104,7 +2104,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -2170,7 +2170,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2866,7 +2866,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2931,7 +2931,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2996,7 +2996,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3099,7 +3099,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3150,7 +3150,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3201,7 +3201,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3252,7 +3252,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3303,7 +3303,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3354,7 +3354,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3419,7 +3419,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3476,7 +3476,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -3529,7 +3529,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 5
 		)
 )
@@ -3575,14 +3575,14 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 19
+			[length] => 10
 			[charsetnr] => 63
 			[flags] => Array
 				(
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIME
 			[decimals] => 0
 		)
 )
@@ -3628,14 +3628,14 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 25
+			[length] => 16
 			[charsetnr] => 63
 			[flags] => Array
 				(
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIME
 			[decimals] => 5
 		)
 )
@@ -3688,7 +3688,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -3741,7 +3741,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 5
 		)
 )
@@ -3894,7 +3894,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3945,7 +3945,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3996,7 +3996,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4047,7 +4047,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4256,7 +4256,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4411,7 +4411,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4883,7 +4883,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4934,7 +4934,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4985,7 +4985,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5036,7 +5036,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5087,7 +5087,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5296,7 +5296,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5451,7 +5451,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5926,7 +5926,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5977,7 +5977,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6028,7 +6028,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6079,7 +6079,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6130,7 +6130,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6339,7 +6339,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6494,7 +6494,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6969,7 +6969,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7020,7 +7020,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7071,7 +7071,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7122,7 +7122,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7173,7 +7173,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7382,7 +7382,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 84
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7537,7 +7537,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8012,7 +8012,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8063,7 +8063,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8114,7 +8114,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8165,7 +8165,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8216,7 +8216,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8425,7 +8425,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 104
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8580,7 +8580,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9055,7 +9055,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9106,7 +9106,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9157,7 +9157,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9208,7 +9208,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9259,7 +9259,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9468,7 +9468,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 104
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9623,7 +9623,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10098,7 +10098,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10149,7 +10149,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10200,7 +10200,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10251,7 +10251,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10302,7 +10302,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10615,7 +10615,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -11090,7 +11090,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -11512,6 +11512,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -11879,7 +11880,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12041,6 +12042,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -12094,6 +12096,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -12147,6 +12150,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -12250,7 +12254,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12515,7 +12519,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12675,6 +12679,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -12727,6 +12732,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -12779,6 +12785,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -12881,7 +12888,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13142,7 +13149,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13302,6 +13309,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -13354,6 +13362,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -13406,6 +13415,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -13508,7 +13518,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13771,7 +13781,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13933,6 +13943,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -13986,6 +13997,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -14039,6 +14051,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -14142,7 +14155,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14299,7 +14312,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14350,7 +14363,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14401,7 +14414,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14452,7 +14465,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -14504,7 +14517,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -14556,9 +14569,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -14607,9 +14621,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -14658,9 +14673,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -14762,7 +14778,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14813,7 +14829,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14864,7 +14880,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -14920,7 +14936,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -14972,7 +14988,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -15019,7 +15035,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -15076,7 +15092,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -15129,7 +15145,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -15179,9 +15195,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -15231,9 +15248,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -15280,9 +15298,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -15384,7 +15403,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -16537,7 +16556,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -16591,6 +16610,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -16644,6 +16664,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -16697,6 +16718,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -16750,6 +16772,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -16803,6 +16826,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -16906,7 +16930,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -17170,7 +17194,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -17386,6 +17410,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -17439,6 +17464,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -17543,7 +17569,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -17807,7 +17833,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -18020,6 +18046,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -18072,6 +18099,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -18175,7 +18203,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -18437,7 +18465,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -18650,6 +18678,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -18702,6 +18731,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -18805,7 +18835,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -19069,7 +19099,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -19285,6 +19315,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -19338,6 +19369,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -19442,7 +19474,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -19601,7 +19633,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -19653,7 +19685,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -19704,7 +19736,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -19755,7 +19787,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -19807,7 +19839,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -19859,7 +19891,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -19911,9 +19943,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -19962,9 +19995,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -20067,7 +20101,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 12
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -20226,7 +20260,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -20278,7 +20312,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -20329,7 +20363,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -20380,7 +20414,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -20432,7 +20466,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -20484,7 +20518,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -20536,9 +20570,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -20587,9 +20622,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -20692,7 +20728,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 80
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -20847,7 +20883,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21168,7 +21204,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21218,8 +21254,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21269,8 +21305,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21320,8 +21356,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21371,8 +21407,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21852,7 +21888,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -21906,6 +21942,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -21958,6 +21995,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22010,6 +22048,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22062,6 +22101,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22114,6 +22154,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22217,7 +22258,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -22479,7 +22520,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -22692,6 +22733,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22744,6 +22786,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -22848,7 +22891,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -23114,7 +23157,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -23333,6 +23376,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -23385,6 +23429,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -23489,7 +23534,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -23755,7 +23800,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -23968,6 +24013,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -24020,6 +24066,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -24124,7 +24171,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -24388,7 +24435,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -24604,6 +24651,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -24657,6 +24705,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -24762,7 +24811,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -24921,7 +24970,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -24973,7 +25022,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -25024,7 +25073,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -25075,7 +25124,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25127,7 +25176,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25179,7 +25228,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25231,9 +25280,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -25282,9 +25332,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -25388,7 +25439,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 12
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -25547,7 +25598,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25599,7 +25650,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -25650,7 +25701,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -25701,7 +25752,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25753,7 +25804,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25805,7 +25856,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -25857,9 +25908,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -25908,9 +25960,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -26014,7 +26067,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 80
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26169,7 +26222,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26495,7 +26548,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26545,8 +26598,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26596,8 +26649,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26647,8 +26700,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -26698,8 +26751,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 4
-			[charsetnr] => 45
+			[length] => 8
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -27181,7 +27234,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -27235,6 +27288,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -27287,6 +27341,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -27339,6 +27394,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -27391,6 +27447,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -27443,6 +27500,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -27545,7 +27603,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -27807,7 +27865,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -28020,6 +28078,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -28072,6 +28131,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -28174,7 +28234,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -28436,7 +28496,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -28649,6 +28709,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -28701,6 +28762,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -28803,7 +28865,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -29065,7 +29127,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -29278,6 +29340,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -29330,6 +29393,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
 			[type] => NEWDECIMAL
@@ -29432,7 +29496,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 32
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -29696,7 +29760,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -29912,6 +29976,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -29965,6 +30030,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -30068,7 +30134,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 36
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -30227,7 +30293,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -30279,7 +30345,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -30330,7 +30396,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -30381,7 +30447,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -30433,7 +30499,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -30485,7 +30551,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -30537,9 +30603,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -30588,9 +30655,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -30692,7 +30760,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -30851,7 +30919,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -30903,7 +30971,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -30954,7 +31022,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31005,7 +31073,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -31057,7 +31125,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -31109,7 +31177,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -31161,9 +31229,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -31212,9 +31281,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -31316,7 +31386,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31471,7 +31541,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31790,7 +31860,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31840,8 +31910,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 16
-			[charsetnr] => 45
+			[length] => 32
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31891,8 +31961,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 16
-			[charsetnr] => 45
+			[length] => 32
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31942,8 +32012,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 16
-			[charsetnr] => 45
+			[length] => 32
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -31993,8 +32063,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 16
-			[charsetnr] => 45
+			[length] => 32
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -32466,7 +32536,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -32520,6 +32590,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -32573,6 +32644,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -32626,6 +32698,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -32679,6 +32752,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -32732,6 +32806,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -32835,7 +32910,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -33099,7 +33174,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -33315,6 +33390,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -33368,6 +33444,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -33472,7 +33549,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -33738,7 +33815,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -33954,6 +34031,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -34007,6 +34085,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -34111,7 +34190,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -34377,7 +34456,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -34593,6 +34672,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -34646,6 +34726,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -34750,7 +34831,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 36
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -35016,7 +35097,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -35232,6 +35313,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -35285,6 +35367,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 					NUM
 				)
@@ -35389,7 +35472,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 40
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -35548,7 +35631,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -35600,7 +35683,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -35651,7 +35734,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -35702,7 +35785,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -35754,7 +35837,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -35806,7 +35889,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -35858,9 +35941,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -35909,9 +35993,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -36014,7 +36099,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -36173,7 +36258,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -36225,7 +36310,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -36276,7 +36361,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -36327,7 +36412,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -36379,7 +36464,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -36431,7 +36516,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -36483,9 +36568,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -36534,9 +36620,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -36639,7 +36726,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 96
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -36794,7 +36881,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37115,7 +37202,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37165,8 +37252,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 20
-			[charsetnr] => 45
+			[length] => 40
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37216,8 +37303,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 20
-			[charsetnr] => 45
+			[length] => 40
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37267,8 +37354,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 20
-			[charsetnr] => 45
+			[length] => 40
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37318,8 +37405,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 20
-			[charsetnr] => 45
+			[length] => 40
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37691,7 +37778,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37742,7 +37829,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37793,7 +37880,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -37844,9 +37931,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -37895,9 +37983,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -37946,9 +38035,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -37997,9 +38087,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -38048,9 +38139,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -38152,7 +38244,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38203,7 +38295,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38254,7 +38346,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38305,7 +38397,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -38357,7 +38449,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38408,7 +38500,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38459,7 +38551,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -38511,7 +38603,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -38563,7 +38655,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -38615,9 +38707,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -38666,9 +38759,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -38771,7 +38865,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 12
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -38930,7 +39024,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -38982,7 +39076,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -39033,7 +39127,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -39084,7 +39178,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39136,7 +39230,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39188,7 +39282,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39240,9 +39334,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -39291,9 +39386,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -39396,7 +39492,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 12
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -39555,7 +39651,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39607,7 +39703,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -39658,7 +39754,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -39709,7 +39805,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39761,7 +39857,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39813,7 +39909,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -39865,9 +39961,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -39916,9 +40013,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -40021,7 +40119,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 24
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40180,7 +40278,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -40232,7 +40330,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40283,7 +40381,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40334,7 +40432,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -40386,7 +40484,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -40438,7 +40536,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -40490,9 +40588,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -40541,9 +40640,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -40646,7 +40746,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 28
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40805,7 +40905,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -40857,7 +40957,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40908,7 +41008,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -40959,7 +41059,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41011,7 +41111,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41063,7 +41163,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41115,9 +41215,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -41166,9 +41267,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -41271,7 +41373,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -41322,7 +41424,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41374,7 +41476,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41426,7 +41528,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41478,7 +41580,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -41529,7 +41631,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -41580,7 +41682,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41632,7 +41734,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41684,7 +41786,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -41736,9 +41838,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -41787,9 +41890,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -41892,7 +41996,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 84
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42047,7 +42151,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42098,7 +42202,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -42366,7 +42470,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42416,8 +42520,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 8
-			[charsetnr] => 45
+			[length] => 16
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42467,8 +42571,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 8
-			[charsetnr] => 45
+			[length] => 16
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42518,8 +42622,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 8
-			[charsetnr] => 45
+			[length] => 16
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42569,8 +42673,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 8
-			[charsetnr] => 45
+			[length] => 16
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42675,7 +42779,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -42727,7 +42831,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -42779,7 +42883,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42830,7 +42934,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42881,7 +42985,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -42937,7 +43041,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -42989,7 +43093,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -43036,7 +43140,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 0
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -43090,9 +43194,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -43142,9 +43247,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -43194,9 +43300,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -43246,9 +43353,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -43295,9 +43403,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -43398,7 +43507,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -43553,7 +43662,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -43605,7 +43714,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -43656,7 +43765,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -43707,7 +43816,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -43759,7 +43868,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -43811,7 +43920,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -43863,9 +43972,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -43914,9 +44024,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -44017,7 +44128,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 80
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44172,7 +44283,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44224,7 +44335,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44275,7 +44386,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44326,7 +44437,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44378,7 +44489,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44430,7 +44541,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44482,9 +44593,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -44533,9 +44645,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -44636,7 +44749,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 80
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44791,7 +44904,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44843,7 +44956,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44894,7 +45007,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -44945,7 +45058,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -44997,7 +45110,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45049,7 +45162,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45101,9 +45214,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -45152,9 +45266,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -45255,7 +45370,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -45410,7 +45525,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45462,7 +45577,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -45513,7 +45628,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -45564,7 +45679,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45616,7 +45731,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45668,7 +45783,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -45720,9 +45835,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -45771,9 +45887,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -45874,7 +45991,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 96
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -46029,7 +46146,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -46081,7 +46198,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -46132,7 +46249,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -46183,7 +46300,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -46235,7 +46352,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -46287,7 +46404,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -46339,9 +46456,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -46390,9 +46508,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -46493,7 +46612,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 84
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -46654,7 +46773,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -46706,7 +46825,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -46753,7 +46872,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -46810,7 +46929,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -46863,7 +46982,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -46916,7 +47035,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -46966,9 +47085,10 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -47015,9 +47135,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					NOT_NULL
 				)
 			[type] => VAR_STRING
 			[decimals] => 39
@@ -47118,7 +47239,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 152
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47175,7 +47296,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -47228,7 +47349,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -47275,7 +47396,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47332,7 +47453,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -47587,7 +47708,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47637,8 +47758,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 76
-			[charsetnr] => 45
+			[length] => 152
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47688,8 +47809,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 76
-			[charsetnr] => 45
+			[length] => 152
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47739,8 +47860,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 76
-			[charsetnr] => 45
+			[length] => 152
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47790,8 +47911,8 @@ Array
 			[table] =>
 			[orgtable] =>
 			[db] =>
-			[length] => 76
-			[charsetnr] => 45
+			[length] => 152
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -47901,7 +48022,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -47954,7 +48075,7 @@ Array
 					NOT_NULL
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -48006,7 +48127,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -48058,7 +48179,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -48110,7 +48231,7 @@ Array
 				(
 					BINARY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -48476,7 +48597,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -48527,7 +48648,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -48578,7 +48699,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 64
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -48629,7 +48750,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 100
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -48680,7 +48801,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -48731,7 +48852,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1444
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)

@@ -189,7 +189,7 @@ MariaStan\Analyser\AnalyserResult
 		)
 )
 #######
-1054: Unknown column 'missing_col' in 'SET'
+1054: Unknown column 'missing_col' in 'SELECT'
 -----
 UPDATE analyser_test SET name = 'aa' WHERE missing_col > 5
 -----

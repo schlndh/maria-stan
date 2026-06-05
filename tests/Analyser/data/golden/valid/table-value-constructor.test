@@ -242,7 +242,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -258,7 +258,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -423,6 +423,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -440,6 +441,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -513,6 +515,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -530,6 +533,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -603,6 +607,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -620,6 +625,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -689,7 +695,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -705,7 +711,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)

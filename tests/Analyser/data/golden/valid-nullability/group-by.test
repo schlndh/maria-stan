@@ -1225,7 +1225,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 64
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2710,7 +2710,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3951,7 +3951,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 44
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4023,7 +4023,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4104,7 +4104,7 @@ Array
 			[orgtable] => analyser_test
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4398,7 +4398,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5357,7 +5357,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -5429,7 +5429,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6670,7 +6670,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 44
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6742,7 +6742,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6823,7 +6823,7 @@ Array
 			[orgtable] => analyser_test
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -7117,7 +7117,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8076,7 +8076,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -8148,7 +8148,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -9380,7 +9380,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 132
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10863,7 +10863,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 92
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10923,7 +10923,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -10990,7 +10990,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 67108860
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					BLOB
@@ -11237,7 +11237,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12040,7 +12040,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12100,7 +12100,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12172,7 +12172,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -12253,7 +12253,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 67108860
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					BLOB
@@ -12548,7 +12548,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13507,7 +13507,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13579,7 +13579,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13639,7 +13639,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -13711,7 +13711,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16777216
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)

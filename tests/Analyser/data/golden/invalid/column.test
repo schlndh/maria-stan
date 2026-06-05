@@ -1139,7 +1139,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1313,7 +1313,7 @@ Array
 			[orgtable] => analyser_test_data_types
 			[db] => mariastan_test
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -1404,7 +1404,7 @@ Array
 			[orgtable] => analyser_test_data_types
 			[db] => mariastan_test
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL

@@ -75,6 +75,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -88,9 +89,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -138,6 +140,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -233,7 +236,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -393,6 +396,7 @@ Array
 			[flags] => Array
 				(
 					BINARY
+					PART_KEY
 				)
 			[type] => STRING
 			[decimals] => 0
@@ -439,6 +443,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -486,6 +491,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -532,6 +538,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -578,6 +585,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -622,9 +630,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -671,9 +680,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -718,6 +729,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -766,6 +778,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -814,6 +827,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -861,6 +875,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -908,6 +923,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -952,10 +968,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -999,10 +1016,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1049,6 +1067,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -1096,6 +1115,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -1144,6 +1164,7 @@ Array
 				(
 					NOT_NULL
 					UNSIGNED
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -1192,6 +1213,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -1239,6 +1261,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1283,10 +1306,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1330,10 +1354,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1380,6 +1405,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -1427,6 +1453,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -1474,6 +1501,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -1521,6 +1549,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -1568,6 +1597,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1612,10 +1642,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1659,10 +1690,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1709,6 +1741,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1757,6 +1790,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1805,6 +1839,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1853,6 +1888,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1901,6 +1937,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -1945,10 +1982,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -1992,10 +2030,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2039,9 +2078,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2085,10 +2125,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2132,10 +2173,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2179,10 +2221,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2226,10 +2269,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2273,10 +2317,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2320,10 +2365,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2370,9 +2416,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -2414,10 +2462,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2461,10 +2510,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2508,10 +2558,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2555,10 +2606,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2602,10 +2654,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2653,9 +2706,11 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -2720,9 +2775,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2777,6 +2833,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -2912,6 +2969,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -2925,9 +2983,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -2975,6 +3034,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -3070,7 +3130,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3230,6 +3290,7 @@ Array
 			[flags] => Array
 				(
 					BINARY
+					PART_KEY
 				)
 			[type] => STRING
 			[decimals] => 0
@@ -3276,6 +3337,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -3323,6 +3385,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -3369,6 +3432,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -3415,6 +3479,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -3459,9 +3524,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -3508,9 +3574,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -3555,6 +3623,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -3603,6 +3672,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -3651,6 +3721,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -3698,6 +3769,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -3745,6 +3817,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -3789,10 +3862,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -3836,10 +3910,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -3886,6 +3961,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -3933,6 +4009,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -3981,6 +4058,7 @@ Array
 				(
 					NOT_NULL
 					UNSIGNED
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -4029,6 +4107,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -4076,6 +4155,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4120,10 +4200,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4167,10 +4248,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4217,6 +4299,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -4264,6 +4347,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -4311,6 +4395,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -4358,6 +4443,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -4405,6 +4491,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4449,10 +4536,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4496,10 +4584,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4546,6 +4635,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4594,6 +4684,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4642,6 +4733,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4690,6 +4782,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4738,6 +4831,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -4782,10 +4876,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4829,10 +4924,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4876,9 +4972,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4922,10 +5019,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -4969,10 +5067,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5016,10 +5115,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5063,10 +5163,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5110,10 +5211,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5157,10 +5259,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5207,9 +5310,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -5251,10 +5356,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5298,10 +5404,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5345,10 +5452,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5392,10 +5500,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5439,10 +5548,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5490,9 +5600,11 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -5557,9 +5669,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5614,6 +5727,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -5749,6 +5863,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -5762,9 +5877,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -5812,6 +5928,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -5907,7 +6024,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -6067,6 +6184,7 @@ Array
 			[flags] => Array
 				(
 					BINARY
+					PART_KEY
 				)
 			[type] => STRING
 			[decimals] => 0
@@ -6113,6 +6231,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -6160,6 +6279,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -6206,6 +6326,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -6252,6 +6373,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -6296,9 +6418,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -6345,9 +6468,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -6392,6 +6517,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -6440,6 +6566,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -6488,6 +6615,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -6535,6 +6663,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -6582,6 +6711,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -6626,10 +6756,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -6673,10 +6804,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -6723,6 +6855,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -6770,6 +6903,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 0
@@ -6818,6 +6952,7 @@ Array
 				(
 					NOT_NULL
 					UNSIGNED
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -6866,6 +7001,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -6913,6 +7049,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -6957,10 +7094,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7004,10 +7142,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7054,6 +7193,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -7101,6 +7241,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -7148,6 +7289,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -7195,6 +7337,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => NEWDECIMAL
 			[decimals] => 1
@@ -7242,6 +7385,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7286,10 +7430,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7333,10 +7478,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7383,6 +7529,7 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7431,6 +7578,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7479,6 +7627,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7527,6 +7676,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7575,6 +7725,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => DOUBLE
@@ -7619,10 +7770,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7666,10 +7818,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7713,9 +7866,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7759,10 +7913,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7806,10 +7961,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7853,10 +8009,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 16
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7900,10 +8057,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 20
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7947,10 +8105,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -7994,10 +8153,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8044,9 +8204,11 @@ Array
 			[charsetnr] => 63
 			[flags] => Array
 				(
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -8088,10 +8250,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8135,10 +8298,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8182,10 +8346,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8229,10 +8394,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8276,10 +8442,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 76
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8327,9 +8494,11 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					UNSIGNED
 					BINARY
+					PART_KEY
 				)
-			[type] => DATETIME
+			[type] => TIMESTAMP
 			[decimals] => 0
 		)
 )
@@ -8394,9 +8563,10 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8451,6 +8621,7 @@ Array
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 					NUM
 				)
 			[type] => LONG
@@ -8567,7 +8738,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -8643,7 +8814,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -8709,10 +8880,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8783,10 +8955,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8849,10 +9022,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0
@@ -8924,10 +9098,11 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
+					PART_KEY
 				)
 			[type] => VAR_STRING
 			[decimals] => 0

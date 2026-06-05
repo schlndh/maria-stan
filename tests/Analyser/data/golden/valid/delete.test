@@ -161,7 +161,7 @@ Array
 			[orgtable] => analyser_test_truncate
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -176,7 +176,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 1032
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)

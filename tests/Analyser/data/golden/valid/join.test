@@ -166,7 +166,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -378,7 +378,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -607,7 +607,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -642,7 +642,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -677,7 +677,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -869,7 +869,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -904,7 +904,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -939,7 +939,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -1057,7 +1057,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -1234,7 +1234,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -1446,7 +1446,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -1658,7 +1658,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -1867,7 +1867,7 @@ Array
 			[orgtable] => analyser_test_join_a
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NO_DEFAULT_VALUE
@@ -2208,7 +2208,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2243,7 +2243,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2277,7 +2277,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2311,7 +2311,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2541,7 +2541,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2575,7 +2575,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2610,7 +2610,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -2645,7 +2645,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3956,7 +3956,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -3971,7 +3971,7 @@ Array
 			[orgtable] => analyser_test
 			[db] => mariastan_test
 			[length] => 1020
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 				)
@@ -4183,7 +4183,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -4199,7 +4199,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 8
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
@@ -5140,7 +5140,7 @@ Array
 			[orgtable] =>
 			[db] =>
 			[length] => 4
-			[charsetnr] => 45
+			[charsetnr] => 224
 			[flags] => Array
 				(
 					NOT_NULL
