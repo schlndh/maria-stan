@@ -38,14 +38,6 @@ final class DeleteQuery extends BaseNode implements Query
 			return;
 		}
 
-		if ($this->orderBy !== null) {
-			throw new InvalidAstException('Multi-table DELETE cannot have ORDER BY clause');
-		}
-
-		if ($this->limit !== null) {
-			throw new InvalidAstException('Multi-table DELETE cannot have LIMIT clause');
-		}
-
 		if ($this->returning !== []) {
 			throw new InvalidAstException('Multi-table DELETE cannot have RETURNING clause');
 		}

@@ -876,3 +876,267 @@ MariaStan\Ast\Query\DeleteQuery
 				)
 		)
 )
+-----
+DELETE t1, t2 FROM parser_test t1, parser_test t2 LIMIT 5
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+			[1] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t2
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
+					[alias] => t1
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
+					[alias] => t2
+					[indexHints] => Array
+						(
+						)
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 5
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE t1, t2 FROM parser_test t1, parser_test t2 ORDER BY t1.id
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+			[1] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t2
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Join
+		(
+			[joinType] => MariaStan\Ast\Query\TableReference\JoinTypeEnum::CROSS_JOIN
+			[leftTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
+					[alias] => t1
+					[indexHints] => Array
+						(
+						)
+				)
+			[rightTable] => MariaStan\Ast\Query\TableReference\Table
+				(
+					[name] => MariaStan\Ast\Query\TableReference\TableName
+						(
+							[name] => parser_test
+						)
+					[alias] => t2
+					[indexHints] => Array
+						(
+						)
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+									[tableName] => MariaStan\Ast\Query\TableReference\TableName
+										(
+											[name] => t1
+										)
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE FROM t1.* USING parser_test t1 ORDER BY id
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE FROM t1.* USING parser_test t1 LIMIT 5
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 5
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE t1.* FROM parser_test t1 ORDER BY id
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[orderBy] => MariaStan\Ast\OrderBy
+		(
+			[expressions] => Array
+				(
+					[0] => MariaStan\Ast\ExprWithDirection
+						(
+							[expr] => MariaStan\Ast\Expr\Column
+								(
+									[name] => id
+								)
+							[direction] => MariaStan\Ast\DirectionEnum::ASC
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE t1.* FROM parser_test t1 LIMIT 5
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => t1
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[limit] => MariaStan\Ast\Expr\LiteralInt
+		(
+			[value] => 5
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)

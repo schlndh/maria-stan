@@ -342,14 +342,13 @@ class MariaDbParserState
 		}
 
 		$returning = [];
+		$orderBy = $this->parseOrderBy();
+
+		if ($this->consumeToken(TokenTypeEnum::LIMIT)) {
+			$limit = $this->parseLimitExpression();
+		}
 
 		if (! $isMultiTableSyntax) {
-			$orderBy = $this->parseOrderBy();
-
-			if ($this->consumeToken(TokenTypeEnum::LIMIT)) {
-				$limit = $this->parseLimitExpression();
-			}
-
 			$returning = $this->parseReturningClause();
 		}
 
