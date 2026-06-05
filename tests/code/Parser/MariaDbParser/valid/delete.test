@@ -877,6 +877,62 @@ MariaStan\Ast\Query\DeleteQuery
 		)
 )
 -----
+DELETE FROM parser_test t1
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+DELETE FROM parser_test AS t1
+-----
+MariaStan\Ast\Query\DeleteQuery
+(
+	[tablesToDelete] => Array
+		(
+			[0] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+		)
+	[table] => MariaStan\Ast\Query\TableReference\Table
+		(
+			[name] => MariaStan\Ast\Query\TableReference\TableName
+				(
+					[name] => parser_test
+				)
+			[alias] => t1
+			[indexHints] => Array
+				(
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
 DELETE t1, t2 FROM parser_test t1, parser_test t2 LIMIT 5
 -----
 MariaStan\Ast\Query\DeleteQuery

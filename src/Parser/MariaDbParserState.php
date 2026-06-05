@@ -302,20 +302,37 @@ class MariaDbParserState
 
 		if ($this->consumeToken(TokenTypeEnum::FROM)) {
 			[$tableName, $isMultiTableSyntax] = $parseTableName();
+			$alias = null;
+
+			if (! $isMultiTableSyntax) {
+				$alias = $this->consumeToken(TokenTypeEnum::AS)
+					? $this->expectAnyOfTokens(
+						...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableAlias(),
+					)
+					: $this->acceptAnyOfTokenTypes(
+						...$this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableAlias(),
+					);
+
+				if ($alias !== null) {
+					$alias = $this->cleanIdentifier($alias->content);
+				}
+			}
+
 			$tablesToDelete[] = $tableName;
 
-			while ($this->consumeToken(',')) {
+			while ($alias === null && $this->consumeToken(',')) {
 				$isMultiTableSyntax = true;
 				$tablesToDelete[] = $parseTableName()[0];
 			}
 
 			if (! $isMultiTableSyntax) {
-				if (! $this->consumeToken(TokenTypeEnum::USING)) {
+				if ($alias !== null || ! $this->consumeToken(TokenTypeEnum::USING)) {
 					$tableReference = new Table(
 						$tableName->getStartPosition(),
 						$tableName->getEndPosition(),
 						$tableName,
-						indexHints: $this->parseIndexHints(),
+						$alias,
+						$this->parseIndexHints(),
 					);
 				} else {
 					$isMultiTableSyntax = true;
