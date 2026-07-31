@@ -28,7 +28,7 @@
 		"ext-mysqli": "*",
 		"phpunit/phpunit": "^10.5.51",
 		"squizlabs/php_codesniffer": "^4",
-		"slevomat/coding-standard": "~8.28.0",
+		"slevomat/coding-standard": "~8.31.0",
 		"phpstan/phpstan-phpunit": "^2.0",
 		"phpstan/phpstan-deprecation-rules": "^2.0",
 		"phpstan/phpstan-strict-rules": "^2.0"
