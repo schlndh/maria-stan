@@ -27,7 +27,6 @@ class MariaDbLexerTest extends TestCase
 
 		if (is_array($tokens)) {
 			foreach ($tokens as $token) {
-				$this->assertNotNull($token->position);
 				$this->assertSame(
 					$token->content,
 					$token->position->findSubstringStartingWithPosition($code, strlen($token->content)),

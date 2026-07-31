@@ -1,6 +1,18 @@
 parameters:
 	ignoreErrors:
 		-
+			rawMessage: 'Call to function assert() with true will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Analyser/ColumnResolver.php
+
+		-
+			rawMessage: Instanceof between MariaStan\Analyser\QueryResultField and MariaStan\Analyser\QueryResultField will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: src/Analyser/ColumnResolver.php
+
+		-
 			rawMessage: 'Property MariaStan\Database\FunctionInfo\FunctionInfoRegistry::$functionInfoMap (array<non-decimal-int-string, MariaStan\Database\FunctionInfo\FunctionInfo>) does not accept array<string, MariaStan\Database\FunctionInfo\FunctionInfo>.'
 			identifier: assign.propertyType
 			count: 1
