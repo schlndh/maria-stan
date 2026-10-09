@@ -87,6 +87,7 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
+          - "8.6"
     services:
       mariadb:
         image: "mariadb:11.8.6"
