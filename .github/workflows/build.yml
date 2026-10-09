@@ -12,7 +12,7 @@ jobs:
   coding-standards:
     name: "Coding standards"
 
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-26.04"
 
     steps:
       - name: "Checkout"
@@ -44,7 +44,7 @@ jobs:
   static-analysis:
     name: "Static analysis"
 
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-26.04"
 
     steps:
       - name: "Checkout"
@@ -76,7 +76,7 @@ jobs:
   tests:
     name: "Tests"
 
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-26.04"
 
     strategy:
       matrix:
