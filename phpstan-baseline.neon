@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: 'Call to function assert() with true will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: src/Analyser/ColumnResolver.php
-
-		-
-			rawMessage: Instanceof between MariaStan\Analyser\QueryResultField and MariaStan\Analyser\QueryResultField will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: src/Analyser/ColumnResolver.php
-
-		-
 			rawMessage: 'Property MariaStan\Database\FunctionInfo\FunctionInfoRegistry::$functionInfoMap (array<non-decimal-int-string, MariaStan\Database\FunctionInfo\FunctionInfo>) does not accept array<string, MariaStan\Database\FunctionInfo\FunctionInfo>.'
 			identifier: assign.propertyType
 			count: 1
@@ -23,6 +11,17 @@ parameters:
 			identifier: phpstanApi.instanceofType
 			count: 2
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
+
+		-
+			rawMessage: '''
+				Class MariaStan\PHPStan\MariaStanResultCacheMetaExtension implements deprecated interface PHPStan\Analyser\ResultCache\ResultCacheMetaExtension:
+				Use value tracking or file tracking instead. See:
+				  https://phpstan.org/developing-extensions/result-cache-meta-extensions#tracking-dependencies-on-values
+				  https://phpstan.org/developing-extensions/result-cache-meta-extensions#tracking-dependencies-on-files
+			'''
+			identifier: class.implementsDeprecatedInterface
+			count: 1
+			path: src/PHPStan/MariaStanResultCacheMetaExtension.php
 
 		-
 			rawMessage: 'Generator expects key type non-decimal-int-string, literal-string&non-falsy-string given.'

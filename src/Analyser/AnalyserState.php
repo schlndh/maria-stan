@@ -644,7 +644,6 @@ final class AnalyserState
 	{
 		static $mockPosition = null;
 		$mockPosition ??= new Position(0, 0, 0);
-		assert($mockPosition instanceof Position);
 		$tableReferenceNode = new Table($mockPosition, $mockPosition, $query->tableName);
 
 		try {
@@ -1051,16 +1050,14 @@ final class AnalyserState
 						|| $rightResult->isNullable
 						|| $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME;
 
-					if ($kbCombinineWithAnd !== null) {
-						if (
-							$condition === AnalyserConditionTypeEnum::NULL
-							&& $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME
-							// if it is "+ INTERVAL NULL" then it will always be NULL.
-							&& $rightResult->knowledgeBase?->truthiness !== true
-						) {
-							// "a + INTERVAL b" can be null is also null if "a" is not valid date,
-							$kbCombinineWithAnd = null;
-						}
+					if (
+						$condition === AnalyserConditionTypeEnum::NULL
+						&& $leftResult->type::getTypeEnum() !== Schema\DbType\DbTypeEnum::DATETIME
+						// if it is "+ INTERVAL NULL" then it will always be NULL.
+						&& $rightResult->knowledgeBase?->truthiness !== true
+					) {
+						// "a + INTERVAL b" can be null is also null if "a" is not valid date,
+						$kbCombinineWithAnd = null;
 					}
 				} else {
 					$lt = $leftResult->type::getTypeEnum();

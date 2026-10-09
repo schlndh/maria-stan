@@ -103,7 +103,6 @@ use function count;
 use function end;
 use function implode;
 use function in_array;
-use function is_int;
 use function is_string;
 use function max;
 use function reset;
@@ -265,9 +264,7 @@ class MariaDbParserState
 		$ignoreErrors = $this->consumeToken(TokenTypeEnum::IGNORE);
 		$tableNameTokens = $this->parser->getTokenTypesWhichCanBeUsedAsUnquotedTableName();
 		$tablesToDelete = [];
-		$isMultiTableSyntax = false;
 		$where = null;
-		$orderBy = null;
 		$limit = null;
 		$tableReference = null;
 		$parseTableName = function () use ($tableNameTokens): array {
@@ -2255,7 +2252,6 @@ class MariaDbParserState
 
 		static $inPrecedence = null;
 		$inPrecedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IN);
-		assert(is_int($inPrecedence));
 
 		// If we encounter IN we want to interpret it as the separator between the two arguments
 		$substrExpr = $this->parseExpression($inPrecedence + 1);
