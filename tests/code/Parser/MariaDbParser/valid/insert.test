@@ -1838,3 +1838,55 @@ MariaStan\Ast\Query\InsertQuery
 				)
 		)
 )
+-----
+INSERT INTO parser_test VALUES ()
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[values] => Array
+				(
+					[0] => Array
+						(
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)
+-----
+INSERT INTO parser_test () VALUES (), ()
+-----
+MariaStan\Ast\Query\InsertQuery
+(
+	[tableName] => MariaStan\Ast\Query\TableReference\TableName
+		(
+			[name] => parser_test
+		)
+	[insertBody] => MariaStan\Ast\Query\InsertBody\ValuesInsertBody
+		(
+			[columnList] => Array
+				(
+				)
+			[values] => Array
+				(
+					[0] => Array
+						(
+						)
+					[1] => Array
+						(
+						)
+				)
+		)
+	[ignoreErrors] => false
+	[returning] => Array
+		(
+		)
+)

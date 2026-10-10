@@ -12,8 +12,8 @@ use MariaStan\Parser\Position;
 final class ValuesInsertBody extends BaseNode implements InsertBody
 {
 	/**
-	 * @param non-empty-array<Column>|null $columnList
-	 * @param non-empty-array<non-empty-array<Expr>> $values
+	 * @param list<Column>|null $columnList
+	 * @param non-empty-list<list<Expr>> $values
 	 */
 	public function __construct(
 		Position $startPosition,

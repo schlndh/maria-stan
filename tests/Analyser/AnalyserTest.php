@@ -1387,6 +1387,10 @@ class AnalyserTest extends TestCase
 			yield "{$type} ... SELECT, skip column with default value" => [
 				'query' => $type . ' INTO analyse_test_insert (val_string_not_null_no_default) SELECT "abcd"',
 			];
+
+			yield "{$type} ... VALUES ()" => [
+				'query' => $type . ' INTO analyser_test VALUES ()',
+			];
 		}
 
 		yield 'INSERT ... ON DUPLICATE KEY UPDATE' => [
@@ -3400,6 +3404,13 @@ class AnalyserTest extends TestCase
 				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - explicit column list"
+				. " + empty tuple" => [
+				'query' => "{$type} INTO analyser_test (id, name) VALUES ()",
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 0),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
 			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - in some tuples" => [
 				'query' => "{$type} INTO analyser_test (id, name) VALUES (999, 'adasd'), (998, 'aaa', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
@@ -3425,9 +3436,21 @@ class AnalyserTest extends TestCase
 				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
-			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count - implicit column list" => [
+			yield "{$type} INTO ... VALUES ... - mismatched column count - implicit column list" => [
 				'query' => "{$type} INTO analyser_test VALUES (999, 'adasd', 1)",
 				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 3),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... VALUES ... - mismatched column count - implicit column list + partial tuple" => [
+				'query' => "{$type} INTO analyser_test VALUES (999)",
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 1),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} INTO ... VALUES ... - mismatched tuple size - implicit column list" => [
+				'query' => "{$type} INTO analyser_test VALUES (999, 'adasd'), ()",
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(2, 0),
 				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
@@ -3445,6 +3468,12 @@ class AnalyserTest extends TestCase
 
 			yield "{$type} ... VALUES - skip column without default value" => [
 				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
+				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
+				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+			];
+
+			yield "{$type} ... VALUES - skip column without default value - empty tuple" => [
+				'query' => "{$type} INTO analyse_test_insert VALUES ()",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
 				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
 			];

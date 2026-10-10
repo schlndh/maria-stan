@@ -311,7 +311,53 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test (id, name) VALUES ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 0 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -357,7 +403,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -403,7 +449,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 1 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -454,7 +500,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -500,7 +546,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -516,6 +562,62 @@ MariaStan\Analyser\AnalyserResult
 #######
 1136: Column count doesn't match value count at row 1
 -----
+INSERT INTO analyser_test VALUES (999)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test VALUES (999, 'adasd'), ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 0 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
 INSERT INTO analyser_test (name) SELECT 'adasd', 1
 -----
 MariaStan\Analyser\AnalyserResult
@@ -528,7 +630,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 1 columns, but got 2 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -565,7 +667,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -612,6 +714,34 @@ MariaStan\Analyser\AnalyserResult
 							[database] => mariastan_test
 						)
 					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+INSERT INTO analyse_test_insert VALUES ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
 		)
 )
@@ -1003,7 +1133,53 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => id
+				)
+			MariaStan\Analyser\ReferencedSymbol\TableColumn
+				(
+					[table] => MariaStan\Analyser\ReferencedSymbol\Table
+						(
+							[name] => analyser_test
+							[database] => mariastan_test
+						)
+					[name] => name
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test (id, name) VALUES ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 0 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1049,7 +1225,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1095,7 +1271,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 1 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1146,7 +1322,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1192,7 +1368,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1208,6 +1384,62 @@ MariaStan\Analyser\AnalyserResult
 #######
 1136: Column count doesn't match value count at row 1
 -----
+REPLACE INTO analyser_test VALUES (999)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test VALUES (999, 'adasd'), ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 2 columns, but got 0 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 2
+-----
 REPLACE INTO analyser_test (name) SELECT 'adasd', 1
 -----
 MariaStan\Analyser\AnalyserResult
@@ -1220,7 +1452,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 1 columns, but got 2 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1257,7 +1489,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Insert expected 2 columns, but got 3 columns.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1304,6 +1536,34 @@ MariaStan\Analyser\AnalyserResult
 							[database] => mariastan_test
 						)
 					[name] => val_string_null_default
+				)
+		)
+)
+#######
+1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+REPLACE INTO analyse_test_insert VALUES ()
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Column val_string_not_null_no_default has no default value and none was provided.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::MISSING_COLUMN_VALUE
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyse_test_insert
+					[database] => mariastan_test
 				)
 		)
 )

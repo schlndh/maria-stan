@@ -8,7 +8,7 @@ enum AnalyserErrorTypeEnum: string
 {
 	case AMBIGUOUS_COLUMN = 'ambiguousColumn';
 	case ASSIGN_TO_READONLY_COLUMN = 'assignToReadonlyColumn';
-	case COLUMN_MISMATCH = 'columnMismatch';
+	case COLUMN_COUNT_MISMATCH = 'columnCountMismatch';
 	case DB_REFLECTION = 'dbReflection';
 	case DB_UNSUPPORTED_FEATURE = 'dbUnsupportedFeature';
 	case DUPLICATE_COLUMN = 'duplicateColumn';

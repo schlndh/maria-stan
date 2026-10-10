@@ -115,7 +115,7 @@ class AnalyserErrorBuilder
 	{
 		return new AnalyserError(
 			"The used SELECT statements have a different number of columns: {$left} vs {$right}.",
-			AnalyserErrorTypeEnum::COLUMN_MISMATCH,
+			AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH,
 		);
 	}
 
@@ -124,7 +124,7 @@ class AnalyserErrorBuilder
 		return new AnalyserError(
 			"Column list of WITH and the subquery have to have the same number of columns."
 			. " Got {$columnList} vs {$query}.",
-			AnalyserErrorTypeEnum::COLUMN_MISMATCH,
+			AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH,
 		);
 	}
 
@@ -156,7 +156,7 @@ class AnalyserErrorBuilder
 	{
 		return new AnalyserError(
 			"Insert expected {$expected} columns, but got {$got} columns.",
-			AnalyserErrorTypeEnum::COLUMN_MISMATCH,
+			AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH,
 		);
 	}
 
@@ -181,7 +181,7 @@ class AnalyserErrorBuilder
 	{
 		return new AnalyserError(
 			"The used table value constructor has a different number of values: {$min} - {$max}.",
-			AnalyserErrorTypeEnum::COLUMN_MISMATCH,
+			AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH,
 		);
 	}
 

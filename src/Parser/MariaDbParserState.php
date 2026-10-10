@@ -401,11 +401,13 @@ class MariaDbParserState
 				$columnListStartPosition = $this->getPreviousToken()->position;
 				$columnList = [];
 
-				do {
-					$columnList[] = $this->parseColumnIdentifier();
-				} while ($this->consumeToken(','));
+				if (! $this->consumeToken(')')) {
+					do {
+						$columnList[] = $this->parseColumnIdentifier();
+					} while ($this->consumeToken(','));
 
-				$this->expectToken(')');
+					$this->expectToken(')');
+				}
 			}
 		}
 
@@ -449,11 +451,14 @@ class MariaDbParserState
 				$row = [];
 				$this->expectToken('(');
 
-				do {
-					$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
-				} while ($this->consumeToken(','));
+				if (! $this->consumeToken(')')) {
+					do {
+						$row[] = $this->parseColumnDefaultExpr() ?? $this->parseExpression();
+					} while ($this->consumeToken(','));
 
-				$this->expectToken(')');
+					$this->expectToken(')');
+				}
+
 				$values[] = $row;
 			} while ($this->consumeToken(','));
 

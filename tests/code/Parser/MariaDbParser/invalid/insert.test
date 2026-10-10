@@ -169,3 +169,17 @@ Expected END_OF_INPUT, got ON after: name = "aa"
 RETURNING name
 #####
 1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'ON DUPLICATE KEY UPDATE name = "bb"' at line 4
+-----
+INSERT INTO parser_test VALUES (())
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Unexpected token: ')' after: INTO parser_test VALUES ((
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '))' at line 1
+-----
+INSERT INTO parser_test (()) VALUES ()
+-----
+MariaStan\Parser\Exception\UnexpectedTokenException
+Expected one of IDENTIFIER, ACTION, BIT, CURRENT, CYCLE, DATABASE, DATE, DATETIME, DUPLICATE, END, ENUM, ESCAPE, FOLLOWING, GENERAL, IGNORE_SERVER_IDS, LOCKED, MASTER_HEARTBEAT_PERIOD, MASTER_SSL_VERIFY_SERVER_CERT, MODE, NO, NOWAIT, OPTION, POSITION, PRECEDING, ROLLUP, ROW, SCHEMA, SHARE, SIGNED, SKIP, SLOW, TEXT, TIME, TIMESTAMP, TRUNCATE, UNBOUNDED, UNKNOWN, VALUE, WAIT, WINDOW, got '(' after: INSERT INTO parser_test (
+#####
+1064: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ')) VALUES ()' at line 1

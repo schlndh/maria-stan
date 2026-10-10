@@ -560,7 +560,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => Column list of WITH and the subquery have to have the same number of columns. Got 2 vs 1.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0

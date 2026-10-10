@@ -30,7 +30,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used table value constructor has a different number of values: 1 - 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0

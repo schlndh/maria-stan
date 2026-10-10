@@ -715,19 +715,42 @@ final class AnalyserState
 					break;
 				}
 
-				$setColumnNames = $query->insertBody->columnList !== null
-					? array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList)
-					: array_keys($tableSchema->columns);
-				$expectedCount = count($setColumnNames);
+				if ($query->insertBody->columnList !== null) {
+					$setColumnNames = array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList);
+					$expectedCount = count($setColumnNames);
+				} else {
+					$expectedCount = count($tableSchema->columns);
+				}
+
+				$previousTupleCount = null;
 
 				foreach ($query->insertBody->values as $tuple) {
-					if (count($tuple) === $expectedCount) {
+					$tupleCount = count($tuple);
+					$previousTupleCount ??= $tupleCount;
+
+					if ($previousTupleCount !== $tupleCount) {
+						$this->errors[] = AnalyserErrorBuilder::createMismatchedInsertColumnCountError(
+							$previousTupleCount,
+							$tupleCount,
+						);
+						break;
+					}
+
+					if (
+						($expectedCount === $tupleCount)
+						|| (
+							$query->insertBody->columnList === null
+							// Empty column list allows VALUES () as long as all columns have a default value.
+							// This is checked later.
+							&& in_array($tupleCount, [0, $expectedCount], true)
+						)
+					) {
 						continue;
 					}
 
 					$this->errors[] = AnalyserErrorBuilder::createMismatchedInsertColumnCountError(
 						$expectedCount,
-						count($tuple),
+						$tupleCount,
 					);
 
 					// Report only 1 mismatch. The mismatches are probably all going to be the same.

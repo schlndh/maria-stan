@@ -177,7 +177,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -211,7 +211,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -383,7 +383,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -619,7 +619,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -653,7 +653,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -825,7 +825,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1061,7 +1061,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1095,7 +1095,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0
@@ -1267,7 +1267,7 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\AnalyserError
 				(
 					[message] => The used SELECT statements have a different number of columns: 1 vs 2.
-					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_MISMATCH
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
 				)
 		)
 	[positionalPlaceholderCount] => 0

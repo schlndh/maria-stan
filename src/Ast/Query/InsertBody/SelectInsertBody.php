@@ -11,7 +11,7 @@ use MariaStan\Parser\Position;
 
 final class SelectInsertBody extends BaseNode implements InsertBody
 {
-	/** @param non-empty-array<Column>|null $columnList */
+	/** @param list<Column>|null $columnList */
 	public function __construct(
 		Position $startPosition,
 		Position $endPosition,
