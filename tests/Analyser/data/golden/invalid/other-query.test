@@ -18,6 +18,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => missing_table
+					[database] => mariastan_test
+				)
 		)
 )
 #######
@@ -41,6 +46,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => seq_1_to_10
+					[database] => information_schema
+				)
 		)
 )
 #######

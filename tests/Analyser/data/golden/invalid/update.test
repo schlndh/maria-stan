@@ -23,6 +23,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => missing_table
+					[database] => mariastan_test
+				)
 		)
 )
 #######
@@ -138,6 +143,11 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => missing_table
 					[database] => mariastan_test
 				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn

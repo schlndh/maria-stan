@@ -69,6 +69,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => 654897987
+					[database] => mariastan_test
+				)
 		)
 )
 #######

@@ -537,6 +537,11 @@ MariaStan\Analyser\AnalyserResult
 					[name] => analyser_only_other_db_test
 					[database] => mariastan_test2
 				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_only_other_db_test
+					[database] => mariastan_test
+				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
@@ -579,6 +584,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => foo_cte
+					[database] => mariastan_test
+				)
 		)
 )
 #######
@@ -804,6 +814,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test2
+				)
 		)
 )
 #######
@@ -868,6 +883,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test2
+				)
 		)
 )
 #######
@@ -1003,6 +1023,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test2
+				)
 		)
 )
 #######
@@ -1031,6 +1056,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test2
+				)
 		)
 )
 #######
@@ -1054,6 +1084,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test2
+				)
 		)
 )
 #######

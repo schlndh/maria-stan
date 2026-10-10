@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 class AnalyserReferencedSymbolTest extends TestCase
 {
 	/** @return iterable<string, array<mixed>> */
-	public static function provideTestData(): iterable
+	public static function provideTestValidData(): iterable
 	{
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$db->query("
@@ -23,12 +23,11 @@ class AnalyserReferencedSymbolTest extends TestCase
 				name VARCHAR(255) NULL
 			);
 		");
+		$db->query("
+			CREATE OR REPLACE VIEW analyser_referenced_symbol_test_view
+			AS SELECT * FROM analyser_referenced_symbol_test;
+		");
 		$db->query("INSERT INTO analyser_referenced_symbol_test (id, name) VALUES (1, 'aa'), (2, NULL)");
-
-		yield 'invalid query' => [
-			'query' => 'asdasasd',
-			'expectedReferencedSymbols' => null,
-		];
 
 		yield 'SELECT 1' => [
 			'query' => 'SELECT 1',
@@ -37,18 +36,38 @@ class AnalyserReferencedSymbolTest extends TestCase
 
 		$table = new Table('analyser_referenced_symbol_test', TestCaseHelper::getDefaultDbName());
 
-		yield 'SELECT 1 FROM analyser_referenced_symbol_test' => [
-			'query' => 'SELECT 1 FROM analyser_referenced_symbol_test',
-			'expectedReferencedSymbols' => [$table],
+		$simpleTableReferences = [
+			'SELECT 1 FROM analyser_referenced_symbol_test',
+			'INSERT INTO analyser_referenced_symbol_test VALUES ()',
+			'REPLACE INTO analyser_referenced_symbol_test VALUES ()',
+			'TRUNCATE TABLE analyser_referenced_symbol_test',
+			'DELETE FROM analyser_referenced_symbol_test',
 		];
 
-		yield 'SELECT id FROM analyser_referenced_symbol_test' => [
-			'query' => 'SELECT id FROM analyser_referenced_symbol_test',
-			'expectedReferencedSymbols' => [
-				$table,
-				new TableColumn($table, 'id'),
-			],
+		foreach ($simpleTableReferences as $query) {
+			yield $query => [
+				'query' => $query,
+				'expectedReferencedSymbols' => [$table],
+			];
+		}
+
+		$simpleColumnReferences = [
+			'SELECT id FROM analyser_referenced_symbol_test',
+			'UPDATE analyser_referenced_symbol_test SET id = 5',
+			'INSERT INTO analyser_referenced_symbol_test SET id = 5',
+			'REPLACE INTO analyser_referenced_symbol_test SET id = 5',
+			'DELETE FROM analyser_referenced_symbol_test WHERE id = 5',
 		];
+
+		foreach ($simpleColumnReferences as $query) {
+			yield $query => [
+				'query' => $query,
+				'expectedReferencedSymbols' => [
+					$table,
+					new TableColumn($table, 'id'),
+				],
+			];
+		}
 
 		yield 'SELECT * FROM analyser_referenced_symbol_test' => [
 			'query' => 'SELECT * FROM analyser_referenced_symbol_test',
@@ -56,6 +75,17 @@ class AnalyserReferencedSymbolTest extends TestCase
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
+			],
+		];
+
+		$view = new Table('analyser_referenced_symbol_test_view', TestCaseHelper::getDefaultDbName());
+
+		yield 'SELECT * FROM view' => [
+			'query' => 'SELECT * FROM analyser_referenced_symbol_test_view',
+			'expectedReferencedSymbols' => [
+				$view,
+				new TableColumn($view, 'id'),
+				new TableColumn($view, 'name'),
 			],
 		];
 
@@ -163,19 +193,72 @@ class AnalyserReferencedSymbolTest extends TestCase
 				new TableColumn($table, 'name'),
 			],
 		];
+	}
+
+	/** @return iterable<string, array<mixed>> */
+	public static function provideTestInvalidData(): iterable
+	{
+		$db = TestCaseHelper::getDefaultSharedConnection();
+		$db->query('
+			CREATE OR REPLACE TABLE analyser_referenced_symbol_test_invalid (
+				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				name VARCHAR(255) NULL
+			);
+		');
+		$db->query("INSERT INTO analyser_referenced_symbol_test_invalid (id, name) VALUES (1, 'aa'), (2, NULL)");
+		$table = new Table('analyser_referenced_symbol_test_invalid', TestCaseHelper::getDefaultDbName());
+
+		yield 'invalid query' => [
+			'query' => 'asdasasd',
+			'expectedReferencedSymbols' => null,
+		];
+
+		$missingTable = new Table('missing_table', TestCaseHelper::getDefaultDbName());
+		$simpleTableReferences = [
+			'SELECT 1 FROM missing_table',
+			'INSERT INTO missing_table VALUES ()',
+			'REPLACE INTO missing_table VALUES ()',
+			'TRUNCATE TABLE missing_table',
+			'DELETE FROM missing_table',
+		];
+
+		foreach ($simpleTableReferences as $query) {
+			yield $query => [
+				'query' => $query,
+				'expectedReferencedSymbols' => [$missingTable],
+			];
+		}
+
+		$missingDbTable = new Table('missing_table', 'missing_db');
+		$simpleDbTableReferences = [
+			'SELECT 1 FROM missing_db.missing_table',
+			'INSERT INTO missing_db.missing_table VALUES ()',
+			'REPLACE INTO missing_db.missing_table VALUES ()',
+			'TRUNCATE TABLE missing_db.missing_table',
+			'DELETE FROM missing_db.missing_table',
+		];
+
+		foreach ($simpleDbTableReferences as $query) {
+			yield $query => [
+				'query' => $query,
+				'expectedReferencedSymbols' => [$missingDbTable],
+			];
+		}
 
 		yield 'detect valid table references even if invalid tables are referenced' => [
-			'query' => 'SELECT * FROM analyser_referenced_symbol_test, missing_table',
+			'query' => 'SELECT * FROM analyser_referenced_symbol_test_invalid, missing_table',
 			'expectedReferencedSymbols' => [
 				$table,
+				$missingTable,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
 			],
 		];
 
 		yield 'detect valid table references even if invalid tables are referenced - flipped' => [
-			'query' => 'SELECT * FROM missing_table, analyser_referenced_symbol_test',
+			'query' => 'SELECT * FROM missing_table, analyser_referenced_symbol_test_invalid',
 			'expectedReferencedSymbols' => [
+				$missingTable,
 				$table,
 				new TableColumn($table, 'id'),
 				new TableColumn($table, 'name'),
@@ -183,17 +266,20 @@ class AnalyserReferencedSymbolTest extends TestCase
 		];
 
 		yield 'detect valid column references even if invalid columns are referenced' => [
-			'query' => 'SELECT aaa, name FROM analyser_referenced_symbol_test',
+			'query' => 'SELECT aaa, name FROM analyser_referenced_symbol_test_invalid',
 			'expectedReferencedSymbols' => [
 				$table,
+				// TODO: detect invalid column usage as well. It's more complicate because we'd have to record it for
+				// all possible candidate tables.
 				new TableColumn($table, 'name'),
 			],
 		];
 	}
 
 	/** @param ?array<ReferencedSymbol> $expectedReferencedSymbols */
-	#[DataProvider('provideTestData')]
-	public function testValid(string $query, ?array $expectedReferencedSymbols): void
+	#[DataProvider('provideTestValidData')]
+	#[DataProvider('provideTestInvalidData')]
+	public function test(string $query, ?array $expectedReferencedSymbols): void
 	{
 		$analyser = TestCaseHelper::createAnalyser();
 		$result = $analyser->analyzeQuery($query);

@@ -1933,6 +1933,11 @@ MariaStan\Analyser\AnalyserResult
 					[name] => analyser_test
 					[database] => mariastan_test
 				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => aaabbbccc
+					[database] => mariastan_test
+				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn
 				(
 					[table] => MariaStan\Analyser\ReferencedSymbol\Table
@@ -1988,6 +1993,11 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
+				)
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => t
 					[database] => mariastan_test
 				)
 			MariaStan\Analyser\ReferencedSymbol\TableColumn

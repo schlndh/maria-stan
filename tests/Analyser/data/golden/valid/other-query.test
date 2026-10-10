@@ -13,6 +13,11 @@ MariaStan\Analyser\AnalyserResult
 	[positionalPlaceholderCount] => 0
 	[referencedSymbols] => Array
 		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_truncate
+					[database] => mariastan_test
+				)
 		)
 )
 #######

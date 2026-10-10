@@ -365,7 +365,7 @@ final class AnalyserState
 		if ($fromClause !== null) {
 			try {
 				$this->columnResolver = $this->analyseTableReference($fromClause, clone $this->columnResolver);
-			} catch (AnalyserException | DbReflectionException $e) {
+			} catch (AnalyserException $e) {
 				$this->errors[] = $e->toAnalyserError();
 			}
 		}
@@ -479,13 +479,14 @@ final class AnalyserState
 		return $fields;
 	}
 
-	/** @throws AnalyserException|DbReflectionException */
+	/** @throws AnalyserException */
 	private function analyseTableReference(TableReference $fromClause, ColumnResolver $columnResolver): ColumnResolver
 	{
 		switch ($fromClause::getTableReferenceType()) {
 			case TableReferenceTypeEnum::TABLE:
 				assert($fromClause instanceof Table);
 				$columnResolver = clone $columnResolver;
+				$tableType = ColumnInfoTableTypeEnum::TABLE;
 
 				try {
 					$tableType = $columnResolver->registerTable(
@@ -493,14 +494,14 @@ final class AnalyserState
 						$fromClause->alias,
 						$fromClause->name->databaseName,
 					);
-
+				} catch (AnalyserException | DbReflectionException $e) {
+					$this->errors[] = $e->toAnalyserError();
+				} finally {
 					if ($tableType === ColumnInfoTableTypeEnum::TABLE) {
 						$database = $fromClause->name->databaseName ?? $this->dbReflection->getDefaultDatabase();
 						$this->referencedTables[$database][$fromClause->name->name]
 							??= new ReferencedSymbol\Table($fromClause->name->name, $database);
 					}
-				} catch (AnalyserException | DbReflectionException $e) {
-					$this->errors[] = $e->toAnalyserError();
 				}
 
 				return $columnResolver;
@@ -615,7 +616,7 @@ final class AnalyserState
 	{
 		try {
 			$this->columnResolver = $this->analyseTableReference($query->table, clone $this->columnResolver);
-		} catch (AnalyserException | DbReflectionException $e) {
+		} catch (AnalyserException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
 
@@ -648,7 +649,7 @@ final class AnalyserState
 
 		try {
 			$this->columnResolver = $this->analyseTableReference($tableReferenceNode, clone $this->columnResolver);
-		} catch (AnalyserException | DbReflectionException $e) {
+		} catch (AnalyserException $e) {
 			$this->errors[] = $e->toAnalyserError();
 		}
 
@@ -813,11 +814,11 @@ final class AnalyserState
 	/** @throws AnalyserException */
 	private function analyseTruncateQuery(TruncateQuery $query): void
 	{
-		try {
-			$this->dbReflection->findTableSchema($query->tableName->name, $query->tableName->databaseName);
-		} catch (DbReflectionException $e) {
-			$this->errors[] = $e->toAnalyserError();
-		}
+		$this->columnResolver = $this->analyseTableReference(new Table(
+			$query->tableName->getStartPosition(),
+			$query->tableName->getEndPosition(),
+			$query->tableName,
+		), clone $this->columnResolver);
 	}
 
 	/** @throws AnalyserException */
