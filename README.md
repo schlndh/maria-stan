@@ -117,7 +117,7 @@ Here is a list of features that you could implement into your own PHPStan extens
 - Column type overrides: You can override the type of a column (e.g. because the table is "static") and even propagate it
   automatically via foreign keys.
 - Custom PHPDoc types: e.g. [MySQLiTableAssocRowType](https://github.com/schlndh/maria-stan/blob/master/src/PHPStan/Type/MySQLi/MySQLiTableAssocRowType.php).
-- PHPStan result cache is invalidated when DB schema changes via [ResultCacheMetaExtension](https://phpstan.org/developing-extensions/result-cache-meta-extensions).
+- Per-table PHPStan result cache invalidation via [ResultCacheValueExtension](https://phpstan.org/developing-extensions/result-cache-meta-extensions#tracking-dependencies-on-values).
 - Check views by placing `MariaStan\PHPStan\checkView` or `MariaStan\PHPStan\checkAllViews` in a PHP file that PHPStan analyses. These calls should not be executed, because you probably have MariaStan installed as a dev dependency.
 - MariaStan understands multi-database queries.
 

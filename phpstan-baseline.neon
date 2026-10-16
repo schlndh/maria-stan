@@ -13,17 +13,6 @@ parameters:
 			path: src/PHPStan/Helper/PHPStanReturnTypeHelper.php
 
 		-
-			rawMessage: '''
-				Class MariaStan\PHPStan\MariaStanResultCacheMetaExtension implements deprecated interface PHPStan\Analyser\ResultCache\ResultCacheMetaExtension:
-				Use value tracking or file tracking instead. See:
-				  https://phpstan.org/developing-extensions/result-cache-meta-extensions#tracking-dependencies-on-values
-				  https://phpstan.org/developing-extensions/result-cache-meta-extensions#tracking-dependencies-on-files
-			'''
-			identifier: class.implementsDeprecatedInterface
-			count: 1
-			path: src/PHPStan/MariaStanResultCacheMetaExtension.php
-
-		-
 			rawMessage: 'Generator expects key type non-decimal-int-string, literal-string&non-falsy-string given.'
 			identifier: generator.keyType
 			count: 2

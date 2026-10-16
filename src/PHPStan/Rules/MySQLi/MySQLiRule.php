@@ -12,6 +12,7 @@ use mysqli;
 use mysqli_stmt;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -68,7 +69,10 @@ class MySQLiRule implements Rule
 		};
 	}
 
-	/** @return list<IdentifierRuleError> */
+	/**
+	 * @param Scope&DependencyTracker $scope
+	 * @return list<IdentifierRuleError>
+	 */
 	private function handleMysqliCall(string $methodName, MethodCall $node, Scope $scope): array
 	{
 		// TODO: normalized arguments - this doesn't work with named arguments.
@@ -80,12 +84,13 @@ class MySQLiRule implements Rule
 
 		$queryType = $scope->getType($args[0]->value);
 		$result = match ($methodName) {
-			'query' => $this->phpstanMysqliHelper->query($queryType),
+			'query' => $this->phpstanMysqliHelper->query($queryType, $scope),
 			'execute_query' => $this->phpstanMysqliHelper->executeQuery(
 				$queryType,
 				$this->phpstanMysqliHelper->getExecuteParamTypesFromArgument($scope, $args[1] ?? null),
+				$scope,
 			),
-			'prepare' => $this->phpstanMysqliHelper->prepare($queryType),
+			'prepare' => $this->phpstanMysqliHelper->prepare($queryType, $scope),
 			default => null,
 		};
 

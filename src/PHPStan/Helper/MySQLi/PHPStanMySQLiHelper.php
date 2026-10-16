@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace MariaStan\PHPStan\Helper\MySQLi;
 
 use InvalidArgumentException;
-use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\AnalyserResult;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\Analyser\PlaceholderTypeProvider\PlaceholderTypeProvider;
 use MariaStan\PHPStan\Helper\AnalyserResultPHPStanParams;
 use MariaStan\PHPStan\Helper\MariaStanError;
 use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
+use MariaStan\PHPStan\Helper\PHPStanAnalyser;
 use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use MariaStan\PHPStan\Helper\PHPStanTypeVarcharPlaceholderTypeProvider;
 use PhpParser\Node\Arg;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
@@ -48,7 +49,7 @@ use const MYSQLI_NUM;
 final class PHPStanMySQLiHelper
 {
 	public function __construct(
-		private readonly Analyser $analyser,
+		private readonly PHPStanAnalyser $analyser,
 		private readonly PHPStanReturnTypeHelper $phpstanHelper,
 	) {
 	}
@@ -56,6 +57,7 @@ final class PHPStanMySQLiHelper
 	private function prepareImpl(
 		Type $queryType,
 		?PlaceholderTypeProvider $placeholderTypeProvider,
+		DependencyTracker $dependencyTracker,
 	): QueryPrepareCallResult {
 		$constantStrings = $queryType->getConstantStrings();
 
@@ -77,7 +79,11 @@ final class PHPStanMySQLiHelper
 
 		foreach ($constantStrings as $sqlType) {
 			try {
-				$analyserResults[] = $this->analyser->analyzeQuery($sqlType->getValue(), $placeholderTypeProvider);
+				$analyserResults[] = $this->analyser->analyzeQuery(
+					$sqlType->getValue(),
+					$dependencyTracker,
+					$placeholderTypeProvider,
+				);
 			} catch (AnalyserException $e) {
 				$errors[] = new MariaStanError(
 					$e->getMessage(),
@@ -99,14 +105,14 @@ final class PHPStanMySQLiHelper
 		return new QueryPrepareCallResult($errors, $analyserResults);
 	}
 
-	public function prepare(Type $queryType): QueryPrepareCallResult
+	public function prepare(Type $queryType, DependencyTracker $dependencyTracker): QueryPrepareCallResult
 	{
-		return $this->prepareImpl($queryType, null);
+		return $this->prepareImpl($queryType, null, $dependencyTracker);
 	}
 
-	public function query(Type $queryType): QueryPrepareCallResult
+	public function query(Type $queryType, DependencyTracker $dependencyTracker): QueryPrepareCallResult
 	{
-		$result = $this->prepare($queryType);
+		$result = $this->prepare($queryType, $dependencyTracker);
 
 		foreach ($result->analyserResults as $analyserResult) {
 			if ($analyserResult->positionalPlaceholderCount > 0) {
@@ -164,10 +170,13 @@ final class PHPStanMySQLiHelper
 	}
 
 	/** @param array<array<Type>> $executeParamTypes possible params */
-	public function executeQuery(Type $queryType, array $executeParamTypes): QueryPrepareCallResult
-	{
+	public function executeQuery(
+		Type $queryType,
+		array $executeParamTypes,
+		DependencyTracker $dependencyTracker,
+	): QueryPrepareCallResult {
 		$placeholderTypeProvider = $this->createPlaceholderTypeProviderFromExecuteParamTypes($executeParamTypes);
-		$prepareResult = $this->prepareImpl($queryType, $placeholderTypeProvider);
+		$prepareResult = $this->prepareImpl($queryType, $placeholderTypeProvider, $dependencyTracker);
 		$phpstanParams = $this->phpstanHelper
 			->createPhpstanParamsFromMultipleAnalyserResults($prepareResult->analyserResults);
 
@@ -215,9 +224,9 @@ final class PHPStanMySQLiHelper
 		return TypeCombinator::union(...$types);
 	}
 
-	public function getRowTypeFromStringQuery(string $query, int $mode): Type
+	public function getRowTypeFromStringQuery(string $query, int $mode, DependencyTracker $dependencyTracker): Type
 	{
-		$queryResult = $this->query(new ConstantStringType($query));
+		$queryResult = $this->query(new ConstantStringType($query), $dependencyTracker);
 		$params = $this->phpstanHelper->createPhpstanParamsFromMultipleAnalyserResults($queryResult->analyserResults);
 
 		if ($params === null) {

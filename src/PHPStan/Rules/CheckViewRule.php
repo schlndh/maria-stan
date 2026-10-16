@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace MariaStan\PHPStan\Rules;
 
-use MariaStan\Analyser\Analyser;
 use MariaStan\Analyser\AnalyserError;
 use MariaStan\Analyser\Exception\AnalyserException;
 use MariaStan\DbReflection\DbReflection;
 use MariaStan\DbReflection\Exception\DbReflectionException;
 use MariaStan\PHPStan\Helper\MariaStanError;
 use MariaStan\PHPStan\Helper\MariaStanErrorIdentifiers;
+use MariaStan\PHPStan\Helper\PHPStanAnalyser;
+use MariaStan\PHPStan\MariaStanResultCacheValueExtension;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -29,8 +31,11 @@ use function sprintf;
 /** @implements Rule<FuncCall> */
 class CheckViewRule implements Rule
 {
-	public function __construct(private readonly DbReflection $dbReflection, private readonly Analyser $analyser)
-	{
+	public function __construct(
+		private readonly DbReflection $dbReflection,
+		private readonly PHPStanAnalyser $phpstanAnalyser,
+		private readonly MariaStanResultCacheValueExtension $mariaStanResultCacheValueExtension,
+	) {
 	}
 
 	public function getNodeType(): string
@@ -64,6 +69,8 @@ class CheckViewRule implements Rule
 			return [];
 		}
 
+		$this->mariaStanResultCacheValueExtension->trackAllViewsDependency($scope);
+
 		try {
 			$viewDefinitions = $this->dbReflection->getViewDefinitions();
 		} catch (DbReflectionException $e) {
@@ -85,7 +92,7 @@ class CheckViewRule implements Rule
 			}
 
 			foreach (array_keys($views) as $view) {
-				$errors = array_merge($errors, $this->checkView((string) $view, $database));
+				$errors = array_merge($errors, $this->checkView((string) $view, $database, $scope));
 			}
 		}
 
@@ -93,6 +100,7 @@ class CheckViewRule implements Rule
 	}
 
 	/**
+	 * @param Scope&DependencyTracker $scope
 	 * @param array<Node\Arg> $args
 	 * @return list<IdentifierRuleError>
 	 */
@@ -120,15 +128,15 @@ class CheckViewRule implements Rule
 			$dbName = (string) $dbName;
 		}
 
-		return $this->checkView($viewName, $dbName);
+		return $this->checkView($viewName, $dbName, $scope);
 	}
 
 	/** @return list<IdentifierRuleError> */
-	private function checkView(string $view, ?string $dbName): array
+	private function checkView(string $view, ?string $dbName, DependencyTracker $dependencyTracker): array
 	{
 		try {
 			$viewDefinition = $this->dbReflection->findViewDefinition($view, $dbName);
-			$analyserResult = $this->analyser->analyzeQuery($viewDefinition);
+			$analyserResult = $this->phpstanAnalyser->analyzeQuery($viewDefinition, $dependencyTracker);
 		} catch (AnalyserException | DbReflectionException $e) {
 			return self::createPHPStanErrorsFromAnalyserErrors([$e->toAnalyserError()], $view, $dbName);
 		}

@@ -75,16 +75,17 @@ services:
 		arguments:
 			dbReflection: @mariaDbReflection
 			columnTypeOverrides: %maria-stan.columnTypeOverrides%
+	- MariaStan\PHPStan\Helper\PHPStanAnalyser
 	- MariaStan\PHPStan\Helper\MySQLi\PHPStanMySQLiHelper
-	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory
 	-
-		create: @functionInfoRegistryFactory::create()
-	-
-		class: MariaStan\PHPStan\MariaStanResultCacheMetaExtension
+		class: MariaStan\PHPStan\MariaStanResultCacheValueExtension
 		arguments:
 			dbReflection: @mariaDbReflection
 		tags:
-			- phpstan.resultCacheMetaExtension
+			- phpstan.resultCacheValueExtension
+	functionInfoRegistryFactory: MariaStan\Database\FunctionInfo\FunctionInfoRegistryFactory
+	-
+		create: @functionInfoRegistryFactory::create()
 	-
 		class: MariaStan\PHPStan\Rules\CheckViewRule
 		arguments:

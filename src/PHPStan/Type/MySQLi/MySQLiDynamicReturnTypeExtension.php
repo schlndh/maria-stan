@@ -10,6 +10,7 @@ use MariaStan\PHPStan\Helper\PHPStanReturnTypeHelper;
 use mysqli_result;
 use mysqli_stmt;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -39,6 +40,7 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		return in_array($methodReflection->getName(), ['query', 'prepare', 'execute_query'], true);
 	}
 
+	/** @param Scope&DependencyTracker $scope */
 	public function getTypeFromMethodCall(
 		MethodReflection $methodReflection,
 		MethodCall $methodCall,
@@ -48,15 +50,16 @@ class MySQLiDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 		$args = $methodCall->getArgs();
 		$queryType = $scope->getType($args[0]->value);
 		[$returnClass, $result] = match ($methodReflection->getName()) {
-			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->query($queryType)],
+			'query' => [mysqli_result::class, $this->phpstanMysqliHelper->query($queryType, $scope)],
 			'execute_query' => [
 				mysqli_result::class,
 				$this->phpstanMysqliHelper->executeQuery(
 					$queryType,
 					$this->phpstanMysqliHelper->getExecuteParamTypesFromArgument($scope, $args[1] ?? null),
+					$scope,
 				),
 			],
-			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->prepare($queryType)],
+			'prepare' => [mysqli_stmt::class, $this->phpstanMysqliHelper->prepare($queryType, $scope)],
 			default => [null, null],
 		};
 

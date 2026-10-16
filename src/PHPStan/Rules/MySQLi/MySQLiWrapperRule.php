@@ -115,7 +115,7 @@ class MySQLiWrapperRule implements Rule
 
 		$sql .= implode(', ', $sets);
 		$queryType = new ConstantStringType($sql);
-		$result = $this->phpstanMysqliHelper->prepare($queryType);
+		$result = $this->phpstanMysqliHelper->prepare($queryType, $scope);
 
 		return MariaStanError::arrayToPHPStanRuleErrors($result->errors);
 	}
