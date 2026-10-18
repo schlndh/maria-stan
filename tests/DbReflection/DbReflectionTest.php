@@ -152,6 +152,16 @@ class DbReflectionTest extends TestCase
 	/** @return iterable<string, array<mixed>> */
 	public static function provideDbReflections(): iterable
 	{
+		foreach (self::provideDbReflectionsInternal() as $key => [$reflection]) {
+			yield "{$key} - uncached" => [$reflection];
+
+			yield "{$key} - cached" => [new CachingDbReflection($reflection)];
+		}
+	}
+
+	/** @return iterable<string, array{0: DbReflection}> */
+	private static function provideDbReflectionsInternal(): iterable
+	{
 		self::initDb();
 		$db = TestCaseHelper::getDefaultSharedConnection();
 		$dbName = MysqliUtil::getDatabaseName($db);

@@ -20,9 +20,6 @@ use const MYSQLI_ASSOC;
 
 class MariaDbOnlineDbReflection implements DbReflection
 {
-	/** @var array<int|string, array<int|string, Table>> database => table name => schema */
-	private array $parsedSchemas = [];
-
 	public function __construct(
 		private readonly mysqli $mysqli,
 		private readonly string $defaultDatabase,
@@ -45,10 +42,6 @@ class MariaDbOnlineDbReflection implements DbReflection
 
 		if ($sequence !== null) {
 			return $sequence;
-		}
-
-		if (isset($this->parsedSchemas[$database][$table])) {
-			return $this->parsedSchemas[$database][$table];
 		}
 
 		try {
@@ -77,7 +70,7 @@ class MariaDbOnlineDbReflection implements DbReflection
 			throw new DatabaseException($e->getMessage(), $e->getCode(), $e);
 		}
 
-		return $this->parsedSchemas[$database][$table] = new Table(
+		return new Table(
 			$table,
 			$database,
 			$this->schemaParser->parseTableColumns($table, $tableCols, $origDatabase),

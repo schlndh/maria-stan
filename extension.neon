@@ -51,17 +51,27 @@ services:
 	- MariaStan\Parser\MariaDbParser
 	- MariaStan\DbReflection\InformationSchemaParser
 	- MariaStan\DbReflection\SequenceEngineHandler
-	mariaDbFileDbReflection:
+	mariaDbFileDbReflectionUncached:
 		class: MariaStan\DbReflection\MariaDbFileDbReflection
 		autowired: false
 		arguments:
 			dumpFile: %maria-stan.reflection.file%
 			defaultDatabase: %maria-stan.reflection.defaultDatabase%
-	mariaDbOnlineDbReflection:
+	mariaDbFileDbReflection:
+		class: MariaStan\DbReflection\CachingDbReflection
+		autowired: false
+		arguments:
+			dbReflection: @mariaDbFileDbReflectionUncached
+	mariaDbOnlineDbReflectionUncached:
 		class: MariaStan\PHPStan\Bridge\MariaDbOnlineForkAwareDbReflection
 		autowired: false
 		arguments:
 			defaultDatabase: %maria-stan.reflection.defaultDatabase%
+	mariaDbOnlineDbReflection:
+		class: MariaStan\DbReflection\CachingDbReflection
+		autowired: false
+		arguments:
+			dbReflection: @mariaDbOnlineDbReflectionUncached
 	mariaDbReflection: @mariaDbOnlineDbReflection
 	-
 		class: MariaStan\Analyser\Analyser
