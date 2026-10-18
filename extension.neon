@@ -41,18 +41,13 @@ parametersSchema:
 		]))
 	])
 services:
-	mariaStanDb:
-		# make sure it doesn't conflict with other extensions
-		autowired: false
-		class: mysqli
+	-
+		class: MariaStan\PHPStan\Bridge\MySQLiFactory
 		arguments:
 			hostname: %maria-stan.db.host%
 			username: %maria-stan.db.user%
 			password: %maria-stan.db.password%
 			port: %maria-stan.db.port%
-		setup:
-			- options(::constant(MYSQLI_OPT_INT_AND_FLOAT_NATIVE), 1)
-			- set_charset('utf8mb4')
 	- MariaStan\Parser\MariaDbParser
 	- MariaStan\DbReflection\InformationSchemaParser
 	- MariaStan\DbReflection\SequenceEngineHandler
@@ -63,10 +58,9 @@ services:
 			dumpFile: %maria-stan.reflection.file%
 			defaultDatabase: %maria-stan.reflection.defaultDatabase%
 	mariaDbOnlineDbReflection:
-		class: MariaStan\DbReflection\MariaDbOnlineDbReflection
+		class: MariaStan\PHPStan\Bridge\MariaDbOnlineForkAwareDbReflection
 		autowired: false
 		arguments:
-			mysqli: @mariaStanDb
 			defaultDatabase: %maria-stan.reflection.defaultDatabase%
 	mariaDbReflection: @mariaDbOnlineDbReflection
 	-
