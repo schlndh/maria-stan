@@ -15,3 +15,5 @@ services:
 		class: MariaStan\PHPStan\Rules\MySQLi\MySQLiWrapperRule
 		tags:
 			- phpstan.rules.rule
+	# Don't use eager reflection, because we change the schema during tests.
+	mariaDbReflection: @mariaDbOnlineDbReflection
