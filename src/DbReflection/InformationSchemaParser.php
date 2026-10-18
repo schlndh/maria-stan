@@ -42,7 +42,7 @@ class InformationSchemaParser
 	}
 
 	/**
-	 * @param array<array<string, scalar|null>> $tableCols [[column => value]]
+	 * @param array<array<array-key, scalar|null>> $tableCols [[column => value]]
 	 * @return non-empty-array<int|string, Column> name => column
 	 * @throws DbReflectionException
 	 */
@@ -71,7 +71,7 @@ class InformationSchemaParser
 	}
 
 	/**
-	 * @param array<array<string, scalar|null>> $foreignKeyRows information_schema.KEY_COLUMN_USAGE rows
+	 * @param array<array<array-key, scalar|null>> $foreignKeyRows information_schema.KEY_COLUMN_USAGE rows
 	 * @return array<int|string, ForeignKey> name => foreign key
 	 * @throws DbReflectionException
 	 */
@@ -139,7 +139,7 @@ class InformationSchemaParser
 	}
 
 	/**
-	 * @param non-empty-array<array<string, scalar|null>> $tableCols
+	 * @param non-empty-array<array<array-key, scalar|null>> $tableCols
 	 * @return non-empty-list<InformationSchemaColumn>
 	 * @throws DbReflectionException
 	 */

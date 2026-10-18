@@ -13,7 +13,6 @@ use MariaStan\Util\MariaDbErrorCodes;
 use MariaStan\Util\TypeUtil;
 
 use function array_column;
-use function array_fill_keys;
 use function array_map;
 use function file_get_contents;
 use function hash;
@@ -28,28 +27,35 @@ use const MYSQLI_ASSOC;
  * @phpcs:ignore
  * @phpstan-type SchemaDump array{
  *     __version: int,
- *     databases: array<string, array{
- *         tables: array<string, array{
- *             columns: array<array<string, scalar|null>>,
- *             foreign_keys: array<array<string, scalar|null>>
+ *     databases: array<array-key, array{
+ *         tables: array<array-key, array{
+ *             columns?: array<array<array-key, scalar|null>>,
+ *             foreign_keys?: array<array<array-key, scalar|null>>
  *	       }>,
- *         views: array<string, array{definition: string}>
+ *         views: array<array-key, array{definition: string}>
  *     }>
  * }
  */
-class MariaDbFileDbReflection implements DbReflection
+final class MariaDbFileDbReflection implements DbReflection
 {
 	private const DUMP_VERSION = 3;
 
 	/** @var SchemaDump */
 	private readonly array $schemaDump;
 
+	/** @param string|SchemaDump $dumpFile path to dump file, or already loaded and checked schema dump */
 	public function __construct(
-		string $dumpFile,
+		string|array $dumpFile,
 		private readonly string $defaultDatabase,
 		private readonly InformationSchemaParser $schemaParser,
 		private readonly SequenceEngineHandler $sequenceEngineHandler,
 	) {
+		if (is_array($dumpFile)) {
+			$this->schemaDump = $dumpFile;
+
+			return;
+		}
+
 		$contents = file_get_contents($dumpFile);
 
 		if ($contents === false) {
@@ -76,6 +82,22 @@ class MariaDbFileDbReflection implements DbReflection
 
 		/** @phpstan-var SchemaDump $dump */
 		$this->schemaDump = $dump;
+	}
+
+	/** @param string|array<string>|null $databases null = all */
+	public static function createFromLiveDb(
+		\mysqli $db,
+		string $defaultDatabase,
+		InformationSchemaParser $schemaParser,
+		SequenceEngineHandler $sequenceEngineHandler,
+		string|array|null $databases = null,
+	): self {
+		return new self(
+			self::dumpRawSchema($db, $databases),
+			$defaultDatabase,
+			$schemaParser,
+			$sequenceEngineHandler,
+		);
 	}
 
 	public function getDefaultDatabase(): string
@@ -152,8 +174,11 @@ class MariaDbFileDbReflection implements DbReflection
 		return hash('xxh128', serialize($this->schemaDump));
 	}
 
-	/** @param string|array<string>|null $databases null = all */
-	public static function dumpSchema(\mysqli $db, string|array|null $databases): string
+	/**
+	 * @param string|array<string>|null $databases null = all
+	 * @return SchemaDump
+	 */
+	private static function dumpRawSchema(\mysqli $db, string|array|null $databases): array
 	{
 		if (is_string($databases)) {
 			$databases = [$databases];
@@ -165,13 +190,12 @@ class MariaDbFileDbReflection implements DbReflection
 
 		$result = [
 			'__version' => self::DUMP_VERSION,
-			'databases' => array_fill_keys($databases, [
-				'tables' => [],
-				'views' => [],
-			]),
+			'databases' => [],
 		];
 
 		foreach ($databases as $database) {
+			$tables = [];
+			$views = [];
 			$stmt = $db->prepare('
 				SELECT * FROM information_schema.COLUMNS
 				WHERE TABLE_SCHEMA = ?
@@ -183,7 +207,7 @@ class MariaDbFileDbReflection implements DbReflection
 			/** @var array<string, scalar|null> $col */
 			foreach ($columns as $col) {
 				$tableName = TypeUtil::getStringValue($col, 'TABLE_NAME');
-				$result['databases'][$database]['tables'][$tableName]['columns'][] = $col;
+				$tables[$tableName]['columns'][] = $col;
 			}
 
 			$stmt = $db->prepare('
@@ -201,7 +225,7 @@ class MariaDbFileDbReflection implements DbReflection
 			/** @var array<string, scalar|null> $fk */
 			foreach ($foreignKeys as $fk) {
 				$tableName = TypeUtil::getStringValue($fk, 'TABLE_NAME');
-				$result['databases'][$database]['tables'][$tableName]['foreign_keys'][] = $fk;
+				$tables[$tableName]['foreign_keys'][] = $fk;
 			}
 
 			$stmt = $db->prepare('
@@ -210,16 +234,26 @@ class MariaDbFileDbReflection implements DbReflection
 				WHERE TABLE_SCHEMA = ?
 			');
 			$stmt->execute([$database]);
-			$views = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+			$viewDefinitions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-			foreach ($views as $view) {
-				$schemaName = TypeUtil::getStringValue($view, 'TABLE_SCHEMA');
+			foreach ($viewDefinitions as $view) {
 				$tableName = TypeUtil::getStringValue($view, 'TABLE_NAME');
-				$result['databases'][$schemaName]['views'][$tableName]
-					= ['definition' => $view['VIEW_DEFINITION']];
+				$views[$tableName]
+					= ['definition' => TypeUtil::getStringValue($view, 'VIEW_DEFINITION')];
 			}
+
+			$result['databases'][$database] = [
+				'tables' => $tables,
+				'views' => $views,
+			];
 		}
 
-		return serialize($result);
+		return $result;
+	}
+
+	/** @param string|array<string>|null $databases null = all */
+	public static function dumpSchema(\mysqli $db, string|array|null $databases): string
+	{
+		return serialize(self::dumpRawSchema($db, $databases));
 	}
 }

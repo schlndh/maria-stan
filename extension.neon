@@ -41,7 +41,7 @@ parametersSchema:
 		]))
 	])
 services:
-	-
+	mariaStanDbFactory:
 		class: MariaStan\PHPStan\Bridge\MySQLiFactory
 		arguments:
 			hostname: %maria-stan.db.host%
@@ -72,7 +72,18 @@ services:
 		autowired: false
 		arguments:
 			dbReflection: @mariaDbOnlineDbReflectionUncached
-	mariaDbReflection: @mariaDbOnlineDbReflection
+	mariaDbEagerOnlineDbReflectionUncached:
+		create: MariaStan\DbReflection\MariaDbFileDbReflection::createFromLiveDb()
+		autowired: false
+		arguments:
+			db: @mariaStanDbFactory::create()
+			defaultDatabase: %maria-stan.reflection.defaultDatabase%
+	mariaDbEagerOnlineDbReflection:
+		class: MariaStan\DbReflection\CachingDbReflection
+		autowired: false
+		arguments:
+			dbReflection: @mariaDbEagerOnlineDbReflectionUncached
+	mariaDbReflection: @mariaDbEagerOnlineDbReflection
 	-
 		class: MariaStan\Analyser\Analyser
 		arguments:

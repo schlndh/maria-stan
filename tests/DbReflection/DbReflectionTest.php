@@ -188,6 +188,13 @@ class DbReflectionTest extends TestCase
 			$sequenceEngineHandler,
 		)];
 
+		yield 'file - createFromLiveDb' => [MariaDbFileDbReflection::createFromLiveDb(
+			$db,
+			$dbName,
+			$informationSchemaParser,
+			$sequenceEngineHandler,
+		)];
+
 		yield 'file - v3' => [
 			new MariaDbFileDbReflection(
 				__DIR__ . '/data/file-reflection.v3.bin',
