@@ -10,6 +10,10 @@ parameters:
 			file:
 			defaultDatabase: ''
 		columnTypeOverrides: []
+	parametersNotInvalidatingCache:
+		# Handled via MariaStanResultCacheValueExtension
+		- [parameters, maria-stan, db]
+		- [parameters, maria-stan, reflection, file]
 parametersSchema:
 	maria-stan: structure([
 		# Connection information for online DB reflection.
