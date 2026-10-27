@@ -531,6 +531,31 @@ Array
 (
 )
 -----
+INSERT INTO analyser_test_insert2 VALUES (1, 2, 3, 4, 5)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
 REPLACE INTO analyser_test SET id = 999, name = "abcd"
 -----
 MariaStan\Analyser\AnalyserResult
@@ -1053,6 +1078,31 @@ MariaStan\Analyser\AnalyserResult
 			MariaStan\Analyser\ReferencedSymbol\Table
 				(
 					[name] => analyser_test
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+Array
+(
+)
+-----
+REPLACE INTO analyser_test_insert2 VALUES (1, 2, 3, 4, 5)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
 					[database] => mariastan_test
 				)
 		)

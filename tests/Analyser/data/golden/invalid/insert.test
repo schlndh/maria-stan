@@ -698,6 +698,34 @@ MariaStan\Analyser\AnalyserResult
 #######
 1136: Column count doesn't match value count at row 1
 -----
+INSERT INTO analyser_test_insert2 VALUES (1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
 INSERT INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')
 -----
 MariaStan\Analyser\AnalyserResult
@@ -762,6 +790,62 @@ MariaStan\Analyser\AnalyserResult
 )
 #######
 1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+INSERT INTO analyser_test_insert2 VALUES (1, 2, 3, 4)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 4 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+INSERT INTO analyser_test_insert2 VALUES (1, 2, 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
 -----
 INSERT INTO analyse_test_insert SET val_string_null_default = 'aaa'
 -----
@@ -1535,6 +1619,34 @@ MariaStan\Analyser\AnalyserResult
 #######
 1136: Column count doesn't match value count at row 1
 -----
+REPLACE INTO analyser_test_insert2 VALUES (1)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 1 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
 REPLACE INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')
 -----
 MariaStan\Analyser\AnalyserResult
@@ -1599,6 +1711,62 @@ MariaStan\Analyser\AnalyserResult
 )
 #######
 1364: Field 'val_string_not_null_no_default' doesn't have a default value
+-----
+REPLACE INTO analyser_test_insert2 VALUES (1, 2, 3, 4)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 4 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
+-----
+REPLACE INTO analyser_test_insert2 VALUES (1, 2, 3)
+-----
+MariaStan\Analyser\AnalyserResult
+(
+	[resultFields] => Array
+		(
+		)
+	[errors] => Array
+		(
+			MariaStan\Analyser\AnalyserError
+				(
+					[message] => Insert expected 5 columns, but got 3 columns.
+					[type] => MariaStan\Analyser\AnalyserErrorTypeEnum::COLUMN_COUNT_MISMATCH
+				)
+		)
+	[positionalPlaceholderCount] => 0
+	[referencedSymbols] => Array
+		(
+			MariaStan\Analyser\ReferencedSymbol\Table
+				(
+					[name] => analyser_test_insert2
+					[database] => mariastan_test
+				)
+		)
+)
+#######
+1136: Column count doesn't match value count at row 1
 -----
 REPLACE INTO analyse_test_insert SET val_string_null_default = 'aaa'
 -----

@@ -720,6 +720,7 @@ final class AnalyserState
 					$setColumnNames = array_map(static fn (Expr\Column $c) => $c->name, $query->insertBody->columnList);
 					$expectedCount = count($setColumnNames);
 				} else {
+					$setColumnNames = array_map(static fn (Schema\Column $c) => $c->name, $tableSchema->columns);
 					$expectedCount = count($tableSchema->columns);
 				}
 
@@ -735,6 +736,10 @@ final class AnalyserState
 							$tupleCount,
 						);
 						break;
+					}
+
+					if ($tupleCount === 0) {
+						$setColumnNames = [];
 					}
 
 					if (
@@ -784,14 +789,7 @@ final class AnalyserState
 		$setColumNamesMap = array_fill_keys($setColumnNames, 1);
 
 		foreach ($tableSchema->columns ?? [] as $name => $column) {
-			if (
-				isset($setColumNamesMap[$name])
-				|| $column->defaultValue !== null
-				|| $column->isNullable
-				|| $column->isAutoIncrement
-				// ENUMs default to the first value if NOT NULL and there is no DEFAULT value specified
-				|| $column->type::getTypeEnum() === Schema\DbType\DbTypeEnum::ENUM
-			) {
+			if (isset($setColumNamesMap[$name]) || $this->hasColumnDefaultValue($column)) {
 				continue;
 			}
 
@@ -809,6 +807,15 @@ final class AnalyserState
 		$cleanAnalyser->columnResolver->registerInsertReplaceTargetTable($tableSchema, $tableSchema->database);
 
 		return $cleanAnalyser->analyseSelectExpressions($query->returning, false);
+	}
+
+	private function hasColumnDefaultValue(Schema\Column $column): bool
+	{
+		return $column->defaultValue !== null
+			|| $column->isNullable
+			|| $column->isAutoIncrement
+			// ENUMs default to the first value if NOT NULL and there is no DEFAULT value specified
+			|| $column->type::getTypeEnum() === Schema\DbType\DbTypeEnum::ENUM;
 	}
 
 	/** @throws AnalyserException */

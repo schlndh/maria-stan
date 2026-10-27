@@ -110,6 +110,16 @@ class AnalyserTest extends TestCase
 		");
 
 		$db->query("
+			CREATE OR REPLACE TABLE analyser_test_insert2 (
+				default_start INT NOT NULL DEFAULT (5),
+				nullable_start INT NULL,
+				not_nullable_mid INT NOT NULL,
+				nullable_end INT NULL,
+				default_end INT NOT NULL DEFAULT (6)
+			);
+		");
+
+		$db->query("
 			CREATE OR REPLACE TABLE analyser_test_enum (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				enum_abc ENUM ('a', 'b', 'c') NOT NULL,
@@ -1390,6 +1400,10 @@ class AnalyserTest extends TestCase
 
 			yield "{$type} ... VALUES ()" => [
 				'query' => $type . ' INTO analyser_test VALUES ()',
+			];
+
+			yield "{$type} ... VALUES () - implicit columns, provide values for all columns" => [
+				'query' => $type . ' INTO analyser_test_insert2 VALUES (1, 2, 3, 4, 5)',
 			];
 		}
 
@@ -3466,6 +3480,13 @@ class AnalyserTest extends TestCase
 				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
+			yield "{$type} INTO ... (columns, ...) VALUES ... - mismatched column count, implicit column list,"
+				. " can't skip starting columns" => [
+				'query' => "{$type} INTO analyser_test_insert2 VALUES (1)",
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(5, 1),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
 			yield "{$type} ... VALUES - skip column without default value" => [
 				'query' => "{$type} INTO analyse_test_insert (val_string_null_default) VALUES ('aaa')",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
@@ -3476,6 +3497,19 @@ class AnalyserTest extends TestCase
 				'query' => "{$type} INTO analyse_test_insert VALUES ()",
 				'error' => AnalyserErrorBuilder::createMissingValueForColumnError('val_string_not_null_no_default'),
 				'dbErrorCode' => MariaDbErrorCodes::ER_NO_DEFAULT_FOR_FIELD,
+			];
+
+			yield "{$type} ... VALUES () - implicit columns, cannot skip last column with default value" => [
+				'query' => $type . ' INTO analyser_test_insert2 VALUES (1, 2, 3, 4)',
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(5, 4),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
+			];
+
+			yield "{$type} ... VALUES () - implicit columns, cannot skip nullable and default value columns "
+				. 'at the end' => [
+				'query' => $type . ' INTO analyser_test_insert2 VALUES (1, 2, 3)',
+				'error' => AnalyserErrorBuilder::createMismatchedInsertColumnCountError(5, 3),
+				'dbErrorCode' => MariaDbErrorCodes::ER_WRONG_VALUE_COUNT_ON_ROW,
 			];
 
 			yield "{$type} ... SET - skip column without default value" => [
