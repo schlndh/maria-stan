@@ -1309,7 +1309,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
 							[expression] => MariaStan\Ast\Expr\LiteralInt
 								(
@@ -1322,7 +1322,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1336,7 +1336,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1350,7 +1350,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\BinaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
-							[left] => MariaStan\Ast\Expr\Is
+							[left] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1365,9 +1365,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1389,7 +1389,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
 							[expression] => MariaStan\Ast\Expr\LiteralInt
 								(
@@ -1402,7 +1402,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1416,7 +1416,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1430,7 +1430,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\BinaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
-							[left] => MariaStan\Ast\Expr\Is
+							[left] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1445,9 +1445,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1469,7 +1469,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
 							[expression] => MariaStan\Ast\Expr\LiteralInt
 								(
@@ -1483,7 +1483,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1498,7 +1498,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1513,7 +1513,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\BinaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
-							[left] => MariaStan\Ast\Expr\Is
+							[left] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1529,9 +1529,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1555,7 +1555,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 		(
 			[0] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
 							[expression] => MariaStan\Ast\Expr\LiteralInt
 								(
@@ -1569,7 +1569,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1584,7 +1584,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\UnaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\UnaryOpTypeEnum::LOGIC_NOT
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1599,7 +1599,7 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 					[expr] => MariaStan\Ast\Expr\BinaryOp
 						(
 							[operation] => MariaStan\Ast\Expr\BinaryOpTypeEnum::LOGIC_AND
-							[left] => MariaStan\Ast\Expr\Is
+							[left] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(
@@ -1615,9 +1615,9 @@ MariaStan\Ast\Query\SelectQuery\SimpleSelectQuery
 				)
 			[4] => MariaStan\Ast\SelectExpr\RegularExpr
 				(
-					[expr] => MariaStan\Ast\Expr\Is
+					[expr] => MariaStan\Ast\Expr\IsOp
 						(
-							[expression] => MariaStan\Ast\Expr\Is
+							[expression] => MariaStan\Ast\Expr\IsOp
 								(
 									[expression] => MariaStan\Ast\Expr\LiteralInt
 										(

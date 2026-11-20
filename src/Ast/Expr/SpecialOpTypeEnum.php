@@ -12,7 +12,7 @@ enum SpecialOpTypeEnum: string
 	/** @see Collate */
 	case COLLATE = 'COLLATE';
 
-	/** @see Is */
+	/** @see IsOp */
 	case IS = 'IS';
 
 	/** @see In */

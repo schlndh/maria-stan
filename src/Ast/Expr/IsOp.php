@@ -7,7 +7,7 @@ namespace MariaStan\Ast\Expr;
 use MariaStan\Ast\BaseNode;
 use MariaStan\Parser\Position;
 
-final class Is extends BaseNode implements Expr
+final class IsOp extends BaseNode implements Expr
 {
 	public function __construct(
 		Position $startPosition,
