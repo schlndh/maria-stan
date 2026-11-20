@@ -1252,7 +1252,7 @@ final class AnalyserState
 					false,
 				);
 			case Expr\ExprTypeEnum::IS:
-				assert($expr instanceof Expr\Is);
+				assert($expr instanceof Expr\IsOp);
 				$fixedKnowledgeBase = null;
 
 				if ($condition === null) {

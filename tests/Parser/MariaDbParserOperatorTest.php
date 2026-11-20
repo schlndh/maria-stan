@@ -10,7 +10,7 @@ use MariaStan\Ast\Expr\BinaryOpTypeEnum;
 use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\ExprTypeEnum;
 use MariaStan\Ast\Expr\In;
-use MariaStan\Ast\Expr\Is;
+use MariaStan\Ast\Expr\IsOp;
 use MariaStan\Ast\Expr\Like;
 use MariaStan\Ast\Expr\LiteralInt;
 use MariaStan\Ast\Expr\LiteralString;
@@ -184,7 +184,7 @@ class MariaDbParserOperatorTest extends TestCase
 					? 1
 					: 0;
 			case ExprTypeEnum::IS:
-				assert($expr instanceof Is);
+				assert($expr instanceof IsOp);
 				$left = $this->getValueFromAstExpression($expr->expression);
 				$this->assertIsNotArray($left);
 

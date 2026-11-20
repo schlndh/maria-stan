@@ -30,7 +30,7 @@ use MariaStan\Ast\Expr\Expr;
 use MariaStan\Ast\Expr\FunctionCall;
 use MariaStan\Ast\Expr\In;
 use MariaStan\Ast\Expr\Interval;
-use MariaStan\Ast\Expr\Is;
+use MariaStan\Ast\Expr\IsOp;
 use MariaStan\Ast\Expr\Like;
 use MariaStan\Ast\Expr\LiteralFloat;
 use MariaStan\Ast\Expr\LiteralInt;
@@ -1368,7 +1368,7 @@ class MariaDbParserState
 	}
 
 	/** @throws ParserException */
-	private function parseRestOfIsOperator(Expr $left): Is|UnaryOp
+	private function parseRestOfIsOperator(Expr $left): IsOp|UnaryOp
 	{
 		static $precedence = null;
 		$precedence ??= $this->getOperatorPrecedence(SpecialOpTypeEnum::IS);
@@ -1401,7 +1401,7 @@ class MariaDbParserState
 			}
 		}
 
-		$result = new Is($left->getStartPosition(), $this->getPreviousToken()->getEndPosition(), $left, $test);
+		$result = new IsOp($left->getStartPosition(), $this->getPreviousToken()->getEndPosition(), $left, $test);
 
 		return $isNot
 			? new UnaryOp(
