@@ -79,6 +79,7 @@ jobs:
     runs-on: "ubuntu-26.04"
 
     strategy:
+      fail-fast: false
       matrix:
         dependencies: ["lowest", "highest"]
         php-version:
